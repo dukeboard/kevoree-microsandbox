@@ -1,0 +1,7 @@
+merge "mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.javaseNode/{kevoree.version}"
+merge "mvn:org.kevoree.microsandbox/org.kevoree.microsandbox.samples/1.0-SNAPSHOT"
+
+addNode node0 : JavaSENode { logLevel="INFO" }
+addComponent analyzer@node0 : FakeVideoAnalyzer { "cpu_wall_time"="7000000" }
+addComponent reasoner@node0 : SandboxReasoner
+
