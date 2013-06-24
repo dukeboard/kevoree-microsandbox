@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.kevoree.microsandbox</groupId>
     <artifactId>org.kevoree.microsandbox.root</artifactId>
@@ -10,6 +11,7 @@
 
     <properties>
         <kevoree.version>2.0.0-SNAPSHOT</kevoree.version>
+        <kotlin.version>0.5.748</kotlin.version>
     </properties>
 
     <licenses>
@@ -102,34 +104,34 @@
                     <target>1.6</target>
                 </configuration>
             </plugin>
-			<plugin>
-			        <groupId>org.codehaus.mojo</groupId>
-			        <artifactId>license-maven-plugin</artifactId>
-			        <version>1.4</version>
-			        <configuration>
-			          <verbose>false</verbose>
-			          <addSvnKeyWords>true</addSvnKeyWords>
-			        </configuration>
-			        <executions>
-			          <execution>
-			            <id>first</id>
-			            <goals>
-			              <goal>update-file-header</goal>
-			            </goals>
-			            <phase>process-sources</phase>
-			            <configuration>
-			              <licenseName>lgpl_v3</licenseName>
-						  <organizationName>org.kevoree</organizationName>
-						  <inceptionYear>2013</inceptionYear>
-			              <includes>
-			                <include>*.java</include>
-			                <include>*.kt</include>
-			                <include>*.scala</include>
-			              </includes>
-			            </configuration>
-			          </execution>
-			        </executions>
-			      </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>license-maven-plugin</artifactId>
+                <version>1.4</version>
+                <configuration>
+                    <verbose>false</verbose>
+                    <addSvnKeyWords>true</addSvnKeyWords>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>first</id>
+                        <goals>
+                            <goal>update-file-header</goal>
+                        </goals>
+                        <phase>process-sources</phase>
+                        <configuration>
+                            <licenseName>lgpl_v3</licenseName>
+                            <organizationName>org.kevoree</organizationName>
+                            <inceptionYear>2013</inceptionYear>
+                            <includes>
+                                <include>*.java</include>
+                                <include>*.kt</include>
+                                <include>*.scala</include>
+                            </includes>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 
@@ -153,6 +155,10 @@
             <id>kevoree-snapshots</id>
             <url>http://maven.kevoree.org/snapshots</url>
         </repository>
+        <repository>
+            <id>jetbrains-release</id>
+            <url>http://repository.jetbrains.com/all</url>
+        </repository>
     </repositories>
 
     <pluginRepositories>
@@ -164,10 +170,16 @@
             <id>plugin.kevoree-snapshots</id>
             <url>http://maven.kevoree.org/snapshots</url>
         </pluginRepository>
+        <pluginRepository>
+            <id>jetbrains-release</id>
+            <url>http://repository.jetbrains.com/all</url>
+        </pluginRepository>
+
     </pluginRepositories>
 
     <modules>
         <module>org.kevoree.microsandbox.api</module>
+        <module>org.kevoree.microsandbox.javaSENode</module>
         <module>org.kevoree.microsandbox.samples</module>
     </modules>
 
