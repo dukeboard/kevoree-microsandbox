@@ -48,34 +48,32 @@ open class KevoreeJarClassLoaderCoverageInjection() : KevoreeJarClassLoader() {
         var coverageBuilder : CoverageBuilder? = CoverageBuilder()
         var analyzer : Analyzer? = Analyzer(dataStore, coverageBuilder)
 
-
         val f:Field = this.getClass().getDeclaredField("classes")
         f.setAccessible(true)
-
-        f.get(this)
 
         val classes : Vector<Class<Any>> = f.get(this) as Vector<Class<Any>>
         for (clazz in classes) {
             val name : String = clazz.getCanonicalName()?.replace('.', '/') + ".class"
             println("Calculating coverage for : " + name + " from a total of : " + classes.size)
-//            var a : InputStream? = getResourceAsStream(clazz. + ".class")
-//            try
-//            {
-//                analyzer?.analyzeClass(a)
-//                a?.close()
-//            }
-//            catch (e : IOException?) {
-//                System.out?.println("Problems with file : " + clazz)
-//            }
-
-
+            val a : InputStream? = getResourceAsStream(clazz.getCanonicalName() + ".class")
+            analyzer?.analyzeClass(a)
+            a?.close()
         }
 
-//        for (cc : IClassCoverage? in coverageBuilder?.getClasses())
-//        {
-//
-//        }
-        return 0.0
+        var ratioBranch : Double = 0.0
+        var ratioInstr : Double = 0.0
+        var count : Int = 0
+        for (cc : IClassCoverage? in coverageBuilder?.getClasses()!!)
+        {
+            ratioBranch += (cc?.getBranchCounter()?.getCoveredRatio() as Double)
+            ratioInstr += (cc?.getInstructionCounter()?.getCoveredRatio() as Double)
+            count ++
+        }
+
+        ratioBranch /= count
+        ratioInstr /= count
+
+        return (ratioBranch + ratioInstr) / 2
 
     }
 
