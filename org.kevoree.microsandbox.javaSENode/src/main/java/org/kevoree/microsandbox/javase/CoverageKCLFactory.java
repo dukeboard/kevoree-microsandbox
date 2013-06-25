@@ -1,6 +1,7 @@
 package org.kevoree.microsandbox.javase;
 
 import org.kevoree.kcl.KevoreeJarClassLoader;
+import org.kevoree.microsandbox.core.KevoreeJarClassLoaderCoverageInjection;
 import org.kevoree.tools.aether.framework.KCLFactory;
 
 /**
