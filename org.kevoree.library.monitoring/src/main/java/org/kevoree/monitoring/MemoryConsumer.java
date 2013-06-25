@@ -1,4 +1,4 @@
-package org.kevoree.microsandbox.samples;
+package org.kevoree.monitoring;
 
 import org.kevoree.annotation.ComponentType;
 import org.kevoree.annotation.Start;

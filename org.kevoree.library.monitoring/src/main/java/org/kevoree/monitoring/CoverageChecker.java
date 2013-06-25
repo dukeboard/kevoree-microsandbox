@@ -1,11 +1,11 @@
-package org.kevoree.microsandbox.samples;
+package org.kevoree.monitoring;
 
 import org.kevoree.annotation.ComponentType;
 import org.kevoree.annotation.Start;
 import org.kevoree.annotation.Stop;
 import org.kevoree.annotation.Update;
 import org.kevoree.framework.AbstractComponentType;
-import org.kevoree.kcl.KevoreeJarClassLoader;
+import org.kevoree.microsandbox.core.CoverageRuntime;
 
 //import org.kevoree.microsandbox.core.KevoreeJarClassLoaderCoverageInjection;
 
@@ -32,13 +32,12 @@ public class CoverageChecker extends AbstractComponentType {
         public void run() {
             while (!isB()) {
                 try {
-                    Thread.sleep(2000);
+                    Thread.sleep(3000);
                     ClassLoader l = this.getClass().getClassLoader();
-                    if (l instanceof KevoreeJarClassLoader) {
-                        KevoreeJarClassLoader loaderCoverageInjection =
-                                (KevoreeJarClassLoader)l;
-                        System.out.println("real coverage : " + "123");
-                    }
+                    if (l == null)
+                        System.out.println("Impossible to calculate coverage");
+                    else
+                        System.out.println("Coverage is : " + CoverageRuntime.instance$.calculateCoverage(l));
                 } catch (InterruptedException e) {
 
                 }

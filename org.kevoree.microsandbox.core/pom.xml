@@ -13,9 +13,9 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.kevoree</groupId>
-            <artifactId>org.kevoree.kcl</artifactId>
-            <version>${kevoree.version}</version>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-stdlib</artifactId>
+            <version>${kotlin.version}</version>
         </dependency>
         <dependency>
             <groupId>org.jacoco</groupId>

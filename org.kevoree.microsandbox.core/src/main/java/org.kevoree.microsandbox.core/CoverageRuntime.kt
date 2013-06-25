@@ -7,10 +7,11 @@ import org.jacoco.core.instr.Instrumenter
 import org.jacoco.core.runtime.IRuntime
 import org.jacoco.core.runtime.LoggerRuntime
 import org.jacoco.core.runtime.RuntimeData
+
 import java.util.Vector
 import java.io.InputStream
-
-import org.kevoree.microsandbox.core.KevoreeJarClassLoaderCoverageInjection
+import java.lang.reflect.Field
+import java.lang.reflect.Method
 
 /**
  * Created with IntelliJ IDEA.
@@ -25,11 +26,11 @@ object CoverageRuntime {
     private val instr : Instrumenter? = Instrumenter(runtime)
     private val data : RuntimeData? = RuntimeData()
 
-    private var parent : KevoreeJarClassLoaderCoverageInjection? = null;
+    private var b : Boolean = false;
 
-    fun init(p: KevoreeJarClassLoaderCoverageInjection): Unit {
-        if (parent != null) {
-            parent = p
+    fun init(): Unit {
+        if (!b) {
+            b = true
             runtime?.startup(data)
         }
     }
@@ -38,17 +39,17 @@ object CoverageRuntime {
         return instr?.instrument(bytes) ?: ByteArray(0)
     }
 
-    fun calculateCoverage(classes : Vector<Class<Any>>) : Double {
+    private fun calculateCoverage(classes : Vector<String>?,
+                                  loader : ClassLoader) : Double {
         var dataStore : ExecutionDataStore? = ExecutionDataStore()
         var infoStore : SessionInfoStore? = SessionInfoStore()
         data?.collect(dataStore, infoStore, false)
         var coverageBuilder : CoverageBuilder? = CoverageBuilder()
         var analyzer : Analyzer? = Analyzer(dataStore, coverageBuilder)
 
-        for (clazz in classes) {
-            val name : String = clazz.getCanonicalName()?.replace('.', '/') + ".class"
-            println("Calculating coverage for : " + name + " from a total of : " + classes.size)
-            val a : InputStream? = parent?.lala(clazz.getCanonicalName() + ".class")
+        for (clazz in classes!!) {
+            val name : String = clazz.replace('.', '/') + ".class"
+            val a : InputStream? = lala(loader, name)
             analyzer?.analyzeClass(a)
             a?.close()
         }
@@ -58,7 +59,12 @@ object CoverageRuntime {
         var count : Int = 0
         for (cc : IClassCoverage? in coverageBuilder?.getClasses()!!)
         {
-            ratioBranch += (cc?.getBranchCounter()?.getCoveredRatio() as Double)
+            ratioBranch += if (cc?.getBranchCounter()?.getCoveredCount() != 0) {
+                                (cc?.getBranchCounter()?.getCoveredRatio() as Double)
+                           }
+                            else {
+                                0.0
+                            }
             ratioInstr += (cc?.getInstructionCounter()?.getCoveredRatio() as Double)
             count ++
         }
@@ -68,5 +74,23 @@ object CoverageRuntime {
 
         return (ratioBranch + ratioInstr) / 2
 
+    }
+
+    private fun lala(loader : ClassLoader, className : String) : InputStream? {
+        return loader.getResourceAsStream(className)
+    }
+
+    open fun calculateCoverage(loader : ClassLoader) : Double {
+        if (loader == null)
+            return 2.0
+
+        var f : Method? = null
+        try {
+            f = loader.getClass().getDeclaredMethod("getLoadedClasses")
+        }
+        catch (ex : NoSuchMethodException) { return 3.0 }
+
+        val classes : Vector<String>? = f?.invoke(loader) as? Vector<String>
+        return CoverageRuntime.calculateCoverage(classes, loader)
     }
 }

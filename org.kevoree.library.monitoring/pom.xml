@@ -47,8 +47,8 @@
         </dependency>
         <dependency>
             <groupId>org.kevoree.microsandbox</groupId>
-            <artifactId>org.kevoree.microsandbox.javasenode</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <artifactId>org.kevoree.microsandbox.core</artifactId>
+            <version>${project.version}</version>
         </dependency>
     </dependencies>
 
