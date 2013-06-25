@@ -1,0 +1,21 @@
+{
+addRepo "http://maven.kevoree.org/release"
+addRepo "http://repo.maven.apache.org/maven2"
+addRepo "http://repository.jetbrains.com/all"
+addRepo "https://oss.sonatype.org/content/repositories/snapshots"
+addRepo "http://maven.kevoree.org/archiva/repository/snapshots/"
+addRepo "http://maven.kevoree.org/snapshots"
+addRepo "http://repo.typesafe.com/typesafe/releases/"
+merge 'mvn:org.kevoree.microsandbox/org.kevoree.microsandbox.javasenode/1.0-SNAPSHOT'
+merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.fakeDomo/2.0.0-SNAPSHOT'
+merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.jexxus/2.0.0-SNAPSHOT'
+addNode node0:MonitoredNode
+updateDictionary node0{}
+{
+  addComponent FakeConso509@node0 : FakeConsole {}
+  updateDictionary FakeConso509@node0
+}
+
+addGroup group81848334:BasicGroup
+addToGroup group81848334 node0
+}

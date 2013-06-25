@@ -181,6 +181,10 @@
         <module>org.kevoree.microsandbox.api</module>
         <module>org.kevoree.microsandbox.javaSENode</module>
         <module>org.kevoree.microsandbox.samples</module>
+        <module>ResourceMonitorArtifacts</module>
+        <module>ResourceMonitorJavaAgent</module>
+        <module>JarInstrumenter</module>
+        <module>org.kevoree.library.monitoring</module>
     </modules>
 
 </project>

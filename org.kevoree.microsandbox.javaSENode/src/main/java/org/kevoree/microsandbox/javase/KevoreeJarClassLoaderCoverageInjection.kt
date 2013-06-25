@@ -1,4 +1,4 @@
-package org.kevoree.kcl
+package org.kevoree.microsandbox.javase
 
 
 import org.jacoco.core.analysis.*
@@ -12,6 +12,7 @@ import java.io.InputStream
 import java.lang.reflect.Field
 import java.util.Vector
 import java.io.IOException
+import org.kevoree.kcl.KevoreeJarClassLoader
 
 /**
  * Created with IntelliJ IDEA.
