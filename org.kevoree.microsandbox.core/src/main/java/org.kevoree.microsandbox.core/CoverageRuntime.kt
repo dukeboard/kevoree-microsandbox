@@ -18,7 +18,7 @@ import java.lang.reflect.Method
  * User: inti
  * Date: 6/25/13
  * Time: 3:26 PM
- * To change this template use File | Settings | File Templates.
+ *
  */
 object CoverageRuntime {
 
@@ -41,6 +41,7 @@ object CoverageRuntime {
 
     private fun calculateCoverage(classes : Vector<String>?,
                                   loader : ClassLoader) : Double {
+
         var dataStore : ExecutionDataStore? = ExecutionDataStore()
         var infoStore : SessionInfoStore? = SessionInfoStore()
         data?.collect(dataStore, infoStore, false)
@@ -56,24 +57,20 @@ object CoverageRuntime {
 
         var ratioBranch : Double = 0.0
         var ratioInstr : Double = 0.0
-        var count : Int = 0
+        var branchCount : Int = 0
+        var instrCount : Int = 0
         for (cc : IClassCoverage? in coverageBuilder?.getClasses()!!)
         {
-            ratioBranch += if (cc?.getBranchCounter()?.getCoveredCount() != 0) {
-                                (cc?.getBranchCounter()?.getCoveredRatio() as Double)
-                           }
-                            else {
-                                0.0
-                            }
-            ratioInstr += (cc?.getInstructionCounter()?.getCoveredRatio() as Double)
-            count ++
+            ratioBranch += (cc?.getBranchCounter()?.getCoveredCount() as Int)
+            ratioInstr += (cc?.getInstructionCounter()?.getCoveredCount() as Int)
+            branchCount += (cc?.getBranchCounter()?.getTotalCount() as Int)
+            instrCount += (cc?.getInstructionCounter()?.getTotalCount() as Int)
         }
 
-        ratioBranch /= count
-        ratioInstr /= count
+        ratioBranch /= branchCount
+        ratioInstr /= instrCount
 
         return (ratioBranch + ratioInstr) / 2
-
     }
 
     private fun lala(loader : ClassLoader, className : String) : InputStream? {

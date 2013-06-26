@@ -26,7 +26,7 @@ open class KevoreeJarClassLoaderCoverageInjection() : KevoreeJarClassLoader() {
     }
 
     override fun internal_defineClass(className: String, bytes: ByteArray): Class<out Any?>? {
-        print("Coverage for class : " + className +  " has been solicited :-)")
+        //print("Coverage for class : " + className +  " has been solicited :-)")
         val x: ByteArray =  if (className?.contains("jacoco")
                                 || className?.contains("asm")
                             ) {
