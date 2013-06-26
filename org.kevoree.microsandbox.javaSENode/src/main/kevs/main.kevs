@@ -6,7 +6,7 @@ merge "mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.swingUI/{ke
 merge 'mvn:org.kevoree.microsandbox/org.kevoree.library.monitoring/1.0-SNAPSHOT'
 
 addNode node0:MonitoredNode
-addComponent FakeConso509@node0 : FakeConsole {}
+addComponent FakeConso509@node0 : FakeConsole { singleFrame='true' }
 addComponent FakeConso510@node0 : FakeConsole {}
 addComponent fread@node0 : FileExplorer { basedir='{basedir}' }
 addComponent CoverageChecker0@node0 : CoverageChecker {}

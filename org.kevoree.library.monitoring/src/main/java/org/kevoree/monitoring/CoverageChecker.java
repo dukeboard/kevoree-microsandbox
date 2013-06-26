@@ -1,9 +1,6 @@
 package org.kevoree.monitoring;
 
-import org.kevoree.ComponentInstance;
-import org.kevoree.ContainerNode;
-import org.kevoree.ContainerRoot;
-import org.kevoree.DeployUnit;
+import org.kevoree.*;
 import org.kevoree.annotation.ComponentType;
 import org.kevoree.annotation.Start;
 import org.kevoree.annotation.Stop;
@@ -12,7 +9,9 @@ import org.kevoree.framework.AbstractComponentType;
 import org.kevoree.framework.kaspects.TypeDefinitionAspect;
 import org.kevoree.kcl.KevoreeJarClassLoader;
 import org.kevoree.microsandbox.core.CoverageRuntime;
+import org.kevoree.monitoring.ranking.ComponentExecutionInfo;
 
+import java.lang.ref.WeakReference;
 import java.util.*;
 
 
@@ -42,12 +41,23 @@ public class CoverageChecker extends AbstractComponentType {
                 try {
                     Thread.sleep(3000);
 
-                    for (ComponentInstance instance : componentInstances) {
+                    for (WeakReference<ComponentInstance> ref : componentInstances) {
+                        ComponentInstance instance = ref.get();
+                        if (instance == null) continue;
+
                         DeployUnit unit = lala.foundRelevantDeployUnit(instance.getTypeDefinition(),containerNode);
                         ClassLoader loader = loader(unit);
+
+                        ComponentExecutionInfo info1 = info.get(instance.getName());
+
+                        CoverageRuntime.Entry entry = CoverageRuntime.instance$.calculateCoverage(loader);
+                        info1.setBranchCoverage(entry.getBranchCoverage());
+                        info1.setInstructionCoverage(entry.getInstrCoverage());
+
+
                         System.out.println("Trying RARA : " + loader.getClass() +
                                 " component " + instance.getName() + " " +
-                                CoverageRuntime.instance$.calculateCoverage(loader)
+                                entry
                         );
                     }
 
@@ -60,7 +70,8 @@ public class CoverageChecker extends AbstractComponentType {
 
     Th th;
 
-    List<ComponentInstance> componentInstances;
+    List<WeakReference<ComponentInstance>> componentInstances;
+    HashMap<String, ComponentExecutionInfo> info = new HashMap<String, ComponentExecutionInfo>();
     ContainerNode containerNode;
 
     public KevoreeJarClassLoader loader(DeployUnit unit) {
@@ -84,9 +95,18 @@ public class CoverageChecker extends AbstractComponentType {
             if (!getNodeName().equals(node.getName())) continue;
             containerNode = node;
             System.out.println("    Node : " + node.getName());
-            componentInstances = node.getComponents();
+            componentInstances = new ArrayList<WeakReference<ComponentInstance>>();
             for (ComponentInstance instance : node.getComponents()) {
                 System.out.println("        Component : " + instance.getName());
+                componentInstances.add(new WeakReference<ComponentInstance>(instance));
+                info.put(instance.getName(), new ComponentExecutionInfo(instance.getName()));
+
+                if (instance.getDictionary() != null) {
+                    List<DictionaryValue> values = instance.getDictionary().getValues();
+                    for (DictionaryValue v : values) {
+                        System.out.println("            Parameter : " + v.getAttribute().getName() + "=" + v.getValue());
+                    }
+                }
             }
         }
     }

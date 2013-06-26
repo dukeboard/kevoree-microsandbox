@@ -28,6 +28,13 @@ object CoverageRuntime {
 
     private var b : Boolean = false;
 
+    open class Entry(branchParam : Double, instrParam : Double) {
+        val branchCoverage : Double = branchParam
+        val instrCoverage : Double = instrParam
+
+        fun toString() : String = "Branch: " + branchCoverage + " Instruction: " + instrCoverage
+    }
+
     fun init(): Unit {
         if (!b) {
             b = true
@@ -40,7 +47,7 @@ object CoverageRuntime {
     }
 
     private fun calculateCoverage(classes : Vector<String>?,
-                                  loader : ClassLoader) : Double {
+                                  loader : ClassLoader) : Entry {
 
         var dataStore : ExecutionDataStore? = ExecutionDataStore()
         var infoStore : SessionInfoStore? = SessionInfoStore()
@@ -70,22 +77,22 @@ object CoverageRuntime {
         ratioBranch /= branchCount
         ratioInstr /= instrCount
 
-        return (ratioBranch + ratioInstr) / 2
+        return Entry(ratioBranch, ratioInstr)
     }
 
     private fun lala(loader : ClassLoader, className : String) : InputStream? {
         return loader.getResourceAsStream(className)
     }
 
-    open fun calculateCoverage(loader : ClassLoader) : Double {
+    open fun calculateCoverage(loader : ClassLoader) : Entry {
         if (loader == null)
-            return 2.0
+            return Entry(2.0, 2.0)
 
         var f : Method?
         try {
             f = loader.getClass().getDeclaredMethod("getLoadedClasses")
         }
-        catch (ex : NoSuchMethodException) { return 3.0 }
+        catch (ex : NoSuchMethodException) { return Entry(3.0, 3.0) }
 
         val classes : Vector<String>? = f?.invoke(loader) as? Vector<String>
         return CoverageRuntime.calculateCoverage(classes, loader)
