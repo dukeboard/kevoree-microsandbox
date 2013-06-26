@@ -81,7 +81,7 @@ object CoverageRuntime {
         if (loader == null)
             return 2.0
 
-        var f : Method? = null
+        var f : Method?
         try {
             f = loader.getClass().getDeclaredMethod("getLoadedClasses")
         }

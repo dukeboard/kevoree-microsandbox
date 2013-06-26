@@ -9,7 +9,7 @@ import org.kevoree.annotation.NodeType;
 /**
  * Created by duke on 24/06/13.
  */
-@NodeType(De)
+@NodeType
 @Library(name = "JavaSE")
 public class MonitoredNode extends JavaSENode {
 

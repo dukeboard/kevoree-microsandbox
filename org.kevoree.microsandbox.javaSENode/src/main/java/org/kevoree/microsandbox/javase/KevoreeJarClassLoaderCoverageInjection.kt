@@ -44,10 +44,6 @@ open class KevoreeJarClassLoaderCoverageInjection() : KevoreeJarClassLoader() {
             }
         }
         val clazz : Class<out Any?>? = defineClass(className, x, 0, x.size)
-        if (clazz.javaClass != this)
-            println("   THIS LOADER")
-        else
-            println(clazz.javaClass)
         return clazz
     }
 
