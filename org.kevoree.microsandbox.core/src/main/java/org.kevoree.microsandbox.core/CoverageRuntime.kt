@@ -57,7 +57,7 @@ object CoverageRuntime {
 
         for (clazz in classes!!) {
             val name : String = clazz.replace('.', '/') + ".class"
-            val a : InputStream? = lala(loader, name)
+            val a : InputStream? = loader.getResourceAsStream(name)
             analyzer?.analyzeClass(a)
             a?.close()
         }
@@ -78,10 +78,6 @@ object CoverageRuntime {
         ratioInstr /= instrCount
 
         return Entry(ratioBranch, ratioInstr)
-    }
-
-    private fun lala(loader : ClassLoader, className : String) : InputStream? {
-        return loader.getResourceAsStream(className)
     }
 
     open fun calculateCoverage(loader : ClassLoader) : Entry {

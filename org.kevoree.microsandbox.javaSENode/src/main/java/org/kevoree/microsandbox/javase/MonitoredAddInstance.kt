@@ -23,6 +23,8 @@ import org.kevoree.Channel
 import org.kevoree.framework.AbstractGroupType
 import org.kevoree.framework.AbstractChannelFragment
 import org.kevoree.log.Log
+import org.kevoree.DictionaryValue
+import org.kevoree.impl.DictionaryAttributeImpl
 
 /**
  * Created with IntelliJ IDEA.
@@ -31,23 +33,33 @@ import org.kevoree.log.Log
  * Time: 4:52 PM
  * To change this template use File | Settings | File Templates.
  */
-class MonitoredAddInstance(val c: Instance,
+open class MonitoredAddInstance(val c: Instance,
                                   val nodeName: String,
                                   val modelservice: KevoreeModelHandlerService,
                                   val kscript: KevScriptEngineFactory,
                                   val bs: org.kevoree.api.Bootstraper,
                                   val nt : AbstractNodeType) : PrimitiveCommand, Runnable {
+
     private val typeDefinitionAspect = TypeDefinitionAspect()
     var deployUnit : DeployUnit? = null
     var nodeTypeName : String? = null
     var tg : ThreadGroup? = null
 
     override fun execute(): Boolean {
+
+        if (c is ComponentInstance) {
+            val cc : ComponentInstance = c as ComponentInstance
+            val flag = ControlAdmissionSystem.registerComponent(cc)
+            if (!flag)
+                return false
+        }
+
         val model = c.getTypeDefinition()!!.eContainer() as ContainerRoot
         val node = model.findNodesByID(nodeName)
         deployUnit = typeDefinitionAspect.foundRelevantDeployUnit(c.getTypeDefinition()!!, node!!)!!
         val nodeType = node!!.getTypeDefinition()
-        nodeTypeName = typeDefinitionAspect.foundRelevantHostNodeType(nodeType as NodeType, c.getTypeDefinition()!!)!!.getName()
+        nodeTypeName = typeDefinitionAspect.foundRelevantHostNodeType(nodeType as NodeType,
+                c.getTypeDefinition()!!)!!.getName()
         var subThread : Thread? = null
         try {
             tg = ThreadGroup("kev/"+c.path()!!)
@@ -59,7 +71,7 @@ class MonitoredAddInstance(val c: Instance,
         } catch(e: Throwable) {
             if(subThread != null){
                 try {
-                    subThread!!.stop() //kill sub thread
+                    subThread!!.stop() //kill sub thread // TODO : that's wrong
                 } catch(t : Throwable){
                     //ignore killing thread
                 }

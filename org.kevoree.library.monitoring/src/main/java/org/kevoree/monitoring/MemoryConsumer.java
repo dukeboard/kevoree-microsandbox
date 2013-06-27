@@ -15,7 +15,8 @@ import org.kevoree.framework.AbstractComponentType;
  */
 
 @ComponentType
-public class MemoryConsumer extends AbstractComponentType {
+public class MemoryConsumer extends AbstractComponentType
+        implements ContractedComponent{
 
     private class Th extends Thread {
         private synchronized boolean isB() {

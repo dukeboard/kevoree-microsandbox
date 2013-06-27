@@ -23,6 +23,7 @@ public class MonitoredNode extends JavaSENode {
         JCLContextHandler jclhandler = (JCLContextHandler) getBootStrapperService().getKevoreeClassLoaderHandler();
         jclhandler.setKCLFactory(new CoverageKCLFactory());
         super.startNode();
+        ControlAdmissionSystem.instance$.init();
     }
 
     @Override
