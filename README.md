@@ -10,9 +10,5 @@ kevoree-microsandbox
 	ResourceMonitorJavaAgent	- Java Agent for instrumenting Java Application, should be refactored to keep here only the agent. I am going to move the instrumentation library to org.kevoree.microsandbox.core
 	JarInstrumenter - Allows the offline instrumentation of any jar file. Used to instrument Java RT
 	
-##[Documentation](https://docs.google.com/document/d/1XofC_g57ZS8WYwFgBW2RBI8EZvxW_kmaPU8AsCftwkw/edit?usp=sharing)	
-	
-##[Control Admission]
-	Module 2
-##[Control Level Agreement]
+##[Documentation](https://docs.google.com/document/d/1XofC_g57ZS8WYwFgBW2RBI8EZvxW_kmaPU8AsCftwkw/edit?usp=sharing)
 
