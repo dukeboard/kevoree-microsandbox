@@ -36,6 +36,13 @@ public class MonitoredNode extends JavaSENode {
                     this.getBootStrapperService(),
                     this);
         }
+        if (pTypeName.equals(JavaSePrimitive.instance$.getRemoveInstance())) {
+            return new MonitoredRemoveInstance((Instance) p.getRef(),
+                    getNodeName(), this.getModelService(),
+                    this.getKevScriptEngineFactory(),
+                    this.getBootStrapperService(),
+                    this);
+        }
         return super.getPrimitive(p);
     }
 }

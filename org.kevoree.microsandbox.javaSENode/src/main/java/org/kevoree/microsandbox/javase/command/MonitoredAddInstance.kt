@@ -83,7 +83,7 @@ open class MonitoredAddInstance(val c: Instance,
     }
 
     override fun undo() {
-        RemoveInstance(c, nodeName, modelservice, kscript, bs,nt).execute()
+        MonitoredRemoveInstance(c, nodeName, modelservice, kscript, bs,nt).execute()
     }
 
     override public fun run() {

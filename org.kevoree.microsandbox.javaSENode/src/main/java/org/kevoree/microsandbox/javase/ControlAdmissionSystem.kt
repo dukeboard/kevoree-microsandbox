@@ -15,11 +15,18 @@ import java.util.ArrayList
  */
 public object ControlAdmissionSystem {
 
+    class Info(val c : WeakReference<ComponentInstance>,
+               val mem: Long,
+               val netIn : Long,
+               val netOut : Long) {
+
+    }
+
     private var freeMemory : Long = 0
     private var freeNetworkIn : Long = 0
     private var freeNetworkOut : Long = 0
 
-    private val components : MutableList<WeakReference<ComponentInstance>> = ArrayList<WeakReference<ComponentInstance>>()
+    private val components : MutableList<Info> = ArrayList<Info>()
 
     /**
      * Calculate the initial amount of resource in the platform and
@@ -56,9 +63,7 @@ public object ControlAdmissionSystem {
                     "network_output_seconds" -> {
                         netOut = java.lang.Long.parseLong(dv.getValue())
                     }
-                    else -> {
-                        // do nothing
-                    }
+                    else -> { }
                 }
                 i++
             }
@@ -68,11 +73,25 @@ public object ControlAdmissionSystem {
                 freeMemory -= mem
                 freeNetworkIn -= netIn
                 freeNetworkOut -= netOut
-                components.add(WeakReference<ComponentInstance>(component))
+                components.add(
+                        Info(WeakReference<ComponentInstance>(component),
+                        mem, netIn, netOut))
                 return true
             }
             return false
         }
         else return true
+    }
+
+    fun unregisterComponent(c : ComponentInstance) : Boolean {
+        val n = components.filter { info -> info.c.get() != null && info.c.get().equals(c) }.first
+        if (n != null) {
+            components.remove(n)
+            freeMemory += n.mem
+            freeNetworkIn += n.netIn
+            freeNetworkOut += n.netOut
+            return true
+        }
+        return false
     }
 }
