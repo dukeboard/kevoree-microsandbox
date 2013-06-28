@@ -7,7 +7,7 @@ package org.kevoree.monitoring.ranking;
  * Time: 3:52 PM
  *
  */
-public class ComponentExecutionInfo {
+class ComponentExecutionInfo {
     private int failuresInCurrentVersion;
     private int failuresInPreviousVersions;
     private double branchCoverage;

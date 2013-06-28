@@ -33,7 +33,7 @@ public class MonitoringComponent extends AbstractComponentType
 
 
 
-        monitoringTask = new MonitoringTask();
+        monitoringTask = new MonitoringTask(getNodeName(), getModelService(), getBootStrapperService());
         new Thread(monitoringTask).start();
     }
 
