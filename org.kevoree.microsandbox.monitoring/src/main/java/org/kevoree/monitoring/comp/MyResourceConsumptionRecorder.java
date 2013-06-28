@@ -54,4 +54,9 @@ public class MyResourceConsumptionRecorder implements ResourceConsumptionRecorde
     public ResourcePrincipal[] getApplications() {
         return ResourceCounter.getApplications();
     }
+
+    @Override
+    public ResourcePrincipal getApplication(String appId) {
+        return ResourceCounter.getApplication(appId);
+    }
 }

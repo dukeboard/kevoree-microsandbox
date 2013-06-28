@@ -20,16 +20,10 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.kevoree.microsandbox</groupId>
-            <artifactId>org.kevoree.microsandbox.api</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
             <groupId>org.kevoree.corelibrary.javase</groupId>
             <artifactId>org.kevoree.library.javase.javaseNode</artifactId>
             <version>${kevoree.version}</version>
         </dependency>
-
         <dependency>
             <groupId>org.kevoree.microsandbox</groupId>
             <artifactId>ResourceMonitorArtifacts</artifactId>
@@ -39,11 +33,6 @@
             <artifactId>jfreechart</artifactId>
             <groupId>jfreechart</groupId>
             <version>1.0.0</version>
-        </dependency>
-        <dependency>
-            <groupId>org.jacoco</groupId>
-            <artifactId>jacoco-maven-plugin</artifactId>
-            <version>0.6.2.201302030002</version>
         </dependency>
         <dependency>
             <groupId>org.kevoree.microsandbox</groupId>

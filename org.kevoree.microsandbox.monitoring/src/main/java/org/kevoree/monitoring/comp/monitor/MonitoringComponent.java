@@ -2,6 +2,8 @@ package org.kevoree.monitoring.comp.monitor;
 
 import org.kevoree.annotation.*;
 import org.kevoree.framework.AbstractComponentType;
+import org.kevoree.monitoring.strategies.DataForCheckingContract;
+import org.kevoree.monitoring.strategies.MonitoringTask;
 import org.resourceaccounting.ResourcePrincipal;
 
 /**
@@ -15,31 +17,18 @@ import org.resourceaccounting.ResourcePrincipal;
  @RequiredPort(name = "output" , type = PortType.MESSAGE, optional = true)
 })
 @ComponentType
-public class MonitoringComponent extends AbstractComponentType
-        implements
-        ContractVerificationRequired {
+public class MonitoringComponent extends AbstractComponentType {
 
     MonitoringTask monitoringTask;
 
-    private ComponentWatcher componentWatcher;
-    private ContractWatcher contractWatcher;
-
     @Start
     public void startComponent() {
-//        contractWatcher = new ContractWatcher();
-//        componentWatcher = new ComponentWatcher();
-//        componentWatcher.addContractVerificationRequieredListener(this);
-//        new Thread(componentWatcher).start();
-
-
-
         monitoringTask = new MonitoringTask(getNodeName(), getModelService(), getBootStrapperService());
         new Thread(monitoringTask).start();
     }
 
     @Stop
     public void stopComponent() {
-//        componentWatcher.setTerminated(true);
         monitoringTask.stop();
     }
 
@@ -47,18 +36,5 @@ public class MonitoringComponent extends AbstractComponentType
     public void updateComponent() {
         stopComponent();
         startComponent();
-    }
-
-    @Override
-    public void verifyContract(ResourcePrincipal principal, Object obj) {
-        if (obj instanceof DataForCheckingContract) {
-            DataForCheckingContract data = (DataForCheckingContract)obj;
-            contractWatcher.checkContract(principal, data);
-        }
-    }
-
-    @Override
-    public void onGCVerifyContract(long used, long max) {
-
     }
 }

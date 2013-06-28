@@ -1,7 +1,9 @@
-package org.kevoree.monitoring.comp.monitor;
+package org.kevoree.monitoring.strategies;
 
 import org.kevoree.api.Bootstraper;
 import org.kevoree.api.service.core.handler.KevoreeModelHandlerService;
+import org.kevoree.monitoring.comp.monitor.ContractVerificationRequired;
+import org.kevoree.monitoring.comp.monitor.GCWatcher;
 import org.kevoree.monitoring.ranking.*;
 import org.resourceaccounting.ResourcePrincipal;
 
@@ -60,9 +62,9 @@ public class MonitoringTask implements Runnable, ContractVerificationRequired {
                                 if (currentStrategy.isThereContractViolation()) {
                                     System.out.println("Switching to local monitoring");
                                     currentStrategy.pause();
-                                    currentStrategy = new LocalMonitoring(
-                                            ComponentsRanker.instance$.rank(nodeName, service, bootstraper));
                                     currentStatus = MonitoringStatus.LOCAL_MONITORING;
+                                    currentStrategy = new LocalMonitoring(
+                                            ComponentsRanker.instance$.rank(nodeName, service, bootstraper), msg);
                                 }
                                 break;
                         }

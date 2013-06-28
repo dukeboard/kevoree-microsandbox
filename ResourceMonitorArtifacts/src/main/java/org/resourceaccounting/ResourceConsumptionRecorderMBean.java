@@ -16,4 +16,5 @@ public interface ResourceConsumptionRecorderMBean {
     long getBytesSent(ResourcePrincipal appId);
     long getBytesReceived(ResourcePrincipal appId);
     ResourcePrincipal[] getApplications();
+    ResourcePrincipal getApplication(String appId);
 }

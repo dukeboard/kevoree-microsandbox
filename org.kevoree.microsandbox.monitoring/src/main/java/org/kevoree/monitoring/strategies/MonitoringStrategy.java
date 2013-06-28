@@ -1,4 +1,6 @@
-package org.kevoree.monitoring.comp.monitor;
+package org.kevoree.monitoring.strategies;
+
+import org.kevoree.monitoring.comp.monitor.ContractVerificationRequired;
 
 /**
  * Created with IntelliJ IDEA.

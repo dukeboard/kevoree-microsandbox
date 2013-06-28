@@ -3,6 +3,7 @@ package org.kevoree.monitoring.comp.monitor;
 import org.kevoree.monitoring.AbstractBehaviorObserver;
 import org.kevoree.monitoring.comp.*;
 
+import org.kevoree.monitoring.strategies.DataForCheckingContract;
 import org.resourceaccounting.ResourcePrincipal;
 
 
@@ -11,24 +12,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-/**
- * Created with IntelliJ IDEA.
- * User: inti
- * Date: 6/11/13
- * Time: 4:26 PM
- * To change this template use File | Settings | File Templates.
- */
-class DataForCheckingContract {
-    long lastCPU;
-    long lastSent;
-    long lastReceived;
-
-    DataForCheckingContract(long lastCPU, long lastSent, long lastReceived) {
-        this.lastCPU = lastCPU;
-        this.lastSent = lastSent;
-        this.lastReceived = lastReceived;
-    }
-}
 public class ComponentWatcher extends AbstractBehaviorObserver<DataForCheckingContract> implements
         Runnable{
 

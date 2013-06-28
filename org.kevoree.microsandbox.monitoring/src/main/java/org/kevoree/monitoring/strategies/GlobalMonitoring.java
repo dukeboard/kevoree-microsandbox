@@ -1,4 +1,4 @@
-package org.kevoree.monitoring.comp.monitor;
+package org.kevoree.monitoring.strategies;
 
 import org.kevoree.monitoring.comp.MyResourceConsumptionRecorder;
 import org.resourceaccounting.ResourceConsumptionRecorderMBean;
@@ -6,8 +6,6 @@ import org.resourceaccounting.ResourcePrincipal;
 
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadMXBean;
-import java.util.Timer;
-import java.util.TimerTask;
 
 /**
  * Created with IntelliJ IDEA.
@@ -16,55 +14,14 @@ import java.util.TimerTask;
  * Time: 11:24 AM
  *
  */
-public class GlobalMonitoring extends TimerTask implements MonitoringStrategy {
-    private final Object msg;
-    private Timer timerForCPU;
-    double previousCPU = 0; // in milliseconds
-    long previousSent = 0;
-    long previousReceived = 0;
-
-    private boolean contractViolation;
+public class GlobalMonitoring extends AbstractMonitoringStrategy {
 
     private final ThreadMXBean tmxb = ManagementFactory.getThreadMXBean();
+
     private final int nCPUs = Runtime.getRuntime().availableProcessors();
 
-    private static final double elapsedTime = 1000; // 1 second
-
     public GlobalMonitoring(Object msg) {
-        this.msg = msg;
-        contractViolation = false;
-    }
-
-    @Override
-    public void init() {
-        // init monitoring of thread execution
-        timerForCPU = new Timer();
-        timerForCPU.schedule(this, 1000, 1000);
-        contractViolation = false;
-        // init monitoring of network communication
-    }
-
-    @Override
-    public void stop() {
-        // stop the monitoring
-        timerForCPU.cancel();
-    }
-
-    @Override
-    public synchronized void actionOnContractViolation() {
-        // notify about action
-        msg.notify();
-        contractViolation = true;
-    }
-
-    @Override
-    public synchronized boolean isThereContractViolation() {
-        return contractViolation;
-    }
-
-    @Override
-    public synchronized void pause() {
-        timerForCPU.cancel();
+        super(msg);
     }
 
     @Override

@@ -44,6 +44,8 @@ class ResourceCounterImpl {
         return totalSent;
     }
 
+
+
     private class LastMeasurements {
 
         int timeStamp;
@@ -335,6 +337,15 @@ class ResourceCounterImpl {
             principals[countOfPrincipals++] = real;
 
             return (inInvocation)?principal: principals[countOfPrincipals -1];
+        }
+    }
+
+    public ResourcePrincipal search(String appId) {
+        synchronized (this) {
+            for (int i = 0 ; i < countOfPrincipals; i++)
+                if (principals[i].toString().equals(appId))
+                    return  principals[i];
+            return null;
         }
     }
 

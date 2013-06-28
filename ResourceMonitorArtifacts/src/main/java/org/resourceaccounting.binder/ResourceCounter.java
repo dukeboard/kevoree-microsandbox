@@ -166,4 +166,8 @@ public class ResourceCounter {
         principal = ourInstance.search(principal);
         ourInstance.innerArrayAllocated(obj, principal);
     }
+
+    public static ResourcePrincipal getApplication(String appId) {
+        return ourInstance.search(appId);
+    }
 }

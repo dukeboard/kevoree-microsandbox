@@ -1,4 +1,4 @@
-package org.kevoree.monitoring;
+package org.kevoree.monitoring.comp.viewer;
 
 import org.kevoree.*;
 import org.kevoree.annotation.ComponentType;
@@ -13,7 +13,9 @@ import org.kevoree.microsandbox.core.Entry;
 import org.kevoree.monitoring.ranking.ComponentExecutionInfo;
 
 import java.lang.ref.WeakReference;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 
 /**

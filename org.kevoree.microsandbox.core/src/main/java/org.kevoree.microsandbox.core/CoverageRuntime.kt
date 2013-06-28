@@ -28,13 +28,6 @@ object CoverageRuntime {
 
     private var b : Boolean = false;
 
-    open class Entry(branchParam : Double, instrParam : Double) {
-        val branchCoverage : Double = branchParam
-        val instrCoverage : Double = instrParam
-
-        fun toString() : String = "Branch: " + branchCoverage + " Instruction: " + instrCoverage
-    }
-
     fun init(): Unit {
         if (!b) {
             b = true

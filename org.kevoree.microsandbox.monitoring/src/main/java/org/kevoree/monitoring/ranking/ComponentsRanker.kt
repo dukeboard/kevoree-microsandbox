@@ -12,13 +12,14 @@ import org.kevoree.microsandbox.core.CoverageRuntime
 import org.kevoree.TypeDefinition
 import org.kevoree.api.Bootstraper
 import java.util.NoSuchElementException
+import org.kevoree.microsandbox.core.Entry
 
 /**
  * Created with IntelliJ IDEA.
  * User: inti
  * Date: 6/28/13
  * Time: 12:53 PM
- * To change this template use File | Settings | File Templates.
+ *
  */
 public object ComponentsRanker {
 
@@ -47,7 +48,7 @@ public object ComponentsRanker {
 
         val root = modelService.getLastModel()
 
-        root?.getNodes()?.filter { node -> nodeName.equals(node?.getName()) }?.forEach { node->
+        root?.getNodes()?.filter { node -> nodeName.equals(node.getName()) }?.forEach { node->
                 for (instance : ComponentInstance in node.getComponents())
                 {
                     val i : ComponentExecutionInfo? = if (info.containsKey(instance.path())) {
@@ -72,9 +73,9 @@ public object ComponentsRanker {
         var unit : DeployUnit? = definitionAspect.
                                     foundRelevantDeployUnit(instance.getTypeDefinition() as TypeDefinition, node)
         var loader : ClassLoader? = bootstraper.getKevoreeClassLoaderHandler().getKevoreeClassLoader(unit)
-        var entry : CoverageRuntime.Entry? = CoverageRuntime.calculateCoverage(loader as ClassLoader)
-        i?.setBranchCoverage((entry?.getBranchCoverage())!!)
-        i?.setInstructionCoverage((entry?.getInstrCoverage())!!)
+        var entry : Entry? = CoverageRuntime.calculateCoverage(loader as ClassLoader)
+        i?.setBranchCoverage((entry?.branchCoverage!!))
+        i?.setInstructionCoverage((entry?.instrCoverage!!))
 
     }
 
