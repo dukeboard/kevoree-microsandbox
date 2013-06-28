@@ -1,7 +1,7 @@
-package org.resourceaccounting.binderinjector.io;
+package org.kevoree.microsandbox.core.instrumentation.io;
 
+import org.kevoree.microsandbox.core.instrumentation.AbstractMethodInstrumentation;
 import org.objectweb.asm.MethodVisitor;
-import org.resourceaccounting.binderinjector.AbstractMethodInstrumentation;
 
 public class NetworkAccessMethodInstrumentation extends AbstractMethodInstrumentation {
     public NetworkAccessMethodInstrumentation(MethodVisitor visitor, String className) {

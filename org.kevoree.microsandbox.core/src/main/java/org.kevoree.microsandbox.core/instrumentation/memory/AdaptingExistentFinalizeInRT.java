@@ -1,4 +1,4 @@
-package org.resourceaccounting.binderinjector.memory;
+package org.kevoree.microsandbox.core.instrumentation.memory;
 
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;

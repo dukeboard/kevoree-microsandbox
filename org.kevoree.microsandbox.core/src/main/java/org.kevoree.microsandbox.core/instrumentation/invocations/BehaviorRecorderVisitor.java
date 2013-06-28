@@ -1,13 +1,13 @@
-package org.resourceaccounting.binderinjector.invocations;
+package org.kevoree.microsandbox.core.instrumentation.invocations;
 
+import org.kevoree.microsandbox.core.instrumentation.AbstractMethodInstrumentation;
+import org.kevoree.microsandbox.core.instrumentation.ExtraInstrumentationRules;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.analysis.*;
-import org.resourceaccounting.binderinjector.AbstractMethodInstrumentation;
-import org.resourceaccounting.binderinjector.ExtraInstrumentationRules;
 
 import java.util.LinkedList;
 

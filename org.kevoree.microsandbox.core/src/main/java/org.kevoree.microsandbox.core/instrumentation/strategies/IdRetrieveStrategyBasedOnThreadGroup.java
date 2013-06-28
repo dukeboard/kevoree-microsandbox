@@ -1,4 +1,4 @@
-package org.resourceaccounting.binderinjector.strategies;
+package org.kevoree.microsandbox.core.instrumentation.strategies;
 
 import org.objectweb.asm.commons.InstructionAdapter;
 
@@ -6,19 +6,17 @@ import org.objectweb.asm.commons.InstructionAdapter;
  * Created with IntelliJ IDEA.
  * User: inti
  * Date: 4/30/13
- * Time: 12:03 PM
+ * Time: 6:16 PM
  * To change this template use File | Settings | File Templates.
  */
-public class IdRetrieveStrategyBasedOnThread extends AbstractIdRetrieveStrategy {
-
-    public IdRetrieveStrategyBasedOnThread(InstructionAdapter instructionAdapter) {
+public class IdRetrieveStrategyBasedOnThreadGroup extends AbstractIdRetrieveStrategy {
+    public IdRetrieveStrategyBasedOnThreadGroup(InstructionAdapter instructionAdapter) {
         super(instructionAdapter);
     }
 
     public void generateByteCodeToGetId() {
         instructionAdapter.invokestatic("java/lang/Thread", "currentThread" ,"()Ljava/lang/Thread;");
-        instructionAdapter.invokestatic("org/resourceaccounting/binder/ThreadResourcePrincipal",
+        instructionAdapter.invokestatic("org/resourceaccounting/binder/ThreadGroupResourcePrincipal",
                 "get", "(Ljava/lang/Thread;)Lorg/resourceaccounting/ResourcePrincipal;");
     }
-
 }

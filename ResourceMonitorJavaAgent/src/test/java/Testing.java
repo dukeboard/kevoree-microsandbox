@@ -14,7 +14,7 @@ import org.objectweb.asm.util.CheckClassAdapter;
 import org.objectweb.asm.util.TraceClassVisitor;
 import org.resourceaccounting.behavior.BehaviorNodeOperation;
 import org.resourceaccounting.behavior.BehaviorNodeRepetition;
-import org.resourceaccounting.binderinjector.invocations.InstForAccountingPerInvocation;
+import org.kevoree.microsandbox.core.instrumentation.invocations.InstForAccountingPerInvocation;
 
 import java.io.File;
 import java.io.FileInputStream;

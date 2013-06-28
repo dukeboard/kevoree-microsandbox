@@ -9,8 +9,7 @@
 package org.resourceaccounting.binderinjector;
 
 
-import org.resourceaccounting.binderinjector.strategies.MyResourceContractProvider;
-import org.resourceaccounting.contract.ResourceContractProvider;
+import org.kevoree.microsandbox.core.instrumentation.strategies.MyResourceContractProvider;
 import org.resourceaccounting.ObjectSizeProvider;
 import org.resourceaccounting.binder.ResourceCounter;
 
@@ -30,44 +29,13 @@ public class ResourceCounterAgent {
 
         System.out.println(globalInst.getObjectSize(new boolean[100]));
 
-        String contractFile = "";
-        String packageName = "";
-
-        // reading arguments
-        String[] args = agentArgs.split(",");
-        for (String arg: args) {
-            String[] ahh = arg.split(":");
-            if (ahh[0].equals("ContractFile"))
-                contractFile = ahh[1];
-            else if (ahh[0].equals("PackageForContracts"))
-                packageName = ahh[1];
-        }
-
-        // specifying where is the contract
-        ResourceContractProvider provider = new MyResourceContractProvider(contractFile, packageName);
-        ResourceCounter.setResourceContractProvider(provider);
+        ResourceCounter.setResourceContractProvider(new MyResourceContractProvider("",""));
         ResourceCounter.setObjectSizeProvider(new ObjectSizeProvider() {
             public long sizeOf(Object obj) {
                 return globalInst.getObjectSize(obj);
             }
         });
 
-        // setting the MBEAN to notify ResourceConsumption
-//        MBeanServer mbs = ManagementFactory.getPlatformMBeanServer();
-//        ObjectName name;
-//        try {
-//            name = new ObjectName("org.resourceaccounting:type=ResourceConsumptionRecorder");
-//            ResourceConsumptionRecorder mbean = new ResourceConsumptionRecorder();
-//            mbs.registerMBean(mbean, name);
-//        } catch (MalformedObjectNameException e) {
-//            e.printStackTrace();
-//        } catch (NotCompliantMBeanException e) {
-//            e.printStackTrace();
-//        } catch (InstanceAlreadyExistsException e) {
-//            e.printStackTrace();
-//        } catch (MBeanRegistrationException e) {
-//            e.printStackTrace();
-//        }
         boolean debug = agentArgs != null && agentArgs.length() > 0 &&  agentArgs.equals("debug");
         inst.addTransformer(new BinderClassTransformer(inst, debug),true);
 
@@ -79,11 +47,8 @@ public class ResourceCounterAgent {
                     globalInst.retransformClasses(Integer.class);
                 }
                 catch (UnmodifiableClassException e) {
-                    e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-
                 }
                 catch (InterruptedException e) {
-
                 }
             }
         }.start();

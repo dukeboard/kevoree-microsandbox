@@ -1,14 +1,15 @@
-package org.resourceaccounting.binderinjector;
+package org.kevoree.microsandbox.core.instrumentation;
 
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.commons.InstructionAdapter;
-import org.resourceaccounting.binderinjector.strategies.IdRetriveStrategyForKevoree;
+import org.kevoree.microsandbox.core.instrumentation.strategies.IdRetriveStrategyForKevoree;
 
 public abstract class AbstractMethodInstrumentation extends InstructionAdapter {
 
     protected final static String MONITOR_INSTRUCTIONS_EVENT_NAME = "increaseInstructions";
-    protected final static String MONITOR_INSTRUCTIONS_EVENT_SIG = "(ILorg/resourceaccounting/ResourcePrincipal;)V";
+    protected final static String MONITOR_INSTRUCTIONS_EVENT_SIG =
+            "(ILorg/resourceaccounting/ResourcePrincipal;)V";
 
     /**
      * Name of the class
@@ -39,6 +40,8 @@ public abstract class AbstractMethodInstrumentation extends InstructionAdapter {
         if (count == 0) return; // TODO : Add COMPUTE_FRAMES to ClassWriter constructor
         this.iconst(count);
         loadResourcePrincipal();
-        this.invokestatic(ExtraInstrumentationRules.MONITOR_CLASS_NAME, MONITOR_INSTRUCTIONS_EVENT_NAME, MONITOR_INSTRUCTIONS_EVENT_SIG);
+        this.invokestatic(ExtraInstrumentationRules.MONITOR_CLASS_NAME,
+                MONITOR_INSTRUCTIONS_EVENT_NAME,
+                MONITOR_INSTRUCTIONS_EVENT_SIG);
     }
 }

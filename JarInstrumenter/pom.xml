@@ -61,7 +61,7 @@
     <dependencies>
         <dependency>
             <groupId>org.kevoree.microsandbox</groupId>
-            <artifactId>ResourceMonitorJavaAgent</artifactId>
+            <artifactId>org.kevoree.microsandbox.core</artifactId>
             <version>${project.version}</version>
         </dependency>
     </dependencies>

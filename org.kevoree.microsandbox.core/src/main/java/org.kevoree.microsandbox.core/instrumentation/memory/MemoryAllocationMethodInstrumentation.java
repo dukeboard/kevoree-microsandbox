@@ -1,9 +1,9 @@
-package org.resourceaccounting.binderinjector.memory;
+package org.kevoree.microsandbox.core.instrumentation.memory;
 
+import org.kevoree.microsandbox.core.instrumentation.AbstractMethodInstrumentation;
+import org.kevoree.microsandbox.core.instrumentation.ExtraInstrumentationRules;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
-import org.resourceaccounting.binderinjector.AbstractMethodInstrumentation;
-import org.resourceaccounting.binderinjector.ExtraInstrumentationRules;
 
 /**
  * Created with IntelliJ IDEA.

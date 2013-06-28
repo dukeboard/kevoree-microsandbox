@@ -1,9 +1,9 @@
-package org.resourceaccounting.binderinjector.invocations;
+package org.kevoree.microsandbox.core.instrumentation.invocations;
 
+import org.kevoree.microsandbox.core.instrumentation.AbstractMethodInstrumentation;
+import org.kevoree.microsandbox.core.instrumentation.ExtraInstrumentationRules;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
-import org.resourceaccounting.binderinjector.AbstractMethodInstrumentation;
-import org.resourceaccounting.binderinjector.ExtraInstrumentationRules;
 
 /**
  * Created with IntelliJ IDEA.
@@ -12,7 +12,7 @@ import org.resourceaccounting.binderinjector.ExtraInstrumentationRules;
  * Time: 7:27 PM
  * To change this template use File | Settings | File Templates.
  */
-public class OperationVisitor extends AbstractMethodInstrumentation{
+public class OperationVisitor extends AbstractMethodInstrumentation {
     private final String methodName;
 
     public OperationVisitor(MethodVisitor next, String className, String methodName) {

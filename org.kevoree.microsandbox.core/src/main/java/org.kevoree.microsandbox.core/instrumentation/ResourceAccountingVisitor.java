@@ -1,9 +1,9 @@
-package org.resourceaccounting.binderinjector;
+package org.kevoree.microsandbox.core.instrumentation;
 
 import org.objectweb.asm.*;
 import org.objectweb.asm.commons.InstructionAdapter;
-import org.resourceaccounting.binderinjector.memory.AdaptingExistentFinalizeInRT;
-import org.resourceaccounting.binderinjector.memory.MemoryAllocationMethodInstrumentation;
+import org.kevoree.microsandbox.core.instrumentation.memory.AdaptingExistentFinalizeInRT;
+import org.kevoree.microsandbox.core.instrumentation.memory.MemoryAllocationMethodInstrumentation;
 
 /**
 * Created with IntelliJ IDEA.

@@ -1,4 +1,4 @@
-package org.resourceaccounting.binderinjector.memory;
+package org.kevoree.microsandbox.core.instrumentation.memory;
 
 import org.objectweb.asm.*;
 import org.objectweb.asm.commons.InstructionAdapter;

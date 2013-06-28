@@ -1,4 +1,4 @@
-package org.resourceaccounting.binderinjector;
+package org.kevoree.microsandbox.core.instrumentation;
 
 /**
  * Created with IntelliJ IDEA.

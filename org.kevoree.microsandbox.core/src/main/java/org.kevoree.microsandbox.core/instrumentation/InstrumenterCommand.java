@@ -1,14 +1,13 @@
-package org.resourceaccounting.binderinjector;
+package org.kevoree.microsandbox.core.instrumentation;
 
 import org.objectweb.asm.*;
 import org.objectweb.asm.util.CheckClassAdapter;
 import org.objectweb.asm.util.TraceClassVisitor;
-import org.resourceaccounting.binderinjector.invocations.InstForAccountingPerInvocation;
-import org.resourceaccounting.binderinjector.io.NetworkAccessInstrumentation;
-import org.resourceaccounting.binderinjector.memory.AddPrincipalIdentifier;
-import org.resourceaccounting.binderinjector.memory.MemoryAllocationMethodInstrumentation;
+import org.kevoree.microsandbox.core.instrumentation.invocations.InstForAccountingPerInvocation;
+import org.kevoree.microsandbox.core.instrumentation.io.NetworkAccessInstrumentation;
+import org.kevoree.microsandbox.core.instrumentation.memory.AddPrincipalIdentifier;
+import org.kevoree.microsandbox.core.instrumentation.memory.MemoryAllocationMethodInstrumentation;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;

@@ -1,4 +1,4 @@
-package org.resourceaccounting.binderinjector.strategies;
+package org.kevoree.microsandbox.core.instrumentation.strategies;
 
 import org.objectweb.asm.commons.InstructionAdapter;
 

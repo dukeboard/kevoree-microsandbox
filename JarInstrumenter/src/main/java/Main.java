@@ -1,5 +1,6 @@
-import org.resourceaccounting.binderinjector.ExtraInstrumentationRules;
-import org.resourceaccounting.binderinjector.InstrumenterCommand;
+
+
+import org.kevoree.microsandbox.core.instrumentation.InstrumenterCommand;
 
 import java.io.File;
 import java.io.FileOutputStream;

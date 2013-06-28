@@ -1,4 +1,4 @@
-package org.resourceaccounting.binderinjector.strategies;
+package org.kevoree.microsandbox.core.instrumentation.strategies;
 
 import org.resourceaccounting.contract.ComponentResourceContract;
 import org.resourceaccounting.contract.ResourceContract;

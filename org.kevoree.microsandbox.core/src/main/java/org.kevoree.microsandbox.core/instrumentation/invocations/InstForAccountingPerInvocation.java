@@ -1,4 +1,4 @@
-package org.resourceaccounting.binderinjector.invocations;
+package org.kevoree.microsandbox.core.instrumentation.invocations;
 
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;

@@ -79,26 +79,20 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.ow2.asm</groupId>
-            <artifactId>asm-all</artifactId>
-            <version>4.1</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
             <groupId>org.kevoree.microsandbox</groupId>
             <artifactId>ResourceMonitorArtifacts</artifactId>
             <version>${project.version}</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>org.jacoco</groupId>
-            <artifactId>jacoco-maven-plugin</artifactId>
-            <version>0.6.2.201302030002</version>
-        </dependency>
-        <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>4.8.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.kevoree.microsandbox</groupId>
+            <artifactId>org.kevoree.microsandbox.core</artifactId>
+            <version>${project.version}</version>
         </dependency>
     </dependencies>
 </project>
