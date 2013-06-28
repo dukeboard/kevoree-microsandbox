@@ -1,5 +1,8 @@
 package org.kevoree.monitoring.comp.monitor;
 
+import org.kevoree.api.Bootstraper;
+import org.kevoree.api.service.core.handler.KevoreeModelHandlerService;
+import org.kevoree.monitoring.ranking.ComponentsRanker;
 import org.resourceaccounting.ResourcePrincipal;
 
 /**
@@ -11,6 +14,9 @@ import org.resourceaccounting.ResourcePrincipal;
  */
 public class MonitoringTask implements Runnable, ContractVerificationRequired {
 
+    private final String nodeName;
+    private final Bootstraper bootstrapper;
+    private final KevoreeModelHandlerService service;
     private boolean stopped;
     private GCWatcher gcWatcher;
     private Object msg;
@@ -22,6 +28,12 @@ public class MonitoringTask implements Runnable, ContractVerificationRequired {
 
     private MonitoringStatus currentStatus;
     private MonitoringStrategy currentStrategy;
+
+    public MonitoringTask(String nodeName, KevoreeModelHandlerService service, Bootstraper bootstrapper) {
+        this.nodeName= nodeName;
+        this.service = service;
+        this.bootstrapper = bootstrapper;
+    }
 
 
     @Override
@@ -42,7 +54,20 @@ public class MonitoringTask implements Runnable, ContractVerificationRequired {
             synchronized (msg) {
                 try {
                     msg.wait();
-                    System.out.println("Switching to local monitoring");
+                    if (!isStopped()) {
+                        switch (currentStatus) {
+                            case GLOBAL_MONITORING:
+                                if (currentStrategy.isThereContractViolation()) {
+                                    System.out.println("Switching to local monitoring");
+                                    currentStrategy.pause();
+                                    currentStrategy = new LocalMonitoring(
+                                            ComponentsRanker.instance$.rank(nodeName, service, bootstrapper));
+                                    currentStatus = MonitoringStatus.LOCAL_MONITORING;
+                                }
+                                break;
+                        }
+
+                    }
                 } catch (InterruptedException e) { }
             }
         }

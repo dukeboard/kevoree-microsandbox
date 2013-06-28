@@ -184,7 +184,7 @@
         <module>ResourceMonitorArtifacts</module>
         <module>ResourceMonitorJavaAgent</module>
         <module>JarInstrumenter</module>
-        <module>org.kevoree.library.monitoring</module>
+        <module>org.kevoree.microsandbox.monitoring</module>
         <module>org.kevoree.microsandbox.core</module>
     </modules>
 

@@ -8,7 +8,10 @@ package org.kevoree.monitoring.comp.monitor;
  * To change this template use File | Settings | File Templates.
  */
 public interface MonitoringStrategy extends ContractVerificationRequired {
-    void init();
-    void stop();
     void actionOnContractViolation();
+    boolean isThereContractViolation();
+
+    void init();
+    void pause();
+    void stop();
 }
