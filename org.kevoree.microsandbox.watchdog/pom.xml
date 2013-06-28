@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>org.kevoree.microsandbox.watchdog</artifactId>
+    <packaging>jar</packaging>
+    <name>kevoree.microsandbox.watchdog</name>
+    <version>1.0-SNAPSHOT</version>
+
+
+    <!-- TODO add all dependency needed by you you're child runtime, by default everything is added in std classloader but you can add it to the bootclassloader if necessary -->
+    <!-- All dependency are shared in the final jar, avoid the need to dwl it at runtime -->
+    <dependencies>
+        <dependency>
+            <groupId>org.kevoree.microsandbox</groupId>
+            <artifactId>ResourceMonitorJavaAgent</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.kevoree.microsandbox</groupId>
+            <artifactId>ResourceMonitorArtifacts</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+    </dependencies>
+
+    <parent>
+        <groupId>org.kevoree.microsandbox</groupId>
+        <artifactId>org.kevoree.microsandbox.root</artifactId>
+        <version>1.0-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>1.7</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <phase>generate-sources</phase>
+                        <configuration>
+                            <tasks>
+                                <property name="src.dir" value="${project.build.sourceDirectory}"/>
+                                <property name="package.dir" value="org/kevoree/watchdog"/>
+                                <property name="package.name" value="org.kevoree.watchdog"/>
+                                <echo file="${src.dir}/${package.dir}/Version.java"
+                                      message="package ${package.name};${line.separator}"/>
+                                <echo file="${src.dir}/${package.dir}/Version.java" append="true"
+                                      message="public final class Version {${line.separator}"/>
+                                <echo file="${src.dir}/${package.dir}/Version.java" append="true"
+                                      message=" public static String VERSION=&quot;${project.version}&quot;;${line.separator}"/>
+                                <echo file="${src.dir}/${package.dir}/Version.java" append="true"
+                                      message=" public static String GROUP=&quot;${project.groupId}&quot;;${line.separator}"/>
+                                <echo file="${src.dir}/${package.dir}/Version.java" append="true"
+                                      message=" public static String NAME=&quot;${project.artifactId}&quot;;${line.separator}"/>
+                                <echo file="${src.dir}/${package.dir}/Version.java" append="true"
+                                      message="}${line.separator}"/>
+                                <echo message="BUILD ${buildtime}"/>
+                            </tasks>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>2.1</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <transformers>
+                                <transformer
+                                        implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                    <mainClass>org.kevoree.watchdog.Runner</mainClass>
+                                </transformer>
+                            </transformers>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <artifactId>jdeb</artifactId>
+                <groupId>org.vafer</groupId>
+                <version>1.0</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>jdeb</goal>
+                        </goals>
+                        <configuration>
+                            <verbose>true</verbose>
+                            <controlDir>${basedir}/src/deb/control</controlDir>
+                            <dataSet>
+
+                                <data>
+                                    <src>${project.build.directory}/${project.build.finalName}.jar</src>
+                                    <type>file</type>
+                                    <mapper>
+                                        <type>perm</type>
+                                        <prefix>/usr/share/kevoree/lib</prefix>
+                                        <user>kevoree</user>
+                                        <group>kevoree</group>
+                                    </mapper>
+                                </data>
+
+                                <data>
+                                    <type>link</type>
+                                    <symlink>true</symlink>
+                                    <linkName>/usr/share/java/kevoree.jar</linkName>
+                                    <linkTarget>/usr/share/kevoree/lib/${project.build.finalName}.jar</linkTarget>
+                                </data>
+
+                                <data>
+                                    <src>${basedir}/src/deb/init.d</src>
+                                    <type>directory</type>
+                                    <mapper>
+                                        <type>perm</type>
+                                        <prefix>/etc/init.d</prefix>
+                                        <user>kevoree</user>
+                                        <group>kevoree</group>
+                                    </mapper>
+                                </data>
+                                <data>
+                                    <src>${basedir}/src/deb/etc/kevoree</src>
+                                    <type>directory</type>
+                                    <mapper>
+                                        <type>perm</type>
+                                        <prefix>/etc/kevoree</prefix>
+                                        <user>kevoree</user>
+                                        <group>kevoree</group>
+                                    </mapper>
+                                </data>
+
+                                <data>
+                                    <type>template</type>
+                                    <paths>
+                                        <path>etc/kevoree</path>
+                                        <path>var/lib/kevoree</path>
+                                        <path>var/log/kevoree</path>
+                                        <path>var/run/kevoree</path>
+                                    </paths>
+                                    <mapper>
+                                        <type>perm</type>
+                                        <user>kevoree</user>
+                                        <group>kevoree</group>
+                                    </mapper>
+                                </data>
+                            </dataSet>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>
