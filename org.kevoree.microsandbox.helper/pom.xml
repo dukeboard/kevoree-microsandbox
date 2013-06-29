@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>org.kevoree.microsandbox.root</artifactId>
+        <groupId>org.kevoree.microsandbox</groupId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>org.kevoree.microsandbox.helper</artifactId>
+
+    <packaging>maven-plugin</packaging>
+    <name>Kevoree :: Microsandbox :: RunnerHelper</name>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.apache.maven</groupId>
+            <artifactId>maven-plugin-api</artifactId>
+            <version>3.0.3</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.maven</groupId>
+            <artifactId>maven-core</artifactId>
+            <version>3.0.3</version>
+        </dependency>
+        <dependency>
+            <groupId>org.kevoree.platform</groupId>
+            <artifactId>org.kevoree.platform.base</artifactId>
+            <version>${kevoree.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.kevoree.tools</groupId>
+            <artifactId>org.kevoree.tools.marShell</artifactId>
+            <version>${kevoree.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.kevoree.tools</groupId>
+            <artifactId>org.kevoree.tools.modelsync</artifactId>
+            <version>${kevoree.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.sonatype.aether</groupId>
+                    <artifactId>aether-connector-file</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.sonatype.aether</groupId>
+                    <artifactId>aether-connector-asynchttpclient</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-plugin-plugin</artifactId>
+                <version>2.9</version>
+                <configuration>
+                    <goalPrefix>kevM</goalPrefix>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>
