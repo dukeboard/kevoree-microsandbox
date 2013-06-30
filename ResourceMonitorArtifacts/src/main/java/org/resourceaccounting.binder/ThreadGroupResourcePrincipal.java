@@ -40,10 +40,6 @@ public class ThreadGroupResourcePrincipal extends AbstractResourcePrincipal<Long
         if (bean == null) {
             bean = ManagementFactory.getThreadMXBean();
             if (bean.isThreadCpuTimeSupported()) {
-                System.out.println("LALALALALALALLAALALALALLALALALALAL");
-                System.out.println("LALALALALALALLAALALALALLALALALALAL");
-                System.out.println("LALALALALALALLAALALALALLALALALALAL");
-                System.out.println("LALALALALALALLAALALALALLALALALALAL");
             }
             bean.setThreadCpuTimeEnabled(true);
         }

@@ -8,6 +8,8 @@ import java.util.Vector
 import java.io.IOException
 import org.kevoree.kcl.KevoreeJarClassLoader
 import org.kevoree.microsandbox.core.CoverageRuntime
+import org.kevoree.microsandbox.core.instrumentation.ExtraInstrumentationRules
+import org.kevoree.microsandbox.core.instrumentation.InstrumenterCommand
 
 /**
  * Created with IntelliJ IDEA.
@@ -21,20 +23,22 @@ open class KevoreeJarClassLoaderCoverageInjection() : KevoreeJarClassLoader() {
 
     public val loadedClasses : Vector<String> = Vector<String>()
 
+    private var cmd : InstrumenterCommand = InstrumenterCommand()
+
+
     KevoreeJarClassLoaderCoverageInjection() {
         CoverageRuntime.init()
     }
 
     override fun internal_defineClass(className: String, bytes: ByteArray): Class<out Any?>? {
-        //print("Coverage for class : " + className +  " has been solicited :-)")
-        val x: ByteArray =  if (className?.contains("jacoco")
-                                || className?.contains("asm")
-                            ) {
+//        println("Coverage for class : " + className +  " has been solicited :-)")
+        val x: ByteArray =  if (!ExtraInstrumentationRules.isInstrumentable(className.replace('.','/'))) {
                                 bytes
                             }
                             else {
                                 loadedClasses.add(className)
-                                CoverageRuntime.instrument(bytes)
+                                val arr : ByteArray? = cmd.instrument(bytes, className.replace('.','/'))
+                                CoverageRuntime.instrument(arr)
                             }
 
         if (className.contains(".")) {

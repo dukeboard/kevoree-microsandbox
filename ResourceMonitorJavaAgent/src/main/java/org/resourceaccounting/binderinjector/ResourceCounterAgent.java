@@ -27,8 +27,6 @@ public class ResourceCounterAgent {
 
         globalInst = inst;
 
-        System.out.println(globalInst.getObjectSize(new boolean[100]));
-
         ResourceCounter.setResourceContractProvider(new MyResourceContractProvider("",""));
         ResourceCounter.setObjectSizeProvider(new ObjectSizeProvider() {
             public long sizeOf(Object obj) {
@@ -39,17 +37,16 @@ public class ResourceCounterAgent {
         boolean debug = agentArgs != null && agentArgs.length() > 0 &&  agentArgs.equals("debug");
         inst.addTransformer(new BinderClassTransformer(inst, debug),true);
 
+
         new Thread() {
             @Override
             public void run() {
                 try {
-                    Thread.sleep(4000);
+                    Thread.sleep(100);
                     globalInst.retransformClasses(Integer.class);
                 }
-                catch (UnmodifiableClassException e) {
-                }
-                catch (InterruptedException e) {
-                }
+                catch (UnmodifiableClassException e) { }
+                catch (InterruptedException e) { }
             }
         }.start();
 

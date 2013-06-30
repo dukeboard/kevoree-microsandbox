@@ -30,9 +30,12 @@ public class BinderClassTransformer implements ClassFileTransformer {
                             ProtectionDomain protectionDomain, byte[] bytes) throws IllegalClassFormatException {
 
         if (className.equals("java/lang/Integer")) {
-            System.out.println("ASKING FOR Object");
+            System.out.println("ASKING FOR Integer");
             return cmd.instrumentProxyClass(bytes);
         }
+
+        if (classLoader != null && classLoader.getClass().getCanonicalName().endsWith("KevoreeJarClassLoaderCoverageInjection"))
+            return null;
 
         if (!ExtraInstrumentationRules.isInstrumentable(className)) {
             return null;

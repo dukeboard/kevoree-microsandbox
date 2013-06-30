@@ -48,12 +48,6 @@ public class Main {
                 }
             }
 
-//            for (Node node: map.values()) {
-//                if (node.parent == null)
-//                    System.out.println("Roots : " + node.className);
-//                else
-//                    System.out.println("With parent :" + node.className + " " + node.parent.className);
-//            }
             JarOutputStream outputStream = new JarOutputStream(new FileOutputStream("rtNew.jar"));
 
             Node objectClass = map.get("java/lang/Object");
@@ -77,7 +71,7 @@ public class Main {
                 }
             }
 
-            // adding classes that should have principalId but inherit from a forbiden class
+            // adding classes that should have principalId but inherit from a forbidden class
             for (Node node : map.values()) {
                 if (node.included)
                     continue;
@@ -138,10 +132,12 @@ public class Main {
 
     private static boolean shouldAccountMemoryConsumption(String clazz) {
         return (clazz.startsWith("java"))
-                &&  !( clazz.startsWith("java/lang/")
+                &&  !(
+                    clazz.startsWith("java/lang/")
                     || clazz.startsWith("java/security/")
                 )
-                &&  !( clazz.equals("java/net/SocketInputStream")
+                &&  !(
+                    clazz.equals("java/net/SocketInputStream")
                     || clazz.equals("java/net/SocketOutputStream")
                     || clazz.equals("java/lang/Integer")
                 );

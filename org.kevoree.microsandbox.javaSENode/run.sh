@@ -6,5 +6,5 @@ LOCAL_PATH=`pwd`
 cp $PATH_MODEL $PATH_MODEL
 
 cd $PATH_KEVOREE
-java -Xbootclasspath/p:rtNew.jar:ResourceMonitor.jar -Xmx212m -Dnode.bootstrap=runner.kev -jar kevoree.jar
+java -Xbootclasspath/p:rtNew.jar:ResourceMonitor.jar -Xmx212m -Dnode.bootstrap=runner.kev -javaagent:ResourceMonitorAgent.jar -jar kevoree.jar
 cd $LOCAL_PATH

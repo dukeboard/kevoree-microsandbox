@@ -24,15 +24,14 @@ public class InstrumenterCommand {
         ClassReader reader = new ClassReader(code);
         ClassWriter writer = new ClassWriter(reader, 0);
         ClassVisitor tmp = writer;
-        if (true) {
-            if (className.contains("MemoryConsumer"))
-                tmp = new TraceClassVisitor(writer, new PrintWriter(System.out));
-            tmp = new CheckClassAdapter(tmp,true);
-        }
-        ClassVisitor visitor = new ResourceAccountingVisitor(tmp);
+//        if (className.equals("org/kevoree/tools/marShell/parser/KevsParser")) {
+//            System.out.println("dfsdsfdsfdsfsfdsfsdfdsff 12345678");
+////            tmp = new TraceClassVisitor(writer, new PrintWriter(System.err));
+//        }
+        tmp = new ResourceAccountingVisitor(tmp);
 
-        visitor = new InstForAccountingPerInvocation(visitor);
-        reader.accept(visitor, ClassReader.EXPAND_FRAMES);
+        tmp = new InstForAccountingPerInvocation(tmp);
+        reader.accept(tmp, ClassReader.EXPAND_FRAMES);
         return writer.toByteArray();
     }
 
@@ -80,7 +79,7 @@ public class InstrumenterCommand {
                     return new MemoryAllocationMethodInstrumentation(
                             super.visitMethod(i, s, s2, s3, strings),
                             className,
-                            className.startsWith("java/util/ArrayList"));
+                            className.equals("java/util/ArrayList")); // TODO : What this mean?
                 }
             };
         visitor = new CheckClassAdapter(visitor,true);

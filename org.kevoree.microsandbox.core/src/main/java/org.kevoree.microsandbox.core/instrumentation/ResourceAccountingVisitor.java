@@ -46,8 +46,8 @@ public class ResourceAccountingVisitor extends ClassVisitor {
 
         MethodVisitor mv = super.visitMethod(flags, methodName, signature, s3, strings);
         if (!isEnum) {
-            if (className.contains("MemoryConsumer"))
-                System.out.println("Using memory instrumenter");
+//            if (className.contains("MemoryConsumer"))
+//                System.out.println("Using memory instrumenter");
             mv = new MemoryAllocationMethodInstrumentation(mv,className,true);
         }
         return new InstructionAccountingMethodInstrumentation(mv, className);

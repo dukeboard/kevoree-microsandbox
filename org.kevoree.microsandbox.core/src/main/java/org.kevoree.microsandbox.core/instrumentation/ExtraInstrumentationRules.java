@@ -21,10 +21,11 @@ public class ExtraInstrumentationRules {
             return false;
         if ( className.startsWith("org/jacoco/") )
             return false;
-        if (className.startsWith("org/")) {
-            return !(className.startsWith("resourceaccounting/", 4) || className.startsWith("objectweb/asm", 4));
-        }
-        if (className.startsWith("org/kevoree/monitoring"))
+        if (className.startsWith("org/kevoree/monitoring")
+                || className.startsWith("org/kevoree/microsandbox")
+                || className.startsWith("org/resourceaccounting/")
+                || className.startsWith("org/objectweb/asm")
+                )
             return false;
         return true;
     }
