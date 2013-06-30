@@ -9,6 +9,9 @@ public class ExtraInstrumentationRules {
 
     public static boolean isInstrumentable(String className) {
 
+        if (className.startsWith("org/kevoree/microsandbox/samples"))
+            return true;
+
         if (className.startsWith("java")
                 || className.startsWith("sun")
                 || className.startsWith("com/sun/")

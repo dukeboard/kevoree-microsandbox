@@ -22,9 +22,6 @@ public class MemoryAllocationMethodInstrumentation extends AbstractMethodInstrum
     public MemoryAllocationMethodInstrumentation(MethodVisitor visitor, String className, boolean accountForArrays) {
         super(visitor, className);
         this.accountForArrays = accountForArrays;
-//        if (className.contains("MemoryConsumer")) {
-//            System.out.println("Magic on " + className);
-//        }
     }
 
     @Override
@@ -39,7 +36,6 @@ public class MemoryAllocationMethodInstrumentation extends AbstractMethodInstrum
                 invokestatic("java/lang/Integer", "__reportAboutMemory__", "(Ljava/lang/Object;)I");
                 putfield(involvedClass, "__principalID__", "I");
                 countOfNew --;
-//                System.out.println(className + " " + involvedClass);
             }
         }
     }

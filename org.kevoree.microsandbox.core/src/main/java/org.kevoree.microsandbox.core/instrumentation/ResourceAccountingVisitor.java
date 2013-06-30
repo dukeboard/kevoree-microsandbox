@@ -46,8 +46,6 @@ public class ResourceAccountingVisitor extends ClassVisitor {
 
         MethodVisitor mv = super.visitMethod(flags, methodName, signature, s3, strings);
         if (!isEnum) {
-//            if (className.contains("MemoryConsumer"))
-//                System.out.println("Using memory instrumenter");
             mv = new MemoryAllocationMethodInstrumentation(mv,className,true);
         }
         return new InstructionAccountingMethodInstrumentation(mv, className);
@@ -58,8 +56,6 @@ public class ResourceAccountingVisitor extends ClassVisitor {
                       String signature, String superclass, String[] strings) {
         className = name;
         isEnum = (flags & Opcodes.ACC_ENUM) != 0;
-
-//        isClassRelateToFileOutput = className.equals("java/io/FileOutputStream");
 
         shouldAddField = ((flags & Opcodes.ACC_ENUM) == 0) &&
                 ((flags & Opcodes.ACC_INTERFACE) == 0) &&
