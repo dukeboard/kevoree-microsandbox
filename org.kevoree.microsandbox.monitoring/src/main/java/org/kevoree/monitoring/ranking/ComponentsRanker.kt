@@ -26,22 +26,9 @@ public object ComponentsRanker {
     private val info : HashMap<String, ComponentExecutionInfo> = HashMap<String, ComponentExecutionInfo>()
     private val definitionAspect : TypeDefinitionAspect = TypeDefinitionAspect()
 
-    private class MyIterator(val components : MutableList<ComponentInstance>) : Iterator<ComponentInstance> {
-
-        var index = 0
-
-        public override fun next(): ComponentInstance {
-            if (index > components.size)
-                throw NoSuchElementException()
-            return components.get(index++)
-        }
-        public override fun hasNext(): Boolean = index < components.size
-
-    }
-
     fun rank(nodeName: String,
-             modelService: KevoreeModelHandlerService,
-             bootstrapService : Bootstraper
+                modelService: KevoreeModelHandlerService,
+                bootstrapService : Bootstraper
              ): Iterator<ComponentInstance> {
         val components : MutableList<ComponentInstance> =
                 ArrayList<ComponentInstance>()
@@ -62,7 +49,7 @@ public object ComponentsRanker {
                     updateInfo(instance, i, node, bootstrapService);
                 }
         }
-        return MyIterator(components)
+        return components.iterator();
     }
 
     private fun updateInfo(instance: ComponentInstance,

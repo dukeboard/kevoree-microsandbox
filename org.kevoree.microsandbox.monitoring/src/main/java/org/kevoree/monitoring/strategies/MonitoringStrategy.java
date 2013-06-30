@@ -3,6 +3,8 @@ package org.kevoree.monitoring.strategies;
 import org.kevoree.monitoring.comp.monitor.ContractVerificationRequired;
 import org.kevoree.monitoring.sla.Metric;
 
+import java.util.EnumSet;
+
 /**
  * Created with IntelliJ IDEA.
  * User: inti
@@ -17,4 +19,6 @@ public interface MonitoringStrategy extends ContractVerificationRequired {
     void init();
     void pause();
     void stop();
+
+    EnumSet<Metric> getViolationOn();
 }

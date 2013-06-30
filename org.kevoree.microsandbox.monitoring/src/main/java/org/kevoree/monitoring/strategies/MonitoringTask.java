@@ -6,6 +6,7 @@ import org.kevoree.monitoring.comp.monitor.ContractVerificationRequired;
 import org.kevoree.monitoring.comp.monitor.GCWatcher;
 import org.kevoree.monitoring.ranking.*;
 import org.kevoree.monitoring.sla.GlobalThreshold;
+import org.kevoree.monitoring.sla.Metric;
 import org.resourceaccounting.ResourcePrincipal;
 
 /**
@@ -67,10 +68,13 @@ public class MonitoringTask implements Runnable, ContractVerificationRequired {
                             case GLOBAL_MONITORING:
                                 if (currentStrategy.isThereContractViolation()) {
                                     System.out.println("Switching to local monitoring");
+                                    for (Metric m : currentStrategy.getViolationOn())
+                                        System.out.println("\t" + m);
                                     currentStrategy.pause();
                                     currentStatus = MonitoringStatus.LOCAL_MONITORING;
-                                    currentStrategy = new LocalMonitoring(
+                                    currentStrategy = new SimpleLocalMonitoring(
                                             ComponentsRanker.instance$.rank(nodeName, service, bootstraper), msg);
+                                    currentStrategy.init();
                                 }
                                 break;
                         }

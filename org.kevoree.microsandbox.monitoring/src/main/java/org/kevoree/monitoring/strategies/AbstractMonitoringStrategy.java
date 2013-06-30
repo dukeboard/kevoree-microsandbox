@@ -81,7 +81,8 @@ public abstract class AbstractMonitoringStrategy extends TimerTask implements Mo
         return contractViolation;
     }
 
-    public EnumSet<Metric> getViolationOn() {
+    @Override
+    public synchronized EnumSet<Metric> getViolationOn() {
         return violationOn;
     }
 }
