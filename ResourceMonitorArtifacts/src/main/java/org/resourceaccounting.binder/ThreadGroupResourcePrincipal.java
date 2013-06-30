@@ -82,9 +82,9 @@ public class ThreadGroupResourcePrincipal extends AbstractResourcePrincipal<Long
             ThreadGroupResourcePrincipal tmp = new ThreadGroupResourcePrincipal(thread.getId());
             tmp.text = nameOfGroup;
             map.put(nameOfGroup, tmp);
-            tmp.contract = ResourceCounter.getResourceContract(tmp);
+//            tmp.contract = ResourceCounter.getResourceContract(tmp);
 
-            System.out.printf("Memory %d, CPU %d\n", tmp.contract.getMemory(), tmp.contract.getCPU());
+//            System.out.printf("Memory %d, CPU %d\n", tmp.contract.getMemory(), tmp.contract.getCPU());
             return tmp;
         }
     }

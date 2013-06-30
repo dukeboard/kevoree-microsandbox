@@ -58,7 +58,7 @@ public class InvocationResourcePrincipal extends AbstractResourcePrincipal<Strin
         MyList<BehaviorNodeCompound> stack = new MyList<BehaviorNodeCompound>();
         stack.push(node);
         currentNode.put(l, stack);
-        contract = ((ComponentResourceContract)parent.getContract()).getContractFor(operation);
+//        contract = ((ComponentResourceContract)parent.getContract()).getContractFor(operation);
     }
 
     private void updateParent(int i, int o, int s, int r, int wf) {
