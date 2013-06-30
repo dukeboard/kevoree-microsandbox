@@ -12,8 +12,8 @@ addNode node0:MonitoredNode
 addComponent FakeConso509@node0 : FakeConsole { singleFrame='true' }
 addComponent FakeConso510@node0 : FakeConsole {}
 addComponent fread@node0 : FileExplorer { basedir='{basedir}' }
-addComponent CoverageChecker0@node0 : CoverageChecker {}
-addComponent MemoryConsumer0@node0 : MemoryConsumer { memory_max_size='123' }
+//addComponent CoverageChecker0@node0 : CoverageChecker {}
+//addComponent MemoryConsumer0@node0 : MemoryConsumer { memory_max_size='123' }
 
 addChannel defMSGT360 : defMSGT {}
 addChannel defMSGT419 : defMSGT {}

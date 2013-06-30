@@ -31,14 +31,12 @@ open class KevoreeJarClassLoaderCoverageInjection() : KevoreeJarClassLoader() {
     }
 
     override fun internal_defineClass(className: String, bytes: ByteArray): Class<out Any?>? {
-//        println("Coverage for class : " + className +  " has been solicited :-)")
         val x: ByteArray =  if (!ExtraInstrumentationRules.isInstrumentable(className.replace('.','/'))) {
                                 bytes
                             }
                             else {
                                 loadedClasses.add(className)
-                                val arr : ByteArray? = cmd.instrument(bytes, className.replace('.','/'))
-                                CoverageRuntime.instrument(arr)
+                                CoverageRuntime.instrument(bytes)
                             }
 
         if (className.contains(".")) {

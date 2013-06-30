@@ -34,8 +34,8 @@ public class BinderClassTransformer implements ClassFileTransformer {
             return cmd.instrumentProxyClass(bytes);
         }
 
-        if (classLoader != null && classLoader.getClass().getCanonicalName().endsWith("KevoreeJarClassLoaderCoverageInjection"))
-            return null;
+//        if (classLoader != null && classLoader.getClass().getCanonicalName().endsWith("KevoreeJarClassLoaderCoverageInjection"))
+//            return null;
 
         if (!ExtraInstrumentationRules.isInstrumentable(className)) {
             return null;

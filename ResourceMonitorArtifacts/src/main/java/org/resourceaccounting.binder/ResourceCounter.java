@@ -142,15 +142,15 @@ public class ResourceCounter {
         ResourcePrincipal principal = get();
         principal = ourInstance.search(principal);
         ourInstance.innerIncreaseObjects(obj, principal);
-//        java.lang.Class cl = obj.getClass();
-//        try {
-//            java.lang.reflect.Field f = cl.getField("__principalID__");
-//        } catch (NoSuchFieldException e) {
-//            String s = cl.getCanonicalName();
-//            for (int i = 0 ; i < s.length() ; i++)
-//                System.out.print(s.charAt(i));
-//            System.exit(2);
-//        }
+        java.lang.Class cl = obj.getClass();
+        try {
+            java.lang.reflect.Field f = cl.getField("__principalID__");
+        } catch (NoSuchFieldException e) {
+            String s = cl.getCanonicalName();
+            for (int i = 0 ; i < s.length() ; i++)
+                System.out.print(s.charAt(i));
+            System.exit(2);
+        }
         return principal.getId();
     }
 
