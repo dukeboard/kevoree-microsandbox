@@ -1,9 +1,6 @@
 package org.kevoree.microsandbox.samples;
 
-import org.kevoree.annotation.ComponentType;
-import org.kevoree.annotation.Start;
-import org.kevoree.annotation.Stop;
-import org.kevoree.annotation.Update;
+import org.kevoree.annotation.*;
 import org.kevoree.framework.AbstractComponentType;
 import org.kevoree.microsandbox.api.ContractedComponent;
 
@@ -14,10 +11,14 @@ import org.kevoree.microsandbox.api.ContractedComponent;
  * Time: 5:47 PM
  * To change this template use File | Settings | File Templates.
  */
-
+@DictionaryType({
+        @DictionaryAttribute(name = "amount", defaultValue = "102400")
+})
 @ComponentType
 public class MemoryConsumer extends AbstractComponentType
         implements ContractedComponent {
+
+    private int size;
 
     private class Th extends Thread {
 
@@ -48,7 +49,7 @@ public class MemoryConsumer extends AbstractComponentType
             while (!isB()) {
                 try {
                     Thread.sleep(200);
-                    head = new Node(new int[102400],head);
+                    head = new Node(new int[size],head);
 //                    int[] ar = new  int[1024024];
 
                 } catch (InterruptedException e) {
@@ -62,6 +63,7 @@ public class MemoryConsumer extends AbstractComponentType
 
     @Start
     public void startComponent() {
+        size = Integer.valueOf(getDictionary().get("amount").toString());
         th = new Th();
         th.start();
     }

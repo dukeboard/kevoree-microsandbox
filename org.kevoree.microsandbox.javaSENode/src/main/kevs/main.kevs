@@ -18,13 +18,21 @@ addComponent memoryConsumer0@node0 : MemoryConsumer {
     memory_max_size='20',
     cpu_wall_time='20',
     network_input_seconds='234',
+    network_output_seconds='234',
+    amount = '101'
+}
+
+addComponent cpuConsumer0@node0 : CPUConsumer {
+    memory_max_size='20',
+    cpu_wall_time='20',
+    network_input_seconds='234',
     network_output_seconds='234'
 }
 
 
 addComponent MonitoringComponent0@node0 : MonitoringComponent {
     memory_threshold='65',
-    cpu_threshold='71',
+    cpu_threshold='10',
     net_in_threshold='80',
     net_out_threshold='80'
 }
