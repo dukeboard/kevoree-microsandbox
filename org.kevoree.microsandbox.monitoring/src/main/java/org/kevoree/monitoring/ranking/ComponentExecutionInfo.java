@@ -12,7 +12,6 @@ public class ComponentExecutionInfo {
     private int failuresInPreviousVersions;
     private double branchCoverage;
     private double instructionCoverage;
-
     private long timeUnderUse;
 
     private String componentName;

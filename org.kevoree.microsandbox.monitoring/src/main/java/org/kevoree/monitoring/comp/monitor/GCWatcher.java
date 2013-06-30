@@ -53,20 +53,18 @@ public class GCWatcher implements NotificationListener {
     public void handleNotification(Notification notification, Object o) {
         if (notification.getType().equals(GarbageCollectionNotificationInfo.GARBAGE_COLLECTION_NOTIFICATION)) {
             //get the information associated with this notification
-            GarbageCollectionNotificationInfo info = GarbageCollectionNotificationInfo.from((CompositeData) notification.getUserData());
+            GarbageCollectionNotificationInfo info =
+                    GarbageCollectionNotificationInfo.from((CompositeData) notification.getUserData());
 
-//            for (String key :info.getGcInfo().getMemoryUsageAfterGc().keySet()) {
-//                System.out.printf("Key %s with value %d\n", key, info.getGcInfo().getMemoryUsageAfterGc().get(key).getUsed());
-//            }
             long eden = info.getGcInfo().getMemoryUsageAfterGc().get("PS Eden Space").getUsed();
             long survivor = info.getGcInfo().getMemoryUsageAfterGc().get("PS Survivor Space").getUsed();
-            if (eden == 0 && survivor == 0) {
 //                System.out.println("Collection : " + info.getGcName() + " " + info.getGcCause() + " " + info.getGcAction());
+//            if (eden == 0 && survivor == 0) {
                 long used = info.getGcInfo().getMemoryUsageAfterGc().get("PS Old Gen").getUsed();
                 long max = info.getGcInfo().getMemoryUsageAfterGc().get("PS Old Gen").getMax();
                 for(int i = 0 ; i < listeners.size() ; i++)
                     listeners.get(i).onGCVerifyContract(used, max);
-            }
+//            }
         }
     }
 

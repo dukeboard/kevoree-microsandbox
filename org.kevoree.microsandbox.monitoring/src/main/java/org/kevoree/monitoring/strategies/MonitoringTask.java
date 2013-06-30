@@ -5,6 +5,7 @@ import org.kevoree.api.service.core.handler.KevoreeModelHandlerService;
 import org.kevoree.monitoring.comp.monitor.ContractVerificationRequired;
 import org.kevoree.monitoring.comp.monitor.GCWatcher;
 import org.kevoree.monitoring.ranking.*;
+import org.kevoree.monitoring.sla.GlobalThreshold;
 import org.resourceaccounting.ResourcePrincipal;
 
 /**
@@ -19,9 +20,20 @@ public class MonitoringTask implements Runnable, ContractVerificationRequired {
     private final String nodeName;
     private final Bootstraper bootstraper;
     private final KevoreeModelHandlerService service;
+    private final GlobalThreshold globalThreshold;
     private boolean stopped;
     private GCWatcher gcWatcher;
     private Object msg;
+
+    public MonitoringTask(String nodeName,
+                          GlobalThreshold globalThreshold,
+                          KevoreeModelHandlerService service,
+                          Bootstraper bootstraper) {
+        this.nodeName= nodeName;
+        this.service = service;
+        this.bootstraper = bootstraper;
+        this.globalThreshold = globalThreshold;
+    }
 
     private enum MonitoringStatus {
         GLOBAL_MONITORING,
@@ -30,12 +42,6 @@ public class MonitoringTask implements Runnable, ContractVerificationRequired {
 
     private MonitoringStatus currentStatus;
     private MonitoringStrategy currentStrategy;
-
-    public MonitoringTask(String nodeName, KevoreeModelHandlerService service, Bootstraper bootstraper) {
-        this.nodeName= nodeName;
-        this.service = service;
-        this.bootstraper = bootstraper;
-    }
 
 
     @Override
@@ -48,7 +54,7 @@ public class MonitoringTask implements Runnable, ContractVerificationRequired {
         gcWatcher.register();
 
         currentStatus = MonitoringStatus.GLOBAL_MONITORING;
-        currentStrategy = new GlobalMonitoring(msg);
+        currentStrategy = new GlobalMonitoring(msg, globalThreshold);
         currentStrategy.init();
 
         stopped = false;

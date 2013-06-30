@@ -6,14 +6,28 @@ merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.jexxus/2.0.
 merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.defaultChannels/2.0.0-SNAPSHOT'
 
 merge 'mvn:org.kevoree.microsandbox/org.kevoree.microsandbox.monitoring/1.0-SNAPSHOT'
+merge 'mvn:org.kevoree.microsandbox/org.kevoree.microsandbox.samples/1.0-SNAPSHOT'
 
 addNode node0:MonitoredNode
 
 addComponent FakeConso509@node0 : FakeConsole { singleFrame='true' }
 addComponent FakeConso510@node0 : FakeConsole {}
 addComponent fread@node0 : FileExplorer { basedir='{basedir}' }
-//addComponent CoverageChecker0@node0 : CoverageChecker {}
-//addComponent MemoryConsumer0@node0 : MemoryConsumer { memory_max_size='123' }
+
+addComponent memoryConsumer0@node0 : MemoryConsumer {
+    memory_max_size='20',
+    cpu_wall_time='20',
+    network_input_seconds='234',
+    network_output_seconds='234'
+}
+
+
+addComponent MonitoringComponent0@node0 : MonitoringComponent {
+    memory_threshold='65',
+    cpu_threshold='71',
+    net_in_threshold='80',
+    net_out_threshold='80'
+}
 
 addChannel defMSGT360 : defMSGT {}
 addChannel defMSGT419 : defMSGT {}

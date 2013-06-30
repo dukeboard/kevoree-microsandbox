@@ -1,5 +1,8 @@
 package org.kevoree.monitoring.strategies;
 
+import org.kevoree.monitoring.sla.Metric;
+
+import java.util.EnumSet;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -25,6 +28,8 @@ public abstract class AbstractMonitoringStrategy extends TimerTask implements Mo
 
     private boolean contractViolation;
 
+    private EnumSet<Metric> violationOn;
+
     protected AbstractMonitoringStrategy(Object msg) {
         this.msg = msg;
     }
@@ -35,6 +40,7 @@ public abstract class AbstractMonitoringStrategy extends TimerTask implements Mo
         timerForCPU = new Timer();
         timerForCPU.schedule(this, ELAPSED_TIME, ELAPSED_TIME);
         contractViolation = false;
+        violationOn = EnumSet.noneOf(Metric.class);
         // init monitoring of network communication
     }
 
@@ -54,14 +60,28 @@ public abstract class AbstractMonitoringStrategy extends TimerTask implements Mo
     }
 
     @Override
-    public synchronized void actionOnContractViolation() {
+    public synchronized void actionOnContractViolation(Metric ... metrics) {
         // notify about action
-        msg.notify();
+        for (Metric m : metrics)
+            violationOn.add(m);
+        synchronized (msg) { msg.notify(); }
+        contractViolation = true;
+    }
+
+    public synchronized void actionOnContractViolation( EnumSet<Metric> metrics) {
+        // notify about action
+        for (Metric m : metrics)
+            violationOn.add(m);
+        synchronized (msg) { msg.notify(); }
         contractViolation = true;
     }
 
     @Override
     public synchronized boolean isThereContractViolation() {
         return contractViolation;
+    }
+
+    public EnumSet<Metric> getViolationOn() {
+        return violationOn;
     }
 }

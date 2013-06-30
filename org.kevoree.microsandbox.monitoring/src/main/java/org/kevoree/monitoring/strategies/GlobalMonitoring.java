@@ -1,6 +1,8 @@
 package org.kevoree.monitoring.strategies;
 
 import org.kevoree.monitoring.comp.MyResourceConsumptionRecorder;
+import org.kevoree.monitoring.sla.GlobalThreshold;
+import org.kevoree.monitoring.sla.Metric;
 import org.resourceaccounting.ResourceConsumptionRecorderMBean;
 import org.resourceaccounting.ResourcePrincipal;
 
@@ -19,9 +21,11 @@ public class GlobalMonitoring extends AbstractMonitoringStrategy {
     private final ThreadMXBean tmxb = ManagementFactory.getThreadMXBean();
 
     private final int nCPUs = Runtime.getRuntime().availableProcessors();
+    private final GlobalThreshold threshold;
 
-    public GlobalMonitoring(Object msg) {
+    public GlobalMonitoring(Object msg, GlobalThreshold threshold) {
         super(msg);
+        this.threshold = threshold;
     }
 
     @Override
@@ -33,10 +37,10 @@ public class GlobalMonitoring extends AbstractMonitoringStrategy {
     @Override
     public void onGCVerifyContract(long used, long max) {
         double usage = (double)used/max*100F;
-        System.out.printf("GC, current consumption %f\n", usage);
-        if (usage > 60) {
+        System.out.printf("GC, current consumption %f vs. %f\n", usage, threshold.getMemory_threshold());
+        if (usage > threshold.getMemory_threshold()) {
             // threshold has been surpassed, try to identify why
-            actionOnContractViolation();
+            actionOnContractViolation(Metric.Memory);
         }
     }
 
@@ -61,14 +65,12 @@ public class GlobalMonitoring extends AbstractMonitoringStrategy {
         previousSent = ins.getTotalSent();
         previousReceived = ins.getTotalReceived();
 
-        System.out.printf("%%CPU : %f , Sent : %f KiB/S, Received %f KiB/S\n",
-                cpuUsage,
-                sent / 1024F,
-                received / 1024F);
-
-
-        if (cpuUsage > 70 && cpuUsage < 99) {
-            actionOnContractViolation();
+        if (cpuUsage > threshold.getCpu_threshold() && cpuUsage < 99) {
+            System.out.printf("%%CPU : %f , Sent : %f KiB/S, Received %f KiB/S\n",
+                    cpuUsage,
+                    sent / 1024F,
+                    received / 1024F);
+            actionOnContractViolation(Metric.CPU);
         }
     }
 }

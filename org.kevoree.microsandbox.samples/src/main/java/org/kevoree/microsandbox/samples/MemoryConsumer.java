@@ -1,10 +1,11 @@
-package org.kevoree.monitoring;
+package org.kevoree.microsandbox.samples;
 
 import org.kevoree.annotation.ComponentType;
 import org.kevoree.annotation.Start;
 import org.kevoree.annotation.Stop;
 import org.kevoree.annotation.Update;
 import org.kevoree.framework.AbstractComponentType;
+import org.kevoree.microsandbox.api.ContractedComponent;
 
 /**
  * Created with IntelliJ IDEA.
@@ -16,9 +17,22 @@ import org.kevoree.framework.AbstractComponentType;
 
 @ComponentType
 public class MemoryConsumer extends AbstractComponentType
-        implements ContractedComponent{
+        implements ContractedComponent {
 
     private class Th extends Thread {
+
+        private class Node {
+            Object value;
+            Node next;
+
+            private Node(Object value, Node next) {
+                this.value = value;
+                this.next = next;
+            }
+        }
+
+        private Node head;
+
         private synchronized boolean isB() {
             return b;
         }
@@ -30,10 +44,13 @@ public class MemoryConsumer extends AbstractComponentType
         boolean b;
         @Override
         public void run() {
+            head = new Node(null, null);
             while (!isB()) {
                 try {
                     Thread.sleep(200);
-                    int[] ar = new  int[1024];
+                    head = new Node(new int[102400],head);
+//                    int[] ar = new  int[1024024];
+
                 } catch (InterruptedException e) {
 
                 }
