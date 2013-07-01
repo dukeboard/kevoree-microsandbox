@@ -25,11 +25,6 @@ public abstract class AbstractLocalMonitoringStrategy extends AbstractMonitoring
 
     }
 
-    @Override
-    public void init() {
-        super.init();
-    }
-
     protected DataForCheckingContract getInfo(ResourcePrincipal principal) {
         ResourceConsumptionRecorderMBean recorder = MyResourceConsumptionRecorder.getInstance();
         long lastCPU = recorder.getExecutedInstruction(principal);

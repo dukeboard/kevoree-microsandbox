@@ -16,7 +16,7 @@ public interface MonitoringStrategy extends ContractVerificationRequired {
     void actionOnContractViolation(Metric ... metrics);
     boolean isThereContractViolation();
 
-    void init();
+    void init(int startTime);
     void pause();
     void stop();
 

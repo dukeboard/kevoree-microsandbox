@@ -22,8 +22,8 @@ public class LocalMonitoring extends AbstractLocalMonitoringStrategy {
     }
 
     @Override
-    public void init() {
-        super.init();
+    public void init(int startTime) {
+        super.init(startTime);
         counter = 0;
     }
 

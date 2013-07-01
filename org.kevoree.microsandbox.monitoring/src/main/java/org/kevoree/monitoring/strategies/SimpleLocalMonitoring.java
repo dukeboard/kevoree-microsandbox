@@ -41,6 +41,7 @@ public class SimpleLocalMonitoring extends AbstractLocalMonitoringStrategy {
                                 data.lastSent,
                                 data.lastReceived
                     );
+            System.out.println(principal.getContract());
         }
         System.out.println("Done with the simple local monitoring");
     }

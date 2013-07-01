@@ -35,10 +35,10 @@ public abstract class AbstractMonitoringStrategy extends TimerTask implements Mo
     }
 
     @Override
-    public void init() {
+    public void init(int startTime) {
         // init monitoring of thread execution
         timerForCPU = new Timer();
-        timerForCPU.schedule(this, ELAPSED_TIME, ELAPSED_TIME);
+        timerForCPU.schedule(this, startTime, ELAPSED_TIME);
         contractViolation = false;
         violationOn = EnumSet.noneOf(Metric.class);
         // init monitoring of network communication

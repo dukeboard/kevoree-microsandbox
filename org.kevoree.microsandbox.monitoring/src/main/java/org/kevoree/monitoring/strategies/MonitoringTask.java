@@ -56,7 +56,7 @@ public class MonitoringTask implements Runnable, ContractVerificationRequired {
 
         currentStatus = MonitoringStatus.GLOBAL_MONITORING;
         currentStrategy = new GlobalMonitoring(msg, globalThreshold);
-        currentStrategy.init();
+        currentStrategy.init(1000);
 
         stopped = false;
         while (!isStopped()) {
@@ -74,7 +74,7 @@ public class MonitoringTask implements Runnable, ContractVerificationRequired {
                                     currentStatus = MonitoringStatus.LOCAL_MONITORING;
                                     currentStrategy = new SimpleLocalMonitoring(
                                             ComponentsRanker.instance$.rank(nodeName, service, bootstraper), msg);
-                                    currentStrategy.init();
+                                    currentStrategy.init(0);
                                 }
                                 break;
                         }
