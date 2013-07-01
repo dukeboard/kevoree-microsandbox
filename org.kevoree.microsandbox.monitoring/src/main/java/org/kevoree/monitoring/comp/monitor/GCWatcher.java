@@ -9,8 +9,10 @@ import javax.management.NotificationListener;
 import javax.management.openmbean.CompositeData;
 import java.lang.management.GarbageCollectorMXBean;
 import java.lang.management.ManagementFactory;
+import java.lang.management.MemoryUsage;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created with IntelliJ IDEA.
@@ -56,15 +58,14 @@ public class GCWatcher implements NotificationListener {
             GarbageCollectionNotificationInfo info =
                     GarbageCollectionNotificationInfo.from((CompositeData) notification.getUserData());
 
-            long eden = info.getGcInfo().getMemoryUsageAfterGc().get("PS Eden Space").getUsed();
-            long survivor = info.getGcInfo().getMemoryUsageAfterGc().get("PS Survivor Space").getUsed();
-//                System.out.println("Collection : " + info.getGcName() + " " + info.getGcCause() + " " + info.getGcAction());
-//            if (eden == 0 && survivor == 0) {
-                long used = info.getGcInfo().getMemoryUsageAfterGc().get("PS Old Gen").getUsed();
-                long max = info.getGcInfo().getMemoryUsageAfterGc().get("PS Old Gen").getMax();
-                for(int i = 0 ; i < listeners.size() ; i++)
-                    listeners.get(i).onGCVerifyContract(used, max);
-//            }
+            Map<String, MemoryUsage> m = info.getGcInfo().getMemoryUsageAfterGc();
+//            long eden = m.get("PS Eden Space").getUsed();
+//            long survivor = m.get("PS Survivor Space").getUsed();
+
+            long used = m.get("PS Old Gen").getUsed() + m.get("PS Survivor Space").getUsed();
+            long max = m.get("PS Old Gen").getMax() + m.get("PS Survivor Space").getMax();
+            for(int i = 0 ; i < listeners.size() ; i++)
+                listeners.get(i).onGCVerifyContract(used, max);
         }
     }
 

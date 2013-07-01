@@ -19,12 +19,17 @@ public abstract class AbstractResourcePrincipal<T> implements ResourcePrincipal 
     private transient T associatedObject;
 
     private static int lastID = 3;
-    protected long nbInstructions;
-    protected long nbObjects;
     protected int id;
+    protected long nbObjects;
+    protected long nbInstructions;
     protected int nbBytesSent;
     protected int nbBytesReceived;
     protected long nbBytesWrite;
+
+    protected long last_nbInstructions;
+    protected int last_nbBytesSent;
+    protected int last_nbBytesReceived;
+    protected long last_nbBytesWrite;
 
     protected transient ResourceContract contract;
 
@@ -66,7 +71,9 @@ public abstract class AbstractResourcePrincipal<T> implements ResourcePrincipal 
     }
 
     public final long getExecutedInstructions() {
-        return nbInstructions;
+        long tmp = nbInstructions - last_nbInstructions;
+        last_nbInstructions = nbInstructions;
+        return tmp;
     }
 
     public final long getAllocatedObjects() {
@@ -74,11 +81,15 @@ public abstract class AbstractResourcePrincipal<T> implements ResourcePrincipal 
     }
 
     public long getBytesSent() {
-        return nbBytesSent;
+        long tmp = nbBytesSent - last_nbBytesSent;
+        last_nbBytesSent = nbBytesSent;
+        return tmp;
     }
 
     public long getBytesReceived() {
-        return nbBytesReceived;
+        long tmp = nbBytesReceived - last_nbBytesReceived;
+        last_nbBytesReceived = nbBytesReceived;
+        return tmp;
     }
 
     @Override

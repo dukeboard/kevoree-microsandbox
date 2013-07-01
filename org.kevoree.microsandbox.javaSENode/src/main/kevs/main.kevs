@@ -16,7 +16,7 @@ addComponent fread@node0 : FileExplorer { basedir='{basedir}' }
 
 addComponent memoryConsumer0@node0 : MemoryConsumer {
     memory_max_size='20',
-    cpu_wall_time='20',
+    cpu_wall_time='20000',
     network_input_seconds='234',
     network_output_seconds='234',
     amount = '101'

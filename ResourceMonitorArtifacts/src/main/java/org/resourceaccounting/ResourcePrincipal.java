@@ -18,10 +18,27 @@ public interface ResourcePrincipal extends Serializable {
     void increaseBytesReceived(int n);
     void increaseFileWrite(int n);
 
+    /**
+     * Since last time the value was asked
+     * @return
+     */
     long getExecutedInstructions();
+
     long getAllocatedObjects();
+
+    /**
+     * Since last time the value was asked
+     * @return
+     */
     long getBytesSent();
+
+    /**
+     * Since last time the value was asked
+     * @return
+     */
     long getBytesReceived();
+
+
     long getCPUUsage();
 
     int getId();

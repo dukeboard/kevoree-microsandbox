@@ -44,8 +44,6 @@ class ResourceCounterImpl {
         return totalSent;
     }
 
-
-
     private class LastMeasurements {
 
         int timeStamp;
@@ -98,110 +96,13 @@ class ResourceCounterImpl {
                         }
                     }
                     // 2 - check if everybody is meeting the contract
-                    checkContract();
+//                    checkContract();
                 }
             }
         };
         tt.executeAtFixedRate(1000);
     }
-    private void checkContract() {
-        currentTimeStamp++;
-        // update
-        for (int i = 0 ; i < countOfPrincipals; i++) {
-            ResourcePrincipal principal = principals[i];
-            ResourceContract contract = principal.getContract();
-            if (contract == null) continue;
-            long memory = principal.getAllocatedObjects();
-            long sent = principal.getBytesSent();
-            long received = principal.getBytesReceived();
-            long cpu = principal.getExecutedInstructions();
-            LastMeasurements l = null;
-            if (lastMeasurements.containsKey(principal)) {
-                l = lastMeasurements.get(principal);
-                sent -= l.sent;
-                received -= l.received;
-                cpu -= l.cpu;
-                l.cpu += cpu;
-                l.sent += sent;
-                l.received += received;
-            }
-            else {
-                l = new LastMeasurements(cpu,sent,received);
-                lastMeasurements.put(principal, l);
-            }
-            if (contract != null) {
-                if (memory > contract.getMemory())
-                    System.out.printf("Memory Violation in %s because it was expecting %d but %d was found\n",
-                            principal.toString(),
-                            contract.getMemory(),
-                            memory);
-                if (sent > contract.getNetworkOut())
-                    System.out.printf("Sent Violation in %s because it was expecting %d but %d was found\n",
-                            principal.toString(),
-                            contract.getNetworkOut(),
-                            sent);
-                if (received > contract.getNetworkIn())
-                    System.out.printf("Received Violation in %s because it was expecting %d but %d was found\n",
-                        principal.toString(),
-                        contract.getNetworkIn(),
-                        received);
-                if (cpu > contract.getCPU())
-                    System.out.printf("CPU Violation in %s because it was expecting %d but %d was found\n",
-                            principal.toString(),
-                            contract.getCPU(),
-                            cpu);
-            }
-            l.timeStamp = currentTimeStamp;
-        }
 
-        // update
-        for (InvocationResourcePrincipal rp : activatedInvocations.values()) {
-            ResourceContract contract = rp.getContract();
-            if (contract == null) continue;
-            long memory = rp.getAllocatedObjects();
-            long sent = rp.getBytesSent();
-            long received = rp.getBytesReceived();
-            long cpu = rp.getExecutedInstructions();
-            LastMeasurements l = null;
-            if (lastMeasurements.containsKey(rp)) {
-                l = lastMeasurements.get(rp);
-                sent -= l.sent;
-                received -= l.received;
-                cpu -= l.cpu;
-            }
-            if (contract != null) {
-                if (memory > contract.getMemory()) {
-                    System.out.println("Memory Violation in " + rp.toString());
-                }
-                if (sent > contract.getNetworkOut()) {
-                    System.out.println("Sent Violation in " + rp.toString());
-                }
-                if (received > contract.getNetworkIn()) {
-                    System.out.println("Received Violation in " + rp.toString());
-                }
-                if (cpu > contract.getCPU()) {
-                    System.out.println("CPU Violation in " + rp.toString());
-                }
-            }
-            if (l == null) {
-                l = new LastMeasurements(cpu,sent,received);
-                lastMeasurements.put(rp, l);
-            }else {
-                l.cpu = cpu;
-                l.sent = sent;
-                l.received = received;
-            }
-            l.timeStamp = currentTimeStamp;
-        }
-        // TODO: if some data is recorded in lastMeasurement and it has not an associated principal then discard it
-        Iterator it = lastMeasurements.entrySet().iterator();
-        while (it.hasNext())
-        {
-            Map.Entry<ResourcePrincipal,LastMeasurements> lm = (Map.Entry<ResourcePrincipal, LastMeasurements>) it.next();
-            if (lm.getValue().timeStamp != currentTimeStamp)
-                it.remove();
-        }
-    }
     private static void processInvocation(InvocationResourcePrincipal rp) {
         // print basic information
         System.err.printf("Operation %s, %d %d %d %d\n",
@@ -210,9 +111,6 @@ class ResourceCounterImpl {
                 rp.getAllocatedObjects(),
                 rp.getBytesSent(),
                 rp.getBytesReceived());
-        // print external operations
-//        rp.externalOperations.optimize();
-//        rp.externalOperations.accept(new PrintExternalOperationsVisitor());
         rp.recordInParent();
         System.out.println();
     }

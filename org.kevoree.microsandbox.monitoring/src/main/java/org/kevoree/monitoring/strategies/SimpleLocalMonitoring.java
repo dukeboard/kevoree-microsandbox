@@ -27,14 +27,29 @@ public class SimpleLocalMonitoring extends AbstractLocalMonitoringStrategy {
     @Override
     public void verifyContract(ResourcePrincipal principal, Object obj) {
         DataForCheckingContract data = (DataForCheckingContract)obj;
-        System.out.println("dsfdsf " + currentComponent.getName());
-        System.out.printf("%s consumes %d CPU, %d Memory, %d Sent and %d Received\n",
-                principal.toString(),
-                data.lastCPU,
-                MyResourceConsumptionRecorder.getInstance().getMemoryConsumption(principal),
-                data.lastSent,
-                data.lastReceived
-        );
+        ResourceContract contract = principal.getContract();
+        if (contract.getCPU() < data.lastCPU) {
+            System.out.printf("%s consumes %d CPU vs. %d\n",
+                    currentComponent.getName(),
+                    data.lastCPU,
+                    contract.getCPU()
+            );
+        }
+
+        if (contract.getNetworkOut() < data.lastSent) {
+            System.out.printf("%s consumes %d Sent\n",
+                    currentComponent.getName(),
+                    data.lastSent
+            );
+        }
+
+        if (contract.getNetworkIn() < data.lastReceived) {
+            System.out.printf("%s consumes %d Received\n",
+                    currentComponent.getName(),
+                    data.lastReceived
+            );
+        }
+
     }
 
     @Override
@@ -49,7 +64,6 @@ public class SimpleLocalMonitoring extends AbstractLocalMonitoringStrategy {
             makeContractAvailable(principal, currentComponent);
             DataForCheckingContract data = getInfo(principal);
             verifyContract(principal, data);
-            System.out.println(principal.getContract());
         }
         System.out.println("Done with the simple local monitoring");
     }

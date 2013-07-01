@@ -82,9 +82,12 @@ public object ControlAdmissionSystem {
                         Info(WeakReference<ComponentInstance>(component),
                         mem as Long, netIn as Long, netOut as Long))
 
+                val contract : KevoreeComponentResourceContract? = if (mem.toInt() == 0 && instr.toInt() == 0)
+                                                                        null
+                                                                    else
+                                                                        KevoreeComponentResourceContract(instr, mem, netOut, netIn)
 
-
-                return ComponentRegistration(true, KevoreeComponentResourceContract(instr, mem, netOut, netIn))
+                return ComponentRegistration(true, contract)
             }
             return ComponentRegistration(false, null)
         }

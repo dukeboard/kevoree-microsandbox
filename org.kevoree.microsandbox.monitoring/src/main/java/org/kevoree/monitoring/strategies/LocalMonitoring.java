@@ -32,10 +32,10 @@ public class LocalMonitoring extends AbstractLocalMonitoringStrategy {
     }
 
     private void checkContract(ResourcePrincipal principal, DataForCheckingContract data) {
-        long cpu = principal.getExecutedInstructions() - data.lastCPU;
-        long sent = principal.getExecutedInstructions() - data.lastSent;
-        long received = principal.getExecutedInstructions() - data.lastReceived;
-        checkContract(principal, cpu, sent, received);
+//        long cpu = principal.getExecutedInstructions() - data.lastCPU;
+//        long sent = principal.getExecutedInstructions() - data.lastSent;
+//        long received = principal.getExecutedInstructions() - data.lastReceived;
+//        checkContract(principal, cpu, sent, received);
     }
 
     private void checkContract(ResourcePrincipal principal, long cpu, long sent, long received) {
