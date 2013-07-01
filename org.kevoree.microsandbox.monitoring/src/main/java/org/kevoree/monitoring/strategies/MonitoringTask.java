@@ -77,6 +77,14 @@ public class MonitoringTask implements Runnable, ContractVerificationRequired {
                                     currentStrategy.init(0);
                                 }
                                 break;
+                            case LOCAL_MONITORING:
+                                if (currentStrategy.isThereContractViolation()) {
+                                    System.out.println("Triggering adaptation to solve the problem");
+                                    for (Metric m : currentStrategy.getViolationOn())
+                                        System.out.println("\t" + m);
+                                    currentStrategy.pause();
+                                }
+                                break;
                         }
 
                     }

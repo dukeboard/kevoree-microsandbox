@@ -5,6 +5,7 @@ import org.resourceaccounting.ResourcePrincipal;
 import org.resourceaccounting.contract.ResourceContract;
 
 import java.util.Iterator;
+import java.util.List;
 
 /**
  * Created with IntelliJ IDEA.
@@ -17,7 +18,7 @@ public class LocalMonitoring extends AbstractLocalMonitoringStrategy {
 
     private int counter;
 
-    public LocalMonitoring(Iterator<ComponentInstance> ranking, Object msg) {
+    public LocalMonitoring(List<ComponentInstance> ranking, Object msg) {
         super(ranking,msg);
     }
 
@@ -61,10 +62,11 @@ public class LocalMonitoring extends AbstractLocalMonitoringStrategy {
 
     @Override
     public void run() {
-        if (ranking.hasNext()) {
+        Iterator<ComponentInstance> it = ranking.iterator();
+        if (it.hasNext()) {
             if ((counter & 1) == 0)
-                currentComponent = ranking.next();
-            ResourcePrincipal principal = getPrincipal();
+                currentComponent = it.next();
+            ResourcePrincipal principal = getPrincipal(currentComponent);
             counter++;
             if ((counter & 1) == 0) {
                 checkContract(principal, getInfo(principal));

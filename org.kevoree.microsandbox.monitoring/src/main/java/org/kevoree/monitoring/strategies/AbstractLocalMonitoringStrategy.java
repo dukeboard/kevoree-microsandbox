@@ -9,6 +9,7 @@ import org.resourceaccounting.contract.ComponentResourceContract;
 import org.resourceaccounting.contract.ResourceContract;
 
 import java.util.Iterator;
+import java.util.List;
 
 /**
  * Created with IntelliJ IDEA.
@@ -18,10 +19,10 @@ import java.util.Iterator;
  *
  */
 public abstract class AbstractLocalMonitoringStrategy extends AbstractMonitoringStrategy {
-    protected final Iterator<ComponentInstance> ranking;
+    protected final List<ComponentInstance> ranking;
     protected ComponentInstance currentComponent;
 
-    public AbstractLocalMonitoringStrategy(Iterator<ComponentInstance> ranking, Object msg) {
+    public AbstractLocalMonitoringStrategy(List<ComponentInstance> ranking, Object msg) {
         super(msg);
         this.ranking = ranking;
 
@@ -36,26 +37,30 @@ public abstract class AbstractLocalMonitoringStrategy extends AbstractMonitoring
         return r;
     }
 
-    protected ResourcePrincipal getPrincipal() {
+    protected ResourcePrincipal getPrincipal(ComponentInstance instance) {
         ResourceConsumptionRecorderMBean recorder = MyResourceConsumptionRecorder.getInstance();
-        for (String key : KevoreeDeployManager.instance$.getInternalMap().keySet()) {
-            if (key.contains("_tg")) {  //TODO far better ....
-                ThreadGroup tg = (ThreadGroup) KevoreeDeployManager.instance$.getInternalMap().get(key);
-                String threadGroupKevoreeInstancePath = tg.getName().substring(tg.getName().indexOf("/") + 1);
-                if (currentComponent.path().equals(threadGroupKevoreeInstancePath)) {
-                    // Found
-                    ResourcePrincipal p = recorder.getApplication(tg.getName());
-                    if (p == null) {
-                        System.err.println("No resource principal was found");
-                        System.exit(2);
-                    }
-                    return p;
-                }
-            }
+        Object obj =KevoreeDeployManager.instance$.getRef(instance.getClass().getName() + "_tg", instance.getName());
+        ThreadGroup tg = (ThreadGroup) obj;
+        ResourcePrincipal p = recorder.getApplication(tg.getName());
+        if (p == null) {
+            System.err.println("No resource principal was found");
+            System.exit(2);
         }
-        System.err.println("No resource principal was found");
-        System.exit(2);
-        return null;
+        return p;
+//        for (String key : KevoreeDeployManager.instance$.getInternalMap().keySet()) {
+//            if (key.contains("_tg")) {  //TODO far better ....
+//
+//                String threadGroupKevoreeInstancePath = tg.getName().substring(tg.getName().indexOf("/") + 1);
+//                if (currentComponent.path().equals(threadGroupKevoreeInstancePath)) {
+//                    // Found
+//
+//
+//                }
+//            }
+//        }
+//        System.err.println("No resource principal was found");
+//        System.exit(2);
+//        return null;
     }
 
     protected void makeContractAvailable(ResourcePrincipal principal, ComponentInstance instance) {

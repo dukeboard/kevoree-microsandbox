@@ -34,10 +34,10 @@ public object ControlAdmissionSystem {
      * Calculate the initial amount of resource in the platform and
      * establish this amount as the initial amount of free resources
      */
-    fun init() : Unit {
-        freeMemory = Runtime.getRuntime().freeMemory()
-        freeNetworkIn = java.lang.Long.MAX_VALUE
-        freeNetworkOut = java.lang.Long.MAX_VALUE
+    fun init(max_mem : Long, max_sent : Long , max_received : Long) : Unit {
+        freeMemory = Math.min(Runtime.getRuntime().freeMemory(), max_mem)
+        freeNetworkIn = max_received
+        freeNetworkOut = max_sent
     }
 
     public data class ComponentRegistration(val valid: Boolean, val contract: ResourceContract?)

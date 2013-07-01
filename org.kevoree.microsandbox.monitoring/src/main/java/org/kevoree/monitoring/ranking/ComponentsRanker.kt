@@ -29,7 +29,7 @@ public object ComponentsRanker {
     fun rank(nodeName: String,
                 modelService: KevoreeModelHandlerService,
                 bootstrapService : Bootstraper
-             ): Iterator<ComponentInstance> {
+             ): List<ComponentInstance> {
         val components : MutableList<ComponentInstance> =
                 ArrayList<ComponentInstance>()
 
@@ -49,7 +49,7 @@ public object ComponentsRanker {
                     updateInfo(instance, i, node, bootstrapService);
                 }
         }
-        return components.iterator();
+        return components;
     }
 
     private fun updateInfo(instance: ComponentInstance,

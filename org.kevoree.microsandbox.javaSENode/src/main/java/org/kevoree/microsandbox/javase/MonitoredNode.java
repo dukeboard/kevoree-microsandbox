@@ -1,6 +1,8 @@
 package org.kevoree.microsandbox.javase;
 
 import org.kevoree.Instance;
+import org.kevoree.annotation.DictionaryAttribute;
+import org.kevoree.annotation.DictionaryType;
 import org.kevoree.api.PrimitiveCommand;
 import org.kevoree.kompare.JavaSePrimitive;
 import org.kevoree.library.defaultNodeTypes.JavaSENode;
@@ -13,17 +15,25 @@ import org.kevoreeadaptation.AdaptationPrimitive;
 /**
  * Created by duke on 24/06/13.
  */
+@DictionaryType({
+        @DictionaryAttribute(name = "availability_memory", defaultValue = "180000000"),
+        @DictionaryAttribute(name = "availability_sent", defaultValue = "18000"),
+        @DictionaryAttribute(name = "availability_received", defaultValue = "18000"),
+        @DictionaryAttribute(name = "availability_instr", defaultValue = "1800000")
+})
 @NodeType
 @Library(name = "JavaSE")
 public class MonitoredNode extends JavaSENode {
 
     @Override
     public void startNode() {
-
         JCLContextHandler jclhandler = (JCLContextHandler) getBootStrapperService().getKevoreeClassLoaderHandler();
         jclhandler.setKCLFactory(new CoverageKCLFactory());
         super.startNode();
-        ControlAdmissionSystem.instance$.init();
+        long max_sent = Long.valueOf(getDictionary().get("availability_sent").toString());
+        long max_received = Long.valueOf(getDictionary().get("availability_received").toString());
+        long max_memory = Long.valueOf(getDictionary().get("availability_memory").toString());
+        ControlAdmissionSystem.instance$.init(max_memory, max_sent, max_received);
     }
 
     @Override
