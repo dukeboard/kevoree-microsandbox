@@ -5,6 +5,8 @@ import org.kevoree.library.defaultNodeTypes.context.KevoreeDeployManager;
 import org.kevoree.monitoring.comp.MyResourceConsumptionRecorder;
 import org.resourceaccounting.ResourceConsumptionRecorderMBean;
 import org.resourceaccounting.ResourcePrincipal;
+import org.resourceaccounting.contract.ComponentResourceContract;
+import org.resourceaccounting.contract.ResourceContract;
 
 import java.util.Iterator;
 
@@ -54,5 +56,16 @@ public abstract class AbstractLocalMonitoringStrategy extends AbstractMonitoring
         System.err.println("No resource principal was found");
         System.exit(2);
         return null;
+    }
+
+    protected void makeContractAvailable(ResourcePrincipal principal, ComponentInstance instance) {
+        if (principal.getContract() == null) {
+            Object obj =KevoreeDeployManager.instance$.getRef(instance.getClass().getName() + "_contract", instance.getName());
+            if (obj != null && obj instanceof ResourceContract) {
+                ResourceContract contract = (ResourceContract)obj;
+                principal.setContract(contract);
+            }
+            else principal.setContract(new ComponentResourceContract(){});
+        }
     }
 }

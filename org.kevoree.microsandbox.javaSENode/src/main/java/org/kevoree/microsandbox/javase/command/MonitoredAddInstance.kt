@@ -49,9 +49,13 @@ open class MonitoredAddInstance(val c: Instance,
 
         if (c is ComponentInstance) {
             val cc : ComponentInstance = c as ComponentInstance
-            val flag = ControlAdmissionSystem.registerComponent(cc)
-            if (!flag)
+            val r = ControlAdmissionSystem.registerComponent(cc)
+            if (!r.valid)
                 return false
+
+            if (r.contract != null)
+                KevoreeDeployManager.putRef(c.javaClass.getName()+"_contract",c.getName(),  r.contract!!)
+
         }
 
         val model = c.getTypeDefinition()!!.eContainer() as ContainerRoot

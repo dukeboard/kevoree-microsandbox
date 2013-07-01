@@ -28,5 +28,6 @@ public interface ResourcePrincipal extends Serializable {
 
 
     ResourceContract getContract();
+    void setContract(ResourceContract contract);
 }
 

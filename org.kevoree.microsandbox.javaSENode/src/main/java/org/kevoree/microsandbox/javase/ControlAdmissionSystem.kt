@@ -5,6 +5,8 @@ import org.kevoree.Dictionary
 import org.kevoree.DictionaryValue
 import java.lang.ref.WeakReference
 import java.util.ArrayList
+import org.resourceaccounting.contract.ComponentResourceContract
+import org.resourceaccounting.contract.ResourceContract
 
 /**
  * Created with IntelliJ IDEA.
@@ -38,13 +40,16 @@ public object ControlAdmissionSystem {
         freeNetworkOut = java.lang.Long.MAX_VALUE
     }
 
-    fun registerComponent(component: ComponentInstance): Boolean {
+    public data class ComponentRegistration(val valid: Boolean, val contract: ResourceContract?)
+
+    fun registerComponent(component: ComponentInstance): ComponentRegistration {
         val v : Dictionary? = component.getDictionary()
         if (v !=null){
             val tmp = v as Dictionary
             var mem : Long = 0
             var netIn : Long = 0
             var netOut : Long = 0
+            var instr  : Long = 0;
             var i = 0
             val d = tmp.getValues()
             val n : Int = d.size()
@@ -55,7 +60,7 @@ public object ControlAdmissionSystem {
                         mem = java.lang.Long.parseLong(dv.getValue())
                     }
                     "cpu_wall_time" -> {
-
+                        instr = java.lang.Long.parseLong(dv.getValue())
                     }
                     "network_input_seconds" -> {
                         netIn = java.lang.Long.parseLong(dv.getValue())
@@ -75,12 +80,15 @@ public object ControlAdmissionSystem {
                 freeNetworkOut -= netOut
                 components.add(
                         Info(WeakReference<ComponentInstance>(component),
-                        mem, netIn, netOut))
-                return true
+                        mem as Long, netIn as Long, netOut as Long))
+
+
+
+                return ComponentRegistration(true, KevoreeComponentResourceContract(instr, mem, netOut, netIn))
             }
-            return false
+            return ComponentRegistration(false, null)
         }
-        else return true
+        else return ComponentRegistration(true, null)
     }
 
     fun unregisterComponent(c : ComponentInstance) : Boolean {

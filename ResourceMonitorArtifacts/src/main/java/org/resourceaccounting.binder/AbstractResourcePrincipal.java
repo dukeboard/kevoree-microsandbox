@@ -32,6 +32,10 @@ public abstract class AbstractResourcePrincipal<T> implements ResourcePrincipal 
         return contract;
     }
 
+    public void setContract(ResourceContract contract) {
+        this.contract = contract;
+    }
+
     /**
      * This is not thread safe
      * @param object
