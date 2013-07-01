@@ -1,12 +1,9 @@
 package org.kevoree.monitoring.strategies;
 
 import org.kevoree.ComponentInstance;
-import org.kevoree.DictionaryValue;
-import org.kevoree.library.defaultNodeTypes.context.KevoreeDeployManager;
-import org.kevoree.monitoring.comp.MyResourceConsumptionRecorder;
+import org.kevoree.monitoring.sla.FaultyComponent;
 import org.kevoree.monitoring.sla.Metric;
 import org.resourceaccounting.ResourcePrincipal;
-import org.resourceaccounting.contract.ComponentResourceContract;
 import org.resourceaccounting.contract.ResourceContract;
 
 import java.util.EnumSet;
@@ -20,13 +17,15 @@ import java.util.List;
  * Time: 10:04 PM
  *
  */
-public class SimpleLocalMonitoring extends AbstractLocalMonitoringStrategy {
+public class AllComponentsMonitoring extends AbstractLocalMonitoringStrategy {
 
     int count = 0;
 
     EnumSet<Metric> a;
 
-    public SimpleLocalMonitoring(List<ComponentInstance> ranking, Object msg) {
+
+
+    public AllComponentsMonitoring(List<ComponentInstance> ranking, Object msg) {
         super(ranking, msg);
     }
 
@@ -40,13 +39,14 @@ public class SimpleLocalMonitoring extends AbstractLocalMonitoringStrategy {
     public void verifyContract(ResourcePrincipal principal, Object obj) {
         DataForCheckingContract data = (DataForCheckingContract)obj;
         ResourceContract contract = principal.getContract();
+        EnumSet<Metric> tmp = EnumSet.noneOf(Metric.class);
         if (contract.getCPU() < data.lastCPU) {
             System.out.printf("%s consumes %d CPU vs. %d\n",
                     currentComponent.getName(),
                     data.lastCPU,
                     contract.getCPU()
             );
-            a.add(Metric.CPU);
+            tmp.add(Metric.CPU);
         }
 
         if (contract.getNetworkOut() < data.lastSent) {
@@ -54,7 +54,7 @@ public class SimpleLocalMonitoring extends AbstractLocalMonitoringStrategy {
                     currentComponent.getName(),
                     data.lastSent
             );
-            a.add(Metric.NetworkS);
+            tmp.add(Metric.NetworkS);
         }
 
         if (contract.getNetworkIn() < data.lastReceived) {
@@ -62,19 +62,25 @@ public class SimpleLocalMonitoring extends AbstractLocalMonitoringStrategy {
                     currentComponent.getName(),
                     data.lastReceived
             );
-            a.add(Metric.NetworkR);
+            tmp.add(Metric.NetworkR);
+        }
+
+        if (count == 2) {
+            a.addAll(tmp);
+            faultyComponents.add(new FaultyComponent(currentComponent.path(),tmp));
         }
 
     }
 
     @Override
-    public void onGCVerifyContract(long used, long max) {
-    }
+    public void onGCVerifyContract(long used, long max) { }
 
     @Override
     public void run() {
         count++;
-        a = EnumSet.noneOf(Metric.class);
+        if (count == 2) {
+            a = EnumSet.noneOf(Metric.class);
+        }
         Iterator<ComponentInstance> it = ranking.iterator();
         while (it.hasNext()) {
             currentComponent = it.next();
@@ -89,6 +95,7 @@ public class SimpleLocalMonitoring extends AbstractLocalMonitoringStrategy {
                 actionOnContractViolation(a);
             else {
                 // pass to Global Monitoring
+                passWithoutViolation();
             }
         }
     }

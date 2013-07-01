@@ -85,4 +85,9 @@ public abstract class AbstractMonitoringStrategy extends TimerTask implements Mo
     public synchronized EnumSet<Metric> getViolationOn() {
         return violationOn;
     }
+
+    @Override
+    public void passWithoutViolation() {
+        synchronized (msg) {msg.notify();}
+    }
 }

@@ -35,4 +35,8 @@ public class ComponentExecutionInfo {
     public void setInstructionCoverage(double instructionCoverage) {
         this.instructionCoverage = instructionCoverage;
     }
+
+    public void increaseFailures() {
+        failuresInCurrentVersion++;
+    }
 }

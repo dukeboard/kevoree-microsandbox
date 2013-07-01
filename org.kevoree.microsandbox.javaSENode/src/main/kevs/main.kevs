@@ -19,7 +19,7 @@ addComponent memoryConsumer0@node0 : MemoryConsumer {
     cpu_wall_time='20000',
     network_input_seconds='234',
     network_output_seconds='234',
-    amount = '101'
+    amount = '10'
 }
 
 addComponent cpuConsumer0@node0 : CPUConsumer {

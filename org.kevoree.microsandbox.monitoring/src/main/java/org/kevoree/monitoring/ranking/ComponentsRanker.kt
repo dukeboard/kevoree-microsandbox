@@ -46,10 +46,10 @@ public object ComponentsRanker {
                         info.put(instance.path() as String, ComponentExecutionInfo(instance.getName()))
                     }
 
-                    updateInfo(instance, i, node, bootstrapService);
+                    updateInfo(instance, i, node, bootstrapService)
                 }
         }
-        return components;
+        return components
     }
 
     private fun updateInfo(instance: ComponentInstance,
@@ -64,6 +64,10 @@ public object ComponentsRanker {
         i?.setBranchCoverage((entry?.branchCoverage!!))
         i?.setInstructionCoverage((entry?.instrCoverage!!))
 
+    }
+
+    fun getExecutionInfo(path : String) : ComponentExecutionInfo? {
+        return if (info.containsKey(path)) info.get(path) else null
     }
 
 

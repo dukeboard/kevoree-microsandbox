@@ -5,6 +5,7 @@ import org.kevoree.api.service.core.handler.KevoreeModelHandlerService;
 import org.kevoree.monitoring.comp.monitor.ContractVerificationRequired;
 import org.kevoree.monitoring.comp.monitor.GCWatcher;
 import org.kevoree.monitoring.ranking.*;
+import org.kevoree.monitoring.sla.FaultyComponent;
 import org.kevoree.monitoring.sla.GlobalThreshold;
 import org.kevoree.monitoring.sla.Metric;
 import org.resourceaccounting.ResourcePrincipal;
@@ -60,41 +61,50 @@ public class MonitoringTask implements Runnable, ContractVerificationRequired {
 
         stopped = false;
         while (!isStopped()) {
-            synchronized (msg) {
-                try {
-                    msg.wait();
-                    if (!isStopped()) {
-                        switch (currentStatus) {
-                            case GLOBAL_MONITORING:
-                                if (currentStrategy.isThereContractViolation()) {
-                                    System.out.println("Switching to local monitoring");
-                                    for (Metric m : currentStrategy.getViolationOn())
-                                        System.out.println("\t" + m);
-                                    currentStrategy.pause();
-                                    currentStatus = MonitoringStatus.LOCAL_MONITORING;
-                                    currentStrategy = new SimpleLocalMonitoring(
-                                            ComponentsRanker.instance$.rank(nodeName, service, bootstraper), msg);
-                                    currentStrategy.init(0);
-                                }
-                                break;
-                            case LOCAL_MONITORING:
-                                if (currentStrategy.isThereContractViolation()) {
-                                    System.out.println("Triggering adaptation to solve the problem");
-                                    for (Metric m : currentStrategy.getViolationOn())
-                                        System.out.println("\t" + m);
-                                    currentStrategy.pause();
-                                }
-                                break;
-                        }
-
+            waitMessage();
+            if (isStopped()) continue;
+            switch (currentStatus) {
+                case GLOBAL_MONITORING:
+                    if (currentStrategy.isThereContractViolation()) {
+                        System.out.println("Switching to local monitoring");
+                        for (Metric m : currentStrategy.getViolationOn())
+                            System.out.println("\t" + m);
+                        currentStrategy.pause();
+                        currentStatus = MonitoringStatus.LOCAL_MONITORING;
+                        currentStrategy = new AllComponentsMonitoring(
+                                ComponentsRanker.instance$.rank(nodeName, service, bootstraper), msg);
+                        currentStrategy.init(0);
                     }
-                } catch (InterruptedException e) { }
+                    break;
+                case LOCAL_MONITORING:
+                    if (currentStrategy.isThereContractViolation()) {
+                        System.out.println("Triggering adaptation to solve the problem");
+                        for (Metric m : currentStrategy.getViolationOn())
+                            System.out.println("\t" + m);
+                        currentStrategy.pause();
+                        AbstractLocalMonitoringStrategy s =(AbstractLocalMonitoringStrategy)currentStrategy;
+                        for (FaultyComponent c : s.getFaultyComponents()) {
+                            ComponentsRanker.instance$.getExecutionInfo(c.getComponentPath()).increaseFailures();
+                        }
+                    }
+
+                    break;
             }
         }
 
         currentStrategy.stop();
         gcWatcher.unregister();
         gcWatcher = null;
+    }
+
+    private void waitMessage() {
+        synchronized (msg) {
+            try {
+                msg.wait();
+            } catch (InterruptedException e) {
+
+            }
+        }
     }
 
 

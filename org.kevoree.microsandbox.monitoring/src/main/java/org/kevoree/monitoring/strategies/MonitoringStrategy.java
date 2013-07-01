@@ -19,6 +19,7 @@ public interface MonitoringStrategy extends ContractVerificationRequired {
     void init(int startTime);
     void pause();
     void stop();
+    void passWithoutViolation();
 
     EnumSet<Metric> getViolationOn();
 }
