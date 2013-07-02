@@ -41,31 +41,31 @@ public class AllComponentsMonitoring extends AbstractLocalMonitoringStrategy {
         ResourceContract contract = principal.getContract();
         EnumSet<Metric> tmp = EnumSet.noneOf(Metric.class);
         if (contract.getCPU() < data.lastCPU) {
-            System.out.printf("%s consumes %d CPU vs. %d\n",
-                    currentComponent.getName(),
-                    data.lastCPU,
-                    contract.getCPU()
-            );
+//            System.out.printf("%s consumes %d CPU vs. %d\n",
+//                    currentComponent.getName(),
+//                    data.lastCPU,
+//                    contract.getCPU()
+//            );
             tmp.add(Metric.CPU);
         }
 
         if (contract.getNetworkOut() < data.lastSent) {
-            System.out.printf("%s consumes %d Sent\n",
-                    currentComponent.getName(),
-                    data.lastSent
-            );
+//            System.out.printf("%s consumes %d Sent\n",
+//                    currentComponent.getName(),
+//                    data.lastSent
+//            );
             tmp.add(Metric.NetworkS);
         }
 
         if (contract.getNetworkIn() < data.lastReceived) {
-            System.out.printf("%s consumes %d Received\n",
-                    currentComponent.getName(),
-                    data.lastReceived
-            );
+//            System.out.printf("%s consumes %d Received\n",
+//                    currentComponent.getName(),
+//                    data.lastReceived
+//            );
             tmp.add(Metric.NetworkR);
         }
 
-        if (count == 2) {
+        if (count == 2 && !tmp.isEmpty()) {
             a.addAll(tmp);
             faultyComponents.add(new FaultyComponent(currentComponent.path(),tmp));
         }

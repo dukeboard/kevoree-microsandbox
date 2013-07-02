@@ -27,7 +27,17 @@ public class MonitoredNode extends JavaSENode {
 
     @Override
     public void startNode() {
-        JCLContextHandler jclhandler = (JCLContextHandler) getBootStrapperService().getKevoreeClassLoaderHandler();
+        JCLContextHandler jclhandler = null;
+        if (getBootStrapperService().getKevoreeClassLoaderHandler() instanceof JCLContextHandler) {
+            jclhandler = (JCLContextHandler) getBootStrapperService().getKevoreeClassLoaderHandler();
+        }
+        else {
+            System.err.println("What a crazy error");
+            System.exit(3);
+            super.startNode();
+            return;
+        }
+
         jclhandler.setKCLFactory(new CoverageKCLFactory());
         super.startNode();
         long max_sent = Long.valueOf(getDictionary().get("availability_sent").toString());

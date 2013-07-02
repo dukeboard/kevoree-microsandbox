@@ -32,6 +32,10 @@ public class Main {
             System.err.printf("File %s does not exist\n", args[0]);
             System.exit(2);
         }
+        boolean onlyProxies = false;
+        if (args.length == 2) {
+            onlyProxies = Boolean.parseBoolean(args[1]);
+        }
         JarFile jar = null;
         try {
             InstrumenterCommand cmd = new InstrumenterCommand();
@@ -50,55 +54,59 @@ public class Main {
 
             JarOutputStream outputStream = new JarOutputStream(new FileOutputStream("rtNew.jar"));
 
-            Node objectClass = map.get("java/lang/Object");
-            objectClass.included = true;
-            int c = 0;
+            // instrument as many classes as
+            if (!onlyProxies) {
+                Node objectClass = map.get("java/lang/Object");
+                objectClass.included = true;
+                int c = 0;
 
-            // adding direct subclasses of Object
-            for (int i = 0; i < objectClass.children.size() ; i++) {
-                String clazz = objectClass.children.get(i).className;
-                if ( shouldHasPrincipalIdField(clazz) ) {
+                // adding direct subclasses of Object
+                for (int i = 0; i < objectClass.children.size() ; i++) {
+                    String clazz = objectClass.children.get(i).className;
+                    if ( shouldHasPrincipalIdField(clazz) ) {
 
-                    objectClass.children.get(i).included = true;
-                    boolean applyMemoryAccounting = shouldAccountMemoryConsumption(clazz)
-                            ;
-                    instrumentClass(jar,
-                            outputStream,
-                            jar.getEntry(clazz + ".class"),
-                            cmd,
-                            false);
-                    System.out.printf("Root %d : %s\n", c++ , clazz);
+                        objectClass.children.get(i).included = true;
+                        boolean applyMemoryAccounting = shouldAccountMemoryConsumption(clazz)
+                                ;
+                        instrumentClass(jar,
+                                outputStream,
+                                jar.getEntry(clazz + ".class"),
+                                cmd,
+                                false);
+                        System.out.printf("Root %d : %s\n", c++ , clazz);
+                    }
                 }
+
+                // adding classes that should have principalId but inherit from a forbidden class
+                for (Node node : map.values()) {
+                    if (node.included)
+                        continue;
+                    if ( node.parent != objectClass
+                            && !shouldHasPrincipalIdField(node.parent.className)
+                            && shouldHasPrincipalIdField(node.className)) {
+                        boolean applyMemoryAccounting = node.className.startsWith("java/util/");
+                        node.included = true;
+                        instrumentClass(jar,
+                                outputStream,
+                                jar.getEntry(node.className + ".class"),
+                                cmd,
+                                false);
+    //                    System.out.printf("Root %d : %s\n", c++ , node.className);
+                    }
+                }
+
+                // adding rest of classes
+                for (Node node : map.values())
+                    if (!node.included && shouldAccountMemoryConsumption(node.className)) {
+
+                        instrumentClassForMemoryAccountingOnly(jar, outputStream,
+                                jar.getEntry(node.className + ".class"),
+                                cmd);
+                        node.included = true;
+    //                    System.out.printf("Root %d : %s\n", c++, node.className);
+                    }
+
             }
-
-            // adding classes that should have principalId but inherit from a forbidden class
-            for (Node node : map.values()) {
-                if (node.included)
-                    continue;
-                if ( node.parent != objectClass
-                        && !shouldHasPrincipalIdField(node.parent.className)
-                        && shouldHasPrincipalIdField(node.className)) {
-                    boolean applyMemoryAccounting = node.className.startsWith("java/util/");
-                    node.included = true;
-                    instrumentClass(jar,
-                            outputStream,
-                            jar.getEntry(node.className + ".class"),
-                            cmd,
-                            false);
-//                    System.out.printf("Root %d : %s\n", c++ , node.className);
-                }
-            }
-
-            // adding rest of classes
-            for (Node node : map.values())
-                if (!node.included && shouldAccountMemoryConsumption(node.className)) {
-
-                    instrumentClassForMemoryAccountingOnly(jar, outputStream,
-                            jar.getEntry(node.className + ".class"),
-                            cmd);
-                    node.included = true;
-//                    System.out.printf("Root %d : %s\n", c++, node.className);
-                }
 
             createMyIntegerClass(jar,outputStream,cmd);
             modifySocketClasses(jar, outputStream, cmd);

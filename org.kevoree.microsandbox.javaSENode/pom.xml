@@ -80,11 +80,6 @@
                 <artifactId>org.kevoree.platform.mavenrunner</artifactId>
                 <version>${kevoree.version}</version>
             </plugin>
-            <plugin>
-                <groupId>org.kevoree.microsandbox</groupId>
-                <artifactId>org.kevoree.microsandbox.helper</artifactId>
-                <version>${project.version}</version>
-            </plugin>
         </plugins>
     </build>
 
