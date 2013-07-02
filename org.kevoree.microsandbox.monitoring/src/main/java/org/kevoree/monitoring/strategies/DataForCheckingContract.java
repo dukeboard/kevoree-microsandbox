@@ -11,10 +11,12 @@ public class DataForCheckingContract {
     public long lastCPU;
     public long lastSent;
     public long lastReceived;
+    public long lastMem;
 
-    public DataForCheckingContract(long lastCPU, long lastSent, long lastReceived) {
+    public DataForCheckingContract(long lastCPU, long lastSent, long lastReceived, long lastMem) {
         this.lastCPU = lastCPU;
         this.lastSent = lastSent;
         this.lastReceived = lastReceived;
+        this.lastMem = lastMem;
     }
 }

@@ -38,7 +38,8 @@ public abstract class AbstractLocalMonitoringStrategy extends AbstractMonitoring
         long lastCPU = recorder.getExecutedInstruction(principal);
         long lastSent = recorder.getBytesSent(principal);
         long lastReceived = recorder.getBytesReceived(principal);
-        DataForCheckingContract r = new DataForCheckingContract(lastCPU, lastSent, lastReceived);
+        DataForCheckingContract r = new DataForCheckingContract(lastCPU, lastSent, lastReceived,
+                recorder.getMemoryConsumption(principal));
         return r;
     }
 

@@ -65,6 +65,10 @@ public class AllComponentsMonitoring extends AbstractLocalMonitoringStrategy {
             tmp.add(Metric.NetworkR);
         }
 
+        if (contract.getMemory() < data.lastMem) {
+            tmp.add(Metric.Memory);
+        }
+
         if (count == 2 && !tmp.isEmpty()) {
             a.addAll(tmp);
             faultyComponents.add(new FaultyComponent(currentComponent.path(),tmp));
