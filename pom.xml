@@ -138,12 +138,12 @@
 
     <distributionManagement>
         <repository>
-            <id>kevoree.oss.release</id>
-            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
+            <id>maven2.kevoree.release</id>
+            <url>http://maven.kevoree.org/archiva/repository/daum/release</url>
         </repository>
         <snapshotRepository>
-            <id>kevoree.oss.snapshots</id>
-            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+            <id>maven2.kevoree.snapshots</id>
+            <url>http://maven.kevoree.org/archiva/repository/daum/snapshots/</url>
         </snapshotRepository>
     </distributionManagement>
 
