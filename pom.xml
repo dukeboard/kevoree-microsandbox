@@ -189,7 +189,6 @@
         <module>org.kevoree.microsandbox.core</module>
 		
 		<module>org.kevoree.microsandbox.watchdog</module>
-        <module>org.kevoree.microsandbox.helper</module>
 
     </modules>
 

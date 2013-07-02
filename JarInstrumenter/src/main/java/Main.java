@@ -40,22 +40,22 @@ public class Main {
         try {
             InstrumenterCommand cmd = new InstrumenterCommand();
 
-            HashMap<String, Node> map = new HashMap<String, Node>(1000);
-
             jar = new JarFile(f);
-            Enumeration<JarEntry> entryEnumeration = jar.entries();
-            while (entryEnumeration.hasMoreElements()) {
-                JarEntry entry = entryEnumeration.nextElement();
-                if (entry.getName().endsWith(".class")) {
-                    String clazz = entry.getName().substring(0, entry.getName().length() - 6);
-                    putInRecursiveWay(clazz, map, jar, cmd);
-                }
-            }
-
             JarOutputStream outputStream = new JarOutputStream(new FileOutputStream("rtNew.jar"));
 
             // instrument as many classes as
             if (!onlyProxies) {
+                HashMap<String, Node> map = new HashMap<String, Node>(1000);
+
+                Enumeration<JarEntry> entryEnumeration = jar.entries();
+                while (entryEnumeration.hasMoreElements()) {
+                    JarEntry entry = entryEnumeration.nextElement();
+                    if (entry.getName().endsWith(".class")) {
+                        String clazz = entry.getName().substring(0, entry.getName().length() - 6);
+                        putInRecursiveWay(clazz, map, jar, cmd);
+                    }
+                }
+
                 Node objectClass = map.get("java/lang/Object");
                 objectClass.included = true;
                 int c = 0;
