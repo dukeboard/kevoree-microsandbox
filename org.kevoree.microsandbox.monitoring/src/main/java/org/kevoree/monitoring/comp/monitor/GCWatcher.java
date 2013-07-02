@@ -62,8 +62,11 @@ public class GCWatcher implements NotificationListener {
 //            long eden = m.get("PS Eden Space").getUsed();
 //            long survivor = m.get("PS Survivor Space").getUsed();
 
-            long used = m.get("PS Old Gen").getUsed() + m.get("PS Survivor Space").getUsed();
-            long max = m.get("PS Old Gen").getMax() + m.get("PS Survivor Space").getMax();
+            String sOld = (m.containsKey("PS Old Gen"))? "PS Old Gen" : "Tenured Gen";
+            String sSurvivor = (m.containsKey("PS Survivor Space"))? "PS Survivor Space" : "Survivor Space";
+
+            long used = m.get(sOld).getUsed() + m.get(sSurvivor).getUsed();
+            long max = m.get(sOld).getMax() + m.get(sSurvivor).getMax();
             for(int i = 0 ; i < listeners.size() ; i++)
                 listeners.get(i).onGCVerifyContract(used, max);
         }
