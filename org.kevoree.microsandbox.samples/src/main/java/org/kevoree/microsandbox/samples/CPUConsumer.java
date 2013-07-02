@@ -5,7 +5,7 @@ import org.kevoree.annotation.Start;
 import org.kevoree.annotation.Stop;
 import org.kevoree.annotation.Update;
 import org.kevoree.framework.AbstractComponentType;
-import org.kevoree.microsandbox.api.ContractedComponent;
+import org.kevoree.microsandbox.api.FullContractedComponent;
 
 /**
  * Created with IntelliJ IDEA.
@@ -15,7 +15,7 @@ import org.kevoree.microsandbox.api.ContractedComponent;
  *
  */
 @ComponentType
-public class CPUConsumer extends AbstractComponentType implements ContractedComponent {
+public class CPUConsumer extends AbstractComponentType implements FullContractedComponent {
 
     private class Th extends Thread {
 

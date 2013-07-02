@@ -27,7 +27,6 @@
                 </executions>
                 <configuration>
                     <finalName>ResourceMonitor</finalName>
-                    <outputDirectory>/home/inti/Desktop/Demo/</outputDirectory>
                 </configuration>
             </plugin>
         </plugins>
