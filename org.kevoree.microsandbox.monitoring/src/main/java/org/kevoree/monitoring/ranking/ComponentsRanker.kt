@@ -13,6 +13,7 @@ import org.kevoree.TypeDefinition
 import org.kevoree.api.Bootstraper
 import java.util.NoSuchElementException
 import org.kevoree.microsandbox.core.Entry
+import org.kevoree.library.defaultNodeTypes.context.KevoreeDeployManager
 
 /**
  * Created with IntelliJ IDEA.
@@ -43,13 +44,23 @@ public object ComponentsRanker {
                     }
                     else {
                         components.add(instance)
-                        info.put(instance.path() as String, ComponentExecutionInfo(instance.getName()))
+                        val l = KevoreeDeployManager.getRef(instance.javaClass.getName()+"_deployTime", instance.getName()) as Long
+                        val c = ComponentExecutionInfo(instance.getName(), l)
+                        info.put(instance.path() as String, c)
                     }
 
                     updateInfo(instance, i, node, bootstrapService)
                 }
         }
-        return components
+        val time = System.nanoTime()
+        return components.sort(comparator { (a,b) ->
+            val x = info.get(a.path())
+            val y = info.get(b.path())
+            if ((x?.timeAlive(time) as Long) < y?.timeAlive(time) as Long)
+                 1
+            else
+                -1
+        })
     }
 
     private fun updateInfo(instance: ComponentInstance,

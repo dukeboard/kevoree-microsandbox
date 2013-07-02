@@ -12,12 +12,13 @@ public class ComponentExecutionInfo {
     private int failuresInPreviousVersions;
     private double branchCoverage;
     private double instructionCoverage;
-    private long timeUnderUse;
+    private long deploymentTime;
 
     private String componentName;
 
-    public ComponentExecutionInfo(String componentName) {
+    public ComponentExecutionInfo(String componentName, long deploymentTime) {
         this.componentName = componentName;
+        this.deploymentTime = deploymentTime;
     }
 
     public double getBranchCoverage() {
@@ -38,5 +39,9 @@ public class ComponentExecutionInfo {
 
     public void increaseFailures() {
         failuresInCurrentVersion++;
+    }
+
+    public long timeAlive(long currentTime) {
+        return currentTime - deploymentTime;
     }
 }

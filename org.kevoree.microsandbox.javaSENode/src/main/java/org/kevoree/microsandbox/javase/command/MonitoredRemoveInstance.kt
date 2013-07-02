@@ -40,6 +40,8 @@ class MonitoredRemoveInstance(val c: Instance, val nodeName: String, val modelse
             KevoreeDeployManager.clearRef(c.javaClass.getName()+"_tg", c.getName())
             KevoreeDeployManager.clearRef(c.javaClass.getName()+"_wrapper", c.getName())
             KevoreeDeployManager.clearRef(c.javaClass.getName(), c.getName())
+            KevoreeDeployManager.clearRef(c.javaClass.getName()+"_deployTime", c.getName())
+            KevoreeDeployManager.clearRef(c.javaClass.getName()+"_contract",c.getName())
             return true
         } catch(e: Exception){
             Log.error("RemoveInstance "+c.getName() + " - type - " + c.getTypeDefinition()!!.getName()+" ",e)
