@@ -1,8 +1,12 @@
 package org.kevoree.microsandbox.samples.throughput;
 
 import org.kevoree.annotation.ComponentType;
+import org.kevoree.annotation.RequiredPort;
+import org.kevoree.annotation.Requires;
 import org.kevoree.annotation.Start;
+import org.kevoree.framework.MessagePort;
 import org.kevoree.microsandbox.api.NetworkContracted;
+import org.kevoree.microsandbox.api.ThroughputContracted;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -15,7 +19,11 @@ import java.net.URL;
  */
 
 @ComponentType
-public class ThroughputProducerFail extends org.kevoree.framework.AbstractComponentType implements NetworkContracted {
+@Requires({
+    @RequiredPort(name = "output")
+})
+
+public class ThroughputProducerFail extends org.kevoree.framework.AbstractComponentType implements ThroughputContracted {
 
     java.util.List<Object> cache = new java.util.ArrayList<Object>();
 
@@ -24,12 +32,7 @@ public class ThroughputProducerFail extends org.kevoree.framework.AbstractCompon
         new Thread(new Runnable() {
             public void run() {
                 while (true) {
-                    try {
-                        URL url = new URL("www.google.com");
-                        //TODO
-                    } catch (MalformedURLException e) {
-                        e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-                    }
+                    getPortByName("output", MessagePort.class).process("payLoadMessage");
                 }
             }
         }).start();
