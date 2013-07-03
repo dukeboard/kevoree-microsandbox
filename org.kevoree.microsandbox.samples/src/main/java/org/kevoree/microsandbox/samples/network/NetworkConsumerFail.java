@@ -3,6 +3,10 @@ package org.kevoree.microsandbox.samples.network;
 import org.kevoree.annotation.ComponentType;
 import org.kevoree.annotation.Start;
 import org.kevoree.microsandbox.api.MemoryContracted;
+import org.kevoree.microsandbox.api.NetworkContracted;
+
+import java.net.MalformedURLException;
+import java.net.URL;
 
 /**
  * Created with IntelliJ IDEA.
@@ -12,7 +16,7 @@ import org.kevoree.microsandbox.api.MemoryContracted;
  */
 
 @ComponentType
-public class NetworkConsumerFail extends org.kevoree.framework.AbstractComponentType implements MemoryContracted {
+public class NetworkConsumerFail extends org.kevoree.framework.AbstractComponentType implements NetworkContracted {
 
     java.util.List<Object> cache = new java.util.ArrayList<Object>();
 
@@ -21,7 +25,12 @@ public class NetworkConsumerFail extends org.kevoree.framework.AbstractComponent
         new Thread(new Runnable() {
             public void run() {
                 while (true) {
-                    cache.add(new byte[1000000]);
+                    try {
+                        URL url = new URL("www.google.com");
+                        //TODO
+                    } catch (MalformedURLException e) {
+                        e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                    }
                 }
             }
         }).start();
