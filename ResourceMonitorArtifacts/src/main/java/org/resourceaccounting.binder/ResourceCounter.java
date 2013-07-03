@@ -15,33 +15,46 @@ import org.resourceaccounting.ResourcePrincipal;
 public class ResourceCounter {
     private static ResourceCounterImpl ourInstance = new ResourceCounterImpl();
 
+    private static boolean monitoring = false;
+
+    private final static synchronized boolean isMonitoring() {
+        return monitoring;
+    }
+
+    public final static synchronized void setMonitoring(boolean b) {
+        monitoring = b;
+    }
+
     public static ResourcePrincipal[] getApplications() {
         return ourInstance.innerGetApplications();
     }
 
     public static void increaseInstructions(int n, ResourcePrincipal principal) {
-        ResourcePrincipal p = ourInstance.search(principal);
-        ourInstance.innerIncreaseInstructions(n, p);
-    }
-
-    public static void decreaseObjects(Object object, ResourcePrincipal principal) {
-        ResourcePrincipal p = ourInstance.search(principal);
-        ourInstance.innerDecreaseObjects(object, p);
+        if (isMonitoring()) {
+            ResourcePrincipal p = ourInstance.search(principal);
+            ourInstance.innerIncreaseInstructions(n, p);
+        }
     }
 
     public static void increaseBytesSent(int n, ResourcePrincipal principal) {
-        ResourcePrincipal p = ourInstance.search(principal);
-        ourInstance.innerIncreaseBytesSent(n, p);
+        if (isMonitoring()) {
+            ResourcePrincipal p = ourInstance.search(principal);
+            ourInstance.innerIncreaseBytesSent(n, p);
+        }
     }
 
     public static void increaseFileWrite(int n, ResourcePrincipal principal) {
-        ResourcePrincipal p = ourInstance.search(principal);
-        ourInstance.innerIncreaseFileWrite(n, p);
+        if (isMonitoring()) {
+            ResourcePrincipal p = ourInstance.search(principal);
+            ourInstance.innerIncreaseFileWrite(n, p);
+        }
     }
 
     public static void increaseBytesReceived(int n, ResourcePrincipal principal) {
-        ResourcePrincipal p = ourInstance.search(principal);
-        ourInstance.innerIncreaseBytesReceived(n, p);
+        if (isMonitoring()) {
+            ResourcePrincipal p = ourInstance.search(principal);
+            ourInstance.innerIncreaseBytesReceived(n, p);
+        }
     }
 
     public static long getNbObjects(ResourcePrincipal principal) {
@@ -78,13 +91,17 @@ public class ResourceCounter {
      * @param operation
      */
     public static void newInvocation(String operation) {
-        Thread th = Thread.currentThread();
-        ourInstance.newInvocation(th, operation);
+        if (isMonitoring()) {
+            Thread th = Thread.currentThread();
+            ourInstance.newInvocation(th, operation);
+        }
     }
 
     public static void associateToInvocation(Thread newTh) {
-        Thread th = Thread.currentThread();
-        ourInstance.associateToInvocation(th, newTh);
+        if (isMonitoring()) {
+            Thread th = Thread.currentThread();
+            ourInstance.associateToInvocation(th, newTh);
+        }
     }
 
     /**
@@ -92,8 +109,10 @@ public class ResourceCounter {
      * by the Accounting System
      */
     public static void stopInvocation() {
-        Thread th = Thread.currentThread();
-        ourInstance.stopInvocation(th);
+        if (isMonitoring()) {
+            Thread th = Thread.currentThread();
+            ourInstance.stopInvocation(th);
+        }
     }
 
     /**
@@ -111,19 +130,25 @@ public class ResourceCounter {
      * @param str
      */
     public static void externalOperationCall(String str) {
-        Thread th = Thread.currentThread();
-        ourInstance.externalOperationCall(th, str);
+        if (isMonitoring()) {
+            Thread th = Thread.currentThread();
+            ourInstance.externalOperationCall(th, str);
+        }
     }
 
 
     public static void push() {
-        Thread th = Thread.currentThread();
-        ourInstance.push(th);
+        if (isMonitoring()) {
+            Thread th = Thread.currentThread();
+            ourInstance.push(th);
+        }
     }
 
     public static void pop() {
-        Thread th = Thread.currentThread();
-        ourInstance.pop(th);
+        if (isMonitoring()) {
+            Thread th = Thread.currentThread();
+            ourInstance.pop(th);
+        }
     }
 
     public static void setResourceContractProvider(ResourceContractProvider provider) {
@@ -142,15 +167,15 @@ public class ResourceCounter {
         ResourcePrincipal principal = get();
         principal = ourInstance.search(principal);
         ourInstance.innerIncreaseObjects(obj, principal);
-        java.lang.Class cl = obj.getClass();
-        try {
-            java.lang.reflect.Field f = cl.getField("__principalID__");
-        } catch (NoSuchFieldException e) {
-            String s = cl.getCanonicalName();
-            for (int i = 0 ; i < s.length() ; i++)
-                System.out.print(s.charAt(i));
-            System.exit(2);
-        }
+//        java.lang.Class cl = obj.getClass();
+//        try {
+//            java.lang.reflect.Field f = cl.getField("__principalID__");
+//        } catch (NoSuchFieldException e) {
+//            String s = cl.getCanonicalName();
+//            for (int i = 0 ; i < s.length() ; i++)
+//                System.out.print(s.charAt(i));
+//            System.exit(2);
+//        }
         return principal.getId();
     }
 
@@ -160,20 +185,24 @@ public class ResourceCounter {
             ourInstance.innerDecreaseObjects(obj,principal);
     }
 
-    public static void reportNetworkDataRead(int n) {
-        ResourcePrincipal principal = get();
-        increaseBytesReceived(n, principal);
-    }
-
-    public static void reportNetworkDataWrite(int n) {
-        ResourcePrincipal principal = get();
-        increaseBytesSent(n, principal);
-    }
-
     public static void reportNewArray(Object obj) {
         ResourcePrincipal principal = get();
         principal = ourInstance.search(principal);
         ourInstance.innerArrayAllocated(obj, principal);
+    }
+
+    public static void reportNetworkDataRead(int n) {
+        if (isMonitoring()) {
+            ResourcePrincipal principal = get();
+            increaseBytesReceived(n, principal);
+        }
+    }
+
+    public static void reportNetworkDataWrite(int n) {
+        if (isMonitoring()) {
+            ResourcePrincipal principal = get();
+            increaseBytesSent(n, principal);
+        }
     }
 
     public static ResourcePrincipal getApplication(String appId) {

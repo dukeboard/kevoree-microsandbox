@@ -2,14 +2,18 @@ package org.kevoree.monitoring.strategies;
 
 import org.kevoree.api.Bootstraper;
 import org.kevoree.api.service.core.handler.KevoreeModelHandlerService;
+import org.kevoree.monitoring.comp.MyResourceConsumptionRecorder;
 import org.kevoree.monitoring.comp.monitor.ContractVerificationRequired;
 import org.kevoree.monitoring.comp.monitor.GCWatcher;
 import org.kevoree.monitoring.ranking.*;
 import org.kevoree.monitoring.sla.FaultyComponent;
 import org.kevoree.monitoring.sla.GlobalThreshold;
 import org.kevoree.monitoring.sla.Metric;
-import org.kevoree.monitoring.strategies.adaptation.BasicAdaptation;
 import org.kevoree.monitoring.strategies.adaptation.KillThemAll;
+import org.kevoree.monitoring.strategies.monitoring.AbstractLocalMonitoringStrategy;
+import org.kevoree.monitoring.strategies.monitoring.AllComponentsMonitoring;
+import org.kevoree.monitoring.strategies.monitoring.GlobalMonitoring;
+import org.kevoree.monitoring.strategies.monitoring.MonitoringStrategy;
 import org.resourceaccounting.ResourcePrincipal;
 
 /**
@@ -66,9 +70,7 @@ public class MonitoringTask implements Runnable, ContractVerificationRequired {
             switch (currentStatus) {
                 case GLOBAL_MONITORING:
                     if (currentStrategy.isThereContractViolation()) {
-                        System.out.println("Switching to local monitoring");
-                        for (Metric m : currentStrategy.getViolationOn())
-                            System.out.println("\t" + m);
+                        System.out.println("Switching to local monitoring " + currentStrategy.getViolationOn());
                         currentStrategy.pause();
                         switchToSimpleLocal();
                     }
@@ -108,6 +110,7 @@ public class MonitoringTask implements Runnable, ContractVerificationRequired {
     }
 
     private void switchToSimpleLocal() {
+        MyResourceConsumptionRecorder.getInstance().turnMonitoring(true);
         currentStatus = MonitoringStatus.LOCAL_MONITORING;
         currentStrategy = new AllComponentsMonitoring(
                 ComponentsRanker.instance$.rank(nodeName, service, bootstraper), msg);
@@ -115,6 +118,7 @@ public class MonitoringTask implements Runnable, ContractVerificationRequired {
     }
 
     private void switchToGlobal() {
+        MyResourceConsumptionRecorder.getInstance().turnMonitoring(false);
         currentStatus = MonitoringStatus.GLOBAL_MONITORING;
         currentStrategy = new GlobalMonitoring(msg, globalThreshold);
         currentStrategy.init(1000);

@@ -17,4 +17,5 @@ public interface ResourceConsumptionRecorderMBean {
     long getBytesReceived(ResourcePrincipal appId);
     ResourcePrincipal[] getApplications();
     ResourcePrincipal getApplication(String appId);
+    void turnMonitoring(boolean on);
 }
