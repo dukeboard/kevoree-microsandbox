@@ -27,10 +27,8 @@ public class OlivierExample extends org.kevoree.framework.AbstractComponentType 
     public void sayHello(java.lang.Object text) {
         new java.lang.Thread(new java.lang.Runnable() {
             public void run() {
-                while (true)
-                    ;
+                while (true);
             }
-
         }).start();
         java.lang.System.out.print("Hello ");
         if (isPortBinded("askWorld")) {

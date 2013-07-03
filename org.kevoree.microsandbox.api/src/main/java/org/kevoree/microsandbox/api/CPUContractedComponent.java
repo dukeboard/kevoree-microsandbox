@@ -12,12 +12,13 @@ import org.kevoree.annotation.DictionaryType;
  */
 
 @DictionaryType({
-        @DictionaryAttribute(name = "cpu_wall_time", dataType = Integer.class),
-        @DictionaryAttribute(name = "cpu_peak_percent", dataType = Integer.class),
-        @DictionaryAttribute(name = "cpu_mean_percent_per_second", dataType = Integer.class),
-        @DictionaryAttribute(name = "cpu_mean_percent_per_minute", dataType = Integer.class),
-        @DictionaryAttribute(name = "cpu_mean_percent_per_minute", dataType = Integer.class)
+        @DictionaryAttribute(name = "cpu_wall_time", dataType = Integer.class, optional = true),
+        @DictionaryAttribute(name = "cpu_peak_percent", dataType = Integer.class, optional = true),
+        @DictionaryAttribute(name = "cpu_mean_percent_per_second", dataType = Integer.class, optional = true),
+        @DictionaryAttribute(name = "cpu_mean_percent_per_minute", dataType = Integer.class, optional = true),
+        @DictionaryAttribute(name = "cpu_mean_percent_per_hour", dataType = Integer.class, optional = true)
 })
 @ComponentFragment
 public interface CPUContractedComponent {
+
 }

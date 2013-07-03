@@ -12,10 +12,10 @@ import org.kevoree.annotation.DictionaryType;
  */
 
 @DictionaryType({
-        @DictionaryAttribute(name = "memory_max_size"),
-        @DictionaryAttribute(name = "cpu_wall_time"),
-        @DictionaryAttribute(name = "network_input_seconds"),
-        @DictionaryAttribute(name = "network_output_seconds")
+        @DictionaryAttribute(name = "network_input_max_seconds", optional = true),
+        @DictionaryAttribute(name = "network_output_max_seconds", optional = true),
+        @DictionaryAttribute(name = "network_input_peak_seconds", optional = true),
+        @DictionaryAttribute(name = "network_output_peak_seconds", optional = true)
 })
 @ComponentFragment
 public interface NetworkContractedComponent {

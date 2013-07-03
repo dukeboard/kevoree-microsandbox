@@ -11,10 +11,10 @@ import org.kevoree.annotation.DictionaryType;
  * Time: 16:29
  */
 @DictionaryType({
-        @DictionaryAttribute(name = "memory_max_size"),
-        @DictionaryAttribute(name = "memory_peak_mean_per_second"),
-        @DictionaryAttribute(name = "memory_peak_mean_per_minute"),
-        @DictionaryAttribute(name = "memory_peak_mean_per_hour")
+        @DictionaryAttribute(name = "memory_max_size", optional = true),
+        @DictionaryAttribute(name = "memory_mean_percent_per_second", optional = true),
+        @DictionaryAttribute(name = "memory_mean_percent_per_minute", optional = true),
+        @DictionaryAttribute(name = "memory_mean_percent_per_hour", optional = true)
 })
 @ComponentFragment
 public interface MemoryContractedComponent {
