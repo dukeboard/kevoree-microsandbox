@@ -100,7 +100,7 @@ public class CoverageChecker extends AbstractComponentType {
             for (ComponentInstance instance : node.getComponents()) {
                 System.out.println("        Component : " + instance.getName());
                 componentInstances.add(new WeakReference<ComponentInstance>(instance));
-                info.put(instance.getName(), new ComponentExecutionInfo(instance.getName()));
+                info.put(instance.getName(), new ComponentExecutionInfo(instance.getName(),0));
 
                 if (instance.getDictionary() != null) {
                     List<DictionaryValue> values = instance.getDictionary().getValues();

@@ -17,7 +17,7 @@ import org.resourceaccounting.contract.ResourceContract
  */
 public object ControlAdmissionSystem {
 
-    class Info(val c : WeakReference<ComponentInstance>,
+    class Info(val c : String,
                val mem: Long,
                val netIn : Long,
                val netOut : Long) {
@@ -79,7 +79,7 @@ public object ControlAdmissionSystem {
                 freeNetworkIn -= netIn
                 freeNetworkOut -= netOut
                 components.add(
-                        Info(WeakReference<ComponentInstance>(component),
+                        Info(component.path() as String,
                         mem as Long, netIn as Long, netOut as Long))
 
                 val contract : KevoreeComponentResourceContract? = if (mem.toInt() == 0 && instr.toInt() == 0)
@@ -95,8 +95,9 @@ public object ControlAdmissionSystem {
     }
 
     fun unregisterComponent(c : ComponentInstance) : Boolean {
-        val n = components.filter { info -> info.c.get() != null && info.c.get().equals(c) }.first
-        if (n != null) {
+        val l = components.filter { info -> info.c.equals(c.path()) }
+        if (l != null && l.size > 0) {
+            val n = l.first as Info
             components.remove(n)
             freeMemory += n.mem
             freeNetworkIn += n.netIn

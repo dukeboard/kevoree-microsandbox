@@ -8,6 +8,8 @@ import org.kevoree.monitoring.ranking.*;
 import org.kevoree.monitoring.sla.FaultyComponent;
 import org.kevoree.monitoring.sla.GlobalThreshold;
 import org.kevoree.monitoring.sla.Metric;
+import org.kevoree.monitoring.strategies.adaptation.BasicAdaptation;
+import org.kevoree.monitoring.strategies.adaptation.KillThemAll;
 import org.resourceaccounting.ResourcePrincipal;
 
 /**
@@ -55,9 +57,7 @@ public class MonitoringTask implements Runnable, ContractVerificationRequired {
         gcWatcher.addContractVerificationRequieredListener(this);
         gcWatcher.register();
 
-        currentStatus = MonitoringStatus.GLOBAL_MONITORING;
-        currentStrategy = new GlobalMonitoring(msg, globalThreshold);
-        currentStrategy.init(1000);
+        switchToGlobal();
 
         stopped = false;
         while (!isStopped()) {
@@ -70,10 +70,7 @@ public class MonitoringTask implements Runnable, ContractVerificationRequired {
                         for (Metric m : currentStrategy.getViolationOn())
                             System.out.println("\t" + m);
                         currentStrategy.pause();
-                        currentStatus = MonitoringStatus.LOCAL_MONITORING;
-                        currentStrategy = new AllComponentsMonitoring(
-                                ComponentsRanker.instance$.rank(nodeName, service, bootstraper), msg);
-                        currentStrategy.init(0);
+                        switchToSimpleLocal();
                     }
                     break;
                 case LOCAL_MONITORING:
@@ -87,6 +84,12 @@ public class MonitoringTask implements Runnable, ContractVerificationRequired {
                             ComponentsRanker.instance$.getExecutionInfo(c.getComponentPath()).increaseFailures();
                             System.out.printf("\t%s : %s\n", c.getComponentPath(), c.getMetrics());
                         }
+                        if (new KillThemAll(service).adapt(nodeName, s.getFaultyComponents())) {
+                            switchToGlobal();
+                        }
+                        else {
+                            // TODO: the system cannot perform an adaptation. Die
+                        }
                     }
 
                     break;
@@ -96,6 +99,19 @@ public class MonitoringTask implements Runnable, ContractVerificationRequired {
         currentStrategy.stop();
         gcWatcher.unregister();
         gcWatcher = null;
+    }
+
+    private void switchToSimpleLocal() {
+        currentStatus = MonitoringStatus.LOCAL_MONITORING;
+        currentStrategy = new AllComponentsMonitoring(
+                ComponentsRanker.instance$.rank(nodeName, service, bootstraper), msg);
+        currentStrategy.init(0);
+    }
+
+    private void switchToGlobal() {
+        currentStatus = MonitoringStatus.GLOBAL_MONITORING;
+        currentStrategy = new GlobalMonitoring(msg, globalThreshold);
+        currentStrategy.init(1000);
     }
 
     private void waitMessage() {

@@ -66,7 +66,7 @@ public abstract class AbstractLocalMonitoringStrategy extends AbstractMonitoring
         }
     }
 
-    public ArrayList<FaultyComponent> getFaultyComponents() {
+    public List<FaultyComponent> getFaultyComponents() {
         return faultyComponents;
     }
 }
