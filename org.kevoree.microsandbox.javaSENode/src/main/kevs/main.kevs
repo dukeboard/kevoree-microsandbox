@@ -12,22 +12,27 @@ merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.defaultChan
 merge 'mvn:org.kevoree.microsandbox/org.kevoree.microsandbox.monitoring/1.0-SNAPSHOT'
 merge 'mvn:org.kevoree.microsandbox/org.kevoree.microsandbox.samples/1.0-SNAPSHOT'
 
-addNode node0:MonitoredNode
+//merge 'mvn:fr.irisa.diversify/examples/0.0.1-SNAPSHOT'
+
+addNode node0:MonitoredNode {
+    availability_memory='150000000',
+    availability_instr='200000000'
+}
 
 addComponent FakeConso509@node0 : FakeConsole { singleFrame='true' }
 addComponent FakeConso510@node0 : FakeConsole {}
 addComponent fread@node0 : FileExplorer { basedir='.' }
 
-addComponent memoryConsumer0@node0 : MemoryConsumer {
-    memory_max_size='20',
-    cpu_wall_time='20000',
-    network_input_seconds='234',
-    network_output_seconds='234',
-    amount = '10'
-}
+//addComponent memoryConsumer0@node0 : MemoryConsumer {
+//    memory_max_size='20',
+//    cpu_wall_time='200000',
+//    network_input_seconds='234',
+//    network_output_seconds='234',
+//    amount = '302400'
+//}
 
 addComponent cpuConsumer0@node0 : CPUConsumer {
-    memory_max_size='20',
+    memory_max_size='3000',
     cpu_wall_time='20',
     network_input_seconds='234',
     network_output_seconds='234'
@@ -36,9 +41,16 @@ addComponent cpuConsumer0@node0 : CPUConsumer {
 
 addComponent MonitoringComponent0@node0 : MonitoringComponent {
     memory_threshold='65',
-    cpu_threshold='10',
+    cpu_threshold='40',
     net_in_threshold='80',
     net_out_threshold='80'
+}
+
+addComponent OlivierComponent@node0 : OlivierExample {
+    memory_max_size='20000000',
+    cpu_wall_time='10000',
+    network_input_seconds='234',
+    network_output_seconds='234'
 }
 
 addChannel defMSGT360 : defMSGT {}
@@ -48,6 +60,10 @@ bind FakeConso509.showText@node0 => defMSGT360
 bind FakeConso509.textEntered@node0 => defMSGT419
 bind FakeConso510.showText@node0 => defMSGT419
 bind FakeConso510.textEntered@node0 => defMSGT360
+
+bind OlivierComponent.saludar@node0 => defMSGT419 // memory consumption
+bind OlivierComponent.sayHello@node0 => defMSGT360 // cpu consumption
+
 
 updateDictionary FakeConso510@node0
 updateDictionary defMSGT360

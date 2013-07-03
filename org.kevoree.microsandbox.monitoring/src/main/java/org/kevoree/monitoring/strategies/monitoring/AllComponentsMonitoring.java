@@ -1,4 +1,4 @@
-package org.kevoree.monitoring.strategies;
+package org.kevoree.monitoring.strategies.monitoring;
 
 import org.kevoree.ComponentInstance;
 import org.kevoree.monitoring.sla.FaultyComponent;
@@ -19,6 +19,7 @@ import java.util.List;
  */
 public class AllComponentsMonitoring extends AbstractLocalMonitoringStrategy {
 
+    public static final int NUMBER_OF_STEPS = 3;
     int count = 0;
 
     EnumSet<Metric> a;
@@ -43,27 +44,14 @@ public class AllComponentsMonitoring extends AbstractLocalMonitoringStrategy {
         ResourceContract contract = principal.getContract();
         EnumSet<Metric> tmp = EnumSet.noneOf(Metric.class);
         if (contract.getCPU() < data.lastCPU) {
-//            System.out.printf("%s consumes %d CPU vs. %d\n",
-//                    currentComponent.getName(),
-//                    data.lastCPU,
-//                    contract.getCPU()
-//            );
             tmp.add(Metric.CPU);
         }
 
         if (contract.getNetworkOut() < data.lastSent) {
-//            System.out.printf("%s consumes %d Sent\n",
-//                    currentComponent.getName(),
-//                    data.lastSent
-//            );
             tmp.add(Metric.NetworkS);
         }
 
         if (contract.getNetworkIn() < data.lastReceived) {
-//            System.out.printf("%s consumes %d Received\n",
-//                    currentComponent.getName(),
-//                    data.lastReceived
-//            );
             tmp.add(Metric.NetworkR);
         }
 
@@ -71,7 +59,7 @@ public class AllComponentsMonitoring extends AbstractLocalMonitoringStrategy {
             tmp.add(Metric.Memory);
         }
 
-        if (count == 2 && !tmp.isEmpty()) {
+        if (count == NUMBER_OF_STEPS && !tmp.isEmpty()) {
             a.addAll(tmp);
             faultyComponents.add(new FaultyComponent(currentComponent.path(),tmp));
         }
@@ -85,21 +73,19 @@ public class AllComponentsMonitoring extends AbstractLocalMonitoringStrategy {
     public void run() {
         System.out.println("Local monitor run called");
         count++;
-        if (count == 2) {
+        if (count == NUMBER_OF_STEPS) {
             a = EnumSet.noneOf(Metric.class);
-        }
-        Iterator<ComponentInstance> it = ranking.iterator();
-        while (it.hasNext()) {
-            currentComponent = it.next();
-            ResourcePrincipal principal = getPrincipal(currentComponent);
-            makeContractAvailable(principal, currentComponent);
-            DataForCheckingContract data = getInfo(principal);
-            verifyContract(principal, data);
-            System.out.printf("\t\tThe consumption for %s is %d\n",
-                    currentComponent.getName(),
-                    data.lastMem);
-        }
-        if (count == 2) {
+            Iterator<ComponentInstance> it = ranking.iterator();
+            while (it.hasNext()) {
+                currentComponent = it.next();
+                ResourcePrincipal principal = getPrincipal(currentComponent);
+                makeContractAvailable(principal, currentComponent);
+                DataForCheckingContract data = getInfo(principal);
+                verifyContract(principal, data);
+                System.out.printf("\t\tThe consumption for %s is %d\n",
+                        currentComponent.getName(),
+                        data.lastMem);
+            }
             // if someone is violating the contract then trigger adaptation
             if (!a.isEmpty())
                 actionOnContractViolation(a);

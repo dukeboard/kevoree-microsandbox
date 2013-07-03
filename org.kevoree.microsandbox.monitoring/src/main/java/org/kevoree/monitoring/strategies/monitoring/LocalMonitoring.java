@@ -1,4 +1,4 @@
-package org.kevoree.monitoring.strategies;
+package org.kevoree.monitoring.strategies.monitoring;
 
 import org.kevoree.ComponentInstance;
 import org.resourceaccounting.ResourcePrincipal;

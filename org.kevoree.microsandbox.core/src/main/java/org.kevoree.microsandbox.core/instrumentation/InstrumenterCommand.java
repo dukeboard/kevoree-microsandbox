@@ -24,10 +24,10 @@ public class InstrumenterCommand {
         ClassReader reader = new ClassReader(code);
         ClassWriter writer = new ClassWriter(reader, ClassWriter.COMPUTE_MAXS);
         ClassVisitor tmp = writer;
-        if (className.endsWith("OlivierExample")) {
-            System.out.println("dfsdsfdsfdsfsfdsfsdfdsff 12345678");
-            tmp = new TraceClassVisitor(tmp, new PrintWriter(System.out));
-        }
+//        if (className.endsWith("OlivierExample")) {
+//            System.out.println("dfsdsfdsfdsfsfdsfsdfdsff 12345678");
+//            tmp = new TraceClassVisitor(tmp, new PrintWriter(System.out));
+//        }
         //tmp = new CheckClassAdapter(tmp,true);
         tmp = new ResourceAccountingVisitor(tmp);
 
@@ -41,9 +41,6 @@ public class InstrumenterCommand {
         }
 //        if (className.endsWith("KevsParser"))
 //        CheckClassAdapter.verify(new ClassReader(writer.toByteArray()),false,new PrintWriter(System.out));
-        if (className.endsWith("OlivierExample")) {
-            System.out.println("Everything seems to be OK");
-        }
         return writer.toByteArray();
     }
 

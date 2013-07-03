@@ -1,4 +1,4 @@
-package org.kevoree.monitoring.strategies;
+package org.kevoree.monitoring.strategies.monitoring;
 
 import org.kevoree.monitoring.comp.MyResourceConsumptionRecorder;
 import org.kevoree.monitoring.sla.GlobalThreshold;
