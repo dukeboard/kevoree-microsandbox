@@ -27,12 +27,14 @@ public class AllComponentsMonitoring extends AbstractLocalMonitoringStrategy {
 
     public AllComponentsMonitoring(List<ComponentInstance> ranking, Object msg) {
         super(ranking, msg);
+        System.out.println("Local monitor constructor called");
     }
 
     @Override
     public void init(int startTime) {
         super.init(startTime);
         count = 0;
+        System.out.println("Local monitor init called");
     }
 
     @Override
@@ -81,6 +83,7 @@ public class AllComponentsMonitoring extends AbstractLocalMonitoringStrategy {
 
     @Override
     public void run() {
+        System.out.println("Local monitor run called");
         count++;
         if (count == 2) {
             a = EnumSet.noneOf(Metric.class);
@@ -92,6 +95,9 @@ public class AllComponentsMonitoring extends AbstractLocalMonitoringStrategy {
             makeContractAvailable(principal, currentComponent);
             DataForCheckingContract data = getInfo(principal);
             verifyContract(principal, data);
+            System.out.printf("\t\tThe consumption for %s is %d\n",
+                    currentComponent.getName(),
+                    data.lastMem);
         }
         if (count == 2) {
             // if someone is violating the contract then trigger adaptation

@@ -19,7 +19,7 @@ import org.kevoreeadaptation.AdaptationPrimitive;
         @DictionaryAttribute(name = "availability_memory", defaultValue = "180000000"),
         @DictionaryAttribute(name = "availability_sent", defaultValue = "18000"),
         @DictionaryAttribute(name = "availability_received", defaultValue = "18000"),
-        @DictionaryAttribute(name = "availability_instr", defaultValue = "1800000")
+        @DictionaryAttribute(name = "availability_instr", defaultValue = "180000000")
 })
 @NodeType
 @Library(name = "JavaSE")

@@ -22,6 +22,7 @@ public class MemoryAllocationMethodInstrumentation extends AbstractMethodInstrum
     public MemoryAllocationMethodInstrumentation(MethodVisitor visitor, String className, boolean accountForArrays) {
         super(visitor, className);
         this.accountForArrays = accountForArrays;
+
     }
 
     @Override

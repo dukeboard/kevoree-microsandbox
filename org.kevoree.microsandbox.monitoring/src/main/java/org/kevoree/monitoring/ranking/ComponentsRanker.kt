@@ -43,12 +43,11 @@ public object ComponentsRanker {
                         info.get(instance.path())
                     }
                     else {
-                        components.add(instance)
                         val l = KevoreeDeployManager.getRef(instance.javaClass.getName()+"_deployTime", instance.getName()) as Long
                         val c = ComponentExecutionInfo(instance.getName(), l)
                         info.put(instance.path() as String, c)
                     }
-
+                    components.add(instance)
                     updateInfo(instance, i, node, bootstrapService)
                 }
         }

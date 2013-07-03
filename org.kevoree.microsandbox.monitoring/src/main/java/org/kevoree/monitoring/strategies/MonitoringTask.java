@@ -89,7 +89,13 @@ public class MonitoringTask implements Runnable, ContractVerificationRequired {
                         }
                         else {
                             // TODO: the system cannot perform an adaptation. Die
+                            System.err.println("Why I am here");
+                            System.exit(3);
                         }
+                    }
+                    else {
+                        currentStrategy.pause();
+                        switchToGlobal();
                     }
 
                     break;

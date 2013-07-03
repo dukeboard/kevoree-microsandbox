@@ -31,8 +31,11 @@ public class KillThemAll extends BasicAdaptation {
         try {
             ContainerRoot clonedModel = cloner.clone(uuidModel.getModel());
             ContainerNode node = clonedModel.findNodesByID(nodeName);
-            for (FaultyComponent c : faultyComponents)
+            for (FaultyComponent c : faultyComponents) {
+                clonedModel.findByPath(c.getComponentPath(), ComponentInstance.class).removeAllProvided();
+                clonedModel.findByPath(c.getComponentPath(), ComponentInstance.class).removeAllRequired();
                 node.removeComponents(clonedModel.findByPath(c.getComponentPath(), ComponentInstance.class));
+            }
             modelService.atomicCompareAndSwapModel(uuidModel, clonedModel);
             return true;
         } catch (KevoreeModelUpdateException e) {

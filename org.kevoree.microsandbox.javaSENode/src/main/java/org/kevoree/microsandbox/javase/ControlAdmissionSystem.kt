@@ -7,6 +7,7 @@ import java.lang.ref.WeakReference
 import java.util.ArrayList
 import org.resourceaccounting.contract.ComponentResourceContract
 import org.resourceaccounting.contract.ResourceContract
+import java.util.concurrent.locks.ReentrantLock
 
 /**
  * Created with IntelliJ IDEA.
@@ -29,6 +30,8 @@ public object ControlAdmissionSystem {
     private var freeNetworkOut : Long = 0
 
     private val components : MutableList<Info> = ArrayList<Info>()
+
+    private val lock = ReentrantLock()
 
     /**
      * Calculate the initial amount of resource in the platform and
@@ -78,9 +81,12 @@ public object ControlAdmissionSystem {
                 freeMemory -= mem
                 freeNetworkIn -= netIn
                 freeNetworkOut -= netOut
-                components.add(
-                        Info(component.path() as String,
-                        mem as Long, netIn as Long, netOut as Long))
+
+                lock.lock()
+                    components.add(
+                            Info(component.path() as String,
+                            mem as Long, netIn as Long, netOut as Long))
+                lock.unlock()
 
                 val contract : KevoreeComponentResourceContract? = if (mem.toInt() == 0 && instr.toInt() == 0)
                                                                         null
@@ -95,10 +101,14 @@ public object ControlAdmissionSystem {
     }
 
     fun unregisterComponent(c : ComponentInstance) : Boolean {
+        lock.lock()
         val l = components.filter { info -> info.c.equals(c.path()) }
+        lock.unlock()
         if (l != null && l.size > 0) {
             val n = l.first as Info
+            lock.lock()
             components.remove(n)
+            lock.unlock()
             freeMemory += n.mem
             freeNetworkIn += n.netIn
             freeNetworkOut += n.netOut
