@@ -1,5 +1,6 @@
 package org.kevoree.microsandbox.api;
 
+import org.kevoree.annotation.ChannelTypeFragment;
 import org.kevoree.annotation.ComponentFragment;
 import org.kevoree.annotation.DictionaryAttribute;
 import org.kevoree.annotation.DictionaryType;
@@ -19,6 +20,7 @@ import org.kevoree.annotation.DictionaryType;
         /* Thread affinity Core dispatch */
 })
 @ComponentFragment
-public interface CPUContractedComponent {
+@ChannelTypeFragment
+public interface CPUContracted {
 
 }

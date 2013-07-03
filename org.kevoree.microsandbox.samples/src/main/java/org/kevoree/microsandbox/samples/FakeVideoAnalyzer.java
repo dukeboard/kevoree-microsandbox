@@ -5,7 +5,7 @@ import org.kevoree.annotation.Start;
 import org.kevoree.annotation.Stop;
 import org.kevoree.framework.AbstractComponentType;
 import org.kevoree.log.Log;
-import org.kevoree.microsandbox.api.FullContractedComponent;
+import org.kevoree.microsandbox.api.FullContracted;
 
 import static org.kevoree.log.Log.info;
 
@@ -17,7 +17,7 @@ import static org.kevoree.log.Log.info;
  */
 
 @ComponentType
-public class FakeVideoAnalyzer extends AbstractComponentType implements FullContractedComponent, Runnable {
+public class FakeVideoAnalyzer extends AbstractComponentType implements FullContracted, Runnable {
 
     private Thread processThread = null;
 
