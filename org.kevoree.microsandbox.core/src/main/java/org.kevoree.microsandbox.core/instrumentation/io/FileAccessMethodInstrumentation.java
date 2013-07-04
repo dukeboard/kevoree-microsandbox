@@ -19,17 +19,18 @@ public class FileAccessMethodInstrumentation extends AbstractMethodInstrumentati
     @Override
     public void visitMethodInsn(int opcode, String involvedClass, String calledMethod, String s3) {
 
-        if (calledMethod.equals("writeBytes")) {
-            // generate call to the resource monitor
-            callIntegerForFileWriteAccess();
+//        if (calledMethod.equals("writeBytes")) {
+//            // generate call to the resource monitor
+//            callIntegerForFileWriteAccess();
+//            super.visitMethodInsn(opcode, involvedClass, calledMethod, s3);
+//        }
+//        else if (calledMethod.equals("readBytes")) {
+//            super.visitMethodInsn(opcode, involvedClass, calledMethod, s3);
+//            // generate call to the resource monitor
+//            callIntegerForFileReadAccess();
+//        }
+//        else 
             super.visitMethodInsn(opcode, involvedClass, calledMethod, s3);
-        }
-        else if (calledMethod.equals("readBytes")) {
-            super.visitMethodInsn(opcode, involvedClass, calledMethod, s3);
-            // generate call to the resource monitor
-            callIntegerForFileReadAccess();
-        }
-        else super.visitMethodInsn(opcode, involvedClass, calledMethod, s3);
     }
 
     private void callIntegerForFileReadAccess() {
