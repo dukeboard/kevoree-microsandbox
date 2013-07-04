@@ -25,7 +25,7 @@
         </dependency>
         <dependency>
             <groupId>org.kevoree.microsandbox</groupId>
-            <artifactId>ResourceMonitorArtifacts</artifactId>
+            <artifactId>org.kevoree.microsandbox.sharedResourceAccounting</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
