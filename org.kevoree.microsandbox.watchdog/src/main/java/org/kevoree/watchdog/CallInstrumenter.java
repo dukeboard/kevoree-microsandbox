@@ -1,5 +1,7 @@
 package org.kevoree.watchdog;
 
+import org.kevoree.watchdog.child.jvm.LocateRuntimeJar;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -27,7 +29,7 @@ public class CallInstrumenter {
             urls[0] = new URL("file:///" + instrumenterJar.getAbsolutePath());
             URLClassLoader cl = new URLClassLoader(urls);
             Class mainClazz = cl.loadClass("org.kevoree.microsandbox.jarInstrument.Main");
-            String rtJar = "/Library/Java/Home/bundle/Home/bundle/Classes/classes.jar";
+            String rtJar = LocateRuntimeJar.locateRuntimeJar().getAbsolutePath();
             Method mainM = mainClazz.getMethod("main", String[].class);
             String[] args = new String[2];
             args[0] = rtJar;
