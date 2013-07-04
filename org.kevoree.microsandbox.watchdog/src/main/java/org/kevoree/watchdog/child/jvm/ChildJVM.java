@@ -130,6 +130,9 @@ public class ChildJVM {
         if (!mainClassArguments.isEmpty()) {
             commandLine.addAll(mainClassArguments);
         }
+
+        System.out.println("Command line : "+commandLine);
+
         return commandLine;
     }
 
