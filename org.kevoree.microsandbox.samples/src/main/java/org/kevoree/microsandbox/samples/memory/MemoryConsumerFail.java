@@ -2,7 +2,7 @@ package org.kevoree.microsandbox.samples.memory;
 
 import org.kevoree.annotation.ComponentType;
 import org.kevoree.annotation.Start;
-import org.kevoree.microsandbox.api.MemoryContracted;
+import org.kevoree.microsandbox.api.contract.MemoryContracted;
 
 /**
  * Created with IntelliJ IDEA.

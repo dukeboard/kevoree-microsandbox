@@ -5,7 +5,7 @@ import org.kevoree.annotation.Start;
 import org.kevoree.annotation.Stop;
 import org.kevoree.framework.AbstractComponentType;
 import org.kevoree.log.Log;
-import org.kevoree.microsandbox.api.FullContracted;
+import org.kevoree.microsandbox.api.contract.FullContracted;
 
 import static org.kevoree.log.Log.info;
 

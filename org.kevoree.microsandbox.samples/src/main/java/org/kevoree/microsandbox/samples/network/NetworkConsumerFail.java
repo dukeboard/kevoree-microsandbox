@@ -2,8 +2,7 @@ package org.kevoree.microsandbox.samples.network;
 
 import org.kevoree.annotation.ComponentType;
 import org.kevoree.annotation.Start;
-import org.kevoree.microsandbox.api.MemoryContracted;
-import org.kevoree.microsandbox.api.NetworkContracted;
+import org.kevoree.microsandbox.api.contract.NetworkContracted;
 
 import java.net.MalformedURLException;
 import java.net.URL;

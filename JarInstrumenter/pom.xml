@@ -10,7 +10,6 @@
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
-
     <artifactId>JarInstrumenter</artifactId>
 
     <build>
@@ -22,9 +21,7 @@
                 <configuration>
                     <archive>
                         <manifestEntries>
-                            <Main-Class>
-                                Main
-                            </Main-Class>
+                            <Main-Class>Main</Main-Class>
                         </manifestEntries>
                     </archive>
                 </configuration>
@@ -41,8 +38,6 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <finalName>JarInstrumenter</finalName>
-                    <outputDirectory>/home/inti/Desktop/Demo/</outputDirectory>
                     <filters>
                         <filter>
                             <artifact>*:*</artifact>
@@ -65,4 +60,5 @@
             <version>${project.version}</version>
         </dependency>
     </dependencies>
+
 </project>

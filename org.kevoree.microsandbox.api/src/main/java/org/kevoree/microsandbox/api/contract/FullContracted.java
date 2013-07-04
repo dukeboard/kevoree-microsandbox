@@ -1,4 +1,4 @@
-package org.kevoree.microsandbox.api;
+package org.kevoree.microsandbox.api.contract;
 
 import org.kevoree.annotation.ChannelTypeFragment;
 import org.kevoree.annotation.ComponentFragment;
