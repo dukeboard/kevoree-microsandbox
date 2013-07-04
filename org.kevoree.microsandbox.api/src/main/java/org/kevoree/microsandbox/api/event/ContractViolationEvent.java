@@ -10,6 +10,13 @@ import org.kevoree.microsandbox.api.sla.Metric;
  */
 public class ContractViolationEvent {
 
+    public ContractViolationEvent(String instancePath, Metric metric, Double observedValue, Double maxValue) {
+        this.instancePath = instancePath;
+        this.metric = metric;
+        this.observedValue = observedValue;
+        this.maxValue = maxValue;
+    }
+
     private String instancePath;
 
     private Metric metric;
