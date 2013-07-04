@@ -7,7 +7,6 @@ import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.Arrays;
 
 /**
  * Created with IntelliJ IDEA.
@@ -17,31 +16,31 @@ import java.util.Arrays;
  */
 public class CallInstrumenter {
 
-    public static void main(String[] args){
-        createRTIntrumentedJar(null);
+    public static void main(String[] args) {
+        createRTIntrumentedJar(new File("OutputRT.jar"));
     }
 
     public static void createRTIntrumentedJar(File target) {
-
         try {
             File instrumenterJar = copyToTemp(CallInstrumenter.class.getClassLoader().getResourceAsStream("jarInstrumenter.jar"));
             URL[] urls = new URL[1];
-            urls[0] = new URL("file:///"+instrumenterJar.getAbsolutePath());
+            urls[0] = new URL("file:///" + instrumenterJar.getAbsolutePath());
             URLClassLoader cl = new URLClassLoader(urls);
             Class mainClazz = cl.loadClass("org.kevoree.microsandbox.jarInstrument.Main");
             String rtJar = "/Library/Java/Home/bundle/Home/bundle/Classes/classes.jar";
             Method mainM = mainClazz.getMethod("main", String[].class);
-            String[] args = new String[1];
+            String[] args = new String[2];
             args[0] = rtJar;
+            args[1] = target.getCanonicalPath();
             mainM.invoke(null, (Object) args);
-
+            instrumenterJar.delete();
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     public static File copyToTemp(InputStream is) throws IOException {
-        File tempFile = File.createTempFile("jarInstrumentJar",".jar");
+        File tempFile = File.createTempFile("jarInstrumentJar", ".jar");
         FileOutputStream fos = new FileOutputStream(tempFile);
         byte data[] = new byte[1024];
         int count;

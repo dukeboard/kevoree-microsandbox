@@ -25,7 +25,7 @@ public class Main {
 
     public static void main(String[] args) {
         if (args.length < 1) {
-            System.err.printf("Usage: java -jar JarInstrumenter.jar [jar file]\n");
+            System.err.printf("Usage: java -jar JarInstrumenter.jar [jar file] ([outputjar file])\n");
             System.exit(1);
         }
         File f = new File(args[0]);
@@ -33,21 +33,27 @@ public class Main {
             System.err.printf("File %s does not exist\n", args[0]);
             System.exit(2);
         }
+
+        File targetFile = new File("rtNew.jar");
+        if(args.length >= 2){
+            targetFile = new File(args[1]);
+        }
+
         boolean onlyProxies = false;
         if (args.length == 2) {
             onlyProxies = Boolean.parseBoolean(args[1]);
         }
-        performInstrumentation(f, onlyProxies);
+        performInstrumentation(f, onlyProxies,targetFile);
     }
 
-    public static void performInstrumentation(File f, boolean onlyProxies) {
+    public static void performInstrumentation(File f, boolean onlyProxies, File targetFile) {
 
         JarFile jar = null;
         try {
             InstrumenterCommand cmd = new InstrumenterCommand();
 
             jar = new JarFile(f);
-            JarOutputStream outputStream = new JarOutputStream(new FileOutputStream("rtNew.jar"));
+            JarOutputStream outputStream = new JarOutputStream(new FileOutputStream(targetFile));
 
             // instrument as many classes as
             if (!onlyProxies) {
@@ -78,7 +84,7 @@ public class Main {
                                 jar.getEntry(clazz + ".class"),
                                 cmd,
                                 false);
-                        System.out.printf("Root %d : %s\n", c++, clazz);
+                        //System.out.printf("Root %d : %s\n", c++, clazz);
                     }
                 }
 
@@ -124,6 +130,9 @@ public class Main {
             outputStream.close();
 
         } catch (IOException e) {
+
+            e.printStackTrace();
+
             System.err.printf("File %s is invalid jar file\n", f);
             System.exit(3);
         } finally {

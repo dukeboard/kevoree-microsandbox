@@ -64,7 +64,9 @@ public class WatchDogCheck implements Runnable {
     }
 
     public void destroyChild() {
-        currentProcess.destroy();
+        if(currentProcess != null){
+            currentProcess.destroy();
+        }
         try {
             sysoutThread.stop();
             try {

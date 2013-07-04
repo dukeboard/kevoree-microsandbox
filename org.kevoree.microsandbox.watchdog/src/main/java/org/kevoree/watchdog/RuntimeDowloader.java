@@ -43,12 +43,6 @@ public class RuntimeDowloader {
                 fos.getChannel().transferFrom(rbc, 0, 1 << 24);
                 fos.close();
             }
-
-            //TODO Inti
-            // At this time you can intrument the Kevoree Jar if necessary, but doing it at this point , you've get the cache strategy to start more quickly next time.
-
-
-
         }
         return runtimeFile;
     }
@@ -57,6 +51,39 @@ public class RuntimeDowloader {
         String tempPath = getTempPath();
         File runtimeFile = new File(tempPath + File.separator + "kevoree-runtime-" + version + ".jar");
         return runtimeFile;
+    }
+
+    public File getExtRTJar() {
+        String tempPath = getTempPath();
+        File runtimeFile = new File(tempPath + File.separator + "ext-rt.jar");
+        if (!runtimeFile.exists()) {
+            System.out.print("Extended JDK jar not found ... building it ....");
+            CallInstrumenter.createRTIntrumentedJar(runtimeFile);
+            System.out.println("Done");
+        }
+        System.out.println("Extended JAR  : "+runtimeFile.getAbsoluteFile());
+        return runtimeFile;
+    }
+
+    public File getExtAgent(){
+        String tempPath = getTempPath();
+        File agentFile = new File(tempPath + File.separator + "ext-agent"+Version.VERSION+".jar");
+        try {
+            if (!agentFile.exists()) {
+                FileOutputStream fos = new FileOutputStream(agentFile);
+                InputStream is = this.getClass().getClassLoader().getResourceAsStream("resourceMonitorJavaAgent.jar");
+                byte data[] = new byte[1024];
+                int count;
+                while ((count = is.read(data, 0, 1024)) != -1) {
+                    fos.write(data, 0, count);
+                }
+                is.close();
+                fos.close();
+            }
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+        return agentFile;
     }
 
 

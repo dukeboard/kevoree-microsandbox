@@ -30,6 +30,7 @@
  */
 package org.kevoree.watchdog.child.jvm;
 
+import org.kevoree.watchdog.RuntimeDowloader;
 import org.kevoree.watchdog.Version;
 
 import java.io.File;
@@ -96,15 +97,12 @@ public class ChildJVM {
 
     private List<String> buildCommandLine() {
 
-        //TODO this the time to instrument the RT.jar
-        //USe a cache strategy to avoid doing it each time :-)
-
-
-
 
         List<String> commandLine = null;
         commandLine = new ArrayList<String>();
         commandLine.add("java");
+
+
         if (additionalCommandLineArguments != null) {
             commandLine.addAll(additionalCommandLineArguments);
         }
@@ -121,10 +119,9 @@ public class ChildJVM {
             }
         }
 
-        //TODO add at this point your Xbootclasspath option
-        //TODO add also your agent :-)
-
-
+        RuntimeDowloader dwl = new RuntimeDowloader();
+        commandLine.add("-Xbootclasspath/p:" + dwl.getExtRTJar().getAbsolutePath());
+        commandLine.add("-javaagent:" + dwl.getExtAgent().getAbsolutePath());
 
         if (inheritedSystemPropertyNames != null && !inheritedSystemPropertyNames.isEmpty()) {
             commandLine.addAll(getInheritedSystemProperties());
