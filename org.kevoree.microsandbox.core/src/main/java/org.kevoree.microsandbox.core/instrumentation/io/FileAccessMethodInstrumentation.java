@@ -19,17 +19,17 @@ public class FileAccessMethodInstrumentation extends AbstractMethodInstrumentati
     @Override
     public void visitMethodInsn(int opcode, String involvedClass, String calledMethod, String s3) {
 
-//        if (calledMethod.equals("writeBytes")) {
-//            // generate call to the resource monitor
-//            callIntegerForFileWriteAccess();
-//            super.visitMethodInsn(opcode, involvedClass, calledMethod, s3);
-//        }
-//        else if (calledMethod.equals("readBytes")) {
-//            super.visitMethodInsn(opcode, involvedClass, calledMethod, s3);
-//            // generate call to the resource monitor
-//            callIntegerForFileReadAccess();
-//        }
-//        else
+        if (calledMethod.equals("writeBytes")) {
+            // generate call to the resource monitor
+            callIntegerForFileWriteAccess(s3);
+            super.visitMethodInsn(opcode, involvedClass, calledMethod, s3);
+        }
+        else if (calledMethod.equals("readBytes")) {
+            super.visitMethodInsn(opcode, involvedClass, calledMethod, s3);
+            // generate call to the resource monitor
+            callIntegerForFileReadAccess();
+        }
+        else
             super.visitMethodInsn(opcode, involvedClass, calledMethod, s3);
     }
 
@@ -38,10 +38,12 @@ public class FileAccessMethodInstrumentation extends AbstractMethodInstrumentati
         invokestatic("java/lang/Integer", "__reportFileRead__", "(I)V");
     }
 
-    private void callIntegerForFileWriteAccess() {
-        this.swap();
+    private void callIntegerForFileWriteAccess(String signature) {
+        if (signature.equals("([BIIZ)V"))
+            this.swap();
         this.dup(); // number of bytes to write
         invokestatic("java/lang/Integer", "__reportFileWrite__", "(I)V");
-        this.swap();
+        if (signature.equals("([BIIZ)V"))
+            this.swap();
     }
 }
