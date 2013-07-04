@@ -120,7 +120,7 @@ public class ChildJVM {
         }
 
         RuntimeDowloader dwl = new RuntimeDowloader();
-        commandLine.add("-Xbootclasspath/p:" + dwl.getExtRTJar().getAbsolutePath()+";"+dwl.getSharedResourceAccounting());
+        commandLine.add("-Xbootclasspath/p:" + dwl.getExtRTJar().getAbsolutePath()+File.pathSeparatorChar+dwl.getSharedResourceAccounting());
         commandLine.add("-javaagent:" + dwl.getExtAgent().getAbsolutePath());
 
         if (inheritedSystemPropertyNames != null && !inheritedSystemPropertyNames.isEmpty()) {

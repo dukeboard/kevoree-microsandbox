@@ -1,7 +1,6 @@
 package org.kevoree.watchdog.child.jvm;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 
 /**
@@ -34,7 +33,7 @@ public class LocateRuntimeJar {
 
         } else {
             //TODO for unix, I just want to see this working
-            return new File("/usr/lib/jvm/java-1.7.0-openjdk-i386/jre/lib");
+            return new File("/usr/lib/jvm/java-7-oracle/jre/lib/rt.jar");
         }
         return null;
     }
