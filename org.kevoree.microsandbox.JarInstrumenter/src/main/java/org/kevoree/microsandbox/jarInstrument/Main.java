@@ -40,13 +40,14 @@ public class Main {
 
 
         File targetFile = new File("rtNew.jar");
+        /*
         if(args.length >= 2){
             targetFile = new File(args[1]);
-        }
+        }*/
 
         //File f = new File("/Library/Java/Home/bundle/Home/bundle/Classes/classes.jar");
 
-        boolean onlyProxies = false;
+        boolean onlyProxies = true;
         if (args.length == 2) {
             onlyProxies = Boolean.parseBoolean(args[1]);
         }
