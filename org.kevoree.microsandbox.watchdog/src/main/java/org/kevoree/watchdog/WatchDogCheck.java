@@ -103,7 +103,7 @@ public class WatchDogCheck implements Runnable {
         serverThread.setDaemon(true);
         serverThread.start();
         lastCheck.set(System.currentTimeMillis());
-        pool.scheduleAtFixedRate(this, WatchDogCheck.checkTime, WatchDogCheck.checkTime, TimeUnit.MILLISECONDS);
+        pool.scheduleAtFixedRate(this, WatchDogCheck.checkTime*3, WatchDogCheck.checkTime, TimeUnit.MILLISECONDS);
     }
 
     public void startKevoreeProcess() {

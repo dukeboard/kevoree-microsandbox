@@ -27,7 +27,7 @@ public class Main {
     public static void main(String[] args) {
 
 
-
+          /*
         if (args.length < 1) {
             System.err.printf("Usage: java -jar JarInstrumenter.jar [jar file] ([outputjar file])\n");
             System.exit(1);
@@ -36,7 +36,7 @@ public class Main {
         if (!f.exists()) {
             System.err.printf("File %s does not exist\n", args[0]);
             System.exit(2);
-        }
+        } */
 
 
         File targetFile = new File("rtNew.jar");
@@ -45,12 +45,12 @@ public class Main {
             targetFile = new File(args[1]);
         }
 
-        //File f = new File("/Library/Java/Home/bundle/Home/bundle/Classes/classes.jar");
+        File f = new File("/Library/Java/Home/bundle/Home/bundle/Classes/classes.jar");
 
-        boolean onlyProxies = true;
-        /*if (args.length == 2) {
+        boolean onlyProxies = false;
+       if (args.length == 3) {
             onlyProxies = Boolean.parseBoolean(args[1]);
-        }*/
+        }
         performInstrumentation(f, onlyProxies,targetFile);
     }
 
