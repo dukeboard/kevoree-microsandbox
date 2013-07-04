@@ -19,7 +19,7 @@ public class CallInstrumenter {
     public void createRTIntrumentedJar(File target) {
 
         try {
-            File instrumenterJar = copyToTemp(this.getClass().getClassLoader().getResourceAsStream("jarInstrumenter.jar"))
+            File instrumenterJar = copyToTemp(this.getClass().getClassLoader().getResourceAsStream("jarInstrumenter.jar"));
             URL[] urls = new URL[1];
             urls[0] = new URL(instrumenterJar.getAbsolutePath());
             URLClassLoader cl = new URLClassLoader(urls);
