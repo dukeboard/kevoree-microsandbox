@@ -50,8 +50,6 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <finalName>ResourceMonitorAgent</finalName>
-                   <!-- <outputDirectory>/home/inti/Desktop/Demo/</outputDirectory>    -->
                     <filters>
                         <filter>
                             <artifact>*:*</artifact>
