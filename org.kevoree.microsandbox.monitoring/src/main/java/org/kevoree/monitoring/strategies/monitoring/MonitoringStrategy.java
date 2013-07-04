@@ -1,7 +1,7 @@
 package org.kevoree.monitoring.strategies.monitoring;
 
+import org.kevoree.microsandbox.api.sla.Metric;
 import org.kevoree.monitoring.comp.monitor.ContractVerificationRequired;
-import org.kevoree.monitoring.sla.Metric;
 
 import java.util.EnumSet;
 
@@ -13,7 +13,7 @@ import java.util.EnumSet;
  * To change this template use File | Settings | File Templates.
  */
 public interface MonitoringStrategy extends ContractVerificationRequired {
-    void actionOnContractViolation(Metric ... metrics);
+    void actionOnContractViolation(Metric... metrics);
     boolean isThereContractViolation();
 
     void init(int startTime);

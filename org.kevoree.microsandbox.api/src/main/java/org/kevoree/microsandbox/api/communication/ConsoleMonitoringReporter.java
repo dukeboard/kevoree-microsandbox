@@ -1,7 +1,7 @@
-package org.kevoree.monitoring.communication;
+package org.kevoree.microsandbox.api.communication;
 
 
-import org.kevoree.monitoring.sla.Metric;
+import org.kevoree.microsandbox.api.sla.Metric;
 
 /**
  * Created with IntelliJ IDEA.

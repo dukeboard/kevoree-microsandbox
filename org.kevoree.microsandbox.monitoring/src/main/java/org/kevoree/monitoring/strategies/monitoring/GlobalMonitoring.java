@@ -1,8 +1,8 @@
 package org.kevoree.monitoring.strategies.monitoring;
 
+import org.kevoree.microsandbox.api.sla.Metric;
 import org.kevoree.monitoring.comp.MyResourceConsumptionRecorder;
 import org.kevoree.monitoring.sla.GlobalThreshold;
-import org.kevoree.monitoring.sla.Metric;
 import org.resourceaccounting.ResourceConsumptionRecorderMBean;
 import org.resourceaccounting.ResourcePrincipal;
 

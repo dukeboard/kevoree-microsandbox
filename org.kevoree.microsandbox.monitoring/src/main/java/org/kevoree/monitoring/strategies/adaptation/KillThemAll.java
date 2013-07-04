@@ -5,7 +5,7 @@ import org.kevoree.api.service.core.handler.KevoreeModelHandlerService;
 import org.kevoree.api.service.core.handler.KevoreeModelUpdateException;
 import org.kevoree.api.service.core.handler.UUIDModel;
 import org.kevoree.cloner.ModelCloner;
-import org.kevoree.monitoring.communication.MonitoringReporterFactory;
+import org.kevoree.microsandbox.api.communication.MonitoringReporterFactory;
 import org.kevoree.monitoring.sla.FaultyComponent;
 
 import java.util.List;

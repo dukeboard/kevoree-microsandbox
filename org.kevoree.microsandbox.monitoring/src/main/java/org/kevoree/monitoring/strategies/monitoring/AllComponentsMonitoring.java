@@ -1,8 +1,8 @@
 package org.kevoree.monitoring.strategies.monitoring;
 
 import org.kevoree.ComponentInstance;
+import org.kevoree.microsandbox.api.sla.Metric;
 import org.kevoree.monitoring.sla.FaultyComponent;
-import org.kevoree.monitoring.sla.Metric;
 import org.resourceaccounting.ResourcePrincipal;
 import org.resourceaccounting.contract.ResourceContract;
 

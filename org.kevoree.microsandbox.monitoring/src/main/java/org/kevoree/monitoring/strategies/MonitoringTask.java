@@ -2,7 +2,8 @@ package org.kevoree.monitoring.strategies;
 
 import org.kevoree.api.Bootstraper;
 import org.kevoree.api.service.core.handler.KevoreeModelHandlerService;
-import org.kevoree.monitoring.communication.MonitoringReporterFactory;
+import org.kevoree.microsandbox.api.communication.MonitoringReporterFactory;
+import org.kevoree.microsandbox.api.sla.Metric;
 import org.kevoree.monitoring.comp.MyResourceConsumptionRecorder;
 import org.kevoree.monitoring.comp.monitor.ContractVerificationRequired;
 import org.kevoree.monitoring.comp.monitor.GCWatcher;
@@ -15,7 +16,6 @@ import org.kevoree.monitoring.strategies.monitoring.AllComponentsMonitoring;
 import org.kevoree.monitoring.strategies.monitoring.GlobalMonitoring;
 import org.kevoree.monitoring.strategies.monitoring.MonitoringStrategy;
 import org.resourceaccounting.ResourcePrincipal;
-import org.kevoree.monitoring.sla.Metric;
 
 import java.util.EnumMap;
 

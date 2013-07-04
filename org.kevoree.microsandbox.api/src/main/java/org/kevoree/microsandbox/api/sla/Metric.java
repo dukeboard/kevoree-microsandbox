@@ -1,4 +1,4 @@
-package org.kevoree.monitoring.sla;
+package org.kevoree.microsandbox.api.sla;
 
 /**
  * Created with IntelliJ IDEA.

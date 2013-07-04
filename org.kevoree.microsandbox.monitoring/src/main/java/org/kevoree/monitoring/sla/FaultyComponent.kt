@@ -3,6 +3,7 @@ package org.kevoree.monitoring.sla
 import org.kevoree.ComponentInstance
 import java.util.EnumSet
 import java.util.EnumMap
+import org.kevoree.microsandbox.api.sla.Metric
 
 /**
  * Created with IntelliJ IDEA.

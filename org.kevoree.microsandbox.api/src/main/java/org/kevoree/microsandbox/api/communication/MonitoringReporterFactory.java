@@ -1,4 +1,4 @@
-package org.kevoree.monitoring.communication;
+package org.kevoree.microsandbox.api.communication;
 
 /**
  * Created with IntelliJ IDEA.
