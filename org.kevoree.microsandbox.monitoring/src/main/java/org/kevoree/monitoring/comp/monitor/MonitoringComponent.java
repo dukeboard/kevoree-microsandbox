@@ -19,7 +19,9 @@ import org.kevoree.monitoring.strategies.MonitoringTask;
         @DictionaryAttribute(name = "memory_threshold", defaultValue = "60"),
         @DictionaryAttribute(name = "cpu_threshold", defaultValue = "70"),
         @DictionaryAttribute(name = "net_in_threshold", defaultValue = "80"),
-        @DictionaryAttribute(name = "net_out_threshold", defaultValue = "80")
+        @DictionaryAttribute(name = "net_out_threshold", defaultValue = "80"),
+        @DictionaryAttribute(name = "io_in_threshold", defaultValue = "80"),
+        @DictionaryAttribute(name = "io_out_threshold", defaultValue = "80")
 }
 )
 @ComponentType
@@ -33,8 +35,10 @@ public class MonitoringComponent extends AbstractComponentType {
         double memory = Double.valueOf(getDictionary().get("memory_threshold").toString());
         double net_received = Double.valueOf(getDictionary().get("net_in_threshold").toString());
         double net_sent = Double.valueOf(getDictionary().get("net_out_threshold").toString());
+        double io_read = Long.valueOf(getDictionary().get("io_in_threshold").toString());
+        double io_write = Long.valueOf(getDictionary().get("io_out_threshold").toString());
 
-        GlobalThreshold globalThreshold = new GlobalThreshold(cpu,memory,net_received, net_sent);
+        GlobalThreshold globalThreshold = new GlobalThreshold(cpu,memory,net_received, net_sent, io_read, io_write);
 
         monitoringTask = new MonitoringTask(getNodeName(),
                 globalThreshold,

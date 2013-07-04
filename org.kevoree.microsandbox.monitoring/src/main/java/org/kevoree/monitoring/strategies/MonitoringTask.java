@@ -2,19 +2,22 @@ package org.kevoree.monitoring.strategies;
 
 import org.kevoree.api.Bootstraper;
 import org.kevoree.api.service.core.handler.KevoreeModelHandlerService;
+import org.kevoree.monitoring.communication.MonitoringReporterFactory;
 import org.kevoree.monitoring.comp.MyResourceConsumptionRecorder;
 import org.kevoree.monitoring.comp.monitor.ContractVerificationRequired;
 import org.kevoree.monitoring.comp.monitor.GCWatcher;
 import org.kevoree.monitoring.ranking.*;
 import org.kevoree.monitoring.sla.FaultyComponent;
 import org.kevoree.monitoring.sla.GlobalThreshold;
-import org.kevoree.monitoring.sla.Metric;
 import org.kevoree.monitoring.strategies.adaptation.KillThemAll;
 import org.kevoree.monitoring.strategies.monitoring.AbstractLocalMonitoringStrategy;
 import org.kevoree.monitoring.strategies.monitoring.AllComponentsMonitoring;
 import org.kevoree.monitoring.strategies.monitoring.GlobalMonitoring;
 import org.kevoree.monitoring.strategies.monitoring.MonitoringStrategy;
 import org.resourceaccounting.ResourcePrincipal;
+import org.kevoree.monitoring.sla.Metric;
+
+import java.util.EnumMap;
 
 /**
  * Created with IntelliJ IDEA.
@@ -84,9 +87,13 @@ public class MonitoringTask implements Runnable, ContractVerificationRequired {
                         AbstractLocalMonitoringStrategy s =(AbstractLocalMonitoringStrategy)currentStrategy;
                         for (FaultyComponent c : s.getFaultyComponents()) {
                             ComponentsRanker.instance$.getExecutionInfo(c.getComponentPath()).increaseFailures();
-                            System.out.printf("\t%s : %s\n", c.getComponentPath(), c.getMetrics());
+                            EnumMap<Metric, Double> map = c.getMetrics();
+                            for (Metric m : map.keySet())
+                                MonitoringReporterFactory.reporter().sla(c.getComponentPath(),
+                                        m, map.get(m), 0);
                         }
                         if (new KillThemAll(service).adapt(nodeName, s.getFaultyComponents())) {
+
                             switchToGlobal();
                         }
                         else {
@@ -110,6 +117,7 @@ public class MonitoringTask implements Runnable, ContractVerificationRequired {
     }
 
     private void switchToSimpleLocal() {
+        MonitoringReporterFactory.reporter().monitoring(false);
         MyResourceConsumptionRecorder.getInstance().turnMonitoring(true);
         currentStatus = MonitoringStatus.LOCAL_MONITORING;
         currentStrategy = new AllComponentsMonitoring(
@@ -118,6 +126,7 @@ public class MonitoringTask implements Runnable, ContractVerificationRequired {
     }
 
     private void switchToGlobal() {
+        MonitoringReporterFactory.reporter().monitoring(true);
         MyResourceConsumptionRecorder.getInstance().turnMonitoring(false);
         currentStatus = MonitoringStatus.GLOBAL_MONITORING;
         currentStrategy = new GlobalMonitoring(msg, globalThreshold);

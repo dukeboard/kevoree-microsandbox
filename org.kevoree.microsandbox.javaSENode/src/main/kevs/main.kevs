@@ -52,7 +52,6 @@ addComponent MonitoringComponent0@node0 : MonitoringComponent {
 //}
 
 addComponent writer0@node0 : IOWriterGood {
-
 }
 
 addChannel defMSGT360 : defMSGT {}

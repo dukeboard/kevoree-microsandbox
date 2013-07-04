@@ -2,6 +2,7 @@ package org.kevoree.monitoring.sla
 
 import org.kevoree.ComponentInstance
 import java.util.EnumSet
+import java.util.EnumMap
 
 /**
  * Created with IntelliJ IDEA.
@@ -10,4 +11,4 @@ import java.util.EnumSet
  * Time: 11:58 PM
  *
  */
-public data class FaultyComponent(val componentPath : String, val metrics: EnumSet<Metric>)
+public data class FaultyComponent(val componentPath : String, val metrics: EnumMap<Metric, Double>)

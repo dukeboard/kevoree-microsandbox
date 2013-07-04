@@ -6,6 +6,7 @@ import org.kevoree.monitoring.sla.Metric;
 import org.resourceaccounting.ResourcePrincipal;
 import org.resourceaccounting.contract.ResourceContract;
 
+import java.util.EnumMap;
 import java.util.EnumSet;
 import java.util.Iterator;
 import java.util.List;
@@ -22,46 +23,39 @@ public class AllComponentsMonitoring extends AbstractLocalMonitoringStrategy {
     public static final int NUMBER_OF_STEPS = 3;
     int count = 0;
 
-    EnumSet<Metric> a;
-
-
+    EnumMap<Metric, Double> a;
 
     public AllComponentsMonitoring(List<ComponentInstance> ranking, Object msg) {
         super(ranking, msg);
-        System.out.println("Local monitor constructor called");
     }
 
     @Override
     public void init(int startTime) {
         super.init(startTime);
         count = 0;
-        System.out.println("Local monitor init called");
     }
 
     @Override
     public void verifyContract(ResourcePrincipal principal, Object obj) {
-        DataForCheckingContract data = (DataForCheckingContract)obj;
-        ResourceContract contract = principal.getContract();
-        EnumSet<Metric> tmp = EnumSet.noneOf(Metric.class);
-        if (contract.getCPU() < data.lastCPU) {
-            tmp.add(Metric.CPU);
-        }
+        if (count == NUMBER_OF_STEPS) {
+            DataForCheckingContract data = (DataForCheckingContract)obj;
+            ResourceContract contract = principal.getContract();
+            if (contract.getCPU() < data.lastCPU)
+                a.put(Metric.CPU, (double) data.lastCPU);
 
-        if (contract.getNetworkOut() < data.lastSent) {
-            tmp.add(Metric.NetworkS);
-        }
+            if (contract.getNetworkOut() < data.lastSent)
+                a.put(Metric.NetworkS, (double) data.lastSent);
 
-        if (contract.getNetworkIn() < data.lastReceived) {
-            tmp.add(Metric.NetworkR);
-        }
+            if (contract.getNetworkIn() < data.lastReceived) {
+                a.put(Metric.NetworkR, (double) data.lastReceived);
+            }
 
-        if (contract.getMemory() < data.lastMem) {
-            tmp.add(Metric.Memory);
-        }
+            if (contract.getMemory() < data.lastMem) {
+                a.put(Metric.Memory, (double)data.lastMem);
+            }
 
-        if (count == NUMBER_OF_STEPS && !tmp.isEmpty()) {
-            a.addAll(tmp);
-            faultyComponents.add(new FaultyComponent(currentComponent.path(),tmp));
+            if (!a.isEmpty())
+                faultyComponents.add(new FaultyComponent(currentComponent.path(),a));
         }
 
     }
@@ -71,24 +65,23 @@ public class AllComponentsMonitoring extends AbstractLocalMonitoringStrategy {
 
     @Override
     public void run() {
-        System.out.println("Local monitor run called");
         count++;
         if (count == NUMBER_OF_STEPS) {
-            a = EnumSet.noneOf(Metric.class);
+
             Iterator<ComponentInstance> it = ranking.iterator();
             while (it.hasNext()) {
+                a = new EnumMap<Metric, Double>(Metric.class);
                 currentComponent = it.next();
                 ResourcePrincipal principal = getPrincipal(currentComponent);
                 makeContractAvailable(principal, currentComponent);
                 DataForCheckingContract data = getInfo(principal);
                 verifyContract(principal, data);
-                System.out.printf("\t\tThe consumption for %s is %d\n",
-                        currentComponent.getName(),
-                        data.lastMem);
             }
             // if someone is violating the contract then trigger adaptation
-            if (!a.isEmpty())
-                actionOnContractViolation(a);
+            if (faultyComponents.size() > 0) {
+                EnumSet<Metric> tmp = EnumSet.allOf(Metric.class);
+                actionOnContractViolation(tmp);
+            }
             else {
                 // pass to Global Monitoring
                 passWithoutViolation();

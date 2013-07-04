@@ -1,12 +1,11 @@
 package org.kevoree.monitoring.strategies.adaptation;
 
-import org.kevoree.ComponentInstance;
-import org.kevoree.ContainerNode;
-import org.kevoree.ContainerRoot;
+import org.kevoree.*;
 import org.kevoree.api.service.core.handler.KevoreeModelHandlerService;
 import org.kevoree.api.service.core.handler.KevoreeModelUpdateException;
 import org.kevoree.api.service.core.handler.UUIDModel;
 import org.kevoree.cloner.ModelCloner;
+import org.kevoree.monitoring.communication.MonitoringReporterFactory;
 import org.kevoree.monitoring.sla.FaultyComponent;
 
 import java.util.List;
@@ -32,9 +31,20 @@ public class KillThemAll extends BasicAdaptation {
             ContainerRoot clonedModel = cloner.clone(uuidModel.getModel());
             ContainerNode node = clonedModel.findNodesByID(nodeName);
             for (FaultyComponent c : faultyComponents) {
-                clonedModel.findByPath(c.getComponentPath(), ComponentInstance.class).removeAllProvided();
-                clonedModel.findByPath(c.getComponentPath(), ComponentInstance.class).removeAllRequired();
-                node.removeComponents(clonedModel.findByPath(c.getComponentPath(), ComponentInstance.class));
+                MonitoringReporterFactory.reporter().adaptation(getActionName(), c.getComponentPath());
+
+                ComponentInstance cc = clonedModel.findByPath(c.getComponentPath(), ComponentInstance.class);
+                node.removeComponents(cc);
+                for (Port p : cc.getProvided()) {
+                    for (MBinding b : p.getBindings()) {
+                        clonedModel.removeMBindings(b);
+                    }
+                }
+                for (Port p : cc.getRequired()) {
+                    for (MBinding b : p.getBindings()) {
+                        clonedModel.removeMBindings(b);
+                    }
+                }
             }
             modelService.atomicCompareAndSwapModel(uuidModel, clonedModel);
             return true;
@@ -42,5 +52,9 @@ public class KillThemAll extends BasicAdaptation {
             return false;
         }
 
+    }
+
+    private String getActionName() {
+        return "remove";
     }
 }

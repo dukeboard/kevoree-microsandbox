@@ -1,10 +1,11 @@
 package org.kevoree.monitoring.strategies.monitoring;
 
-import org.kevoree.monitoring.sla.Metric;
 
 import java.util.EnumSet;
 import java.util.Timer;
 import java.util.TimerTask;
+
+import org.kevoree.monitoring.sla.Metric;
 
 /**
  * Created with IntelliJ IDEA.

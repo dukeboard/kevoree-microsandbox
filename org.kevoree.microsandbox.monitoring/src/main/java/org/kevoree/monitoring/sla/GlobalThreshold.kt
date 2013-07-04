@@ -10,5 +10,7 @@ package org.kevoree.monitoring.sla
 public class GlobalThreshold(val cpu_threshold: Double,
                               val memory_threshold: Double,
                               val net_received_threshold: Double,
-                              val net_sent: Double) {
+                              val net_sent: Double,
+                              val io_read:Double,
+                              val io_write: Double) {
 }

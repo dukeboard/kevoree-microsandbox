@@ -65,12 +65,31 @@ public class GlobalMonitoring extends AbstractMonitoringStrategy {
         long written = ins.getTotalWritten();
         long read = ins.getTotalRead();
 
-        if (!firstTime && cpuUsage > threshold.getCpu_threshold() && cpuUsage < 99) {
-            System.out.printf("%%CPU : %f , Sent : %f KiB/S, Received %f KiB/S\n",
-                    cpuUsage,
-                    sent / 1024F,
-                    received / 1024F);
-            actionOnContractViolation(Metric.CPU);
+        double perSent = (sent / 100000.0F)*100; // let say that we can send 100000.0F per second at most
+        double perReceived = (received / 100000.0F) * 100;
+
+        double perWritten = (written / 100000.0F)*100; // let say that we can send 100000.0F per second at most
+        double perRead = (read / 100000.0F) * 100;
+
+        if (!firstTime) {
+
+            if (cpuUsage > threshold.getCpu_threshold() && cpuUsage < 99) {
+                actionOnContractViolation(Metric.CPU);
+            }
+            else if (perSent > threshold.getNet_sent()) {
+                actionOnContractViolation(Metric.NetworkS);
+            }
+            else if (perReceived > threshold.getNet_received_threshold()) {
+                actionOnContractViolation(Metric.NetworkR);
+            }
+            else if (perWritten > threshold.getIo_write()) {
+                actionOnContractViolation(Metric.IOWrite);
+            }
+            else if (perRead > threshold.getIo_read()) {
+                actionOnContractViolation(Metric.IORead);
+            }
+
         }
+
     }
 }
