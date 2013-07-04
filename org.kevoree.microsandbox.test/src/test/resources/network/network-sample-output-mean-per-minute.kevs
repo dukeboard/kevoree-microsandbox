@@ -1,0 +1,9 @@
+merge "mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.javaseNode/{kevoree.version}"
+merge "mvn:org.kevoree.microsandbox/org.kevoree.microsandbox.samples/1.0-SNAPSHOT"
+
+addNode node0 : JavaSENode
+// TODO both component must have the same contract
+addComponent goodComponent@node0 : CPUConsumerGood
+addComponent badComponent@node0 : CPUConsumerFail
+
+// It could be interesting to be able to parametrize the badComponent to specify various level of failure
