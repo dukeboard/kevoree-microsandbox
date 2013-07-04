@@ -4,7 +4,7 @@ import org.kevoree.annotation.ComponentType;
 import org.kevoree.annotation.Start;
 import org.kevoree.annotation.Stop;
 import org.kevoree.framework.AbstractComponentType;
-import org.kevoree.microsandbox.api.CPUContracted;
+import org.kevoree.microsandbox.api.contract.CPUContracted;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 

@@ -2,7 +2,7 @@ package org.kevoree.microsandbox.samples;
 
 import org.kevoree.annotation.*;
 import org.kevoree.framework.AbstractComponentType;
-import org.kevoree.microsandbox.api.FullContracted;
+import org.kevoree.microsandbox.api.contract.FullContracted;
 
 /**
  * Created with IntelliJ IDEA.

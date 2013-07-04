@@ -5,11 +5,7 @@ import org.kevoree.annotation.RequiredPort;
 import org.kevoree.annotation.Requires;
 import org.kevoree.annotation.Start;
 import org.kevoree.framework.MessagePort;
-import org.kevoree.microsandbox.api.NetworkContracted;
-import org.kevoree.microsandbox.api.ThroughputContracted;
-
-import java.net.MalformedURLException;
-import java.net.URL;
+import org.kevoree.microsandbox.api.contract.ThroughputContracted;
 
 /**
  * Created with IntelliJ IDEA.
