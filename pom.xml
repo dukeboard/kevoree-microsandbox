@@ -81,20 +81,24 @@
                 </executions>
                 <version>2.2.1</version>
             </plugin>
+
+
+            <!-- Without this plugin => no release !!!! -->
+
             <!--<plugin>-->
-                <!--<groupId>org.apache.maven.plugins</groupId>-->
-                <!--<artifactId>maven-javadoc-plugin</artifactId>-->
-                <!--<executions>-->
-                    <!--<execution>-->
-                        <!--<id>attach-javadocs</id>-->
-                        <!--<goals>-->
-                            <!--<goal>jar</goal>-->
-                        <!--</goals>-->
-                    <!--</execution>-->
-                <!--</executions>-->
-                <!--<configuration>-->
-                    <!--<javadocExecutable>${java.home}/../bin/javadoc</javadocExecutable>-->
-                <!--</configuration>-->
+            <!--<groupId>org.apache.maven.plugins</groupId>-->
+            <!--<artifactId>maven-javadoc-plugin</artifactId>-->
+            <!--<executions>-->
+            <!--<execution>-->
+            <!--<id>attach-javadocs</id>-->
+            <!--<goals>-->
+            <!--<goal>jar</goal>-->
+            <!--</goals>-->
+            <!--</execution>-->
+            <!--</executions>-->
+            <!--<configuration>-->
+            <!--<javadocExecutable>${java.home}/../bin/javadoc</javadocExecutable>-->
+            <!--</configuration>-->
             <!--</plugin>-->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -180,15 +184,17 @@
 
     <modules>
         <module>org.kevoree.microsandbox.api</module>
+        <module>org.kevoree.microsandbox.sharedResourceAccounting</module>
+
+        <module>org.kevoree.microsandbox.core</module>
+        <module>org.kevoree.microsandbox.resourceMonitorJavaAgent</module>
+
         <module>org.kevoree.microsandbox.javaSENode</module>
         <module>org.kevoree.microsandbox.samples</module>
-        <module>ResourceMonitorArtifacts</module>
-        <module>ResourceMonitorJavaAgent</module>
-        <module>JarInstrumenter</module>
         <module>org.kevoree.microsandbox.monitoring</module>
-        <module>org.kevoree.microsandbox.core</module>
-		
-		<module>org.kevoree.microsandbox.watchdog</module>
+
+        <module>org.kevoree.microsandbox.JarInstrumenter</module>
+        <module>org.kevoree.microsandbox.watchdog</module>
 
     </modules>
 
