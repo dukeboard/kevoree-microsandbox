@@ -29,7 +29,7 @@ public class FileAccessMethodInstrumentation extends AbstractMethodInstrumentati
 //            // generate call to the resource monitor
 //            callIntegerForFileReadAccess();
 //        }
-//        else 
+//        else
             super.visitMethodInsn(opcode, involvedClass, calledMethod, s3);
     }
 

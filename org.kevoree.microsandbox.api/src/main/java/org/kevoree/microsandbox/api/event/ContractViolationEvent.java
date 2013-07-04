@@ -1,5 +1,7 @@
 package org.kevoree.microsandbox.api.event;
 
+import org.kevoree.microsandbox.api.sla.Metric;
+
 /**
  * Created with IntelliJ IDEA.
  * User: duke
@@ -10,7 +12,7 @@ public class ContractViolationEvent {
 
     private String instancePath;
 
-    private Metrics metric;
+    private Metric metric;
 
     private Double observedValue;
 
@@ -24,11 +26,11 @@ public class ContractViolationEvent {
         this.instancePath = instancePath;
     }
 
-    public Metrics getMetric() {
+    public Metric getMetric() {
         return metric;
     }
 
-    public void setMetric(Metrics metric) {
+    public void setMetric(Metric metric) {
         this.metric = metric;
     }
 
