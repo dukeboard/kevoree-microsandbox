@@ -162,6 +162,7 @@ public class MonitoringTask implements Runnable, ContractVerificationRequired {
 
     @Override
     public void onGCVerifyContract(long used, long max) {
-        currentStrategy.onGCVerifyContract(used, max);
+        if (currentStrategy != null)
+            currentStrategy.onGCVerifyContract(used, max);
     }
 }

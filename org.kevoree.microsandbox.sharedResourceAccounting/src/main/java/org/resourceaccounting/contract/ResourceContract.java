@@ -20,6 +20,8 @@ public abstract class ResourceContract implements Serializable {
         map.put("Memory", Integer.MAX_VALUE);
         map.put("NetworkBandwidthIn", Integer.MAX_VALUE);
         map.put("NetworkBandwidthOut", Integer.MAX_VALUE);
+        map.put("IOWrite", Integer.MAX_VALUE);
+        map.put("IORead", Integer.MAX_VALUE);
     }
 
     public int getCPU() {
@@ -40,6 +42,14 @@ public abstract class ResourceContract implements Serializable {
 
     public void setValue(String property, int n) {
         map.put(property, n);
+    }
+
+    public int getWrite() {
+        return map.get("IOWrite");
+    }
+
+    public int getRead() {
+        return map.get("IORead");
     }
 
 }

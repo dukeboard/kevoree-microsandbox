@@ -13,9 +13,13 @@ public class MonitoringReporterFactory {
         return activeReporter;
     }
 
-    private static MonitoringReporter activeReporter = consoleReporter();
+    private static MonitoringReporter activeReporter =null;
 
     public static MonitoringReporter reporter() {
+        if (activeReporter == null) {
+            activeReporter = new ComposeMonitoringReport();
+            ((ComposeMonitoringReport)activeReporter).addReporter(consoleReporter());
+        }
         return activeReporter;
     }
 }

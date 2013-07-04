@@ -54,6 +54,14 @@ public class AllComponentsMonitoring extends AbstractLocalMonitoringStrategy {
                 a.put(Metric.Memory, (double)data.lastMem);
             }
 
+            if (contract.getWrite() < data.lastWrite) {
+                a.put(Metric.IOWrite, (double)data.lastWrite);
+            }
+
+            if (contract.getRead() < data.lastRead) {
+                a.put(Metric.IORead, (double)data.lastRead);
+            }
+
             if (!a.isEmpty())
                 faultyComponents.add(new FaultyComponent(currentComponent.path(),a));
         }

@@ -9,14 +9,20 @@ package org.kevoree.monitoring.strategies.monitoring;
  */
 public class DataForCheckingContract {
     public long lastCPU;
+    public long lastMem;
     public long lastSent;
     public long lastReceived;
-    public long lastMem;
+    public long lastWrite;
+    public long lastRead;
 
-    public DataForCheckingContract(long lastCPU, long lastSent, long lastReceived, long lastMem) {
+    public DataForCheckingContract(long lastCPU, long lastSent,
+                                   long lastReceived, long lastMem,
+                                   long lastWrite, long lastRead) {
         this.lastCPU = lastCPU;
         this.lastSent = lastSent;
         this.lastReceived = lastReceived;
         this.lastMem = lastMem;
+        this.lastWrite = lastWrite;
+        this.lastRead = lastRead;
     }
 }
