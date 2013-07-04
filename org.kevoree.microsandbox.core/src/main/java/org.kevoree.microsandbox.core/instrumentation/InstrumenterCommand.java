@@ -1,16 +1,14 @@
 package org.kevoree.microsandbox.core.instrumentation;
 
+import org.kevoree.microsandbox.core.instrumentation.io.FileAccessInstrumentation;
 import org.objectweb.asm.*;
 import org.objectweb.asm.util.CheckClassAdapter;
-import org.objectweb.asm.util.TraceClassVisitor;
-import org.kevoree.microsandbox.core.instrumentation.invocations.InstForAccountingPerInvocation;
 import org.kevoree.microsandbox.core.instrumentation.io.NetworkAccessInstrumentation;
 import org.kevoree.microsandbox.core.instrumentation.memory.AddPrincipalIdentifier;
 import org.kevoree.microsandbox.core.instrumentation.memory.MemoryAllocationMethodInstrumentation;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.PrintWriter;
 
 /**
  * Created with IntelliJ IDEA.
@@ -168,6 +166,22 @@ public class InstrumenterCommand {
                 mv.visitMaxs(3, 3);
                 mv.visitEnd();
 
+                // adding method to report file write
+                mv = super.visitMethod(Opcodes.ACC_PUBLIC | Opcodes.ACC_STATIC,
+                        "__reportFileWrite__","(I)V",null,null);
+                mv.visitCode();
+                mv.visitInsn(Opcodes.RETURN);
+                mv.visitMaxs(3, 3);
+                mv.visitEnd();
+
+                // adding method to report file read
+                mv = super.visitMethod(Opcodes.ACC_PUBLIC | Opcodes.ACC_STATIC,
+                        "__reportFileRead__","(I)V",null,null);
+                mv.visitCode();
+                mv.visitInsn(Opcodes.RETURN);
+                mv.visitMaxs(3, 3);
+                mv.visitEnd();
+
                 super.visitEnd();
             }
         };
@@ -181,6 +195,16 @@ public class InstrumenterCommand {
         ClassReader reader = new ClassReader(code);
         ClassWriter writer = new ClassWriter(reader, 0);
         ClassVisitor visitor = new NetworkAccessInstrumentation(writer);
+        visitor = new CheckClassAdapter(visitor,true);
+        reader.accept(visitor, ClassReader.EXPAND_FRAMES);
+        code.close();
+        return writer.toByteArray();
+    }
+
+    public byte[] modifyingFileAccessClass(InputStream code) throws IOException {
+        ClassReader reader = new ClassReader(code);
+        ClassWriter writer = new ClassWriter(reader, 0);
+        ClassVisitor visitor = new FileAccessInstrumentation(writer);
         visitor = new CheckClassAdapter(visitor,true);
         reader.accept(visitor, ClassReader.EXPAND_FRAMES);
         code.close();

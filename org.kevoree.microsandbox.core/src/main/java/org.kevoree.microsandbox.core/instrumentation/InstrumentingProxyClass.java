@@ -99,6 +99,38 @@ public class InstrumentingProxyClass extends ClassVisitor {
                     };
             return adapter;
         }
+        else if (name.equals("__reportFileWrite__") && desc.equals("(I)V")) {
+            InstructionAdapter adapter =
+                    new InstructionAdapter(super.visitMethod(i, name, desc, s3, strings)) {
+                        @Override
+                        public void visitInsn(int opcode) {
+                            if (opcode == Opcodes.RETURN) {
+                                load(0, Type.INT_TYPE);
+                                invokestatic(ExtraInstrumentationRules.MONITOR_CLASS_NAME,
+                                        "reportFileDataWrite",
+                                        "(I)V");
+                            }
+                            super.visitInsn(opcode);
+                        }
+                    };
+            return adapter;
+        }
+        else if (name.equals("__reportFileRead__") && desc.equals("(I)V")) {
+            InstructionAdapter adapter =
+                    new InstructionAdapter(super.visitMethod(i, name, desc, s3, strings)) {
+                        @Override
+                        public void visitInsn(int opcode) {
+                            if (opcode == Opcodes.RETURN) {
+                                load(0, Type.INT_TYPE);
+                                invokestatic(ExtraInstrumentationRules.MONITOR_CLASS_NAME,
+                                        "reportFileDataRead",
+                                        "(I)V");
+                            }
+                            super.visitInsn(opcode);
+                        }
+                    };
+            return adapter;
+        }
         else if (name.equals("__reportNewArray__") && desc.equals("(Ljava/lang/Object;)V")) {
             InstructionAdapter adapter =
                     new InstructionAdapter(super.visitMethod(i, name, desc, s3, strings)) {

@@ -22,42 +22,46 @@ import java.util.Iterator;
  */
 class ResourceCounterImpl {
 
-
     /**
      * Keep all alive invocations
      */
     private HashMap<Thread, InvocationResourcePrincipal> activatedInvocations;
 
-    int currentTimeStamp = 0;
-
-    private HashMap<ResourcePrincipal, LastMeasurements> lastMeasurements;
-
     private int countOfPrincipals = 0;
     private long totalReceived = 0;
     private long totalSent = 0;
+    private long totalWritten = 0;
+    private long totalRead = 0;
+    private long lastTotalReceived;
+    private long lastTotalSent;
+    private long lastTotalRead;
+    private long lastTotalWritten;
 
     long getTotalReceived() {
-        return totalReceived;
+        long tmp = totalReceived - lastTotalReceived;
+        lastTotalReceived = totalReceived;
+        return tmp;
     }
 
     long getTotalSent() {
-        return totalSent;
+        long tmp = totalSent - lastTotalSent;
+        lastTotalSent = totalSent;
+        return tmp;
     }
 
-    private class LastMeasurements {
-
-        int timeStamp;
-
-        long cpu;
-        long sent;
-        long received;
-        private LastMeasurements(long cpu, long sent, long received) {
-            this.cpu = cpu;
-            this.sent = sent;
-            this.received = received;
-        }
-
+    long getTotalRead() {
+        long tmp = totalRead - lastTotalRead;
+        lastTotalRead = totalRead;
+        return tmp;
     }
+
+    long getTotalWritten() {
+        long tmp = totalWritten - lastTotalWritten;
+        //lastTotalWritten = totalWritten;
+        return tmp;
+    }
+
+
     private ResourcePrincipal[] principals = new ResourcePrincipal[1000];
     private ResourcePrincipal[] cachePrincipals = new ResourcePrincipal[0];
 
@@ -72,9 +76,6 @@ class ResourceCounterImpl {
     ResourceCounterImpl() {
         activatedInvocations
                 = new HashMap<Thread, InvocationResourcePrincipal>();
-
-        lastMeasurements
-                = new HashMap<ResourcePrincipal, LastMeasurements>();
 
         // Invocation can spawn new threads and the system can only discard
         // such invocations when every thread is done
@@ -95,8 +96,6 @@ class ResourceCounterImpl {
                             processInvocation(rp);
                         }
                     }
-                    // 2 - check if everybody is meeting the contract
-//                    checkContract();
                 }
             }
         };
@@ -161,23 +160,30 @@ class ResourceCounterImpl {
     }
 
     void innerIncreaseBytesSent(int n, ResourcePrincipal principal) {
-        totalSent += n; // TODO : synchronize
+        increaseTotalSent(n);
         synchronized (principal) {
             principal.increaseBytesSent(n);
         }
     }
 
     void innerIncreaseBytesReceived(int n, ResourcePrincipal principal) {
-        totalReceived += n; // TODO : synchronize
+        increaseTotalReceived(n);
         synchronized (principal) {
             principal.increaseBytesReceived(n);
         }
     }
 
     public void innerIncreaseFileWrite(int n, ResourcePrincipal principal) {
+        increaseTotalWritten(n);
         synchronized (principal) {
             principal.increaseFileWrite(n);
-            System.out.println("Escribiendo a archivo : " + n);
+        }
+    }
+
+    public void innerIncreaseBytesRead(int n, ResourcePrincipal principal) {
+        increaseTotalRead(n);
+        synchronized (principal) {
+            principal.increaseFileRead(n);
         }
     }
 
@@ -202,6 +208,18 @@ class ResourceCounterImpl {
     long innerGetNbBytesReceived(ResourcePrincipal principal) {
         synchronized (principal) {
             return principal.getBytesReceived();
+        }
+    }
+
+    long innerGetNbWrittenBytes(ResourcePrincipal principal) {
+        synchronized (principal) {
+            return principal.getWrittenBytes();
+        }
+    }
+
+    long innerGetNbReadBytes(ResourcePrincipal principal) {
+        synchronized (principal) {
+            return principal.getReadBytes();
         }
     }
 
@@ -342,5 +360,21 @@ class ResourceCounterImpl {
 
     public void setObjectSizeProvider(ObjectSizeProvider objectSizeProvider) {
         this.objectSizeProvider = objectSizeProvider;
+    }
+
+    public synchronized void increaseTotalRead(int n) {
+        totalRead += n;
+    }
+
+    public synchronized void increaseTotalReceived(int n) {
+        totalReceived += n;
+    }
+
+    public synchronized void increaseTotalWritten(int n) {
+        totalWritten += n;
+    }
+
+    public synchronized void increaseTotalSent(int n) {
+        totalSent += n;
     }
 }

@@ -110,6 +110,7 @@ public class Main {
 
             createMyIntegerClass(jar,outputStream,cmd);
             modifySocketClasses(jar, outputStream, cmd);
+            modifyFileClasses(jar, outputStream, cmd);
 
 
 //            for (int i = 0 ; i < ExtraInstrumentationRules.extras.size(); i++)
@@ -269,5 +270,24 @@ public class Main {
         String socketWrite = "java/net/SocketOutputStream" + ".class";
         result = cmd.modifyingNetworkClass(jar.getInputStream(jar.getEntry(socketWrite)));
         createEntryInOutput(outputStream, socketWrite, result);
+    }
+
+    /**
+     * Modify the classes in JDK RT that have something to do with file access.
+     * The modification is the addition of calls to Integer.__reportFileRead__
+     * and Integer.__reportFileWrite__
+     * @param jar
+     * @param outputStream
+     * @param cmd
+     * @throws IOException
+     */
+    private static void modifyFileClasses(JarFile jar, JarOutputStream outputStream, InstrumenterCommand cmd) throws IOException {
+        String fileRead = "java/io/FileInputStream" + ".class";
+        byte[] result = cmd.modifyingFileAccessClass(jar.getInputStream(jar.getEntry(fileRead)));
+        createEntryInOutput(outputStream, fileRead, result);
+
+        String fileWrite = "java/io/FileOutputStream" + ".class";
+        result = cmd.modifyingFileAccessClass(jar.getInputStream(jar.getEntry(fileWrite)));
+        createEntryInOutput(outputStream, fileWrite, result);
     }
 }

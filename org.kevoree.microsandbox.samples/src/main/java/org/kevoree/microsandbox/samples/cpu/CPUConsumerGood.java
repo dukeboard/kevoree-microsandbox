@@ -3,6 +3,7 @@ package org.kevoree.microsandbox.samples.cpu;
 import org.kevoree.annotation.*;
 import org.kevoree.framework.AbstractComponentType;
 import org.kevoree.microsandbox.api.CPUContracted;
+import org.kevoree.microsandbox.api.FullContracted;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -18,13 +19,23 @@ import java.util.concurrent.Executors;
         @DictionaryAttribute(name = "sleepTime", dataType = Integer.class, optional = true)
 })
 @ComponentType
-public class CPUConsumerGood extends AbstractComponentType implements CPUContracted, Runnable {
+public class CPUConsumerGood extends AbstractComponentType implements FullContracted, Runnable {
 
     @Override
     public void run() {
         //define an acceptable level of consumption
+        while (true) {
+            //inject
+            try {
+                Thread.sleep(200);
+                int c= 0;
+                for (int i = 0 ; i < 10000000 ; i++) {
+                    c++;
+                }
+            } catch (InterruptedException e) {
 
-        //inject
+            }
+        }
 
     }
 

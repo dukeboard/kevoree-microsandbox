@@ -54,17 +54,18 @@ public class GlobalMonitoring extends AbstractMonitoringStrategy {
             }
         }
 
+        boolean firstTime = previousCPU == 0;
         double diff = sum - previousCPU;
         previousCPU = sum;
         double cpuUsage = Math.min(99, diff/(elapsedTime*nCPUs)*100);
 
         ResourceConsumptionRecorderMBean ins = MyResourceConsumptionRecorder.getInstance();
-        long sent = ins.getTotalSent() - previousSent;
-        long received = ins.getTotalReceived() - previousReceived;
-        previousSent = ins.getTotalSent();
-        previousReceived = ins.getTotalReceived();
+        long sent = ins.getTotalSent();
+        long received = ins.getTotalReceived();
+        long written = ins.getTotalWritten();
+        long read = ins.getTotalRead();
 
-        if (cpuUsage > threshold.getCpu_threshold() && cpuUsage < 99) {
+        if (!firstTime && cpuUsage > threshold.getCpu_threshold() && cpuUsage < 99) {
             System.out.printf("%%CPU : %f , Sent : %f KiB/S, Received %f KiB/S\n",
                     cpuUsage,
                     sent / 1024F,

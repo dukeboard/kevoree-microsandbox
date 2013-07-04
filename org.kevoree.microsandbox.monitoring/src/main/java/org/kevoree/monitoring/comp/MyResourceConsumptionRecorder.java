@@ -19,7 +19,6 @@ public class MyResourceConsumptionRecorder implements ResourceConsumptionRecorde
         return instance;
     }
 
-
     @Override
     public long getMemoryConsumption(ResourcePrincipal appId) {
         return ResourceCounter.getNbObjects(appId);
@@ -41,6 +40,16 @@ public class MyResourceConsumptionRecorder implements ResourceConsumptionRecorde
     }
 
     @Override
+    public long getTotalRead() {
+        return ResourceCounter.getTotalRead();
+    }
+
+    @Override
+    public long getTotalWritten() {
+        return ResourceCounter.getTotalWritten();
+    }
+
+    @Override
     public long getBytesSent(ResourcePrincipal appId) {
         return ResourceCounter.getNbBytesSent(appId);
     }
@@ -48,6 +57,16 @@ public class MyResourceConsumptionRecorder implements ResourceConsumptionRecorde
     @Override
     public long getBytesReceived(ResourcePrincipal appId) {
         return ResourceCounter.getNbBytesReceived(appId);
+    }
+
+    @Override
+    public long getWrittenBytes(ResourcePrincipal appId) {
+        return ResourceCounter.getNbWrittenBytes(appId);
+    }
+
+    @Override
+    public long getReadBytes(ResourcePrincipal appId) {
+        return ResourceCounter.getNbReadBytes(appId);
     }
 
     @Override

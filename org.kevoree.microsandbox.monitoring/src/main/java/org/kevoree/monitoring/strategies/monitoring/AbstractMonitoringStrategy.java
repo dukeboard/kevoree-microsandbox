@@ -23,8 +23,6 @@ public abstract class AbstractMonitoringStrategy extends TimerTask implements Mo
 
     private Timer timerForCPU;
     double previousCPU = 0; // in milliseconds
-    long previousSent = 0;
-    long previousReceived = 0;
 
     private boolean contractViolation;
 
@@ -55,8 +53,6 @@ public abstract class AbstractMonitoringStrategy extends TimerTask implements Mo
         // stop the monitoring
         timerForCPU.cancel();
         previousCPU = 0;
-        previousSent = 0;
-        previousReceived = 0;
     }
 
     @Override

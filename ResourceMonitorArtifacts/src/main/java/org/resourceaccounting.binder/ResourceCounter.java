@@ -36,25 +36,24 @@ public class ResourceCounter {
         }
     }
 
-    public static void increaseBytesSent(int n, ResourcePrincipal principal) {
-        if (isMonitoring()) {
-            ResourcePrincipal p = ourInstance.search(principal);
-            ourInstance.innerIncreaseBytesSent(n, p);
-        }
+    private static void increaseBytesSent(int n, ResourcePrincipal principal) {
+        ResourcePrincipal p = ourInstance.search(principal);
+        ourInstance.innerIncreaseBytesSent(n, p);
     }
 
-    public static void increaseFileWrite(int n, ResourcePrincipal principal) {
-        if (isMonitoring()) {
-            ResourcePrincipal p = ourInstance.search(principal);
-            ourInstance.innerIncreaseFileWrite(n, p);
-        }
+    private static void increaseFileWrite(int n, ResourcePrincipal principal) {
+        ResourcePrincipal p = ourInstance.search(principal);
+        ourInstance.innerIncreaseFileWrite(n, p);
     }
 
-    public static void increaseBytesReceived(int n, ResourcePrincipal principal) {
-        if (isMonitoring()) {
-            ResourcePrincipal p = ourInstance.search(principal);
-            ourInstance.innerIncreaseBytesReceived(n, p);
-        }
+    private static void increaseBytesReceived(int n, ResourcePrincipal principal) {
+        ResourcePrincipal p = ourInstance.search(principal);
+        ourInstance.innerIncreaseBytesReceived(n, p);
+    }
+
+    private static void increaseBytesRead(int n, ResourcePrincipal principal) {
+        ResourcePrincipal p = ourInstance.search(principal);
+        ourInstance.innerIncreaseBytesRead(n, p);
     }
 
     public static long getNbObjects(ResourcePrincipal principal) {
@@ -77,12 +76,30 @@ public class ResourceCounter {
         return ourInstance.innerGetNbBytesReceived(p);
     }
 
+    public static long getNbWrittenBytes(ResourcePrincipal principal) {
+        ResourcePrincipal p = ourInstance.search(principal);
+        return ourInstance.innerGetNbWrittenBytes(p);
+    }
+
+    public static long getNbReadBytes(ResourcePrincipal principal) {
+        ResourcePrincipal p = ourInstance.search(principal);
+        return ourInstance.innerGetNbReadBytes(p);
+    }
+
     public static long getTotalSent() {
         return ourInstance.getTotalSent();
     }
 
     public static long getTotalReceived() {
         return ourInstance.getTotalReceived();
+    }
+
+    public static long getTotalRead() {
+        return ourInstance.getTotalRead();
+    }
+
+    public static long getTotalWritten() {
+        return ourInstance.getTotalWritten();
     }
 
     /**
@@ -196,6 +213,7 @@ public class ResourceCounter {
             ResourcePrincipal principal = get();
             increaseBytesReceived(n, principal);
         }
+        else ourInstance.increaseTotalReceived(n);
     }
 
     public static void reportNetworkDataWrite(int n) {
@@ -203,6 +221,23 @@ public class ResourceCounter {
             ResourcePrincipal principal = get();
             increaseBytesSent(n, principal);
         }
+        else ourInstance.increaseTotalSent(n);
+    }
+
+    public static void reportFileDataRead(int n) {
+        if (isMonitoring()) {
+            ResourcePrincipal principal = get();
+            increaseBytesReceived(n, principal);
+        }
+        else ourInstance.increaseTotalRead(n);
+    }
+
+    public static void reportFileDataWrite(int n) {
+        if (isMonitoring()) {
+            ResourcePrincipal principal = get();
+            increaseBytesSent(n, principal);
+        }
+        else ourInstance.increaseTotalWritten(n);
     }
 
     public static ResourcePrincipal getApplication(String appId) {

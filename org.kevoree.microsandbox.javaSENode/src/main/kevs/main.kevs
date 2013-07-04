@@ -31,11 +31,9 @@ addComponent fread@node0 : FileExplorer { basedir='.' }
 //    amount = '302400'
 //}
 
-addComponent cpuConsumer0@node0 : CPUConsumer {
-    memory_max_size='3000',
-    cpu_wall_time='20',
-    network_input_seconds='234',
-    network_output_seconds='234'
+addComponent cpuConsumer0@node0 : CPUConsumerGood {
+    cpu_wall_time='2000000',
+    memory_max_size='3000'
 }
 
 
@@ -46,11 +44,15 @@ addComponent MonitoringComponent0@node0 : MonitoringComponent {
     net_out_threshold='80'
 }
 
-addComponent OlivierComponent@node0 : OlivierExample {
-    memory_max_size='20000000',
-    cpu_wall_time='10000',
-    network_input_seconds='234',
-    network_output_seconds='234'
+//addComponent OlivierComponent@node0 : OlivierExample {
+//    memory_max_size='20000000',
+//    cpu_wall_time='10000',
+//    network_input_seconds='234',
+//    network_output_seconds='234'
+//}
+
+addComponent writer0@node0 : IOWriterGood {
+
 }
 
 addChannel defMSGT360 : defMSGT {}
@@ -61,8 +63,8 @@ bind FakeConso509.textEntered@node0 => defMSGT419
 bind FakeConso510.showText@node0 => defMSGT419
 bind FakeConso510.textEntered@node0 => defMSGT360
 
-bind OlivierComponent.saludar@node0 => defMSGT419 // memory consumption
-bind OlivierComponent.sayHello@node0 => defMSGT360 // cpu consumption
+//bind OlivierComponent.saludar@node0 => defMSGT419 // memory consumption
+//bind OlivierComponent.sayHello@node0 => defMSGT360 // cpu consumption
 
 
 updateDictionary FakeConso510@node0

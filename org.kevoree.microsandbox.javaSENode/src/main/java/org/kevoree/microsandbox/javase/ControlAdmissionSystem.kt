@@ -65,10 +65,10 @@ public object ControlAdmissionSystem {
                     "cpu_wall_time" -> {
                         instr = java.lang.Long.parseLong(dv.getValue())
                     }
-                    "network_input_seconds" -> {
+                    "network_input_peak_seconds" -> {
                         netIn = java.lang.Long.parseLong(dv.getValue())
                     }
-                    "network_output_seconds" -> {
+                    "network_output_peak_seconds" -> {
                         netOut = java.lang.Long.parseLong(dv.getValue())
                     }
                     else -> { }

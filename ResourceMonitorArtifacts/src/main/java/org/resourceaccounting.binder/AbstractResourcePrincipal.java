@@ -25,11 +25,13 @@ public abstract class AbstractResourcePrincipal<T> implements ResourcePrincipal 
     protected int nbBytesSent;
     protected int nbBytesReceived;
     protected long nbBytesWrite;
+    protected long nbBytesRead;
 
     protected long last_nbInstructions;
     protected int last_nbBytesSent;
     protected int last_nbBytesReceived;
     protected long last_nbBytesWrite;
+    protected long last_nbBytesRead;
 
     protected transient ResourceContract contract;
 
@@ -70,6 +72,10 @@ public abstract class AbstractResourcePrincipal<T> implements ResourcePrincipal 
         nbBytesWrite += n;
     }
 
+    public void increaseFileRead(int n) {
+        nbBytesRead += n;
+    }
+
     public final long getExecutedInstructions() {
         long tmp = nbInstructions - last_nbInstructions;
         last_nbInstructions = nbInstructions;
@@ -89,6 +95,18 @@ public abstract class AbstractResourcePrincipal<T> implements ResourcePrincipal 
     public long getBytesReceived() {
         long tmp = nbBytesReceived - last_nbBytesReceived;
         last_nbBytesReceived = nbBytesReceived;
+        return tmp;
+    }
+
+    public long getWrittenBytes() {
+        long tmp = nbBytesWrite - last_nbBytesWrite;
+        last_nbBytesWrite = nbBytesWrite;
+        return tmp;
+    }
+
+    public long getReadBytes() {
+        long tmp = nbBytesRead - last_nbBytesRead;
+        last_nbBytesRead = nbBytesRead;
         return tmp;
     }
 

@@ -13,8 +13,12 @@ public interface ResourceConsumptionRecorderMBean {
     long getExecutedInstruction(ResourcePrincipal appId);
     long getTotalSent();
     long getTotalReceived();
+    long getTotalRead();
+    long getTotalWritten();
     long getBytesSent(ResourcePrincipal appId);
     long getBytesReceived(ResourcePrincipal appId);
+    long getWrittenBytes(ResourcePrincipal appId);
+    long getReadBytes(ResourcePrincipal appId);
     ResourcePrincipal[] getApplications();
     ResourcePrincipal getApplication(String appId);
     void turnMonitoring(boolean on);

@@ -17,6 +17,7 @@ public interface ResourcePrincipal extends Serializable {
     void increaseBytesSent(int n);
     void increaseBytesReceived(int n);
     void increaseFileWrite(int n);
+    void increaseFileRead(int n);
 
     /**
      * Since last time the value was asked
@@ -37,6 +38,18 @@ public interface ResourcePrincipal extends Serializable {
      * @return
      */
     long getBytesReceived();
+
+    /**
+     * Since last time the value was asked
+     * @return
+     */
+    long getWrittenBytes();
+
+    /**
+     * Since last time the value was asked
+     * @return
+     */
+    long getReadBytes();
 
 
     long getCPUUsage();
