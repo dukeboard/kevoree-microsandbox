@@ -11,6 +11,7 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.jar.JarOutputStream;
 import java.util.zip.ZipEntry;
+import java.util.zip.ZipException;
 
 /**
  * Created with IntelliJ IDEA.
@@ -24,6 +25,9 @@ import java.util.zip.ZipEntry;
 public class Main {
 
     public static void main(String[] args) {
+
+
+
         if (args.length < 1) {
             System.err.printf("Usage: java -jar JarInstrumenter.jar [jar file] ([outputjar file])\n");
             System.exit(1);
@@ -34,10 +38,13 @@ public class Main {
             System.exit(2);
         }
 
+
         File targetFile = new File("rtNew.jar");
         if(args.length >= 2){
             targetFile = new File(args[1]);
         }
+
+        //File f = new File("/Library/Java/Home/bundle/Home/bundle/Classes/classes.jar");
 
         boolean onlyProxies = false;
         if (args.length == 2) {
@@ -61,10 +68,14 @@ public class Main {
 
                 Enumeration<JarEntry> entryEnumeration = jar.entries();
                 while (entryEnumeration.hasMoreElements()) {
-                    JarEntry entry = entryEnumeration.nextElement();
-                    if (entry.getName().endsWith(".class")) {
-                        String clazz = entry.getName().substring(0, entry.getName().length() - 6);
-                        putInRecursiveWay(clazz, map, jar, cmd);
+                    try {
+                        JarEntry entry = entryEnumeration.nextElement();
+                        if (entry.getName().endsWith(".class")) {
+                            String clazz = entry.getName().substring(0, entry.getName().length() - 6);
+                            putInRecursiveWay(clazz, map, jar, cmd);
+                        }
+                    } catch(ZipException e){
+                       e.printStackTrace();
                     }
                 }
 
@@ -211,10 +222,14 @@ public class Main {
      * @throws IOException
      */
     private static void createEntryInOutput(JarOutputStream outputStream, String classEntry, byte[] code) throws IOException {
-        ZipEntry newV = new ZipEntry(classEntry);
-        outputStream.putNextEntry(newV);
-        outputStream.write(code);
-        outputStream.closeEntry();
+        try {
+            ZipEntry newV = new ZipEntry(classEntry);
+            outputStream.putNextEntry(newV);
+            outputStream.write(code);
+            outputStream.closeEntry();
+        } catch(Exception e){
+             e.printStackTrace();
+        }
     }
 
     /**
