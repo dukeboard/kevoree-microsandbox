@@ -18,10 +18,6 @@ import java.net.URLClassLoader;
  */
 public class CallInstrumenter {
 
-    public static void main(String[] args) {
-        createRTIntrumentedJar(new File("OutputRT.jar"));
-    }
-
     public static void createRTIntrumentedJar(File target) {
         try {
             File instrumenterJar = copyToTemp(CallInstrumenter.class.getClassLoader().getResourceAsStream("jarInstrumenter.jar"));
@@ -31,9 +27,10 @@ public class CallInstrumenter {
             Class mainClazz = cl.loadClass("org.kevoree.microsandbox.jarInstrument.Main");
             String rtJar = LocateRuntimeJar.locateRuntimeJar().getAbsolutePath();
             Method mainM = mainClazz.getMethod("main", String[].class);
-            String[] args = new String[2];
+            String[] args = new String[3];
             args[0] = rtJar;
             args[1] = target.getCanonicalPath();
+            args[2] = "true";
             mainM.invoke(null, (Object) args);
             instrumenterJar.delete();
         } catch (Exception e) {

@@ -86,5 +86,26 @@ public class RuntimeDowloader {
         return agentFile;
     }
 
+    public File getSharedResourceAccounting(){
+        String tempPath = getTempPath();
+        File agentFile = new File(tempPath + File.separator + "shared-res-"+Version.VERSION+".jar");
+        try {
+            if (!agentFile.exists()) {
+                FileOutputStream fos = new FileOutputStream(agentFile);
+                InputStream is = this.getClass().getClassLoader().getResourceAsStream("sharedResourceAccounting.jar");
+                byte data[] = new byte[1024];
+                int count;
+                while ((count = is.read(data, 0, 1024)) != -1) {
+                    fos.write(data, 0, count);
+                }
+                is.close();
+                fos.close();
+            }
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+        return agentFile;
+    }
+
 
 }

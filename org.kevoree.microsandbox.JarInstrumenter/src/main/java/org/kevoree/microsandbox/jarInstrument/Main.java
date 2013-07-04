@@ -37,17 +37,15 @@ public class Main {
         }
 
         File targetFile = new File("rtNew.jar");
-        if(args.length >= 2){
+        if (args.length >= 2) {
             targetFile = new File(args[1]);
         }
 
-       // File f = new File("/Library/Java/Home/bundle/Home/bundle/Classes/classes.jar");
-
         boolean onlyProxies = false;
-       if (args.length == 3) {
-            onlyProxies = Boolean.parseBoolean(args[1]);
+        if (args.length == 3) {
+            onlyProxies = Boolean.parseBoolean(args[3]);
         }
-        performInstrumentation(f, onlyProxies,targetFile);
+        performInstrumentation(f, onlyProxies, targetFile);
     }
 
     public static void performInstrumentation(File f, boolean onlyProxies, File targetFile) {
@@ -71,8 +69,8 @@ public class Main {
                             String clazz = entry.getName().substring(0, entry.getName().length() - 6);
                             putInRecursiveWay(clazz, map, jar, cmd);
                         }
-                    } catch(ZipException e){
-                       e.printStackTrace();
+                    } catch (ZipException e) {
+                        e.printStackTrace();
                     }
                 }
 
@@ -224,8 +222,8 @@ public class Main {
             outputStream.putNextEntry(newV);
             outputStream.write(code);
             outputStream.closeEntry();
-        } catch(Exception e){
-             e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
