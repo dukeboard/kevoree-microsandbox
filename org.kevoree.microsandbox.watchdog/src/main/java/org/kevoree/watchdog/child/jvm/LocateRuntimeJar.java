@@ -33,7 +33,8 @@ public class LocateRuntimeJar {
             }
 
         } else {
-            //TODO for unix
+            //TODO for unix, I just want to see this working
+            return new File("/usr/lib/jvm/java-1.7.0-openjdk-i386/jre/lib");
         }
         return null;
     }
