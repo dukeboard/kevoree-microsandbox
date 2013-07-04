@@ -1,7 +1,6 @@
 package org.kevoree.watchdog.child.jvm;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 
 /**

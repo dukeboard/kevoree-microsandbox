@@ -43,7 +43,7 @@ public class Main {
 
         boolean onlyProxies = false;
         if (args.length == 3) {
-            onlyProxies = Boolean.parseBoolean(args[3]);
+            onlyProxies = Boolean.parseBoolean(args[2]);
         }
         performInstrumentation(f, onlyProxies, targetFile);
     }
