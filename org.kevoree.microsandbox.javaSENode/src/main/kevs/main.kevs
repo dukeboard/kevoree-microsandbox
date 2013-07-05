@@ -12,12 +12,24 @@ merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.defaultChan
 merge 'mvn:org.kevoree.microsandbox/org.kevoree.microsandbox.monitoring/1.0-SNAPSHOT'
 merge 'mvn:org.kevoree.microsandbox/org.kevoree.microsandbox.samples/1.0-SNAPSHOT'
 
-//merge 'mvn:fr.irisa.diversify/examples/0.0.1-SNAPSHOT'
-
 addNode node0:MonitoredNode {
     availability_memory='150000000',
     availability_instr='200000000'
 }
+
+addComponent MonitoringComponent0@node0 : MonitoringComponent {
+    memory_threshold='65',
+    cpu_threshold='40',
+    net_in_threshold='80',
+    net_out_threshold='80'
+}
+
+addComponent reasoner0@node0 : ResourceAwareReasoner {
+}
+
+addChannel defMSGT_reasoning : defMSGT {}
+bind reasoner0.eventHandler@node0 => defMSGT_reasoning
+bind MonitoringComponent0.reasoner@node0 => defMSGT_reasoning
 
 addComponent FakeConso509@node0 : FakeConsole { singleFrame='true' }
 addComponent FakeConso510@node0 : FakeConsole {}
@@ -38,21 +50,6 @@ addComponent cpuConsumer0@node0 : CPUConsumerGood {
 
 addComponent writer0@node0 : IOWriterGood {
 }
-
-addComponent MonitoringComponent0@node0 : MonitoringComponent {
-    memory_threshold='65',
-    cpu_threshold='40',
-    net_in_threshold='80',
-    net_out_threshold='80'
-}
-
-addComponent reasoner0@node0 : ResourceAwareReasoner {
-}
-
-addChannel defMSGT_reasoning : defMSGT {}
-bind reasoner0.eventHandler@node0 => defMSGT_reasoning
-bind MonitoringComponent0.reasoner@node0 => defMSGT_reasoning
-
 
 addChannel defMSGT419 : defMSGT {}
 addChannel defMSGT360 : defMSGT {}

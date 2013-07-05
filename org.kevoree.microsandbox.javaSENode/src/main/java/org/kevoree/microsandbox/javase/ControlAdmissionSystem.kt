@@ -8,6 +8,7 @@ import java.util.ArrayList
 import org.resourceaccounting.contract.ComponentResourceContract
 import org.resourceaccounting.contract.ResourceContract
 import java.util.concurrent.locks.ReentrantLock
+import org.kevoree.microsandbox.api.communication.MonitoringReporterFactory
 
 /**
  * Created with IntelliJ IDEA.
@@ -93,11 +94,15 @@ public object ControlAdmissionSystem {
                                                                     else
                                                                         KevoreeComponentResourceContract(instr, mem, netOut, netIn)
 
+                MonitoringReporterFactory.reporter()?.controlAdmission_accepted(component.path())
                 return ComponentRegistration(true, contract)
             }
             return ComponentRegistration(false, null)
         }
-        else return ComponentRegistration(true, null)
+        else {
+            MonitoringReporterFactory.reporter()?.controlAdmission_accepted(component.path())
+            return ComponentRegistration(true, null)
+        }
     }
 
     fun unregisterComponent(c : ComponentInstance) : Boolean {
@@ -112,6 +117,7 @@ public object ControlAdmissionSystem {
             freeMemory += n.mem
             freeNetworkIn += n.netIn
             freeNetworkOut += n.netOut
+            MonitoringReporterFactory.reporter()?.controlAdmission_removed(c.path())
             return true
         }
         return false
