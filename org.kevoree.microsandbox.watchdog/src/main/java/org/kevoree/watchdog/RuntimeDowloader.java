@@ -69,7 +69,7 @@ public class RuntimeDowloader {
         String tempPath = getTempPath();
         File agentFile = new File(tempPath + File.separator + "ext-agent"+Version.VERSION+".jar");
         try {
-            if (!agentFile.exists()) {
+//            if (!agentFile.exists()) {
                 FileOutputStream fos = new FileOutputStream(agentFile);
                 InputStream is = this.getClass().getClassLoader().getResourceAsStream("resourceMonitorJavaAgent.jar");
                 byte data[] = new byte[1024];
@@ -79,7 +79,7 @@ public class RuntimeDowloader {
                 }
                 is.close();
                 fos.close();
-            }
+//            }
         } catch (Exception e){
             e.printStackTrace();
         }
@@ -90,7 +90,7 @@ public class RuntimeDowloader {
         String tempPath = getTempPath();
         File agentFile = new File(tempPath + File.separator + "shared-res-"+Version.VERSION+".jar");
         try {
-            if (!agentFile.exists()) {
+//            if (!agentFile.exists()) {
                 FileOutputStream fos = new FileOutputStream(agentFile);
                 InputStream is = this.getClass().getClassLoader().getResourceAsStream("sharedResourceAccounting.jar");
                 byte data[] = new byte[1024];
@@ -100,7 +100,7 @@ public class RuntimeDowloader {
                 }
                 is.close();
                 fos.close();
-            }
+//            }
         } catch (Exception e){
             e.printStackTrace();
         }
