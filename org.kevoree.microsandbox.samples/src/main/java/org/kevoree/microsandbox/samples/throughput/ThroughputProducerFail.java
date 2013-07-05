@@ -1,9 +1,6 @@
 package org.kevoree.microsandbox.samples.throughput;
 
-import org.kevoree.annotation.ComponentType;
-import org.kevoree.annotation.RequiredPort;
-import org.kevoree.annotation.Requires;
-import org.kevoree.annotation.Start;
+import org.kevoree.annotation.*;
 import org.kevoree.framework.MessagePort;
 import org.kevoree.microsandbox.api.contract.ThroughputContracted;
 
@@ -16,7 +13,7 @@ import org.kevoree.microsandbox.api.contract.ThroughputContracted;
 
 @ComponentType
 @Requires({
-    @RequiredPort(name = "output")
+    @RequiredPort(name = "output", type = PortType.MESSAGE)
 })
 
 public class ThroughputProducerFail extends org.kevoree.framework.AbstractComponentType implements ThroughputContracted {

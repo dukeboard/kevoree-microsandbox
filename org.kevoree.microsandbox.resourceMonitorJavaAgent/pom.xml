@@ -33,9 +33,7 @@
                                 true
                             </Can-Retransform-Classes>
                         </manifestEntries>
-
                     </archive>
-
                 </configuration>
             </plugin>
             <plugin>
