@@ -3,6 +3,7 @@ package org.kevoree.monitoring.strategies.monitoring;
 import org.kevoree.ComponentInstance;
 import org.kevoree.microsandbox.api.sla.Metric;
 import org.kevoree.monitoring.sla.FaultyComponent;
+import org.kevoree.monitoring.sla.MeasurePoint;
 import org.resourceaccounting.ResourcePrincipal;
 import org.resourceaccounting.contract.ResourceContract;
 
@@ -23,7 +24,7 @@ public class AllComponentsMonitoring extends AbstractLocalMonitoringStrategy {
     public static final int NUMBER_OF_STEPS = 3;
     int count = 0;
 
-    EnumMap<Metric, Double> a;
+    EnumMap<Metric, MeasurePoint> a;
 
     public AllComponentsMonitoring(List<ComponentInstance> ranking, Object msg) {
         super(ranking, msg);
@@ -41,25 +42,25 @@ public class AllComponentsMonitoring extends AbstractLocalMonitoringStrategy {
             DataForCheckingContract data = (DataForCheckingContract)obj;
             ResourceContract contract = principal.getContract();
             if (contract.getCPU() < data.lastCPU)
-                a.put(Metric.CPU, (double) data.lastCPU);
+                a.put(Metric.CPU,  new MeasurePoint(data.lastCPU, contract.getCPU()));
 
             if (contract.getNetworkOut() < data.lastSent)
-                a.put(Metric.NetworkS, (double) data.lastSent);
+                a.put(Metric.NetworkS, new MeasurePoint(data.lastSent, contract.getNetworkOut()));
 
             if (contract.getNetworkIn() < data.lastReceived) {
-                a.put(Metric.NetworkR, (double) data.lastReceived);
+                a.put(Metric.NetworkR, new MeasurePoint(data.lastReceived, contract.getNetworkIn()));
             }
 
             if (contract.getMemory() < data.lastMem) {
-                a.put(Metric.Memory, (double)data.lastMem);
+                a.put(Metric.Memory, new MeasurePoint(data.lastMem, contract.getMemory()));
             }
 
             if (contract.getWrite() < data.lastWrite) {
-                a.put(Metric.IOWrite, (double)data.lastWrite);
+                a.put(Metric.IOWrite, new MeasurePoint(data.lastWrite, contract.getWrite()));
             }
 
             if (contract.getRead() < data.lastRead) {
-                a.put(Metric.IORead, (double)data.lastRead);
+                a.put(Metric.IORead, new MeasurePoint(data.lastRead, contract.getRead()));
             }
 
             if (!a.isEmpty())
@@ -78,7 +79,7 @@ public class AllComponentsMonitoring extends AbstractLocalMonitoringStrategy {
 
             Iterator<ComponentInstance> it = ranking.iterator();
             while (it.hasNext()) {
-                a = new EnumMap<Metric, Double>(Metric.class);
+                a = new EnumMap<Metric, MeasurePoint>(Metric.class);
                 currentComponent = it.next();
                 ResourcePrincipal principal = getPrincipal(currentComponent);
                 makeContractAvailable(principal, currentComponent);

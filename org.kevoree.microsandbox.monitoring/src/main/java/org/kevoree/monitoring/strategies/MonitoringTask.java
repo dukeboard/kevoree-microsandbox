@@ -10,6 +10,7 @@ import org.kevoree.monitoring.comp.monitor.GCWatcher;
 import org.kevoree.monitoring.ranking.*;
 import org.kevoree.monitoring.sla.FaultyComponent;
 import org.kevoree.monitoring.sla.GlobalThreshold;
+import org.kevoree.monitoring.sla.MeasurePoint;
 import org.kevoree.monitoring.strategies.adaptation.KillThemAll;
 import org.kevoree.monitoring.strategies.monitoring.AbstractLocalMonitoringStrategy;
 import org.kevoree.monitoring.strategies.monitoring.AllComponentsMonitoring;
@@ -87,10 +88,10 @@ public class MonitoringTask implements Runnable, ContractVerificationRequired {
                         AbstractLocalMonitoringStrategy s =(AbstractLocalMonitoringStrategy)currentStrategy;
                         for (FaultyComponent c : s.getFaultyComponents()) {
                             ComponentsRanker.instance$.getExecutionInfo(c.getComponentPath()).increaseFailures();
-                            EnumMap<Metric, Double> map = c.getMetrics();
+                            EnumMap<Metric, MeasurePoint> map = c.getMetrics();
                             for (Metric m : map.keySet())
                                 MonitoringReporterFactory.reporter().sla(c.getComponentPath(),
-                                        m, map.get(m), 0);
+                                        m, map.get(m).getObserved(), map.get(m).getMax());
                         }
                         if (new KillThemAll(service).adapt(nodeName, s.getFaultyComponents())) {
 

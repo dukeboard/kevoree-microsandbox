@@ -12,4 +12,4 @@ import org.kevoree.microsandbox.api.sla.Metric
  * Time: 11:58 PM
  *
  */
-public data class FaultyComponent(val componentPath : String, val metrics: EnumMap<Metric, Double>)
+public data class FaultyComponent(val componentPath : String, val metrics: EnumMap<Metric, MeasurePoint>)
