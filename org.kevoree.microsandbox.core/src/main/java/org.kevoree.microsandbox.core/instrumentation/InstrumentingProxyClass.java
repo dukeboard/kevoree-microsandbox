@@ -147,6 +147,41 @@ public class InstrumentingProxyClass extends ClassVisitor {
                     };
             return adapter;
         }
+        else if (name.equals("__reportPortProcessingRequest__") && desc.equals("(Ljava/lang/Object;)V")) {
+            InstructionAdapter adapter =
+                    new InstructionAdapter(super.visitMethod(i, name, desc, s3, strings)) {
+                        @Override
+                        public void visitInsn(int opcode) {
+                            if (opcode == Opcodes.RETURN) {
+                                load(0, OBJECT_TYPE);
+                                invokestatic(ExtraInstrumentationRules.MONITOR_CLASS_NAME,
+                                        "reportPortProcessingRequest",
+                                        "(Ljava/lang/Object;)V");
+                            }
+                            super.visitInsn(opcode);
+                        }
+                    };
+            return adapter;
+        }
+        else if (name.equals("__reportPortHandlerExecution__") && desc.equals("(Ljava/lang/Object;)V")) {
+            InstructionAdapter adapter =
+                    new InstructionAdapter(super.visitMethod(i, name, desc, s3, strings)) {
+                        @Override
+                        public void visitInsn(int opcode) {
+                            if (opcode == Opcodes.RETURN) {
+                                load(0, OBJECT_TYPE);
+                                invokestatic(ExtraInstrumentationRules.MONITOR_CLASS_NAME,
+                                        "reportPortHandlerExecution",
+                                        "(Ljava/lang/Object;)V");
+                            }
+                            super.visitInsn(opcode);
+                        }
+                    };
+            return adapter;
+        }
+
+
+
         return super.visitMethod(i, name, desc, s3, strings);
     }
 }

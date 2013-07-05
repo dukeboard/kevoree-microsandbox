@@ -1,5 +1,7 @@
 package org.kevoree.microsandbox.core.instrumentation;
 
+import org.kevoree.microsandbox.core.instrumentation.invocations.DetectingInvocationReceptions;
+import org.kevoree.microsandbox.core.instrumentation.invocations.DetectingInvocationRequests;
 import org.kevoree.microsandbox.core.instrumentation.io.FileAccessInstrumentation;
 import org.objectweb.asm.*;
 import org.objectweb.asm.util.CheckClassAdapter;
@@ -19,26 +21,24 @@ import java.io.InputStream;
  */
 public class InstrumenterCommand {
     public byte[] instrument(byte[] code, String className) {
+
         ClassReader reader = new ClassReader(code);
         ClassWriter writer = new ClassWriter(reader, ClassWriter.COMPUTE_MAXS);
         ClassVisitor tmp = writer;
-//        if (className.endsWith("OlivierExample")) {
-//            System.out.println("dfsdsfdsfdsfsfdsfsdfdsff 12345678");
-//            tmp = new TraceClassVisitor(tmp, new PrintWriter(System.out));
-//        }
+//      tmp = new TraceClassVisitor(tmp, new PrintWriter(System.out));
         //tmp = new CheckClassAdapter(tmp,true);
         tmp = new ResourceAccountingVisitor(tmp);
 
         //tmp = new InstForAccountingPerInvocation(tmp);
-        try {
 
+        try {
+            tmp = new DetectingInvocationRequests(tmp);
+            tmp = new DetectingInvocationReceptions(tmp);
             reader.accept(tmp, ClassReader.EXPAND_FRAMES);
         }
         catch (Exception e) {
             e.printStackTrace();
         }
-//        if (className.endsWith("KevsParser"))
-//        CheckClassAdapter.verify(new ClassReader(writer.toByteArray()),false,new PrintWriter(System.out));
         return writer.toByteArray();
     }
 
@@ -177,6 +177,22 @@ public class InstrumenterCommand {
                 // adding method to report file read
                 mv = super.visitMethod(Opcodes.ACC_PUBLIC | Opcodes.ACC_STATIC,
                         "__reportFileRead__","(I)V",null,null);
+                mv.visitCode();
+                mv.visitInsn(Opcodes.RETURN);
+                mv.visitMaxs(3, 3);
+                mv.visitEnd();
+
+                // adding method to report attempts of sending messages
+                mv = super.visitMethod(Opcodes.ACC_PUBLIC | Opcodes.ACC_STATIC,
+                        "__reportPortProcessingRequest__","(Ljava/lang/Object;)V",null,null);
+                mv.visitCode();
+                mv.visitInsn(Opcodes.RETURN);
+                mv.visitMaxs(3, 3);
+                mv.visitEnd();
+
+                // adding method to report attempts of sending messages
+                mv = super.visitMethod(Opcodes.ACC_PUBLIC | Opcodes.ACC_STATIC,
+                        "__reportPortHandlerExecution__","(Ljava/lang/Object;)V",null,null);
                 mv.visitCode();
                 mv.visitInsn(Opcodes.RETURN);
                 mv.visitMaxs(3, 3);

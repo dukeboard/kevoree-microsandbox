@@ -208,6 +208,14 @@ public class ResourceCounter {
         ourInstance.innerArrayAllocated(obj, principal);
     }
 
+    public static void reportPortProcessingRequest(Object obj) {
+        System.out.println("sdsdfdfsfsfsfsffsd : " + obj.toString());
+    }
+
+    public static void reportPortHandlerExecution(Object obj) {
+        System.out.println("another event: reception : " + obj.toString());
+    }
+
     public static void reportNetworkDataRead(int n) {
         if (isMonitoring()) {
             ResourcePrincipal principal = get();
