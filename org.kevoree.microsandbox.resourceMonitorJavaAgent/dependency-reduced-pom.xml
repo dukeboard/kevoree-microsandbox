@@ -40,6 +40,7 @@
                 <exclude>META-INF/*.SF</exclude>
                 <exclude>META-INF/*.DSA</exclude>
                 <exclude>META-INF/*.RSA</exclude>
+                <exclude>*/org.kevoree.microsandbox.sharedResourceAccounting</exclude>
               </excludes>
             </filter>
           </filters>
