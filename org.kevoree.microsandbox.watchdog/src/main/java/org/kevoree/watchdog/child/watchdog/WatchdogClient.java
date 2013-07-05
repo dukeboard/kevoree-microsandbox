@@ -12,14 +12,23 @@ import java.net.InetAddress;
 public class WatchdogClient implements Runnable {
     @Override
     public void run() {
+        DatagramSocket clientSocket = null;
         try {
-            DatagramSocket clientSocket = new DatagramSocket();
+            clientSocket = new DatagramSocket();
             InetAddress IPAddress = InetAddress.getByName("localhost");
             byte[] sendData = "alive".getBytes();
             DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, IPAddress, WatchDogCheck.internalPort);
             clientSocket.send(sendPacket);
         } catch (Exception e) {
             e.printStackTrace();
+        } finally {
+            if (clientSocket != null) {
+                try {
+                    clientSocket.close();
+                } catch (Exception e){
+                    e.printStackTrace();
+                }
+            }
         }
     }
 }
