@@ -50,7 +50,6 @@ public class MonitoringComponent extends AbstractComponentType implements Micros
                                                                 io_read, io_write);
 
         if (MonitoringReporterFactory.reporter() instanceof ComposeMonitoringReport) {
-
             ((ComposeMonitoringReport)MonitoringReporterFactory.reporter()).addReporter(
                     new MicrosandboxReporter(this));
         }

@@ -36,6 +36,9 @@ addComponent cpuConsumer0@node0 : CPUConsumerGood {
     memory_max_size='3000'
 }
 
+addComponent writer0@node0 : IOWriterGood {
+}
+
 addComponent MonitoringComponent0@node0 : MonitoringComponent {
     memory_threshold='65',
     cpu_threshold='40',
@@ -43,11 +46,16 @@ addComponent MonitoringComponent0@node0 : MonitoringComponent {
     net_out_threshold='80'
 }
 
-addComponent writer0@node0 : IOWriterGood {
+addComponent reasoner0@node0 : ResourceAwareReasoner {
 }
 
-addChannel defMSGT360 : defMSGT {}
+addChannel defMSGT_reasoning : defMSGT {}
+bind reasoner0.eventHandler@node0 => defMSGT_reasoning
+bind MonitoringComponent0.reasoner@node0 => defMSGT_reasoning
+
+
 addChannel defMSGT419 : defMSGT {}
+addChannel defMSGT360 : defMSGT {}
 
 bind FakeConso509.showText@node0 => defMSGT360
 bind FakeConso509.textEntered@node0 => defMSGT419

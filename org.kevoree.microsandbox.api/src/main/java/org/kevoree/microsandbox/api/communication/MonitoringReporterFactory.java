@@ -8,17 +8,13 @@ package org.kevoree.microsandbox.api.communication;
  * To change this template use File | Settings | File Templates.
  */
 public class MonitoringReporterFactory {
-    public static MonitoringReporter consoleReporter() {
-        activeReporter = new ConsoleMonitoringReporter();
-        return activeReporter;
-    }
 
     private static MonitoringReporter activeReporter =null;
 
     public static MonitoringReporter reporter() {
-        if (activeReporter == null) {
+        if (activeReporter == null || !(activeReporter instanceof ComposeMonitoringReport)) {
             activeReporter = new ComposeMonitoringReport();
-            ((ComposeMonitoringReport)activeReporter).addReporter(consoleReporter());
+            ((ComposeMonitoringReport)activeReporter).addReporter(new ConsoleMonitoringReporter());
         }
         return activeReporter;
     }
