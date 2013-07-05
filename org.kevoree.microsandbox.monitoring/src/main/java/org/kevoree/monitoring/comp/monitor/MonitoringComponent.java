@@ -2,6 +2,12 @@ package org.kevoree.monitoring.comp.monitor;
 
 import org.kevoree.annotation.*;
 import org.kevoree.framework.AbstractComponentType;
+import org.kevoree.framework.MessagePort;
+import org.kevoree.microsandbox.api.communication.ComposeMonitoringReport;
+import org.kevoree.microsandbox.api.communication.MonitoringReporterFactory;
+import org.kevoree.microsandbox.api.event.MicrosandboxEvent;
+import org.kevoree.monitoring.communication.MicrosandboxEventListener;
+import org.kevoree.monitoring.communication.MicrosandboxReporter;
 import org.kevoree.monitoring.sla.GlobalThreshold;
 import org.kevoree.monitoring.strategies.MonitoringTask;
 
@@ -13,7 +19,9 @@ import org.kevoree.monitoring.strategies.MonitoringTask;
  *
  */
 @Requires( {
- @RequiredPort(name = "output" , type = PortType.MESSAGE, optional = true)
+ @RequiredPort(name = "output" , type = PortType.MESSAGE, optional = true),
+ @RequiredPort(name = "reasoner", type = PortType.MESSAGE,
+         className = MicrosandboxEvent.class, optional = true)
 })
 @DictionaryType( {
         @DictionaryAttribute(name = "memory_threshold", defaultValue = "60"),
@@ -25,8 +33,7 @@ import org.kevoree.monitoring.strategies.MonitoringTask;
 }
 )
 @ComponentType
-public class MonitoringComponent extends AbstractComponentType {
-
+public class MonitoringComponent extends AbstractComponentType implements MicrosandboxEventListener {
     MonitoringTask monitoringTask;
 
     @Start
@@ -38,12 +45,21 @@ public class MonitoringComponent extends AbstractComponentType {
         double io_read = Long.valueOf(getDictionary().get("io_in_threshold").toString());
         double io_write = Long.valueOf(getDictionary().get("io_out_threshold").toString());
 
-        GlobalThreshold globalThreshold = new GlobalThreshold(cpu,memory,net_received, net_sent, io_read, io_write);
+        GlobalThreshold globalThreshold = new GlobalThreshold(cpu,memory,
+                                                                net_received, net_sent,
+                                                                io_read, io_write);
+
+        if (MonitoringReporterFactory.reporter() instanceof ComposeMonitoringReport) {
+
+            ((ComposeMonitoringReport)MonitoringReporterFactory.reporter()).addReporter(
+                    new MicrosandboxReporter(this));
+        }
 
         monitoringTask = new MonitoringTask(getNodeName(),
                 globalThreshold,
                 getModelService(),
                 getBootStrapperService());
+
         new Thread(monitoringTask).start();
     }
 
@@ -56,5 +72,13 @@ public class MonitoringComponent extends AbstractComponentType {
     public void updateComponent() {
         stopComponent();
         startComponent();
+    }
+
+    @Override
+    public void notifyEvent(MicrosandboxEvent monitoringEvent) {
+        if (isPortBinded("reasoner")) {
+            MessagePort port = getPortByName("reasoner", MessagePort.class);
+            port.process(monitoringEvent);
+        }
     }
 }

@@ -6,8 +6,24 @@ package org.kevoree.microsandbox.api.event;
  * Date: 04/07/13
  * Time: 09:39
  */
-public class ModelAdmissionEvent {
+public abstract class ModelAdmissionEvent extends MicrosandboxEvent {
+    protected final String componentPath;
 
-    //TODO , perhaps to split in severals
+    public ModelAdmissionEvent(String componentPath) {
+        this.componentPath = componentPath;
+    }
 
+    public String getComponentPath() {
+        return componentPath;
+    }
+
+    @Override
+    public String toString() {
+        return "ControlAdmission : {" +
+                "path : \"" + componentPath + "\", " +
+                "action : \"" + action() + "\"" +
+                '}';
+    }
+
+    protected abstract String action();
 }

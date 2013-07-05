@@ -8,9 +8,11 @@ import org.kevoree.microsandbox.api.sla.Metric;
  * Date: 04/07/13
  * Time: 09:35
  */
-public class ContractViolationEvent {
+public class ContractViolationEvent extends MicrosandboxEvent {
 
-    public ContractViolationEvent(String instancePath, Metric metric, Double observedValue, Double maxValue) {
+    public ContractViolationEvent(String instancePath,
+                                  Metric metric,
+                                  Double observedValue, Double maxValue) {
         this.instancePath = instancePath;
         this.metric = metric;
         this.observedValue = observedValue;
