@@ -57,7 +57,7 @@ public class ThreadGroupResourcePrincipal extends AbstractResourcePrincipal<Long
     private static ThreadMXBean bean;
 
 
-    public static String locateGroup(Thread th, String prefix) {
+    private static String locateGroup(Thread th, String prefix) {
         ThreadGroup tg = th.getThreadGroup();
         while (tg != null && !tg.getName().startsWith(prefix)) {
             tg = tg.getParent();

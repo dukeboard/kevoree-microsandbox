@@ -62,22 +62,21 @@ public object ComponentInteractionAspect {
 
                 // ok, someone is sending more message than expected, try to identify the faulty
                 errorOnSinglePortUsage = true
-//                println("Count of invocation using port $name are $portObserved")
+                if (!result.misUsedProvidedPorts.containsKey(name))
+                    result.misUsedProvidedPorts.put(name, HashSet<Port>())
+                //                println("Count of invocation using port $name are $portObserved")
                 for (binding in port?.getBindings()!!)
                 {
-//                    println("\t${binding?.getHub()?.getName()}\t")
-
                     for (b2 in binding?.getHub()?.getBindings()!!)
                         if (!b2.equals(binding) && (portAspect.isRequiredPort(b2.getPort() as Port)))
                         {
                             val other = ((b2.getPort()?.eContainer() as ComponentInstance))
                             val nameC = other.getName()
                             val nameP = b2.getPort()?.getPortTypeRef()?.getName()
-                            val d = MyResourceConsumptionRecorder.getInstance()?.getUsesOfRequiredPort(nameC, nameP) as Int
+                            val d = MyResourceConsumptionRecorder.
+                                    getInstance()?.getUsesOfRequiredPort(nameC, nameP) as Int / 3
                             if (d > portExpected) {
 //                                println("\t\tI found you. Sent by ${nameC}.${nameP} : $d")
-                                if (!result.misUsedProvidedPorts.containsKey(name))
-                                    result.misUsedProvidedPorts.put(name, HashSet<Port>())
                                 result.misUsedProvidedPorts.get(name)?.add(b2?.getPort()!!)
                             }
                         }
@@ -86,7 +85,7 @@ public object ComponentInteractionAspect {
             totalObserved += portObserved
         }
         if (!errorOnSinglePortUsage) {
-            if ( totalObserved > totalExpected) {
+            if ( totalObserved / 3 > totalExpected) {
                 // ok, there is no violation on single port, but there is violation on the global contract
                 result.wrongUsage = true
                 return result

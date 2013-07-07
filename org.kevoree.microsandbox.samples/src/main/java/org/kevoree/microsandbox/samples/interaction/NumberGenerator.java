@@ -18,12 +18,16 @@ import java.util.TimerTask;
 @Requires({
         @RequiredPort(name = "numbers", type = PortType.MESSAGE, optional = true)
 })
+@DictionaryType({
+        @DictionaryAttribute(name = "frequency", defaultValue = "300")
+})
 @ComponentType
 public class NumberGenerator extends AbstractComponentType {
     Timer t;
     Random random;
     @Start
     public void startComponent() {
+        int time = Integer.valueOf(getDictionary().get("frequency").toString());
         random = new Random();
         TimerTask tt = new TimerTask() {
             @Override
@@ -34,7 +38,7 @@ public class NumberGenerator extends AbstractComponentType {
             }
         };
         t = new Timer();
-        t.schedule(tt, 50,50);
+        t.schedule(tt, time,time);
     }
 
     @Stop

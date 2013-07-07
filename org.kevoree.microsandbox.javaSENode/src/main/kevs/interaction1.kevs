@@ -35,15 +35,19 @@ addComponent tester0@node0 : CPUConsumerByPrimalityTesting {
 }
 
 addComponent generator0@node0 : NumberGenerator {
-    frequency = '50'
+    frequency = '200'
+}
+
+addComponent generator1@node0 : NumberGenerator {
+    frequency = '200'
 }
 
 addChannel channelForNumbers : defMSGT {}
 
 bind tester0.primalityTester@node0 => channelForNumbers
 bind generator0.numbers@node0 => channelForNumbers
+bind generator1.numbers@node0 => channelForNumbers
 
 updateDictionary channelForNumbers
 
 }
-
