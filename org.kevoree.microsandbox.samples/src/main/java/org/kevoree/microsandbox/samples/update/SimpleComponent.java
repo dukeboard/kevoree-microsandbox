@@ -1,9 +1,11 @@
 package org.kevoree.microsandbox.samples.update;
 
+import org.kevoree.ContainerRoot;
 import org.kevoree.annotation.ComponentType;
 import org.kevoree.annotation.Start;
 import org.kevoree.annotation.Stop;
 import org.kevoree.annotation.Update;
+import org.kevoree.api.service.core.handler.ModelListener;
 import org.kevoree.api.service.core.handler.UUIDModel;
 import org.kevoree.framework.AbstractComponentType;
 import org.kevoree.microsandbox.api.contract.FullContracted;
@@ -23,7 +25,9 @@ public class SimpleComponent extends AbstractComponentType implements FullContra
 
         System.out.println("\t" + getModelService().getLastUUIDModel().getUUID());
         System.out.println("\t" + getModelService().getLastUUIDModel().getUUID());
-        System.out.println("\t Preivous model : " + getModelService().getPreviousModel().size());
+
+
+
 //        System.out.println("Funny string");
     }
 

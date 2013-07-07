@@ -96,7 +96,8 @@ public object ControlAdmissionSystem {
                                                                     else
                                                                         KevoreeComponentResourceContract(instr, mem, netOut, netIn)
 
-                MonitoringReporterFactory.reporter()?.controlAdmission_accepted(component.path())
+                MonitoringReporterFactory.reporter()?.controlAdmission_accepted(component.path() + " " +
+                                component.getMetaData() + " " + component.getTypeDefinition()?.getName() )
                 return ComponentRegistration(true, contract)
             }
             return ComponentRegistration(false, null)

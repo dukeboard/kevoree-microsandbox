@@ -7,12 +7,14 @@ import org.kevoree.Port;
 import org.kevoree.annotation.RequiredPort;
 import org.kevoree.api.Bootstraper;
 import org.kevoree.api.service.core.handler.KevoreeModelHandlerService;
+import org.kevoree.api.service.core.handler.ModelListener;
 import org.kevoree.framework.kaspects.PortAspect;
 import org.kevoree.microsandbox.api.communication.MonitoringReporterFactory;
 import org.kevoree.microsandbox.api.sla.Metric;
 import org.kevoree.monitoring.comp.MyResourceConsumptionRecorder;
 import org.kevoree.monitoring.comp.monitor.ContractVerificationRequired;
 import org.kevoree.monitoring.comp.monitor.GCWatcher;
+import org.kevoree.monitoring.models.SimpleIdAssigner;
 import org.kevoree.monitoring.ranking.*;
 import org.kevoree.monitoring.sla.FaultyComponent;
 import org.kevoree.monitoring.sla.GlobalThreshold;
@@ -36,7 +38,7 @@ import java.util.EnumSet;
  * Time: 11:12 AM
  * To change this template use File | Settings | File Templates.
  */
-public class MonitoringTask implements Runnable, ContractVerificationRequired {
+public class MonitoringTask implements Runnable, ContractVerificationRequired, ModelListener {
 
     private final String nodeName;
     private final Bootstraper bootstraper;
@@ -56,6 +58,32 @@ public class MonitoringTask implements Runnable, ContractVerificationRequired {
         this.globalThreshold = globalThreshold;
     }
 
+    @Override
+    public boolean preUpdate(ContainerRoot containerRoot, ContainerRoot containerRoot2) {
+        return true;
+    }
+
+    @Override
+    public boolean initUpdate(ContainerRoot containerRoot, ContainerRoot containerRoot2) {
+        return true;
+    }
+
+    @Override
+    public boolean afterLocalUpdate(ContainerRoot containerRoot, ContainerRoot containerRoot2) {
+        return true;
+    }
+
+    @Override
+    public void modelUpdated() {
+        ComponentsInfoStorage.instance$.refresh(nodeName, service);
+    }
+
+    @Override
+    public void preRollback(ContainerRoot containerRoot, ContainerRoot containerRoot2) { }
+
+    @Override
+    public void postRollback(ContainerRoot containerRoot, ContainerRoot containerRoot2) { }
+
     private enum MonitoringStatus {
         GLOBAL_MONITORING,
         LOCAL_MONITORING;
@@ -69,6 +97,7 @@ public class MonitoringTask implements Runnable, ContractVerificationRequired {
     public void run() {
         System.out.printf("Initiating Monitoring task\n");
         msg = new Object();
+        ComponentsInfoStorage.instance$.setIdAssigner(new SimpleIdAssigner(service));
 
         gcWatcher = new GCWatcher();
         gcWatcher.addContractVerificationRequieredListener(this);
@@ -96,7 +125,7 @@ public class MonitoringTask implements Runnable, ContractVerificationRequired {
                         currentStrategy.pause();
                         AbstractLocalMonitoringStrategy s =(AbstractLocalMonitoringStrategy)currentStrategy;
                         for (FaultyComponent c : s.getFaultyComponents()) {
-                            ComponentsRanker.instance$.getExecutionInfo(c.getComponentPath()).increaseFailures();
+                            ComponentsInfoStorage.instance$.getExecutionInfo(c.getComponentPath()).increaseFailures();
                             EnumMap<Metric, MeasurePoint> map = c.getMetrics();
                             for (Metric m : map.keySet())
                                 MonitoringReporterFactory.reporter().sla(c.getComponentPath(),

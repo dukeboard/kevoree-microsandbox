@@ -14,6 +14,7 @@ import org.kevoree.api.Bootstraper
 import java.util.NoSuchElementException
 import org.kevoree.microsandbox.core.Entry
 import org.kevoree.library.defaultNodeTypes.context.KevoreeDeployManager
+import org.kevoree.monitoring.models.ComponentExecutionInfo
 
 /**
  * Created with IntelliJ IDEA.
@@ -24,7 +25,6 @@ import org.kevoree.library.defaultNodeTypes.context.KevoreeDeployManager
  */
 public object ComponentsRanker {
 
-    private val info : HashMap<String, ComponentExecutionInfo> = HashMap<String, ComponentExecutionInfo>()
     private val definitionAspect : TypeDefinitionAspect = TypeDefinitionAspect()
 
     fun rank(nodeName: String,
@@ -34,28 +34,18 @@ public object ComponentsRanker {
         val components : MutableList<ComponentInstance> =
                 ArrayList<ComponentInstance>()
 
-        val root = modelService.getLastModel()
-
-        root?.getNodes()?.filter { node -> nodeName.equals(node.getName()) }?.forEach { node->
-                for (instance : ComponentInstance in node.getComponents())
-                {
-                    val i : ComponentExecutionInfo? = if (info.containsKey(instance.path())) {
-                        info.get(instance.path())
-                    }
-                    else {
-                        val l = KevoreeDeployManager.getRef(instance.javaClass.getName()+"_deployTime", instance.getName()) as Long
-                        val c = ComponentExecutionInfo(instance.getName(), l)
-                        info.put(instance.path() as String, c)
-                    }
+        ComponentsInfoStorage.updateListOfComponents(nodeName, modelService, {
+                (node, instance, info) ->
+                    updateInfo(instance, info, node, bootstrapService)
                     components.add(instance)
-                    updateInfo(instance, i, node, bootstrapService)
-                }
-        }
-        val time = System.nanoTime()
+            }
+        )
+
+        val currentTime = System.nanoTime()
         return components.sort(comparator { (a,b) ->
-            val x = info.get(a.path())
-            val y = info.get(b.path())
-            if ((x?.timeAlive(time) as Long) < y?.timeAlive(time) as Long)
+            val x = ComponentsInfoStorage.getExecutionInfo(a.path() as String)
+            val y = ComponentsInfoStorage.getExecutionInfo(b.path() as String)
+            if ((x?.timeAlive(currentTime) as Long) < y?.timeAlive(currentTime) as Long)
                  1
             else
                 -1
@@ -73,12 +63,9 @@ public object ComponentsRanker {
         var entry : Entry? = CoverageRuntime.calculateCoverage(loader as ClassLoader)
         i?.setBranchCoverage((entry?.branchCoverage!!))
         i?.setInstructionCoverage((entry?.instrCoverage!!))
-
     }
 
-    fun getExecutionInfo(path : String) : ComponentExecutionInfo? {
-        return if (info.containsKey(path)) info.get(path) else null
-    }
+
 
 
 }
