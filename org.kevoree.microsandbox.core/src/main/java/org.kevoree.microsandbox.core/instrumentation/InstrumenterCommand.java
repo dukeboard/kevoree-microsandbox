@@ -184,18 +184,20 @@ public class InstrumenterCommand {
 
                 // adding method to report attempts of sending messages
                 mv = super.visitMethod(Opcodes.ACC_PUBLIC | Opcodes.ACC_STATIC,
-                        "__reportPortProcessingRequest__","(Ljava/lang/Object;)V",null,null);
+                        "__reportPortProcessingRequest__",
+                        "(Ljava/lang/Object;Ljava/lang/Object;)V",null,null);
                 mv.visitCode();
                 mv.visitInsn(Opcodes.RETURN);
-                mv.visitMaxs(3, 3);
+                mv.visitMaxs(4, 4);
                 mv.visitEnd();
 
                 // adding method to report attempts of sending messages
                 mv = super.visitMethod(Opcodes.ACC_PUBLIC | Opcodes.ACC_STATIC,
-                        "__reportPortHandlerExecution__","(Ljava/lang/Object;)V",null,null);
+                        "__reportPortHandlerExecution__",
+                        "(Ljava/lang/Object;Ljava/lang/Object;)V",null,null);
                 mv.visitCode();
                 mv.visitInsn(Opcodes.RETURN);
-                mv.visitMaxs(3, 3);
+                mv.visitMaxs(4, 4);
                 mv.visitEnd();
 
                 super.visitEnd();

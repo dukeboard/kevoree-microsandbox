@@ -18,7 +18,7 @@ import java.net.URLClassLoader;
  * Time: 10:38 PM
  * To change this template use File | Settings | File Templates.
  */
-public class MyResourceContractProvider implements ResourceContractProvider {
+public class DefaultResourceContractProvider implements ResourceContractProvider {
 
     private URLClassLoader contractLoader = null;
 
@@ -50,13 +50,13 @@ public class MyResourceContractProvider implements ResourceContractProvider {
     };
     private String packageName;
 
-    public MyResourceContractProvider(String contractFile, String packageName) {
+    public DefaultResourceContractProvider(String contractFile, String packageName) {
         try {
             this.packageName = packageName;
             URL url = new File(contractFile).toURI().toURL();
             contractLoader = URLClassLoader.newInstance(
                     new URL[]{url},
-                    MyResourceContractProvider.class.getClassLoader()
+                    DefaultResourceContractProvider.class.getClassLoader()
             );
 
         } catch (MalformedURLException e) {
@@ -78,15 +78,15 @@ public class MyResourceContractProvider implements ResourceContractProvider {
             tmp = ctor.newInstance();
 
         } catch (ClassNotFoundException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            e.printStackTrace();
         } catch (InvocationTargetException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            e.printStackTrace();
         } catch (NoSuchMethodException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            e.printStackTrace();
         } catch (InstantiationException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            e.printStackTrace();
         } catch (IllegalAccessException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            e.printStackTrace();
         }
 
         return tmp;

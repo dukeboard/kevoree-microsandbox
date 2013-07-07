@@ -82,7 +82,7 @@ public class BehaviorRecorderVisitor extends AbstractMethodInstrumentation {
         Analyzer analyzer = new MyAnalyzer(new BasicInterpreter());
         MethodNode mm = ((MethodNode)mv);
         try {
-            Frame[] frames = analyzer.analyze(className, ((MethodNode)mv));
+            Frame[] frames = analyzer.analyze(className.replace('/','.'), ((MethodNode)mv));
             LinkedList<AbstractInsnNode> l1 = new LinkedList<AbstractInsnNode>();
             LinkedList<AbstractInsnNode> l2 = new LinkedList<AbstractInsnNode>();
             for (int i = frames.length - 1 ; i >= 0 ; i--) {

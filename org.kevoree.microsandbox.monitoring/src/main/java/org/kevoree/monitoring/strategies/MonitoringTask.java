@@ -1,7 +1,13 @@
 package org.kevoree.monitoring.strategies;
 
+import org.kevoree.ComponentInstance;
+import org.kevoree.ContainerRoot;
+import org.kevoree.MBinding;
+import org.kevoree.Port;
+import org.kevoree.annotation.RequiredPort;
 import org.kevoree.api.Bootstraper;
 import org.kevoree.api.service.core.handler.KevoreeModelHandlerService;
+import org.kevoree.framework.kaspects.PortAspect;
 import org.kevoree.microsandbox.api.communication.MonitoringReporterFactory;
 import org.kevoree.microsandbox.api.sla.Metric;
 import org.kevoree.monitoring.comp.MyResourceConsumptionRecorder;
@@ -92,6 +98,8 @@ public class MonitoringTask implements Runnable, ContractVerificationRequired {
                             for (Metric m : map.keySet())
                                 MonitoringReporterFactory.reporter().sla(c.getComponentPath(),
                                         m, map.get(m).getObserved(), map.get(m).getMax());
+
+                            printInfoAboutPorts(c.getComponentPath());
                         }
                         if (new KillThemAll(service).adapt(nodeName, s.getFaultyComponents())) {
 
@@ -115,6 +123,37 @@ public class MonitoringTask implements Runnable, ContractVerificationRequired {
         currentStrategy.stop();
         gcWatcher.unregister();
         gcWatcher = null;
+    }
+
+    private void printInfoAboutPorts(String componentPath) {
+        PortAspect portAspect = new PortAspect();
+        ComponentInstance c = service.getLastModel().findByPath(componentPath, ComponentInstance.class);
+        ContainerRoot root = service.getLastModel();
+
+        for (Port port : c.getRequired()) {
+            int n = MyResourceConsumptionRecorder.getInstance().
+                    getUsesOfRequiredPort(c.getName(), port.getPortTypeRef().getName());
+            System.out.printf("Count of invocation using port %s are %d\n", port.getPortTypeRef().getName(), n);
+        }
+
+        for (Port port : c.getProvided()) {
+            int n = MyResourceConsumptionRecorder.getInstance().
+                    getUsesOfProvidedPort(c.getName(), port.getPortTypeRef().getName());
+            System.out.printf("Count of invocation using port %s are %d\n",
+                    port.getPortTypeRef().getName(), n);
+            for (MBinding binding : port.getBindings()) {
+                System.out.printf("\t%s\n", binding.getHub().getName());
+                for (MBinding b2 : binding.getHub().getBindings())
+                    if (!b2.equals(binding) && portAspect.isRequiredPort(b2.getPort())) {
+                        ComponentInstance other = ((ComponentInstance)b2.getPort().eContainer());
+                        String nameC = other.getName();
+                        String nameP = b2.getPort().getPortTypeRef().getName();
+                        System.out.printf("\t\t%s %s %d\n", nameC, nameP,
+                                MyResourceConsumptionRecorder.getInstance().getUsesOfRequiredPort(nameC,nameP));
+                    }
+
+            }
+        }
     }
 
     private void switchToSimpleLocal() {

@@ -27,13 +27,23 @@ public class DetectingInvocationReceptions extends ClassVisitor {
                       String[] interfaces) {
         super.visit(version, flags, name, signature, superName, interfaces);
         className = name;
-        conditionsToBeValidComponent = (superName.equals("org/kevoree/framework/AbstractComponentType"));
+        if (superName.equals("java/lang/Object") && interfaces != null && interfaces.length == 3) {
+            int c = 0;
+            for (String s : interfaces) {
+                if (s.equals("org/kevoree/framework/MessagePort"))
+                    c++;
+                else if (s.equals("org/kevoree/framework/port/KevoreeProvidedExecutorPort"))
+                    c++;
+            }
+            conditionsToBeValidComponent = (c == 2);
+        }
 
     }
 
     @Override
     public MethodVisitor visitMethod(int access, String name, String desc, String s3, String[] strings) {
-        if (conditionsToBeValidComponent) {
+        if (conditionsToBeValidComponent && name.equals("internal_process") &&
+                desc.equals("(Ljava/lang/Object;)Ljava/lang/Object;")) {
             return new InstrumentingInvocationServerMethodDetection(
                     super.visitMethod(access, name, desc, s3, strings),
                     className, name);

@@ -19,13 +19,12 @@ addNode node0:MonitoredNode {
 
 addComponent MonitoringComponent0@node0 : MonitoringComponent {
     memory_threshold='65',
-    cpu_threshold='40',
+    cpu_threshold='10',
     net_in_threshold='80',
     net_out_threshold='80'
 }
 
-addComponent reasoner0@node0 : ResourceAwareReasoner {
-}
+addComponent reasoner0@node0 : ResourceAwareReasoner { }
 
 addChannel defMSGT_reasoning : defMSGT {}
 bind reasoner0.eventHandler@node0 => defMSGT_reasoning
@@ -33,39 +32,20 @@ bind MonitoringComponent0.reasoner@node0 => defMSGT_reasoning
 
 updateDictionary defMSGT_reasoning
 
-addComponent FakeConso509@node0 : FakeConsole { singleFrame='true' }
-addComponent FakeConso510@node0 : FakeConsole {}
-addComponent fread@node0 : FileExplorer { basedir='.' }
-
-addComponent memoryConsumer0@node0 : MemoryConsumer {
-    memory_max_size='20',
-    cpu_wall_time='200000',
-    network_input_peak_seconds='234',
-    network_output_peak_seconds='234',
-    amount = '302400'
+addComponent tester0@node0 : CPUConsumerByPrimalityTesting {
+    cpu_wall_time='2000000'
 }
 
-addComponent cpuConsumer0@node0 : CPUConsumerGood {
-    cpu_wall_time='2000000',
-    memory_max_size='3000'
+addComponent generator0@node0 : NumberGenerator {
+
 }
 
-addComponent writer0@node0 : IOWriterGood {
-}
+addChannel channelForNumbers : defMSGT {}
 
+bind tester0.primalityTester@node0 => channelForNumbers
+bind generator0.numbers@node0 => channelForNumbers
 
-addChannel defMSGT419 : defMSGT {}
-addChannel defMSGT360 : defMSGT {}
-
-bind FakeConso509.showText@node0 => defMSGT360
-bind FakeConso509.textEntered@node0 => defMSGT419
-bind FakeConso510.showText@node0 => defMSGT419
-bind FakeConso510.textEntered@node0 => defMSGT360
-
-updateDictionary FakeConso510@node0
-updateDictionary defMSGT360
-updateDictionary defMSGT419
-updateDictionary FakeConso509@node0
+updateDictionary channelForNumbers
 
 }
 

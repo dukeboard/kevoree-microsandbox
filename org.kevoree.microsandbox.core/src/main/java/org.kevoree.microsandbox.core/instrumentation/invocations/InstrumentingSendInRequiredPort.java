@@ -24,7 +24,10 @@ public class InstrumentingSendInRequiredPort extends AbstractMethodInstrumentati
         super.visitCode();
         // calling a method in Integer to detect the call
         load(0, OBJECT_TYPE);
-        invokevirtual(className.replace('.', '/'), "getComponentName", "()Ljava/lang/String;");
-        invokestatic("java/lang/Integer", "__reportPortProcessingRequest__", "(Ljava/lang/Object;)V");
+        invokevirtual(className, "getComponentName", "()Ljava/lang/String;");
+        load(0, OBJECT_TYPE);
+        invokevirtual(className, "getName", "()Ljava/lang/String;");
+        invokestatic("java/lang/Integer", "__reportPortProcessingRequest__",
+                        "(Ljava/lang/Object;Ljava/lang/Object;)V");
     }
 }

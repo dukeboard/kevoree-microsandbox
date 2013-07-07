@@ -42,7 +42,6 @@ public class DetectingInvocationRequests extends ClassVisitor {
     @Override
     public MethodVisitor visitMethod(int access, String name, String desc, String s3, String[] strings) {
         if (conditionsToBeValidComponentPort && name.equals("send") && desc.equals("(Ljava/lang/Object;)V")) {
-            System.out.println("Port found in class 222:" + className);
             return new InstrumentingSendInRequiredPort(super.visitMethod(access, name, desc, s3, strings),
                     className, name);
         }

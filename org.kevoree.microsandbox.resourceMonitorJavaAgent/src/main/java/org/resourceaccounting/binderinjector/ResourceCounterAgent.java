@@ -9,7 +9,7 @@
 package org.resourceaccounting.binderinjector;
 
 
-import org.kevoree.microsandbox.core.instrumentation.strategies.MyResourceContractProvider;
+import org.kevoree.microsandbox.core.instrumentation.strategies.DefaultResourceContractProvider;
 import org.resourceaccounting.ObjectSizeProvider;
 import org.resourceaccounting.binder.ResourceCounter;
 
@@ -27,7 +27,7 @@ public class ResourceCounterAgent {
 
         globalInst = inst;
 
-        ResourceCounter.setResourceContractProvider(new MyResourceContractProvider("",""));
+        ResourceCounter.setResourceContractProvider(new DefaultResourceContractProvider("",""));
         ResourceCounter.setObjectSizeProvider(new ObjectSizeProvider() {
             public long sizeOf(Object obj) {
                 return globalInst.getObjectSize(obj);

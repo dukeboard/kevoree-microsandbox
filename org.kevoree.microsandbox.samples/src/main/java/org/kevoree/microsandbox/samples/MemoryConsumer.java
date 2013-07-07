@@ -11,6 +11,10 @@ import org.kevoree.microsandbox.api.contract.FullContracted;
  * Time: 5:47 PM
  * To change this template use File | Settings | File Templates.
  */
+
+@Provides({
+        @ProvidedPort(name = "input", type = PortType.MESSAGE)
+})
 @DictionaryType({
         @DictionaryAttribute(name = "amount", defaultValue = "102400")
 })
@@ -77,6 +81,12 @@ public class MemoryConsumer extends AbstractComponentType
     public void updateComponent() {
         stopComponent();
         startComponent();
+    }
+
+    @Port(name = "input")
+    public void handlerInputPort(Object obj) {
+        System.out.println("It should not run because this " +
+                "component violates the contract regarding memory consumption");
     }
 
 }

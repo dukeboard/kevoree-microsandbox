@@ -4,6 +4,7 @@ import org.resourceaccounting.ObjectSizeProvider;
 import org.resourceaccounting.contract.ResourceContract;
 import org.resourceaccounting.contract.ResourceContractProvider;
 import org.resourceaccounting.ResourcePrincipal;
+import org.resourceaccounting.invocations.InvocationAmountTable;
 import org.resourceaccounting.utils.HashMap;
 import org.resourceaccounting.utils.Map;
 import org.resourceaccounting.utils.MyList;
@@ -37,6 +38,9 @@ class ResourceCounterImpl {
     private long lastTotalRead;
     private long lastTotalWritten;
 
+    public InvocationAmountTable senders = new InvocationAmountTable();
+    public InvocationAmountTable receivers = new InvocationAmountTable();
+
     long getTotalReceived() {
         long tmp = totalReceived - lastTotalReceived;
         lastTotalReceived = totalReceived;
@@ -57,7 +61,7 @@ class ResourceCounterImpl {
 
     long getTotalWritten() {
         long tmp = totalWritten - lastTotalWritten;
-        //lastTotalWritten = totalWritten;
+        lastTotalWritten = totalWritten;
         return tmp;
     }
 

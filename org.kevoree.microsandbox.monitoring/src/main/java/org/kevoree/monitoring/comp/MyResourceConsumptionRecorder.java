@@ -83,4 +83,14 @@ public class MyResourceConsumptionRecorder implements ResourceConsumptionRecorde
     public void turnMonitoring(boolean on) {
         ResourceCounter.setMonitoring(on);
     }
+
+    @Override
+    public int getUsesOfProvidedPort(String component, String port) {
+        return ResourceCounter.getUsesOfProvidedPort(component, port);
+    }
+
+    @Override
+    public int getUsesOfRequiredPort(String component, String port) {
+        return ResourceCounter.getUsesOfRequiredPort(component, port);
+    }
 }

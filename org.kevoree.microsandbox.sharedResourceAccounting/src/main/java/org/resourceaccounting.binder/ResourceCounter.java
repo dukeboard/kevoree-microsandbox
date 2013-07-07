@@ -23,6 +23,8 @@ public class ResourceCounter {
 
     public final static synchronized void setMonitoring(boolean b) {
         monitoring = b;
+        ourInstance.senders.clear();
+        ourInstance.receivers.clear();
     }
 
     public static ResourcePrincipal[] getApplications() {
@@ -208,12 +210,20 @@ public class ResourceCounter {
         ourInstance.innerArrayAllocated(obj, principal);
     }
 
-    public static void reportPortProcessingRequest(Object obj) {
-        System.out.println("sdsdfdfsfsfsfsffsd : " + obj.toString());
+    public static void reportPortProcessingRequest(Object obj, Object obj1) {
+        if (isMonitoring()) {
+//            System.out.println("sdsdfdfsfsfsfsffsd : " + obj.toString() + " "
+//                    + obj1.toString());
+            ourInstance.senders.addInvocation(obj.toString(), obj1.toString());
+        }
     }
 
-    public static void reportPortHandlerExecution(Object obj) {
-        System.out.println("another event: reception : " + obj.toString());
+    public static void reportPortHandlerExecution(Object obj, Object obj1) {
+        if (isMonitoring()) {
+//            System.out.println("another event: reception : " + obj.toString() + "."
+//                + obj1.toString() + " ");
+            ourInstance.receivers.addInvocation(obj.toString(), obj1.toString());
+        }
     }
 
     public static void reportNetworkDataRead(int n) {
@@ -250,5 +260,13 @@ public class ResourceCounter {
 
     public static ResourcePrincipal getApplication(String appId) {
         return ourInstance.search(appId);
+    }
+
+    public static int getUsesOfProvidedPort(String component, String port) {
+        return ourInstance.receivers.getNumberOfInvocations(component, port);
+    }
+
+    public static int getUsesOfRequiredPort(String component, String port) {
+        return ourInstance.senders.getNumberOfInvocations(component, port);
     }
 }

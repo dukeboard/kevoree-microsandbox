@@ -22,4 +22,8 @@ public interface ResourceConsumptionRecorderMBean {
     ResourcePrincipal[] getApplications();
     ResourcePrincipal getApplication(String appId);
     void turnMonitoring(boolean on);
+
+    int getUsesOfProvidedPort(String component, String port);
+
+    int getUsesOfRequiredPort(String component, String port);
 }
