@@ -2,6 +2,7 @@ package org.kevoree.monitoring.strategies.monitoring;
 
 import org.kevoree.ComponentInstance;
 import org.kevoree.library.defaultNodeTypes.context.KevoreeDeployManager;
+import org.kevoree.microsandbox.api.sla.Metric;
 import org.kevoree.monitoring.comp.MyResourceConsumptionRecorder;
 import org.kevoree.monitoring.sla.FaultyComponent;
 import org.resourceaccounting.ResourceConsumptionRecorderMBean;
@@ -10,6 +11,7 @@ import org.resourceaccounting.contract.ComponentResourceContract;
 import org.resourceaccounting.contract.ResourceContract;
 
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.List;
 
 /**
@@ -22,15 +24,15 @@ import java.util.List;
 public abstract class AbstractLocalMonitoringStrategy extends AbstractMonitoringStrategy {
     protected final List<ComponentInstance> ranking;
     protected ComponentInstance currentComponent;
-
+    protected EnumSet<Metric> reason;
 
 
     protected ArrayList<FaultyComponent> faultyComponents = new ArrayList<FaultyComponent>();
 
-    public AbstractLocalMonitoringStrategy(List<ComponentInstance> ranking, Object msg) {
+    public AbstractLocalMonitoringStrategy(EnumSet<Metric> reason, List<ComponentInstance> ranking, Object msg) {
         super(msg);
         this.ranking = ranking;
-
+        this.reason = reason;
     }
 
     protected DataForCheckingContract getInfo(ResourcePrincipal principal) {

@@ -7,10 +7,7 @@ import org.kevoree.monitoring.sla.MeasurePoint;
 import org.resourceaccounting.ResourcePrincipal;
 import org.resourceaccounting.contract.ResourceContract;
 
-import java.util.EnumMap;
-import java.util.EnumSet;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created with IntelliJ IDEA.
@@ -26,8 +23,8 @@ public class AllComponentsMonitoring extends AbstractLocalMonitoringStrategy {
 
     EnumMap<Metric, MeasurePoint> a;
 
-    public AllComponentsMonitoring(List<ComponentInstance> ranking, Object msg) {
-        super(ranking, msg);
+    public AllComponentsMonitoring(EnumSet<Metric> reason, List<ComponentInstance> ranking, Object msg) {
+        super(reason, ranking, msg);
     }
 
     @Override
@@ -41,30 +38,31 @@ public class AllComponentsMonitoring extends AbstractLocalMonitoringStrategy {
         if (count == NUMBER_OF_STEPS) {
             DataForCheckingContract data = (DataForCheckingContract)obj;
             ResourceContract contract = principal.getContract();
-            if (contract.getCPU() < data.lastCPU)
+            if (reason.contains(Metric.CPU) && contract.getCPU() < data.lastCPU)
                 a.put(Metric.CPU,  new MeasurePoint(data.lastCPU, contract.getCPU()));
 
-            if (contract.getNetworkOut() < data.lastSent)
+            if (reason.contains(Metric.NetworkS) && contract.getNetworkOut() < data.lastSent)
                 a.put(Metric.NetworkS, new MeasurePoint(data.lastSent, contract.getNetworkOut()));
 
-            if (contract.getNetworkIn() < data.lastReceived) {
+            if (reason.contains(Metric.NetworkR) && contract.getNetworkIn() < data.lastReceived) {
                 a.put(Metric.NetworkR, new MeasurePoint(data.lastReceived, contract.getNetworkIn()));
             }
 
-            if (contract.getMemory() < data.lastMem) {
+            if (reason.contains(Metric.Memory) && contract.getMemory() < data.lastMem) {
                 a.put(Metric.Memory, new MeasurePoint(data.lastMem, contract.getMemory()));
             }
 
-            if (contract.getWrite() < data.lastWrite) {
+            if (reason.contains(Metric.IOWrite) && contract.getWrite() < data.lastWrite) {
                 a.put(Metric.IOWrite, new MeasurePoint(data.lastWrite, contract.getWrite()));
             }
 
-            if (contract.getRead() < data.lastRead) {
+            if (reason.contains(Metric.IORead) && contract.getRead() < data.lastRead) {
                 a.put(Metric.IORead, new MeasurePoint(data.lastRead, contract.getRead()));
             }
 
             if (!a.isEmpty())
-                faultyComponents.add(new FaultyComponent(currentComponent.path(),a));
+                faultyComponents.add(new FaultyComponent(currentComponent.path(),a,
+                        new HashSet<String>(), new HashSet<String>()));
         }
 
     }

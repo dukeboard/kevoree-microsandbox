@@ -1,9 +1,11 @@
 package org.kevoree.monitoring.strategies.monitoring;
 
 import org.kevoree.ComponentInstance;
+import org.kevoree.microsandbox.api.sla.Metric;
 import org.resourceaccounting.ResourcePrincipal;
 import org.resourceaccounting.contract.ResourceContract;
 
+import java.util.EnumSet;
 import java.util.Iterator;
 import java.util.List;
 
@@ -18,8 +20,8 @@ public class LocalMonitoring extends AbstractLocalMonitoringStrategy {
 
     private int counter;
 
-    public LocalMonitoring(List<ComponentInstance> ranking, Object msg) {
-        super(ranking,msg);
+    public LocalMonitoring(EnumSet<Metric> reason, List<ComponentInstance> ranking, Object msg) {
+        super(reason, ranking,msg);
     }
 
     @Override

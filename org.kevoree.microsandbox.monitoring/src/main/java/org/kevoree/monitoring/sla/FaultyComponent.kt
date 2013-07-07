@@ -4,6 +4,7 @@ import org.kevoree.ComponentInstance
 import java.util.EnumSet
 import java.util.EnumMap
 import org.kevoree.microsandbox.api.sla.Metric
+import java.util.HashSet
 
 /**
  * Created with IntelliJ IDEA.
@@ -12,4 +13,5 @@ import org.kevoree.microsandbox.api.sla.Metric
  * Time: 11:58 PM
  *
  */
-public data class FaultyComponent(val componentPath : String, val metrics: EnumMap<Metric, MeasurePoint>)
+public data class FaultyComponent(val componentPath : String, val metrics: EnumMap<Metric, MeasurePoint>,
+                                  val wrongProvided : HashSet<String>, val wrongRequired : HashSet<String>)

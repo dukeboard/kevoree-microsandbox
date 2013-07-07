@@ -17,7 +17,9 @@ import org.kevoree.monitoring.ranking.*;
 import org.kevoree.monitoring.sla.FaultyComponent;
 import org.kevoree.monitoring.sla.GlobalThreshold;
 import org.kevoree.monitoring.sla.MeasurePoint;
+import org.kevoree.monitoring.strategies.adaptation.ComponentInteractionAspect;
 import org.kevoree.monitoring.strategies.adaptation.KillThemAll;
+import org.kevoree.monitoring.strategies.adaptation.PortUsageStatus;
 import org.kevoree.monitoring.strategies.monitoring.AbstractLocalMonitoringStrategy;
 import org.kevoree.monitoring.strategies.monitoring.AllComponentsMonitoring;
 import org.kevoree.monitoring.strategies.monitoring.GlobalMonitoring;
@@ -25,6 +27,7 @@ import org.kevoree.monitoring.strategies.monitoring.MonitoringStrategy;
 import org.resourceaccounting.ResourcePrincipal;
 
 import java.util.EnumMap;
+import java.util.EnumSet;
 
 /**
  * Created with IntelliJ IDEA.
@@ -82,7 +85,7 @@ public class MonitoringTask implements Runnable, ContractVerificationRequired {
                     if (currentStrategy.isThereContractViolation()) {
                         System.out.println("Switching to local monitoring " + currentStrategy.getViolationOn());
                         currentStrategy.pause();
-                        switchToSimpleLocal();
+                        switchToSimpleLocal(currentStrategy.getViolationOn());
                     }
                     break;
                 case LOCAL_MONITORING:
@@ -99,7 +102,11 @@ public class MonitoringTask implements Runnable, ContractVerificationRequired {
                                 MonitoringReporterFactory.reporter().sla(c.getComponentPath(),
                                         m, map.get(m).getObserved(), map.get(m).getMax());
 
-                            printInfoAboutPorts(c.getComponentPath());
+                            printJaja(ComponentInteractionAspect.instance$.findMisbehavedComponents(service,
+                                    c.getComponentPath()));
+
+
+
                         }
                         if (new KillThemAll(service).adapt(nodeName, s.getFaultyComponents())) {
 
@@ -125,42 +132,23 @@ public class MonitoringTask implements Runnable, ContractVerificationRequired {
         gcWatcher = null;
     }
 
-    private void printInfoAboutPorts(String componentPath) {
-        PortAspect portAspect = new PortAspect();
-        ComponentInstance c = service.getLastModel().findByPath(componentPath, ComponentInstance.class);
-        ContainerRoot root = service.getLastModel();
-
-        for (Port port : c.getRequired()) {
-            int n = MyResourceConsumptionRecorder.getInstance().
-                    getUsesOfRequiredPort(c.getName(), port.getPortTypeRef().getName());
-            System.out.printf("Count of invocation using port %s are %d\n", port.getPortTypeRef().getName(), n);
-        }
-
-        for (Port port : c.getProvided()) {
-            int n = MyResourceConsumptionRecorder.getInstance().
-                    getUsesOfProvidedPort(c.getName(), port.getPortTypeRef().getName());
-            System.out.printf("Count of invocation using port %s are %d\n",
-                    port.getPortTypeRef().getName(), n);
-            for (MBinding binding : port.getBindings()) {
-                System.out.printf("\t%s\n", binding.getHub().getName());
-                for (MBinding b2 : binding.getHub().getBindings())
-                    if (!b2.equals(binding) && portAspect.isRequiredPort(b2.getPort())) {
-                        ComponentInstance other = ((ComponentInstance)b2.getPort().eContainer());
-                        String nameC = other.getName();
-                        String nameP = b2.getPort().getPortTypeRef().getName();
-                        System.out.printf("\t\t%s %s %d\n", nameC, nameP,
-                                MyResourceConsumptionRecorder.getInstance().getUsesOfRequiredPort(nameC,nameP));
-                    }
-
+    private void printJaja(PortUsageStatus result) {
+        if (result.getWrongUsage()) {
+            for (String s : result.getMisUsedProvidedPorts().keySet()) {
+                System.out.printf("Port %s is wrongly used\n", s);
+                for (Port p : result.getMisUsedProvidedPorts().get(s)) {
+                    ComponentInstance c = (ComponentInstance)p.eContainer();
+                    System.out.printf("\tby %s.%s\n", c.getName(), p.getPortTypeRef().getName());
+                }
             }
         }
     }
 
-    private void switchToSimpleLocal() {
+    private void switchToSimpleLocal(EnumSet<Metric> reason) {
         MonitoringReporterFactory.reporter().monitoring(false);
         MyResourceConsumptionRecorder.getInstance().turnMonitoring(true);
         currentStatus = MonitoringStatus.LOCAL_MONITORING;
-        currentStrategy = new AllComponentsMonitoring(
+        currentStrategy = new AllComponentsMonitoring(reason,
                 ComponentsRanker.instance$.rank(nodeName, service, bootstraper), msg);
         currentStrategy.init(0);
     }
