@@ -181,7 +181,6 @@ public class ResourceCounter {
     public static void reportNetworkDataWrite(int n) {
         if (isMonitoring()) {
             ResourcePrincipal principal = get();
-            principal = ourInstance.search(principal);
             increaseBytesSent(n, principal);
         }
         else ourInstance.increaseTotalSent(n);
@@ -190,7 +189,6 @@ public class ResourceCounter {
     public static void reportFileDataRead(int n) {
         if (isMonitoring()) {
             ResourcePrincipal principal = get();
-            principal = ourInstance.search(principal);
             increaseBytesReceived(n, principal);
         }
         else ourInstance.increaseTotalRead(n);
@@ -199,7 +197,6 @@ public class ResourceCounter {
     public static void reportFileDataWrite(int n) {
         if (isMonitoring()) {
             ResourcePrincipal principal = get();
-            principal = ourInstance.search(principal);
             increaseBytesSent(n, principal);
         }
         else ourInstance.increaseTotalWritten(n);

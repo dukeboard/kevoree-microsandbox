@@ -1,5 +1,6 @@
 package org.resourceaccounting.binder;
 
+import org.resourceaccounting.contract.ComponentResourceContract;
 import org.resourceaccounting.contract.ResourceContract;
 import org.resourceaccounting.ResourcePrincipal;
 
@@ -40,7 +41,8 @@ public abstract class AbstractResourcePrincipal<T> implements ResourcePrincipal 
     }
 
     public void setContract(ResourceContract contract) {
-        this.contract = contract;
+        this.contract = new ComponentResourceContract(contract) {
+        };
     }
 
     /**

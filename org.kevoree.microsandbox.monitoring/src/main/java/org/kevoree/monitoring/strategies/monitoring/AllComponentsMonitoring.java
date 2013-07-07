@@ -94,6 +94,7 @@ public class AllComponentsMonitoring extends AbstractLocalMonitoringStrategy {
                 passWithoutViolation();
             }
         }
+        
     }
 
 }

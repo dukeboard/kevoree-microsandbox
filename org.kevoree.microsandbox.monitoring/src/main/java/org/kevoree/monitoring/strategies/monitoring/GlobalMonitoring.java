@@ -20,7 +20,7 @@ public class GlobalMonitoring extends AbstractMonitoringStrategy {
 
     private final ThreadMXBean tmxb = ManagementFactory.getThreadMXBean();
 
-    private final int nCPUs = Runtime.getRuntime().availableProcessors();
+    private final static int nCPUs = Runtime.getRuntime().availableProcessors();
     private final GlobalThreshold threshold;
 
     public GlobalMonitoring(Object msg, GlobalThreshold threshold) {

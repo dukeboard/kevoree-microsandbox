@@ -39,6 +39,16 @@ public abstract class ComponentResourceContract extends ResourceContract {
         operations = new HashMap<String, ResourceContract>();
     }
 
+    public ComponentResourceContract(ResourceContract contract) {
+        this();
+        map.put("CPU", contract.getCPU());
+        map.put("Memory", contract.getMemory());
+        map.put("NetworkBandwidthIn", contract.getNetworkIn());
+        map.put("NetworkBandwidthOut", contract.getNetworkOut());
+        map.put("IOWrite", contract.getWrite());
+        map.put("IORead", contract.getRead());
+    }
+
     public ResourceContract getContractFor(String operation) {
         if (operations.containsKey(operation))
             return operations.get(operation);

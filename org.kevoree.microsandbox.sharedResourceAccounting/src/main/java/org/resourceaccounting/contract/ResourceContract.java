@@ -40,16 +40,16 @@ public abstract class ResourceContract implements Serializable {
         return map.get("NetworkBandwidthOut");
     }
 
-    public void setValue(String property, int n) {
-        map.put(property, n);
-    }
-
     public int getWrite() {
         return map.get("IOWrite");
     }
 
     public int getRead() {
         return map.get("IORead");
+    }
+
+    public void setValue(String property, int n) {
+        map.put(property, n);
     }
 
 }

@@ -74,4 +74,10 @@ public abstract class AbstractLocalMonitoringStrategy extends AbstractMonitoring
     public List<FaultyComponent> getFaultyComponents() {
         return faultyComponents;
     }
+
+    @Override
+    public boolean cancel() {
+        currentComponent = null;
+        return super.cancel();
+    }
 }

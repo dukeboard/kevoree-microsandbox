@@ -67,5 +67,8 @@ updateDictionary defMSGT360
 updateDictionary defMSGT419
 updateDictionary FakeConso509@node0
 
+addGroup sync:BasicGroup
+addToGroup sync node0
+
 }
 
