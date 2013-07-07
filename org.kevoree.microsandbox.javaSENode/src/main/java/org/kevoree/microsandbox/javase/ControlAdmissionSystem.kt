@@ -29,6 +29,8 @@ public object ControlAdmissionSystem {
     private var freeMemory : Long = 0
     private var freeNetworkIn : Long = 0
     private var freeNetworkOut : Long = 0
+    private var freeWrite : Long = 0
+    private var freeRead : Long = 0
 
     private val components : MutableList<Info> = ArrayList<Info>()
 
