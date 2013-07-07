@@ -1,7 +1,6 @@
 package org.resourceaccounting.binder;
 
 import org.resourceaccounting.ResourcePrincipal;
-import org.resourceaccounting.behavior.BehaviorNode;
 import org.resourceaccounting.memory.PrincipalReferenceQueue;
 import org.resourceaccounting.memory.ReferenceLostListener;
 import org.resourceaccounting.memory.WeakReferenceToArray;
@@ -25,7 +24,6 @@ public class ThreadGroupResourcePrincipal extends AbstractResourcePrincipal<Long
      * Name of the thread group
      */
     private String text = "MainThreadGroup";
-    private transient HashMap<String, OperationSummary> operationMap = new HashMap<String, OperationSummary>(5);
     private Set<Long> threadsId = new Set<Long>();
     private transient PrincipalReferenceQueue principalReferenceQueue;
 
@@ -86,34 +84,6 @@ public class ThreadGroupResourcePrincipal extends AbstractResourcePrincipal<Long
 
 //            System.out.printf("Memory %d, CPU %d\n", tmp.contract.getMemory(), tmp.contract.getCPU());
             return tmp;
-        }
-    }
-
-    public void storeOperationInformation(String operationName, BehaviorNode behavior, ResourcePrincipal rp) {
-        synchronized (map) {
-            if (!operationMap.containsKey(operationName)) {
-                operationMap.put(operationName,
-                        new OperationSummary(behavior,
-                        rp.getExecutedInstructions(),
-                        rp.getAllocatedObjects(),
-                        rp.getBytesSent(),
-                        rp.getBytesReceived()
-                ));
-            } else {
-                operationMap.get(operationName).merge(behavior,
-                        rp.getExecutedInstructions(),
-                        rp.getAllocatedObjects(),
-                        rp.getBytesSent(),
-                        rp.getBytesReceived()
-                );
-            }
-            System.out.print("Result for " + text + "." + operationName);
-            behavior.accept(new PrintExternalOperationsVisitor());
-            OperationSummary summary = operationMap.get(operationName);
-            System.out.printf("%f %f %f %f\n", summary.getExecutedInstructions(),
-                    summary.getConsumedMemory(), summary.getBytesSent(),
-                    summary.getBytesReceived());
-            summary.getNode().accept(new PrintExternalOperationsVisitor());
         }
     }
 

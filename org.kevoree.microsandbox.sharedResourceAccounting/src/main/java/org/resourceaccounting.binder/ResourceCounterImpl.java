@@ -5,12 +5,6 @@ import org.resourceaccounting.contract.ResourceContract;
 import org.resourceaccounting.contract.ResourceContractProvider;
 import org.resourceaccounting.ResourcePrincipal;
 import org.resourceaccounting.invocations.InvocationAmountTable;
-import org.resourceaccounting.utils.HashMap;
-import org.resourceaccounting.utils.Map;
-import org.resourceaccounting.utils.MyList;
-import org.resourceaccounting.utils.MyTimerTask;
-
-import java.util.Iterator;
 
 
 /**
@@ -22,11 +16,6 @@ import java.util.Iterator;
  * Performs the accounting. it is a package class
  */
 class ResourceCounterImpl {
-
-    /**
-     * Keep all alive invocations
-     */
-    private HashMap<Thread, InvocationResourcePrincipal> activatedInvocations;
 
     private int countOfPrincipals = 0;
     private long totalReceived = 0;
@@ -78,44 +67,6 @@ class ResourceCounterImpl {
     };
 
     ResourceCounterImpl() {
-        activatedInvocations
-                = new HashMap<Thread, InvocationResourcePrincipal>();
-
-        // Invocation can spawn new threads and the system can only discard
-        // such invocations when every thread is done
-        // this simple task in in charge of performing such a task
-        // Additionally, this task is in charge of
-        MyTimerTask tt = new MyTimerTask() {
-            public void run() {
-                MyList<Thread> l = new MyList<Thread>();
-                synchronized (ResourceCounterImpl.this) {
-                    // 1 - free all invocations you can
-                    for (Thread th :activatedInvocations.keySet())
-                        if (!th.isAlive()) l.add(th);
-                    for (int i = 0 ; i < l.size() ; i++) {
-                        Thread t = l.get(i);
-                        InvocationResourcePrincipal rp = activatedInvocations.remove(t);
-                        rp.decreaseUsers();
-                        if (rp.isReadyToBeFree()) {
-                            processInvocation(rp);
-                        }
-                    }
-                }
-            }
-        };
-        tt.executeAtFixedRate(1000);
-    }
-
-    private static void processInvocation(InvocationResourcePrincipal rp) {
-        // print basic information
-        System.err.printf("Operation %s, %d %d %d %d\n",
-                rp.getAssociatedObject(),
-                rp.getExecutedInstructions(),
-                rp.getAllocatedObjects(),
-                rp.getBytesSent(),
-                rp.getBytesReceived());
-        rp.recordInParent();
-        System.out.println();
     }
 
     ResourcePrincipal[] innerGetApplications() {
@@ -137,7 +88,7 @@ class ResourceCounterImpl {
 
     public void innerIncreaseObjects(Object object, ResourcePrincipal principal) {
         synchronized (principal) {
-            int n = (int)objectSizeProvider.sizeOf(object);
+            int n = (int) objectSizeProvider.sizeOf(object);
             principal.increaseOwnedObjects(n);
         }
     }
@@ -146,20 +97,15 @@ class ResourceCounterImpl {
         if (principal == null)
             return;
         synchronized (principal) {
-            int n = (int)objectSizeProvider.sizeOf(object);
+            int n = (int) objectSizeProvider.sizeOf(object);
             principal.increaseOwnedObjects(-n);
         }
     }
 
     public void innerArrayAllocated(Object obj, ResourcePrincipal principal) {
         if (principal instanceof ThreadGroupResourcePrincipal) {
-            int n = (int)objectSizeProvider.sizeOf(obj);
+            int n = (int) objectSizeProvider.sizeOf(obj);
             ((ThreadGroupResourcePrincipal)principal).registerObject(obj, n);
-        }
-        else if (principal instanceof InvocationResourcePrincipal) {
-            ThreadGroupResourcePrincipal p = (ThreadGroupResourcePrincipal)((InvocationResourcePrincipal)principal).parent;
-            int n = (int)objectSizeProvider.sizeOf(obj);
-            p.registerObject(obj, n);
         }
     }
 
@@ -240,14 +186,9 @@ class ResourceCounterImpl {
             ResourcePrincipal real = principal;
             if (principal == null) return null;
 
-            boolean inInvocation = (principal instanceof InvocationResourcePrincipal);
-
-            if (inInvocation)
-                real = ((InvocationResourcePrincipal) principal).parent;
-
             for (int i = 0 ; i < countOfPrincipals; i++) {
                 if (principals[i].equals(real))
-                    return inInvocation? principal : principals[i];
+                    return principals[i];
             }
             if (countOfPrincipals == principals.length) {
                 ResourcePrincipal[] pTmp = new ResourcePrincipal[countOfPrincipals *2];
@@ -256,7 +197,7 @@ class ResourceCounterImpl {
             }
             principals[countOfPrincipals++] = real;
 
-            return (inInvocation)?principal: principals[countOfPrincipals -1];
+            return principals[countOfPrincipals -1];
         }
     }
 
@@ -281,73 +222,8 @@ class ResourceCounterImpl {
 
     ResourcePrincipal get(Thread th) {
         synchronized (this) {
-            if (activatedInvocations.containsKey(th)) {
-                return activatedInvocations.get(th);
-            }
             // not inside one invocation
             return ThreadGroupResourcePrincipal.get(th);
-        }
-    }
-
-    void externalOperationCall(Thread th, String str) {
-        synchronized (this) {
-            if (activatedInvocations.containsKey(th)) {
-                InvocationResourcePrincipal rp = activatedInvocations.get(th);
-                rp.addCallToExternalOperation(str, th);
-            }
-        }
-    }
-
-    void push(Thread th) {
-        synchronized (this) {
-            if (activatedInvocations.containsKey(th)) {
-                InvocationResourcePrincipal rp = activatedInvocations.get(th);
-                rp.push(th);
-            }
-        }
-    }
-
-    void pop(Thread th) {
-        synchronized (this) {
-            if (activatedInvocations.containsKey(th)) {
-                InvocationResourcePrincipal rp = activatedInvocations.get(th);
-                rp.pop(th);
-            }
-        }
-    }
-
-    void stopInvocation(Thread th) {
-        synchronized (this) {
-            if (activatedInvocations.containsKey(th)) {
-                InvocationResourcePrincipal rp = activatedInvocations.get(th);
-                rp.decreaseUsers();
-                activatedInvocations.remove(th);
-                rp.stopInvocation(th);
-                if (rp.isReadyToBeFree())
-                    processInvocation(rp);
-            }
-        }
-    }
-
-    void associateToInvocation(Thread th, Thread newTh) {
-        synchronized (this) {
-            // Create a new Invocation if the current thread is not executing an operation
-            if (activatedInvocations.containsKey(th)) {
-                InvocationResourcePrincipal inv = activatedInvocations.get(th);
-                inv.increaseUsers();
-                activatedInvocations.put(newTh, inv);
-            }
-        }
-    }
-
-    void newInvocation(Thread th, String operation) {
-        synchronized (this) {
-            ResourcePrincipal parent = ThreadGroupResourcePrincipal.get(th);
-            // Create a new Invocation if the current thread is not executing an operation
-            if (!activatedInvocations.containsKey(th)) {
-                InvocationResourcePrincipal inv = new InvocationResourcePrincipal(operation, parent);
-                activatedInvocations.put(th, inv);
-            }
         }
     }
 
