@@ -45,5 +45,8 @@ bind generator0.numbers@node0 => channelForNumbers
 
 updateDictionary channelForNumbers
 
+addGroup sync:BasicGroup
+addToGroup sync node0
+
 }
 

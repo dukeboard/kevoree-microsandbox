@@ -130,7 +130,7 @@ class ResourceCounterImpl {
         }
     }
 
-    public void innerIncreaseBytesRead(int n, ResourcePrincipal principal) {
+    public void innerIncreaseFileRead(int n, ResourcePrincipal principal) {
         increaseTotalRead(n);
         synchronized (principal) {
             principal.increaseFileRead(n);

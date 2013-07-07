@@ -38,26 +38,6 @@ public class ResourceCounter {
         }
     }
 
-    private static void increaseBytesSent(int n, ResourcePrincipal principal) {
-        ResourcePrincipal p = ourInstance.search(principal);
-        ourInstance.innerIncreaseBytesSent(n, p);
-    }
-
-    private static void increaseFileWrite(int n, ResourcePrincipal principal) {
-        ResourcePrincipal p = ourInstance.search(principal);
-        ourInstance.innerIncreaseFileWrite(n, p);
-    }
-
-    private static void increaseBytesReceived(int n, ResourcePrincipal principal) {
-        ResourcePrincipal p = ourInstance.search(principal);
-        ourInstance.innerIncreaseBytesReceived(n, p);
-    }
-
-    private static void increaseBytesRead(int n, ResourcePrincipal principal) {
-        ResourcePrincipal p = ourInstance.search(principal);
-        ourInstance.innerIncreaseBytesRead(n, p);
-    }
-
     public static long getNbObjects(ResourcePrincipal principal) {
         ResourcePrincipal p = ourInstance.search(principal);
         return ourInstance.innerGetNbObjects(p);
@@ -173,7 +153,8 @@ public class ResourceCounter {
     public static void reportNetworkDataRead(int n) {
         if (isMonitoring()) {
             ResourcePrincipal principal = get();
-            increaseBytesReceived(n, principal);
+            principal = ourInstance.search(principal);
+            ourInstance.innerIncreaseBytesReceived(n, principal);
         }
         else ourInstance.increaseTotalReceived(n);
     }
@@ -181,7 +162,8 @@ public class ResourceCounter {
     public static void reportNetworkDataWrite(int n) {
         if (isMonitoring()) {
             ResourcePrincipal principal = get();
-            increaseBytesSent(n, principal);
+            principal = ourInstance.search(principal);
+            ourInstance.innerIncreaseBytesSent(n,principal);
         }
         else ourInstance.increaseTotalSent(n);
     }
@@ -189,7 +171,8 @@ public class ResourceCounter {
     public static void reportFileDataRead(int n) {
         if (isMonitoring()) {
             ResourcePrincipal principal = get();
-            increaseBytesReceived(n, principal);
+            principal = ourInstance.search(principal);
+            ourInstance.innerIncreaseFileRead(n, principal);
         }
         else ourInstance.increaseTotalRead(n);
     }
@@ -197,7 +180,8 @@ public class ResourceCounter {
     public static void reportFileDataWrite(int n) {
         if (isMonitoring()) {
             ResourcePrincipal principal = get();
-            increaseBytesSent(n, principal);
+            principal = ourInstance.search(principal);
+            ourInstance.innerIncreaseFileWrite(n, principal);
         }
         else ourInstance.increaseTotalWritten(n);
     }
