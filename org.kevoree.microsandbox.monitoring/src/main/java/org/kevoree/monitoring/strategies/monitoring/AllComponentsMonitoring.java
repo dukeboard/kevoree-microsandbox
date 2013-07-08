@@ -44,6 +44,7 @@ public class AllComponentsMonitoring extends AbstractLocalMonitoringStrategy {
             if (reason.contains(Metric.NetworkS) && contract.getNetworkOut() < data.lastSent)
                 a.put(Metric.NetworkS, new MeasurePoint(data.lastSent, contract.getNetworkOut()));
 
+            System.out.println(principal.toString() + " " + contract.getNetworkIn() + "<" + data.lastReceived);
             if (reason.contains(Metric.NetworkR) && contract.getNetworkIn() < data.lastReceived) {
                 a.put(Metric.NetworkR, new MeasurePoint(data.lastReceived, contract.getNetworkIn()));
             }
