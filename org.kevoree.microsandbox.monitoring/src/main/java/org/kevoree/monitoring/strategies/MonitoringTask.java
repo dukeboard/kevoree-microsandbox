@@ -2,13 +2,10 @@ package org.kevoree.monitoring.strategies;
 
 import org.kevoree.ComponentInstance;
 import org.kevoree.ContainerRoot;
-import org.kevoree.MBinding;
 import org.kevoree.Port;
-import org.kevoree.annotation.RequiredPort;
 import org.kevoree.api.Bootstraper;
 import org.kevoree.api.service.core.handler.KevoreeModelHandlerService;
 import org.kevoree.api.service.core.handler.ModelListener;
-import org.kevoree.framework.kaspects.PortAspect;
 import org.kevoree.microsandbox.api.communication.MonitoringReporterFactory;
 import org.kevoree.microsandbox.api.sla.Metric;
 import org.kevoree.monitoring.comp.MyResourceConsumptionRecorder;

@@ -1,10 +1,8 @@
 package org.kevoree.monitoring.comp.monitor;
 
-import org.kevoree.ContainerRoot;
 import org.kevoree.annotation.*;
 import org.kevoree.framework.AbstractComponentType;
 import org.kevoree.framework.MessagePort;
-import org.kevoree.framework.service.handler.ModelListenerAdapter;
 import org.kevoree.microsandbox.api.communication.ComposeMonitoringReport;
 import org.kevoree.microsandbox.api.communication.MonitoringReporterFactory;
 import org.kevoree.microsandbox.api.event.MicrosandboxEvent;

@@ -15,16 +15,36 @@ import org.resourceaccounting.ResourcePrincipal;
 public class ResourceCounter {
     private static ResourceCounterImpl ourInstance = new ResourceCounterImpl();
 
-    private static boolean monitoring = false;
+    private static final int MONITORING = 1;
+    private static final int CONTROLLING_PORTS = 2;
+
+    private static int monitoringFlags = 0;
+
 
     private final static synchronized boolean isMonitoring() {
-        return monitoring;
+        return ( monitoringFlags & MONITORING ) != 0;
     }
 
     public final static synchronized void setMonitoring(boolean b) {
-        monitoring = b;
+        if (b)
+            monitoringFlags |= MONITORING;
+        else if (isMonitoring())
+            monitoringFlags -= MONITORING;
+
         ourInstance.senders.clear();
         ourInstance.receivers.clear();
+    }
+
+    private final static synchronized boolean isControllingPorts() {
+        return ( monitoringFlags & CONTROLLING_PORTS ) != 0;
+    }
+
+    public final static synchronized void setControllingPorts(boolean b) {
+        if (b)
+            monitoringFlags |= CONTROLLING_PORTS;
+        else if (isControllingPorts())
+            monitoringFlags -= CONTROLLING_PORTS;
+
     }
 
     public static ResourcePrincipal[] getApplications() {
@@ -134,11 +154,22 @@ public class ResourceCounter {
         ourInstance.innerArrayAllocated(obj, principal);
     }
 
-    public static void reportPortProcessingRequest(Object obj, Object obj1) {
+    public static void reportPortProcessingRequest(Object component, Object port) {
         if (isMonitoring()) {
 //            System.out.println("sdsdfdfsfsfsfsffsd : " + obj.toString() + " "
 //                    + obj1.toString());
-            ourInstance.senders.addInvocation(obj.toString(), obj1.toString());
+            ourInstance.senders.addInvocation(component.toString(), port.toString());
+        }
+        else if (isControllingPorts()) {
+            if (ourInstance.senders.isControlled(component.toString(), port.toString())) {
+                int max = ourInstance.senders.max_allowed(component.toString(), port.toString());
+                int x0 = 1000000000/ max;
+                int milli = x0 / 1000000;
+                int nano = x0 % 1000000;
+                try {
+                    Thread.sleep(milli, nano);
+                } catch (InterruptedException e) { }
+            }
         }
     }
 
