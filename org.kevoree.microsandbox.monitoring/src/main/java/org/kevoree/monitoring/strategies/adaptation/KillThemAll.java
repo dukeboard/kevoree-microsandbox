@@ -38,11 +38,13 @@ public class KillThemAll extends BasicAdaptation {
                 for (Port p : cc.getProvided()) {
                     for (MBinding b : p.getBindings()) {
                         clonedModel.removeMBindings(b);
+                        b.getHub().removeBindings(b);
                     }
                 }
                 for (Port p : cc.getRequired()) {
                     for (MBinding b : p.getBindings()) {
                         clonedModel.removeMBindings(b);
+                        b.getHub().removeBindings(b);
                     }
                 }
             }
