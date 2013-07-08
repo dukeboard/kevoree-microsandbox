@@ -131,7 +131,7 @@ public class ChildJVM {
             commandLine.addAll(mainClassArguments);
         }
 
-        System.out.println("Command line : "+commandLine);
+        //System.out.println("Command line : "+commandLine);
 
         return commandLine;
     }
