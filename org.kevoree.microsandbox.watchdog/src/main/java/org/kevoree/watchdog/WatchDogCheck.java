@@ -29,6 +29,8 @@ public class WatchDogCheck implements Runnable {
     private static ScheduledExecutorService pool = Executors.newScheduledThreadPool(1);
     private Process currentProcess = null;
 
+    public static JVMStream.LineHandler lineHandler = null;
+
     public void setModelFile(File modelFile) {
         this.modelFile = modelFile;
     }
@@ -64,7 +66,7 @@ public class WatchDogCheck implements Runnable {
     }
 
     public void destroyChild() {
-        if(currentProcess != null){
+        if (currentProcess != null) {
             currentProcess.destroy();
         }
         try {
@@ -103,7 +105,7 @@ public class WatchDogCheck implements Runnable {
         serverThread.setDaemon(true);
         serverThread.start();
         lastCheck.set(System.currentTimeMillis());
-        pool.scheduleAtFixedRate(this, WatchDogCheck.checkTime*3, WatchDogCheck.checkTime, TimeUnit.MILLISECONDS);
+        pool.scheduleAtFixedRate(this, WatchDogCheck.checkTime * 3, WatchDogCheck.checkTime, TimeUnit.MILLISECONDS);
     }
 
     public void startKevoreeProcess() {
@@ -156,7 +158,11 @@ public class WatchDogCheck implements Runnable {
                         e.printStackTrace();
                     }
                 } else {
-                    System.out.println(line);
+                    if (lineHandler != null) {
+                        lineHandler.handle(line);
+                    } else {
+                        System.out.println(line);
+                    }
                 }
             }
         });
@@ -173,7 +179,11 @@ public class WatchDogCheck implements Runnable {
                         e.printStackTrace();
                     }
                 } else {
-                    System.err.println(line);
+                    if (lineHandler != null) {
+                        lineHandler.handle(line);
+                    } else {
+                        System.err.println(line);
+                    }
                 }
             }
         });
@@ -196,10 +206,10 @@ public class WatchDogCheck implements Runnable {
             } catch (Exception e) {
                 e.printStackTrace();
             } finally {
-                if(serverSocket != null){
+                if (serverSocket != null) {
                     try {
                         serverSocket.close();
-                    } catch (Exception e){
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
                 }
