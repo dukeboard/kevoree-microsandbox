@@ -121,6 +121,7 @@ public class MonitoringTask implements Runnable, ContractVerificationRequired, M
 //                            System.out.println("\t" + m);
                         currentStrategy.pause();
                         AbstractLocalMonitoringStrategy s =(AbstractLocalMonitoringStrategy)currentStrategy;
+                        boolean misUsedComponents = false;
                         for (FaultyComponent c : s.getFaultyComponents()) {
                             ComponentsInfoStorage.instance$.getExecutionInfo(c.getComponentPath()).increaseFailures();
                             EnumMap<Metric, MeasurePoint> map = c.getMetrics();
@@ -128,13 +129,17 @@ public class MonitoringTask implements Runnable, ContractVerificationRequired, M
                                 MonitoringReporterFactory.reporter().sla(c.getComponentPath(),
                                         m, map.get(m).getObserved(), map.get(m).getMax());
 
-                            printJaja(ComponentInteractionAspect.instance$.findMisbehavedComponents(service,
+                            misUsedComponents |= printJaja(c.getComponentPath(),
+                                    ComponentInteractionAspect.instance$.findMisbehavedComponents(service,
                                     c.getComponentPath()));
 
 
 
                         }
-                        if (new KillThemAll(service).adapt(nodeName, s.getFaultyComponents())) {
+                        if (misUsedComponents) {
+                            switchToGlobal();
+                        }
+                        else if (new KillThemAll(service).adapt(nodeName, s.getFaultyComponents())) {
 
                             switchToGlobal();
                         }
@@ -158,16 +163,25 @@ public class MonitoringTask implements Runnable, ContractVerificationRequired, M
         gcWatcher = null;
     }
 
-    private void printJaja(PortUsageStatus result) {
+    private boolean printJaja(String path, PortUsageStatus result) {
         if (result.getWrongUsage()) {
             for (String s : result.getMisUsedProvidedPorts().keySet()) {
                 System.out.printf("Port %s is wrongly used\n", s);
-                for (Port p : result.getMisUsedProvidedPorts().get(s)) {
-                    ComponentInstance c = (ComponentInstance)p.eContainer();
-                    System.out.printf("\tby %s.%s\n", c.getName(), p.getPortTypeRef().getName());
+                if (result.getMisUsedProvidedPorts().get(s).isEmpty()) {
+
                 }
+                else
+                    for (Port p : result.getMisUsedProvidedPorts().get(s)) {
+                        ComponentInstance c = (ComponentInstance)p.eContainer();
+                        String portName = p.getPortTypeRef().getName();
+                        System.out.printf("\tby %s.%s\n", c.getName(), portName);
+                        MyResourceConsumptionRecorder.getInstance().turnOnPortControllingOn(c.getName(),
+                                portName,true,
+                                ComponentInteractionAspect.instance$.getMaxNumberOfRequest(path, s, service));
+                    }
             }
         }
+        return result.getWrongUsage();
     }
 
     private void switchToSimpleLocal(EnumSet<Metric> reason) {

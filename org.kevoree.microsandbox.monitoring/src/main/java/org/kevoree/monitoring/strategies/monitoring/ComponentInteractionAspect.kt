@@ -65,7 +65,6 @@ public object ComponentInteractionAspect {
                 errorOnSinglePortUsage = true
                 if (!result.misUsedProvidedPorts.containsKey(name))
                     result.misUsedProvidedPorts.put(name, HashSet<Port>())
-                //                println("Count of invocation using port $name are $portObserved")
                 for (binding in port?.getBindings()!!)
                 {
                     for (b2 in binding?.getHub()?.getBindings()!!)
@@ -77,7 +76,6 @@ public object ComponentInteractionAspect {
                             val d = MyResourceConsumptionRecorder.
                                     getInstance()?.getUsesOfRequiredPort(nameC, nameP) as Int / AllComponentsMonitoring.NUMBER_OF_STEPS
                             if (d > portExpected) {
-//                                println("\t\tI found you. Sent by ${nameC}.${nameP} : $d")
                                 result.misUsedProvidedPorts.get(name)?.add(b2?.getPort()!!)
                             }
                         }
@@ -121,7 +119,7 @@ public object ComponentInteractionAspect {
         return result;
     }
 
-    private fun getMaxNumberOfRequest(componentPath : String, port : String, modelS : KevoreeModelHandlerService): Int {
+    public fun getMaxNumberOfRequest(componentPath : String, port : String, modelS : KevoreeModelHandlerService): Int {
         val c = modelS.getLastModel()?.findByPath(componentPath, javaClass<ComponentInstance>())
         var result = Integer.MAX_VALUE
         for (dv in c?.getDictionary()?.getValues()!!) {

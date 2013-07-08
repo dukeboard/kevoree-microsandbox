@@ -39,12 +39,21 @@ public class ResourceCounter {
         return ( monitoringFlags & CONTROLLING_PORTS ) != 0;
     }
 
-    public final static synchronized void setControllingPorts(boolean b) {
+    private final static synchronized void setControllingPorts(boolean b) {
         if (b)
             monitoringFlags |= CONTROLLING_PORTS;
         else if (isControllingPorts())
             monitoringFlags -= CONTROLLING_PORTS;
 
+    }
+
+    public static void startControlling(String component, String port, boolean sender, int max) {
+        if (!isControllingPorts())
+            setControllingPorts(true);
+        if (sender)
+            ourInstance.senders.control(component, port, max);
+        else
+            ourInstance.receivers.control(component, port, max);
     }
 
     public static ResourcePrincipal[] getApplications() {
@@ -156,13 +165,11 @@ public class ResourceCounter {
 
     public static void reportPortProcessingRequest(Object component, Object port) {
         if (isMonitoring()) {
-//            System.out.println("sdsdfdfsfsfsfsffsd : " + obj.toString() + " "
-//                    + obj1.toString());
             ourInstance.senders.addInvocation(component.toString(), port.toString());
         }
         else if (isControllingPorts()) {
             if (ourInstance.senders.isControlled(component.toString(), port.toString())) {
-                int max = ourInstance.senders.max_allowed(component.toString(), port.toString());
+                int max = ourInstance.senders.maxAllowed(component.toString(), port.toString());
                 int x0 = 1000000000/ max;
                 int milli = x0 / 1000000;
                 int nano = x0 % 1000000;
@@ -175,9 +182,18 @@ public class ResourceCounter {
 
     public static void reportPortHandlerExecution(Object obj, Object obj1) {
         if (isMonitoring()) {
-//            System.out.println("another event: reception : " + obj.toString() + "."
-//                + obj1.toString() + " ");
             ourInstance.receivers.addInvocation(obj.toString(), obj1.toString());
+        }
+        else if (isControllingPorts()) {
+            if (ourInstance.receivers.isControlled(obj.toString(), obj1.toString())) {
+                int max = ourInstance.receivers.maxAllowed(obj.toString(), obj1.toString());
+                int x0 = 1000000000/ max;
+                int milli = x0 / 1000000;
+                int nano = x0 % 1000000;
+                try {
+                    Thread.sleep(milli, nano);
+                } catch (InterruptedException e) { }
+            }
         }
     }
 

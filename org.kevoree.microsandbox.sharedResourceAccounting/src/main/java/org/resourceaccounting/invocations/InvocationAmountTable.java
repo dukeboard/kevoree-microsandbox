@@ -7,13 +7,16 @@ import org.resourceaccounting.utils.HashMap;
  * User: inti
  * Date: 7/6/13
  * Time: 6:49 PM
- * To change this template use File | Settings | File Templates.
+ *
  */
 public class InvocationAmountTable {
     private HashMap<String, HashMap<String, Integer>> data;
 
+    private HashMap<String, HashMap<String, Integer>> dataMaxs;
+
     public InvocationAmountTable() {
         data = new HashMap<String, HashMap<String, Integer>>();
+        dataMaxs = new HashMap<String, HashMap<String, Integer>>();
     }
 
     public synchronized void addInvocation(String component, String operation) {
@@ -36,5 +39,21 @@ public class InvocationAmountTable {
 
     public synchronized void clear() {
         data.clear();
+    }
+
+    public synchronized boolean isControlled(String component, String port) {
+        return dataMaxs.containsKey(component) & dataMaxs.get(component).containsKey(port);
+    }
+
+    public synchronized int maxAllowed(String component, String port) {
+        return dataMaxs.get(component).get(port);
+    }
+
+    public synchronized void control(String component, String port, int max) {
+        if (!dataMaxs.containsKey(component))
+            dataMaxs.put(component, new HashMap<String, Integer>());
+        if (max > 3)
+            max -= 2;
+        dataMaxs.get(component).put(port, max);
     }
 }

@@ -13,6 +13,10 @@ import java.util.Map;
  *
  */
 public class ComponentExecutionInfo {
+    public String getName() {
+        return componentName;
+    }
+
     private class UsageInfo {
         int failures;
         double branchCoverage;
