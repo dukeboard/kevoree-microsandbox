@@ -1,5 +1,7 @@
 package org.kevoree.monitoring.sla
 
+import org.kevoree.microsandbox.api.contract.PlatformDescription
+
 /**
  * Created with IntelliJ IDEA.
  * User: inti
@@ -12,5 +14,6 @@ public class GlobalThreshold(val cpu_threshold: Double,
                               val net_received_threshold: Double,
                               val net_sent: Double,
                               val io_read:Double,
-                              val io_write: Double) {
+                              val io_write: Double,
+                              val pDescription: PlatformDescription?) {
 }

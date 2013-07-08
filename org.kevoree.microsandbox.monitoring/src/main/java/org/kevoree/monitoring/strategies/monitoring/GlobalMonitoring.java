@@ -1,5 +1,6 @@
 package org.kevoree.monitoring.strategies.monitoring;
 
+import org.kevoree.library.defaultNodeTypes.context.KevoreeDeployManager;
 import org.kevoree.microsandbox.api.sla.Metric;
 import org.kevoree.monitoring.comp.MyResourceConsumptionRecorder;
 import org.kevoree.monitoring.sla.GlobalThreshold;
@@ -26,6 +27,7 @@ public class GlobalMonitoring extends AbstractMonitoringStrategy {
     public GlobalMonitoring(Object msg, GlobalThreshold threshold) {
         super(msg);
         this.threshold = threshold;
+
     }
 
     @Override
@@ -60,16 +62,18 @@ public class GlobalMonitoring extends AbstractMonitoringStrategy {
         double cpuUsage = Math.min(99, diff/(elapsedTime*nCPUs)*100);
 
         ResourceConsumptionRecorderMBean ins = MyResourceConsumptionRecorder.getInstance();
-        long sent = ins.getTotalSent();
-        long received = ins.getTotalReceived();
-        long written = ins.getTotalWritten();
-        long read = ins.getTotalRead();
+        double sent = ins.getTotalSent();
+        double received = ins.getTotalReceived();
+        double written = ins.getTotalWritten();
+        double read = ins.getTotalRead();
 
-        double perSent = (sent / 100000.0F)*100; // let say that we can send 100000.0F per second at most
-        double perReceived = (received / 100000.0F) * 100;
+        double perSent = (sent / threshold.getpDescription().availability_sent)*100;
+        double perReceived = (received /  threshold.getpDescription().availability_received) * 100;
 
-        double perWritten = (written / 100000.0F)*100; // let say that we can send 100000.0F per second at most
-        double perRead = (read / 100000.0F) * 100;
+        System.out.printf("Sent: %f, Received %f\n", perSent, perReceived);
+
+        double perWritten = (written /  threshold.getpDescription().availability_write_disc)*100;
+        double perRead = (read /  threshold.getpDescription().availability_read_disc) * 100;
 
         if (!firstTime) {
 

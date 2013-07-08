@@ -247,6 +247,7 @@ class ResourceCounterImpl {
     }
 
     public synchronized void increaseTotalReceived(int n) {
+//        System.out.println("fsfsd");
         totalReceived += n;
     }
 

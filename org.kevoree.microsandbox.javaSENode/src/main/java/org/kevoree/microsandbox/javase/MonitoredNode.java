@@ -6,6 +6,7 @@ import org.kevoree.annotation.DictionaryType;
 import org.kevoree.api.PrimitiveCommand;
 import org.kevoree.kompare.JavaSePrimitive;
 import org.kevoree.library.defaultNodeTypes.JavaSENode;
+import org.kevoree.microsandbox.api.contract.PlatformDescription;
 import org.kevoree.tools.aether.framework.JCLContextHandler;
 
 import org.kevoree.annotation.Library;
@@ -19,11 +20,15 @@ import org.kevoreeadaptation.AdaptationPrimitive;
         @DictionaryAttribute(name = "availability_memory", defaultValue = "180000000"),
         @DictionaryAttribute(name = "availability_sent", defaultValue = "18000"),
         @DictionaryAttribute(name = "availability_received", defaultValue = "18000"),
-        @DictionaryAttribute(name = "availability_instr", defaultValue = "180000000")
+        @DictionaryAttribute(name = "availability_instr", defaultValue = "180000000"),
+        @DictionaryAttribute(name = "availability_write_disc", defaultValue = "18000"),
+        @DictionaryAttribute(name = "availability_read_disc", defaultValue = "18000")
 })
 @NodeType
 @Library(name = "JavaSE")
 public class MonitoredNode extends JavaSENode {
+
+    PlatformDescription description;
 
     @Override
     public void startNode() {
@@ -38,12 +43,21 @@ public class MonitoredNode extends JavaSENode {
             return;
         }
 
+
+
         jclhandler.setKCLFactory(new CoverageKCLFactory());
         super.startNode();
         long max_sent = Long.valueOf(getDictionary().get("availability_sent").toString());
         long max_received = Long.valueOf(getDictionary().get("availability_received").toString());
         long max_memory = Long.valueOf(getDictionary().get("availability_memory").toString());
-        ControlAdmissionSystem.instance$.init(max_memory, max_sent, max_received);
+        long max_instr = Long.valueOf(getDictionary().get("availability_instr").toString());
+        long max_write = Long.valueOf(getDictionary().get("availability_write_disc").toString());
+        long max_read = Long.valueOf(getDictionary().get("availability_read_disc").toString());
+
+        description = new PlatformDescription(max_memory, max_sent,
+                                                max_received, max_instr,
+                                                max_write, max_read);
+        ControlAdmissionSystem.instance$.init(description);
     }
 
     @Override

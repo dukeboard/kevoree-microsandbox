@@ -1,0 +1,41 @@
+{
+addRepo "http://maven.kevoree.org/daum/snapshots"
+
+
+merge 'mvn:org.kevoree.microsandbox/org.kevoree.microsandbox.javasenode/1.0-SNAPSHOT'
+
+merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.jexxus/2.0.0-SNAPSHOT'
+merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.defaultChannels/2.0.0-SNAPSHOT'
+
+merge 'mvn:org.kevoree.microsandbox/org.kevoree.microsandbox.monitoring/1.0-SNAPSHOT'
+merge 'mvn:org.kevoree.microsandbox/org.kevoree.microsandbox.samples/1.0-SNAPSHOT'
+
+addNode node0:MonitoredNode {
+    availability_memory='150000000',
+    availability_instr='200000000',
+    availability_received = '20000'
+}
+
+addComponent MonitoringComponent0@node0 : MonitoringComponent {
+    memory_threshold='65',
+    cpu_threshold='80',
+    net_in_threshold='60',
+    net_out_threshold='80'
+}
+
+addComponent reasoner0@node0 : ResourceAwareReasoner { }
+
+addChannel defMSGT_reasoning : defMSGT {}
+bind reasoner0.eventHandler@node0 => defMSGT_reasoning
+bind MonitoringComponent0.reasoner@node0 => defMSGT_reasoning
+
+updateDictionary defMSGT_reasoning
+
+addComponent googleReader@node0 : NetworkConsumerFail {
+    network_input_peak_seconds='10000'
+}
+
+addGroup sync:BasicGroup
+addToGroup sync node0
+
+}

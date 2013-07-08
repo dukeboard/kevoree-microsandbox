@@ -9,6 +9,7 @@ import org.resourceaccounting.contract.ComponentResourceContract
 import org.resourceaccounting.contract.ResourceContract
 import java.util.concurrent.locks.ReentrantLock
 import org.kevoree.microsandbox.api.communication.MonitoringReporterFactory
+import org.kevoree.microsandbox.api.contract.PlatformDescription
 
 /**
  * Created with IntelliJ IDEA.
@@ -26,6 +27,7 @@ public object ControlAdmissionSystem {
 
     }
 
+    private var description : PlatformDescription? = null
     private var freeMemory : Long = 0
     private var freeNetworkIn : Long = 0
     private var freeNetworkOut : Long = 0
@@ -40,10 +42,13 @@ public object ControlAdmissionSystem {
      * Calculate the initial amount of resource in the platform and
      * establish this amount as the initial amount of free resources
      */
-    fun init(max_mem : Long, max_sent : Long , max_received : Long) : Unit {
-        freeMemory = Math.min(Runtime.getRuntime().freeMemory(), max_mem)
-        freeNetworkIn = max_received
-        freeNetworkOut = max_sent
+    fun init(platformDescription : PlatformDescription) : Unit {
+        description = platformDescription
+        freeMemory = Math.min(Runtime.getRuntime().freeMemory(), description?.availability_memory as Long)
+        freeNetworkIn = description?.availability_received as Long
+        freeNetworkOut = description?.availability_sent as Long
+        freeRead = description?.availability_read_disc as Long
+        freeWrite = description?.availability_write_disc as Long
     }
 
     public data class ComponentRegistration(val valid: Boolean, val contract: ResourceContract?)
@@ -125,4 +130,6 @@ public object ControlAdmissionSystem {
         }
         return false
     }
+
+    fun getPlatformDescription() : PlatformDescription? = description
 }

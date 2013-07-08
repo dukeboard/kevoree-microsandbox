@@ -72,6 +72,8 @@ open class MonitoredAddInstance(val c: Instance,
             subThread!!.join()
             KevoreeDeployManager.putRef(c.javaClass.getName()+"_tg", c.getName(), tg!!)
             KevoreeDeployManager.putRef(c.javaClass.getName()+"_deployTime", c.getName(), System.nanoTime())
+            KevoreeDeployManager.putRef(c.javaClass.getName()+"_platformDescription", c.getName(),
+                    ControlAdmissionSystem.getPlatformDescription() as Any)
             return true
         } catch(e: Throwable) {
             if(subThread != null){

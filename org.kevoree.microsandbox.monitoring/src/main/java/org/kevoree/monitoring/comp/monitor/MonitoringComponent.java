@@ -1,10 +1,13 @@
 package org.kevoree.monitoring.comp.monitor;
 
+import org.kevoree.ComponentInstance;
 import org.kevoree.annotation.*;
 import org.kevoree.framework.AbstractComponentType;
 import org.kevoree.framework.MessagePort;
+import org.kevoree.library.defaultNodeTypes.context.KevoreeDeployManager;
 import org.kevoree.microsandbox.api.communication.ComposeMonitoringReport;
 import org.kevoree.microsandbox.api.communication.MonitoringReporterFactory;
+import org.kevoree.microsandbox.api.contract.PlatformDescription;
 import org.kevoree.microsandbox.api.event.MicrosandboxEvent;
 import org.kevoree.monitoring.communication.MicrosandboxEventListener;
 import org.kevoree.monitoring.communication.MicrosandboxReporter;
@@ -45,9 +48,20 @@ public class MonitoringComponent extends AbstractComponentType implements Micros
         double io_read = Long.valueOf(getDictionary().get("io_in_threshold").toString());
         double io_write = Long.valueOf(getDictionary().get("io_out_threshold").toString());
 
+        PlatformDescription description = null;
+        for (String key : KevoreeDeployManager.instance$.getInternalMap().keySet())
+            if (key.contains("_platformDescription")) {
+                description = (PlatformDescription) KevoreeDeployManager.instance$.getInternalMap().get(key);
+                break;
+            }
+        if (description == null) {
+            System.out.println("panic: Why the platform description isn't here");
+            System.exit(0);
+        }
+
         GlobalThreshold globalThreshold = new GlobalThreshold(cpu,memory,
                                                                 net_received, net_sent,
-                                                                io_read, io_write);
+                                                                io_read, io_write,description);
 
         if (MonitoringReporterFactory.reporter() instanceof ComposeMonitoringReport) {
             ((ComposeMonitoringReport)MonitoringReporterFactory.reporter()).addReporter(
