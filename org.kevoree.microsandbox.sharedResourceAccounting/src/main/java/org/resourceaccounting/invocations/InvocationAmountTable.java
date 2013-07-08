@@ -42,7 +42,7 @@ public class InvocationAmountTable {
     }
 
     public synchronized boolean isControlled(String component, String port) {
-        return dataMaxs.containsKey(component) & dataMaxs.get(component).containsKey(port);
+        return dataMaxs.containsKey(component) && dataMaxs.get(component).containsKey(port);
     }
 
     public synchronized int maxAllowed(String component, String port) {

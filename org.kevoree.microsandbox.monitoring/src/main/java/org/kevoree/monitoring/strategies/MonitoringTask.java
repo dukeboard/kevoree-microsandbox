@@ -166,9 +166,12 @@ public class MonitoringTask implements Runnable, ContractVerificationRequired, M
     private boolean printJaja(String path, PortUsageStatus result) {
         if (result.getWrongUsage()) {
             for (String s : result.getMisUsedProvidedPorts().keySet()) {
+                String nameOfOrigin = ComponentsInfoStorage.instance$.getExecutionInfo(path).getName();
                 System.out.printf("Port %s is wrongly used\n", s);
                 if (result.getMisUsedProvidedPorts().get(s).isEmpty()) {
-
+                    MyResourceConsumptionRecorder.getInstance().turnOnPortControllingOn(nameOfOrigin,
+                            s,false,
+                            ComponentInteractionAspect.instance$.getMaxNumberOfRequest(path, s, service));
                 }
                 else
                     for (Port p : result.getMisUsedProvidedPorts().get(s)) {

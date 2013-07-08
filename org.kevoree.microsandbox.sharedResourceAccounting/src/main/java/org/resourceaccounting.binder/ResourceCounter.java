@@ -190,6 +190,7 @@ public class ResourceCounter {
                 int x0 = 1000000000/ max;
                 int milli = x0 / 1000000;
                 int nano = x0 % 1000000;
+//                System.out.printf("Wait %d %d %d\n", max, milli, nano);
                 try {
                     Thread.sleep(milli, nano);
                 } catch (InterruptedException e) { }
