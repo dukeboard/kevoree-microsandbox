@@ -10,6 +10,7 @@ import org.kevoree.MBinding
 import java.util.ArrayList
 import java.util.HashSet
 import java.util.HashMap
+import org.kevoree.monitoring.strategies.monitoring.AllComponentsMonitoring
 
 /**
  * Created with IntelliJ IDEA.
@@ -74,7 +75,7 @@ public object ComponentInteractionAspect {
                             val nameC = other.getName()
                             val nameP = b2.getPort()?.getPortTypeRef()?.getName()
                             val d = MyResourceConsumptionRecorder.
-                                    getInstance()?.getUsesOfRequiredPort(nameC, nameP) as Int / 3
+                                    getInstance()?.getUsesOfRequiredPort(nameC, nameP) as Int / AllComponentsMonitoring.NUMBER_OF_STEPS
                             if (d > portExpected) {
 //                                println("\t\tI found you. Sent by ${nameC}.${nameP} : $d")
                                 result.misUsedProvidedPorts.get(name)?.add(b2?.getPort()!!)
@@ -103,11 +104,38 @@ public object ComponentInteractionAspect {
     }
 
     private fun getMaxNumberOfRequest(componentPath : String, modelS : KevoreeModelHandlerService): Int {
-        return 8;
+        val c = modelS.getLastModel()?.findByPath(componentPath, javaClass<ComponentInstance>())
+        var result = Integer.MAX_VALUE
+        for (dv in c?.getDictionary()?.getValues()!!) {
+            if (dv.getAttribute()?.getName() == "throughput_msg_per_second") {
+               val value = dv.getValue()
+               val l : Array<String> = value.split(";")
+               val tmp = l.filter { s -> s.startsWith("all=") }.
+                            map { s -> Integer.valueOf(s.substring(s.indexOf('=') + 1)) }
+
+               if (tmp != null && tmp.size() > 0)
+                   result = tmp.get(0) as Int
+
+            }
+        }
+        return result;
     }
 
     private fun getMaxNumberOfRequest(componentPath : String, port : String, modelS : KevoreeModelHandlerService): Int {
+        val c = modelS.getLastModel()?.findByPath(componentPath, javaClass<ComponentInstance>())
+        var result = Integer.MAX_VALUE
+        for (dv in c?.getDictionary()?.getValues()!!) {
+            if (dv.getAttribute()?.getName() == "throughput_msg_per_second") {
+                val value = dv.getValue()
+                val l : Array<String> = value.split(";")
+                val tmp = l.filter { s -> s.startsWith(port + "=") }.
+                map { s -> Integer.valueOf(s.substring(s.indexOf('=') + 1)) }
 
-        return 8;
+                if (tmp != null && tmp.size() > 0)
+                    result = tmp.get(0) as Int
+
+            }
+        }
+        return result;
     }
 }

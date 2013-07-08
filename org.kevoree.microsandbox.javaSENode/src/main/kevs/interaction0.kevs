@@ -31,7 +31,8 @@ bind MonitoringComponent0.reasoner@node0 => defMSGT_reasoning
 updateDictionary defMSGT_reasoning
 
 addComponent tester0@node0 : CPUConsumerByPrimalityTesting {
-    cpu_wall_time='2000000'
+    cpu_wall_time='2000000',
+    throughput_msg_per_second='all=8;primalityTester=8'
 }
 
 addComponent generator0@node0 : NumberGenerator {

@@ -3,6 +3,7 @@ package org.kevoree.microsandbox.samples.interaction;
 import org.kevoree.annotation.*;
 import org.kevoree.framework.AbstractComponentType;
 import org.kevoree.microsandbox.api.contract.CPUContracted;
+import org.kevoree.microsandbox.api.contract.ThroughputContracted;
 
 /**
  * Created with IntelliJ IDEA.
@@ -16,7 +17,7 @@ import org.kevoree.microsandbox.api.contract.CPUContracted;
         @ProvidedPort(name = "primalityTester", type = PortType.MESSAGE)
 })
 @ComponentType
-public class CPUConsumerByPrimalityTesting extends AbstractComponentType implements CPUContracted {
+public class CPUConsumerByPrimalityTesting extends AbstractComponentType implements CPUContracted, ThroughputContracted {
 
 
     @Port(name = "primalityTester")
