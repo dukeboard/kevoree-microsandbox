@@ -97,6 +97,7 @@ public class Runner {
             File modelFile = new File(modelPath);
             if (modelFile.exists()) {
                 checker.setModelFile(modelFile);
+                System.out.println("Bootstrap model => "+modelPath);
             }
         }
         System.out.println("Kevoree " + kevoreeVersion + " Ready to run ");
