@@ -30,23 +30,16 @@ import java.util.List;
  * Time: 11:12 AM
  *
  */
-public class MonitoringTask implements Runnable, ContractVerificationRequired, ModelListener {
+public class MonitoringTask extends AbstractMonitoringTask {
 
-    private final String nodeName;
-    private final Bootstraper bootstraper;
-    private final KevoreeModelHandlerService service;
     private final GlobalThreshold globalThreshold;
-    private boolean stopped;
-    private GCWatcher gcWatcher;
-    private Object msg;
 
     public MonitoringTask(String nodeName,
                           GlobalThreshold globalThreshold,
+                          String nameOfRankerFunction,
                           KevoreeModelHandlerService service,
                           Bootstraper bootstraper) {
-        this.nodeName= nodeName;
-        this.service = service;
-        this.bootstraper = bootstraper;
+        super(bootstraper, service, nameOfRankerFunction, nodeName);
         this.globalThreshold = globalThreshold;
     }
 
@@ -82,13 +75,12 @@ public class MonitoringTask implements Runnable, ContractVerificationRequired, M
     }
 
     private MonitoringStatus currentStatus;
-    private MonitoringStrategy currentStrategy;
 
 
     @Override
     public void run() {
         System.out.printf("Initiating Monitoring task\n");
-        msg = new Object();
+
         ComponentsInfoStorage.instance$.setIdAssigner(new SimpleIdAssigner(service));
 
         gcWatcher = new GCWatcher();
@@ -158,7 +150,8 @@ public class MonitoringTask implements Runnable, ContractVerificationRequired, M
         MyLowLevelResourceConsumptionRecorder.getInstance().turnMonitoring(true);
         currentStatus = MonitoringStatus.LOCAL_MONITORING;
         currentStrategy = FineGrainedStrategyFactory.instance$.newMonitor(reason,
-                ComponentsRanker.instance$.rank(nodeName, service, bootstraper), msg);
+                ComponentsRanker.instance$.rank(nodeName, service, bootstraper,
+                        ComponentRankerFunctionFactory.instance$.get(nameOfRankerFunction)), msg);
         currentStrategy.init(0);
     }
 
@@ -168,38 +161,5 @@ public class MonitoringTask implements Runnable, ContractVerificationRequired, M
         currentStatus = MonitoringStatus.GLOBAL_MONITORING;
         currentStrategy = new GlobalMonitoring(msg, globalThreshold);
         currentStrategy.init(1000);
-    }
-
-    private void waitMessage() {
-        synchronized (msg) {
-            try {
-                msg.wait();
-            } catch (InterruptedException e) {
-
-            }
-        }
-    }
-
-
-    public synchronized boolean isStopped() {
-        return stopped;
-    }
-
-    public synchronized void stop() {
-        stopped = true;
-        synchronized (msg) {
-            msg.notify();
-        }
-    }
-
-    @Override
-    public void verifyContract(ResourcePrincipal principal, Object obj) {
-        currentStrategy.verifyContract(principal, obj);
-    }
-
-    @Override
-    public void onGCVerifyContract(long used, long max) {
-        if (currentStrategy != null)
-            currentStrategy.onGCVerifyContract(used, max);
     }
 }

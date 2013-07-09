@@ -32,7 +32,7 @@ class ResourceCounterImpl {
     public InvocationAmountTable receivers = new InvocationAmountTable();
 
     // is the principal being monitored when the system is monitoring a single component
-    private Set<Integer> monitoredPrincipals = new Set<Integer>();
+    private Set<ResourcePrincipal> monitoredPrincipals = new Set<ResourcePrincipal>();
 
     long getTotalReceived() {
         long tmp = totalReceived - lastTotalReceived;
@@ -263,16 +263,22 @@ class ResourceCounterImpl {
     }
 
     public void turnOnMonitoringSinglePrincipal(String appId) {
-        if (appId == null)
+        if (appId == null) {
+            for (int i = 0 ; i < monitoredPrincipals.size() ; i++)
+                ((ThreadGroupResourcePrincipal)monitoredPrincipals.getElement(i)).markAsMonitored(false);
             monitoredPrincipals.clear();
+            return;
+        }
         ResourcePrincipal p = search(appId);
         if (p != null) {
-            System.err.println("Panic: Resource principal " + appId + " wasn't found");
-            monitoredPrincipals.add(p.getId());
+            monitoredPrincipals.add(p);
+            ((ThreadGroupResourcePrincipal)p).markAsMonitored(true);
         }
+        else
+            System.err.println("Panic: Resource principal " + appId + " wasn't found");
     }
 
     public boolean isPrincipalBeingMonitored(ResourcePrincipal principal) {
-        return monitoredPrincipals.find(principal.getId()) != -1;
+        return principal.isBeingMonitored();
     }
 }

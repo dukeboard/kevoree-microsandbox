@@ -29,7 +29,8 @@ public object ComponentsRanker {
 
     fun rank(nodeName: String,
                 modelService: KevoreeModelHandlerService,
-                bootstrapService : Bootstraper
+                bootstrapService : Bootstraper,
+                componentRankerFunction: (ComponentInstance, ComponentInstance) -> Integer
              ): List<ComponentInstance> {
         val components : MutableList<ComponentInstance> =
                 ArrayList<ComponentInstance>()
@@ -42,14 +43,8 @@ public object ComponentsRanker {
         )
 
         val currentTime = System.nanoTime()
-        return components.sort(comparator { (a,b) ->
-            val x = ComponentsInfoStorage.getExecutionInfo(a.path() as String)
-            val y = ComponentsInfoStorage.getExecutionInfo(b.path() as String)
-            if ((x?.timeAlive(currentTime) as Long) < y?.timeAlive(currentTime) as Long)
-                 1
-            else
-                -1
-        })
+        println("number of components before sorting is " + components.size)
+        return components.sort(comparator { (a,b) -> componentRankerFunction(a,b) as Int })
     }
 
     private fun updateInfo(instance: ComponentInstance,

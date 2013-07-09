@@ -98,7 +98,8 @@ public class SingleComponentMonitoring extends FineGrainedMonitoringStrategy {
             counter = 1;
             index++;
             currentComponent = null;
-            if (index == ranking.size()) {
+            if (index == ranking.size() || faultyComponents.size() > 0) {
+                // leave as soon as we find a faulty components
                 // cleanup
                 // stop monitoring the components
                 MyLowLevelResourceConsumptionRecorder.getInstance().turnFilteredPrincipalMonitoring(false, null);

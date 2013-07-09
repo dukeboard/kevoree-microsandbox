@@ -34,18 +34,18 @@ public class ComponentExecutionInfo {
     private Map<ModelID, UsageInfo> infoMap;
 
     private int failures;
+
     private int failuresInPreviousVersions;
     private double branchCoverage;
     private double instructionCoverage;
-
     /**
      *
      */
     private long initialDeployment;
 
     private String componentName;
-    private String path;
 
+    private String path;
     private ModelID lastModel;
 
     public ComponentExecutionInfo(ComponentInstance component, ModelID id,
@@ -93,5 +93,9 @@ public class ComponentExecutionInfo {
             failuresInPreviousVersions += failures;
             failures = 0;
         }
+    }
+
+    public int getFailures() {
+        return failures;
     }
 }

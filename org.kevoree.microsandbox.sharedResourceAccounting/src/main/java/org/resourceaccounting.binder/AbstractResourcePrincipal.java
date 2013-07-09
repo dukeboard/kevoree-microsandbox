@@ -17,6 +17,8 @@ public abstract class AbstractResourcePrincipal<T> implements ResourcePrincipal 
         return associatedObject;
     }
 
+    private boolean isBeingMonitored = false;
+
     private transient T associatedObject;
 
     private static int lastID = 3;
@@ -120,6 +122,16 @@ public abstract class AbstractResourcePrincipal<T> implements ResourcePrincipal 
         AbstractResourcePrincipal that = (AbstractResourcePrincipal) o;
 
         return id == that.id;
+    }
+
+
+    @Override
+    public boolean isBeingMonitored() {
+        return isBeingMonitored;
+    }
+
+    public void markAsMonitored(boolean mark) {
+        isBeingMonitored = mark;
     }
 
     @Override

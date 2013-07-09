@@ -12,7 +12,9 @@ import org.kevoree.microsandbox.api.event.MicrosandboxEvent;
 import org.kevoree.monitoring.communication.MicrosandboxEventListener;
 import org.kevoree.monitoring.communication.MicrosandboxReporter;
 import org.kevoree.monitoring.sla.GlobalThreshold;
+import org.kevoree.monitoring.strategies.AbstractMonitoringTask;
 import org.kevoree.monitoring.strategies.MonitoringTask;
+import org.kevoree.monitoring.strategies.MonitoringTaskAllComponents;
 import org.kevoree.monitoring.strategies.monitoring.FineGrainedStrategyFactory;
 
 /**
@@ -35,12 +37,19 @@ import org.kevoree.monitoring.strategies.monitoring.FineGrainedStrategyFactory;
         @DictionaryAttribute(name = "io_in_threshold", defaultValue = "80"),
         @DictionaryAttribute(name = "io_out_threshold", defaultValue = "80"),
 
-        @DictionaryAttribute(name = "fineGrainedStrategy", defaultValue = "all-components") // the other is single-monitoring
+        // indicates that we want adaptive monitoring
+        @DictionaryAttribute(name = "adaptiveMonitoring", defaultValue = "true"),
+
+        // indicates the kind of fine-grained monitoring
+        @DictionaryAttribute(name = "fineGrainedStrategy", defaultValue = "all-components"), // the other is single-monitoring
+
+        // indicate the function used to rank components
+        @DictionaryAttribute(name ="componentRankFunction", defaultValue = "amount_of_time_alive")
 }
 )
 @ComponentType
 public class MonitoringComponent extends AbstractComponentType implements MicrosandboxEventListener {
-    MonitoringTask monitoringTask;
+    AbstractMonitoringTask monitoringTask;
 
     @Start
     public void startComponent() {
@@ -62,24 +71,34 @@ public class MonitoringComponent extends AbstractComponentType implements Micros
             System.exit(0);
         }
 
-        FineGrainedStrategyFactory.instance$.init(getDictionary().get("fineGrainedStrategy").toString());
-
-        GlobalThreshold globalThreshold = new GlobalThreshold(cpu,memory,
-                                                                net_received, net_sent,
-                                                                io_read, io_write,description);
+        boolean adaptiveMonitoring = Boolean.valueOf(getDictionary().get("adaptiveMonitoring").toString());
+        String componentRankFunction = getDictionary().get("componentRankFunction").toString();
 
         if (MonitoringReporterFactory.reporter() instanceof ComposeMonitoringReport) {
             ((ComposeMonitoringReport)MonitoringReporterFactory.reporter()).addReporter(
                     new MicrosandboxReporter(this));
         }
 
-        monitoringTask = new MonitoringTask(getNodeName(),
-                globalThreshold,
-                getModelService(),
-                getBootStrapperService());
+        if (adaptiveMonitoring) {
+            FineGrainedStrategyFactory.instance$.init(getDictionary().get("fineGrainedStrategy").toString());
 
-        getModelService().registerModelListener(monitoringTask);
+            GlobalThreshold globalThreshold = new GlobalThreshold(cpu,memory,
+                                                                    net_received, net_sent,
+                                                                    io_read, io_write,description);
+            monitoringTask = new MonitoringTask(getNodeName(),
+                    globalThreshold,
+                    componentRankFunction,
+                    getModelService(),
+                    getBootStrapperService());
 
+            getModelService().registerModelListener((MonitoringTask)monitoringTask);
+        }
+        else {
+            monitoringTask = new MonitoringTaskAllComponents(getNodeName(),
+                                componentRankFunction,
+                                getModelService(),
+                                getBootStrapperService());
+        }
         new Thread(monitoringTask).start();
     }
 

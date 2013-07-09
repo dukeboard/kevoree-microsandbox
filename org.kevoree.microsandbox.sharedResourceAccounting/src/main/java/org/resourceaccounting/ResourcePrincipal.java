@@ -59,5 +59,11 @@ public interface ResourcePrincipal extends Serializable {
 
     ResourceContract getContract();
     void setContract(ResourceContract contract);
+
+    /**
+     * Indicae if the principal is being monitored
+     * @return
+     */
+    boolean isBeingMonitored();
 }
 

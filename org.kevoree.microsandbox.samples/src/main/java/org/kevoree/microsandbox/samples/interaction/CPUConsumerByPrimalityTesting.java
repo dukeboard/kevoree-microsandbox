@@ -19,6 +19,10 @@ import org.kevoree.microsandbox.api.contract.ThroughputContracted;
 @ComponentType
 public class CPUConsumerByPrimalityTesting extends AbstractComponentType implements CPUContracted, ThroughputContracted {
 
+    @Start
+    public void startComponent() {
+
+    }
 
     @Port(name = "primalityTester")
     public void tester(Object obj) {
