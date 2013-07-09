@@ -11,6 +11,7 @@ import java.util.ArrayList
 import java.util.HashSet
 import java.util.HashMap
 import org.kevoree.monitoring.strategies.monitoring.AllComponentsMonitoring
+import org.kevoree.monitoring.strategies.monitoring.FineGrainedMonitoringStrategy
 
 /**
  * Created with IntelliJ IDEA.
@@ -54,7 +55,7 @@ public object ComponentInteractionAspect {
             val name = port?.getPortTypeRef()?.getName() as String
             val portObserved : Int = MyLowLevelResourceConsumptionRecorder.
                     getInstance()?.
-                    getUsesOfProvidedPort(c?.getName(), name)!! / AllComponentsMonitoring.ELLAPSED_SECONDS
+                    getUsesOfProvidedPort(c?.getName(), name)!! / FineGrainedMonitoringStrategy.ELAPSED_SECONDS
 
             val portExpected = getMaxNumberOfRequest(componentPath, name, modelService)
 
@@ -74,7 +75,7 @@ public object ComponentInteractionAspect {
                             val nameC = other.getName()
                             val nameP = b2.getPort()?.getPortTypeRef()?.getName()
                             val d = MyLowLevelResourceConsumptionRecorder.
-                                    getInstance()?.getUsesOfRequiredPort(nameC, nameP) as Int / AllComponentsMonitoring.ELLAPSED_SECONDS
+                                    getInstance()?.getUsesOfRequiredPort(nameC, nameP) as Int / FineGrainedMonitoringStrategy.ELAPSED_SECONDS
                             if (d > portExpected) {
                                 result.misUsedProvidedPorts.get(name)?.add(b2?.getPort()!!)
                             }
@@ -84,7 +85,7 @@ public object ComponentInteractionAspect {
             totalObserved += portObserved
         }
         if (!errorOnSinglePortUsage) {
-            if ( totalObserved / AllComponentsMonitoring.ELLAPSED_SECONDS > totalExpected) {
+            if ( totalObserved / FineGrainedMonitoringStrategy.ELAPSED_SECONDS > totalExpected) {
                 // ok, there is no violation on single port, but there is violation on the global contract
                 result.wrongUsage = true
                 return result

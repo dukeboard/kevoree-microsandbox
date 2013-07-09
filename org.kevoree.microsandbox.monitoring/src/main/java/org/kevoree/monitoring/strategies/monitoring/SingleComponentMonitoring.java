@@ -2,6 +2,7 @@ package org.kevoree.monitoring.strategies.monitoring;
 
 import org.kevoree.ComponentInstance;
 import org.kevoree.microsandbox.api.sla.Metric;
+import org.kevoree.monitoring.comp.MyLowLevelResourceConsumptionRecorder;
 import org.kevoree.monitoring.sla.FaultyComponent;
 import org.kevoree.monitoring.sla.MeasurePoint;
 import org.resourceaccounting.ResourcePrincipal;
@@ -12,29 +13,29 @@ import java.util.*;
 /**
  * Created with IntelliJ IDEA.
  * User: inti
- * Date: 6/30/13
- * Time: 10:04 PM
+ * Date: 6/28/13
+ * Time: 6:08 PM
  *
  */
-public class AllComponentsMonitoring extends FineGrainedMonitoringStrategy {
+public class SingleComponentMonitoring extends FineGrainedMonitoringStrategy {
 
-    int count = 0;
-
+    private int index = 0;
     EnumMap<Metric, MeasurePoint> a;
+    private int counter;
 
-    public AllComponentsMonitoring(EnumSet<Metric> reason, List<ComponentInstance> ranking, Object msg) {
-        super(reason, ranking, msg);
+    public SingleComponentMonitoring(EnumSet<Metric> reason, List<ComponentInstance> ranking, Object msg) {
+        super(reason, ranking,msg);
     }
 
     @Override
     public void init(int startTime) {
         super.init(startTime);
-        count = 0;
+        counter = 0;
     }
 
     @Override
     public void verifyContract(ResourcePrincipal principal, Object obj) {
-        if (count == NUMBER_OF_STEPS) {
+        if (counter == NUMBER_OF_STEPS) {
             DataForCheckingContract data = (DataForCheckingContract)obj;
             data.lastCPU /= ELAPSED_SECONDS;
             data.lastRead /= ELAPSED_SECONDS;
@@ -73,33 +74,47 @@ public class AllComponentsMonitoring extends FineGrainedMonitoringStrategy {
     }
 
     @Override
-    public void onGCVerifyContract(long used, long max) { }
+    public void onGCVerifyContract(long used, long max) {
+
+    }
 
     @Override
     public void run() {
-        count++;
-        if (count == NUMBER_OF_STEPS) {
+        counter++;
+        if (counter == NUMBER_OF_STEPS) {
+            currentComponent = ranking.get(index);
+            String appId = getAppId(currentComponent);
+            // stop monitoring the previous one
+            MyLowLevelResourceConsumptionRecorder.getInstance().turnFilteredPrincipalMonitoring(false, null);
+            // start monitoring the new one
+            MyLowLevelResourceConsumptionRecorder.getInstance().turnFilteredPrincipalMonitoring(true, appId);
 
-            Iterator<ComponentInstance> it = ranking.iterator();
-            while (it.hasNext()) {
-                currentComponent = it.next();
-                a = new EnumMap<Metric, MeasurePoint>(Metric.class);
-                ResourcePrincipal principal = getPrincipal(currentComponent);
-                makeContractAvailable(principal, currentComponent);
-                DataForCheckingContract data = getInfo(principal);
-                verifyContract(principal, data);
-            }
-            // if someone is violating the contract then trigger adaptation
-            if (faultyComponents.size() > 0) {
-                EnumSet<Metric> tmp = EnumSet.noneOf(Metric.class);
-                actionOnContractViolation(tmp);
-            }
-            else {
-                // pass to Global Monitoring
-                passWithoutViolation();
+            a = new EnumMap<Metric, MeasurePoint>(Metric.class);
+            ResourcePrincipal principal = getPrincipal(currentComponent);
+            makeContractAvailable(principal, currentComponent);
+            DataForCheckingContract data = getInfo(principal);
+            verifyContract(principal, data);
+            // go to the next component
+            counter = 1;
+            index++;
+            currentComponent = null;
+            if (index == ranking.size()) {
+                // cleanup
+                // stop monitoring the components
+                MyLowLevelResourceConsumptionRecorder.getInstance().turnFilteredPrincipalMonitoring(false, null);
+                // if someone is violating the contract then trigger adaptation
+                if (faultyComponents.size() > 0) {
+                    EnumSet<Metric> tmp = EnumSet.noneOf(Metric.class);
+                    actionOnContractViolation(tmp);
+                }
+                else {
+                    // pass to Global Monitoring
+                    passWithoutViolation();
+                }
             }
         }
-        
     }
+
+
 
 }

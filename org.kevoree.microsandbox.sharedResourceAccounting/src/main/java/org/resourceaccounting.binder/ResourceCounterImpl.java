@@ -267,6 +267,7 @@ class ResourceCounterImpl {
             monitoredPrincipals.clear();
         ResourcePrincipal p = search(appId);
         if (p != null) {
+            System.err.println("Panic: Resource principal " + appId + " wasn't found");
             monitoredPrincipals.add(p.getId());
         }
     }

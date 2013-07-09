@@ -16,10 +16,7 @@ import org.kevoree.monitoring.sla.GlobalThreshold;
 import org.kevoree.monitoring.sla.MeasurePoint;
 import org.kevoree.monitoring.strategies.adaptation.KillThemAll;
 import org.kevoree.monitoring.strategies.adaptation.SlowDownComponentInteraction;
-import org.kevoree.monitoring.strategies.monitoring.AbstractLocalMonitoringStrategy;
-import org.kevoree.monitoring.strategies.monitoring.AllComponentsMonitoring;
-import org.kevoree.monitoring.strategies.monitoring.GlobalMonitoring;
-import org.kevoree.monitoring.strategies.monitoring.MonitoringStrategy;
+import org.kevoree.monitoring.strategies.monitoring.*;
 import org.resourceaccounting.ResourcePrincipal;
 
 import java.util.EnumMap;
@@ -31,7 +28,7 @@ import java.util.List;
  * User: inti
  * Date: 6/23/13
  * Time: 11:12 AM
- * To change this template use File | Settings | File Templates.
+ *
  */
 public class MonitoringTask implements Runnable, ContractVerificationRequired, ModelListener {
 
@@ -118,7 +115,7 @@ public class MonitoringTask implements Runnable, ContractVerificationRequired, M
 //                        for (Metric m : currentStrategy.getViolationOn())
 //                            System.out.println("\t" + m);
                         currentStrategy.pause();
-                        AbstractLocalMonitoringStrategy s =(AbstractLocalMonitoringStrategy)currentStrategy;
+                        FineGrainedMonitoringStrategy s =(FineGrainedMonitoringStrategy)currentStrategy;
                         List<FaultyComponent> tmpList = s.getFaultyComponents();
                         for (FaultyComponent c : tmpList) {
                             ComponentsInfoStorage.instance$.getExecutionInfo(c.getComponentPath()).increaseFailures();
@@ -160,7 +157,7 @@ public class MonitoringTask implements Runnable, ContractVerificationRequired, M
         MonitoringReporterFactory.reporter().monitoring(false);
         MyLowLevelResourceConsumptionRecorder.getInstance().turnMonitoring(true);
         currentStatus = MonitoringStatus.LOCAL_MONITORING;
-        currentStrategy = new AllComponentsMonitoring(reason,
+        currentStrategy = FineGrainedStrategyFactory.instance$.newMonitor(reason,
                 ComponentsRanker.instance$.rank(nodeName, service, bootstraper), msg);
         currentStrategy.init(0);
     }

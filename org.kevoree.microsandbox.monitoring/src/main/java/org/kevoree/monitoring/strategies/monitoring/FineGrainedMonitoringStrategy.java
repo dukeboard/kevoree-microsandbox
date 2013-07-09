@@ -21,7 +21,9 @@ import java.util.List;
  * Time: 10:00 PM
  *
  */
-public abstract class AbstractLocalMonitoringStrategy extends AbstractMonitoringStrategy {
+public abstract class FineGrainedMonitoringStrategy extends AbstractMonitoringStrategy {
+    public static final int NUMBER_OF_STEPS = 3;
+    public static final int ELAPSED_SECONDS = NUMBER_OF_STEPS - 1;
     protected final List<ComponentInstance> ranking;
     protected ComponentInstance currentComponent;
     protected EnumSet<Metric> reason;
@@ -29,7 +31,7 @@ public abstract class AbstractLocalMonitoringStrategy extends AbstractMonitoring
 
     protected ArrayList<FaultyComponent> faultyComponents = new ArrayList<FaultyComponent>();
 
-    public AbstractLocalMonitoringStrategy(EnumSet<Metric> reason, List<ComponentInstance> ranking, Object msg) {
+    public FineGrainedMonitoringStrategy(EnumSet<Metric> reason, List<ComponentInstance> ranking, Object msg) {
         super(msg);
         this.ranking = ranking;
         this.reason = reason;
@@ -58,6 +60,13 @@ public abstract class AbstractLocalMonitoringStrategy extends AbstractMonitoring
             System.exit(2);
         }
         return p;
+    }
+
+    protected String getAppId(ComponentInstance instance) {
+        LowLevelResourceMonitorProxy recorder = MyLowLevelResourceConsumptionRecorder.getInstance();
+        Object obj =KevoreeDeployManager.instance$.getRef(instance.getClass().getName() + "_tg", instance.getName());
+        ThreadGroup tg = (ThreadGroup) obj;
+        return tg.getName();
     }
 
     protected void makeContractAvailable(ResourcePrincipal principal, ComponentInstance instance) {

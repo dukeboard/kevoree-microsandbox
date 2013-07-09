@@ -13,6 +13,7 @@ import org.kevoree.monitoring.communication.MicrosandboxEventListener;
 import org.kevoree.monitoring.communication.MicrosandboxReporter;
 import org.kevoree.monitoring.sla.GlobalThreshold;
 import org.kevoree.monitoring.strategies.MonitoringTask;
+import org.kevoree.monitoring.strategies.monitoring.FineGrainedStrategyFactory;
 
 /**
  * Created with IntelliJ IDEA.
@@ -32,7 +33,9 @@ import org.kevoree.monitoring.strategies.MonitoringTask;
         @DictionaryAttribute(name = "net_in_threshold", defaultValue = "80"),
         @DictionaryAttribute(name = "net_out_threshold", defaultValue = "80"),
         @DictionaryAttribute(name = "io_in_threshold", defaultValue = "80"),
-        @DictionaryAttribute(name = "io_out_threshold", defaultValue = "80")
+        @DictionaryAttribute(name = "io_out_threshold", defaultValue = "80"),
+
+        @DictionaryAttribute(name = "fineGrainedStrategy", defaultValue = "all-components") // the other is single-monitoring
 }
 )
 @ComponentType
@@ -58,6 +61,8 @@ public class MonitoringComponent extends AbstractComponentType implements Micros
             System.out.println("panic: Why the platform description isn't here");
             System.exit(0);
         }
+
+        FineGrainedStrategyFactory.instance$.init(getDictionary().get("fineGrainedStrategy").toString());
 
         GlobalThreshold globalThreshold = new GlobalThreshold(cpu,memory,
                                                                 net_received, net_sent,

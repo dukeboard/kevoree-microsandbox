@@ -10,6 +10,7 @@ import java.util.ArrayList
 import org.kevoree.microsandbox.api.communication.MonitoringReporterFactory
 import org.kevoree.microsandbox.api.sla.Metric
 import org.kevoree.monitoring.strategies.monitoring.AllComponentsMonitoring
+import org.kevoree.monitoring.strategies.monitoring.FineGrainedMonitoringStrategy
 
 /**
  * Created with IntelliJ IDEA.
@@ -38,7 +39,7 @@ public class SlowDownComponentInteraction(service : KevoreeModelHandlerService)
                 var nameOfOrigin : String? = ComponentsInfoStorage.getExecutionInfo(path)?.getName()
                 val maxAllowed = ComponentInteractionAspect.getMaxNumberOfRequest(path, s, modelService!!)
                 val usage = MyLowLevelResourceConsumptionRecorder.getInstance()?.getUsesOfProvidedPort(nameOfOrigin, s) as Int /
-                    AllComponentsMonitoring.ELLAPSED_SECONDS
+                            FineGrainedMonitoringStrategy.ELAPSED_SECONDS
                 MonitoringReporterFactory.reporter()?.sla(path, Metric.PortUsage, usage.toDouble(), maxAllowed.toDouble())
 
                 if (result.misUsedProvidedPorts.get(s)?.isEmpty()!!)
