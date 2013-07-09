@@ -1,7 +1,7 @@
 package org.kevoree.monitoring.comp.viewer;
 
 import org.kevoree.monitoring.AppBehaviorObserver;
-import org.resourceaccounting.ResourceConsumptionRecorderMBean;
+import org.resourceaccounting.LowLevelResourceMonitorProxy;
 import org.resourceaccounting.ResourcePrincipal;
 
 import java.util.HashSet;
@@ -15,7 +15,7 @@ import java.util.Set;
 * To change this template use File | Settings | File Templates.
 */
 class PollingConsumption extends Thread {
-    private final ResourceConsumptionRecorderMBean bean;
+    private final LowLevelResourceMonitorProxy bean;
     private final int frequency;
     private Set<ResourcePrincipal> principals;
 
@@ -23,7 +23,7 @@ class PollingConsumption extends Thread {
 
     boolean stop = false;
 
-    PollingConsumption(int frequency, ResourceConsumptionRecorderMBean beanProxy) {
+    PollingConsumption(int frequency, LowLevelResourceMonitorProxy beanProxy) {
         this.bean = beanProxy;
         this.frequency = frequency;
         principals = new HashSet<ResourcePrincipal>();

@@ -54,4 +54,8 @@ public class Set<E> implements Serializable {
             count --;
         }
     }
+
+    public void clear() {
+        count = 0;
+    }
 }

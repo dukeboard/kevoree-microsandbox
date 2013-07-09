@@ -5,6 +5,7 @@ import org.resourceaccounting.contract.ResourceContract;
 import org.resourceaccounting.contract.ResourceContractProvider;
 import org.resourceaccounting.ResourcePrincipal;
 import org.resourceaccounting.invocations.InvocationAmountTable;
+import org.resourceaccounting.utils.Set;
 
 
 /**
@@ -29,6 +30,9 @@ class ResourceCounterImpl {
 
     public InvocationAmountTable senders = new InvocationAmountTable();
     public InvocationAmountTable receivers = new InvocationAmountTable();
+
+    // is the principal being monitored when the system is monitoring a single component
+    private Set<Integer> monitoredPrincipals = new Set<Integer>();
 
     long getTotalReceived() {
         long tmp = totalReceived - lastTotalReceived;
@@ -247,7 +251,6 @@ class ResourceCounterImpl {
     }
 
     public synchronized void increaseTotalReceived(int n) {
-//        System.out.println("fsfsd");
         totalReceived += n;
     }
 
@@ -257,5 +260,18 @@ class ResourceCounterImpl {
 
     public synchronized void increaseTotalSent(int n) {
         totalSent += n;
+    }
+
+    public void turnOnMonitoringSinglePrincipal(String appId) {
+        if (appId == null)
+            monitoredPrincipals.clear();
+        ResourcePrincipal p = search(appId);
+        if (p != null) {
+            monitoredPrincipals.add(p.getId());
+        }
+    }
+
+    public boolean isPrincipalBeingMonitored(ResourcePrincipal principal) {
+        return monitoredPrincipals.find(principal.getId()) != -1;
     }
 }

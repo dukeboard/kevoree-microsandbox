@@ -1,14 +1,12 @@
 package org.kevoree.monitoring.strategies;
 
-import org.kevoree.ComponentInstance;
 import org.kevoree.ContainerRoot;
-import org.kevoree.Port;
 import org.kevoree.api.Bootstraper;
 import org.kevoree.api.service.core.handler.KevoreeModelHandlerService;
 import org.kevoree.api.service.core.handler.ModelListener;
 import org.kevoree.microsandbox.api.communication.MonitoringReporterFactory;
 import org.kevoree.microsandbox.api.sla.Metric;
-import org.kevoree.monitoring.comp.MyResourceConsumptionRecorder;
+import org.kevoree.monitoring.comp.MyLowLevelResourceConsumptionRecorder;
 import org.kevoree.monitoring.comp.monitor.ContractVerificationRequired;
 import org.kevoree.monitoring.comp.monitor.GCWatcher;
 import org.kevoree.monitoring.models.SimpleIdAssigner;
@@ -16,9 +14,7 @@ import org.kevoree.monitoring.ranking.*;
 import org.kevoree.monitoring.sla.FaultyComponent;
 import org.kevoree.monitoring.sla.GlobalThreshold;
 import org.kevoree.monitoring.sla.MeasurePoint;
-import org.kevoree.monitoring.strategies.adaptation.ComponentInteractionAspect;
 import org.kevoree.monitoring.strategies.adaptation.KillThemAll;
-import org.kevoree.monitoring.strategies.adaptation.PortUsageStatus;
 import org.kevoree.monitoring.strategies.adaptation.SlowDownComponentInteraction;
 import org.kevoree.monitoring.strategies.monitoring.AbstractLocalMonitoringStrategy;
 import org.kevoree.monitoring.strategies.monitoring.AllComponentsMonitoring;
@@ -162,7 +158,7 @@ public class MonitoringTask implements Runnable, ContractVerificationRequired, M
 
     private void switchToSimpleLocal(EnumSet<Metric> reason) {
         MonitoringReporterFactory.reporter().monitoring(false);
-        MyResourceConsumptionRecorder.getInstance().turnMonitoring(true);
+        MyLowLevelResourceConsumptionRecorder.getInstance().turnMonitoring(true);
         currentStatus = MonitoringStatus.LOCAL_MONITORING;
         currentStrategy = new AllComponentsMonitoring(reason,
                 ComponentsRanker.instance$.rank(nodeName, service, bootstraper), msg);
@@ -171,7 +167,7 @@ public class MonitoringTask implements Runnable, ContractVerificationRequired, M
 
     private void switchToGlobal() {
         MonitoringReporterFactory.reporter().monitoring(true);
-        MyResourceConsumptionRecorder.getInstance().turnMonitoring(false);
+        MyLowLevelResourceConsumptionRecorder.getInstance().turnMonitoring(false);
         currentStatus = MonitoringStatus.GLOBAL_MONITORING;
         currentStrategy = new GlobalMonitoring(msg, globalThreshold);
         currentStrategy.init(1000);

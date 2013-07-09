@@ -1,6 +1,6 @@
 package org.kevoree.monitoring.comp;
 
-import org.resourceaccounting.ResourceConsumptionRecorderMBean;
+import org.resourceaccounting.LowLevelResourceMonitorProxy;
 import org.resourceaccounting.ResourcePrincipal;
 import org.resourceaccounting.binder.ResourceCounter;
 
@@ -9,13 +9,13 @@ import org.resourceaccounting.binder.ResourceCounter;
  * User: inti
  * Date: 6/22/13
  * Time: 8:08 PM
- * To change this template use File | Settings | File Templates.
+ *
  */
-public class MyResourceConsumptionRecorder implements ResourceConsumptionRecorderMBean {
+public class MyLowLevelResourceConsumptionRecorder implements LowLevelResourceMonitorProxy {
 
-    private final static ResourceConsumptionRecorderMBean instance = new MyResourceConsumptionRecorder();
+    private final static LowLevelResourceMonitorProxy instance = new MyLowLevelResourceConsumptionRecorder();
 
-    public static ResourceConsumptionRecorderMBean getInstance() {
+    public static LowLevelResourceMonitorProxy getInstance() {
         return instance;
     }
 
@@ -82,6 +82,11 @@ public class MyResourceConsumptionRecorder implements ResourceConsumptionRecorde
     @Override
     public void turnMonitoring(boolean on) {
         ResourceCounter.setMonitoring(on);
+    }
+
+    @Override
+    public void turnFilteredPrincipalMonitoring(boolean on, String appID) {
+        ResourceCounter.turnMonitoringSinglePrincipal(on, appID);
     }
 
     @Override

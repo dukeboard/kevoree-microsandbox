@@ -1,10 +1,9 @@
 package org.kevoree.monitoring.strategies.monitoring;
 
-import org.kevoree.library.defaultNodeTypes.context.KevoreeDeployManager;
 import org.kevoree.microsandbox.api.sla.Metric;
-import org.kevoree.monitoring.comp.MyResourceConsumptionRecorder;
+import org.kevoree.monitoring.comp.MyLowLevelResourceConsumptionRecorder;
 import org.kevoree.monitoring.sla.GlobalThreshold;
-import org.resourceaccounting.ResourceConsumptionRecorderMBean;
+import org.resourceaccounting.LowLevelResourceMonitorProxy;
 import org.resourceaccounting.ResourcePrincipal;
 
 import java.lang.management.ManagementFactory;
@@ -61,7 +60,7 @@ public class GlobalMonitoring extends AbstractMonitoringStrategy {
         previousCPU = sum;
         double cpuUsage = Math.min(99, diff/(elapsedTime*nCPUs)*100);
 
-        ResourceConsumptionRecorderMBean ins = MyResourceConsumptionRecorder.getInstance();
+        LowLevelResourceMonitorProxy ins = MyLowLevelResourceConsumptionRecorder.getInstance();
         double sent = ins.getTotalSent();
         double received = ins.getTotalReceived();
         double written = ins.getTotalWritten();

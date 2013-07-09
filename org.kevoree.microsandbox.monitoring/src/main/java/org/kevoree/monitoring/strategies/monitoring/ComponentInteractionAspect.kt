@@ -5,7 +5,7 @@ import org.kevoree.framework.kaspects.PortAspect
 import org.kevoree.ComponentInstance
 import org.kevoree.ContainerRoot
 import org.kevoree.Port
-import org.kevoree.monitoring.comp.MyResourceConsumptionRecorder
+import org.kevoree.monitoring.comp.MyLowLevelResourceConsumptionRecorder
 import org.kevoree.MBinding
 import java.util.ArrayList
 import java.util.HashSet
@@ -52,7 +52,7 @@ public object ComponentInteractionAspect {
         for (port in c?.getProvided()!!)
         {
             val name = port?.getPortTypeRef()?.getName() as String
-            val portObserved : Int = MyResourceConsumptionRecorder.
+            val portObserved : Int = MyLowLevelResourceConsumptionRecorder.
                     getInstance()?.
                     getUsesOfProvidedPort(c?.getName(), name)!! / AllComponentsMonitoring.ELLAPSED_SECONDS
 
@@ -73,7 +73,7 @@ public object ComponentInteractionAspect {
                             val other = ((b2.getPort()?.eContainer() as ComponentInstance))
                             val nameC = other.getName()
                             val nameP = b2.getPort()?.getPortTypeRef()?.getName()
-                            val d = MyResourceConsumptionRecorder.
+                            val d = MyLowLevelResourceConsumptionRecorder.
                                     getInstance()?.getUsesOfRequiredPort(nameC, nameP) as Int / AllComponentsMonitoring.ELLAPSED_SECONDS
                             if (d > portExpected) {
                                 result.misUsedProvidedPorts.get(name)?.add(b2?.getPort()!!)

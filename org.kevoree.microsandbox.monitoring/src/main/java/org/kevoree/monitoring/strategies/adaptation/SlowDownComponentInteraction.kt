@@ -5,7 +5,7 @@ import org.kevoree.monitoring.sla.FaultyComponent
 import org.kevoree.monitoring.ranking.ComponentsInfoStorage
 import org.kevoree.ComponentInstance
 import org.kevoree.Port
-import org.kevoree.monitoring.comp.MyResourceConsumptionRecorder
+import org.kevoree.monitoring.comp.MyLowLevelResourceConsumptionRecorder
 import java.util.ArrayList
 import org.kevoree.microsandbox.api.communication.MonitoringReporterFactory
 import org.kevoree.microsandbox.api.sla.Metric
@@ -37,13 +37,13 @@ public class SlowDownComponentInteraction(service : KevoreeModelHandlerService)
             {
                 var nameOfOrigin : String? = ComponentsInfoStorage.getExecutionInfo(path)?.getName()
                 val maxAllowed = ComponentInteractionAspect.getMaxNumberOfRequest(path, s, modelService!!)
-                val usage = MyResourceConsumptionRecorder.getInstance()?.getUsesOfProvidedPort(nameOfOrigin, s) as Int /
+                val usage = MyLowLevelResourceConsumptionRecorder.getInstance()?.getUsesOfProvidedPort(nameOfOrigin, s) as Int /
                     AllComponentsMonitoring.ELLAPSED_SECONDS
                 MonitoringReporterFactory.reporter()?.sla(path, Metric.PortUsage, usage.toDouble(), maxAllowed.toDouble())
 
                 if (result.misUsedProvidedPorts.get(s)?.isEmpty()!!)
                 {
-                    MyResourceConsumptionRecorder.getInstance()?.turnOnPortControllingOn(nameOfOrigin, s, false,
+                    MyLowLevelResourceConsumptionRecorder.getInstance()?.turnOnPortControllingOn(nameOfOrigin, s, false,
                             maxAllowed)
                 }
                 else
@@ -52,7 +52,7 @@ public class SlowDownComponentInteraction(service : KevoreeModelHandlerService)
                         var c : ComponentInstance? = (p?.eContainer() as ComponentInstance?)
                         var portName : String? = p?.getPortTypeRef()?.getName()
                         MonitoringReporterFactory.reporter()?.adaptation("SlowDownInteraction", "${c?.getName()}${portName}" )
-                        MyResourceConsumptionRecorder.getInstance()?.turnOnPortControllingOn(c?.getName(), portName, true,
+                        MyLowLevelResourceConsumptionRecorder.getInstance()?.turnOnPortControllingOn(c?.getName(), portName, true,
                                 maxAllowed)
                     }
             }

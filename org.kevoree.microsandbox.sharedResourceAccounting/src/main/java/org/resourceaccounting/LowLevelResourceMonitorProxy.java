@@ -8,7 +8,7 @@ package org.resourceaccounting;
  * Time: 5:24 PM
  * To change this template use File | Settings | File Templates.
  */
-public interface ResourceConsumptionRecorderMBean {
+public interface LowLevelResourceMonitorProxy {
     long getMemoryConsumption(ResourcePrincipal appId);
     long getExecutedInstruction(ResourcePrincipal appId);
     long getTotalSent();
@@ -22,7 +22,15 @@ public interface ResourceConsumptionRecorderMBean {
     ResourcePrincipal[] getApplications();
     ResourcePrincipal getApplication(String appId);
     void turnMonitoring(boolean on);
+
+    /**
+     * Enable the monitoring of one principal
+     * @param on true if you want to enable filtered monitoring, false to disable it
+     * @param appID if on == true, it is the ID of the principal you want to include in the set of monitored
+     */
+    void turnFilteredPrincipalMonitoring(boolean on, String appID);
     void turnOnPortControllingOn(String component, String port, boolean sender, int max);
+
 
     int getUsesOfProvidedPort(String component, String port);
 

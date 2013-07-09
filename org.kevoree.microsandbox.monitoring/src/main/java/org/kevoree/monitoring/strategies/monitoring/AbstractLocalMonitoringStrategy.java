@@ -3,9 +3,9 @@ package org.kevoree.monitoring.strategies.monitoring;
 import org.kevoree.ComponentInstance;
 import org.kevoree.library.defaultNodeTypes.context.KevoreeDeployManager;
 import org.kevoree.microsandbox.api.sla.Metric;
-import org.kevoree.monitoring.comp.MyResourceConsumptionRecorder;
+import org.kevoree.monitoring.comp.MyLowLevelResourceConsumptionRecorder;
 import org.kevoree.monitoring.sla.FaultyComponent;
-import org.resourceaccounting.ResourceConsumptionRecorderMBean;
+import org.resourceaccounting.LowLevelResourceMonitorProxy;
 import org.resourceaccounting.ResourcePrincipal;
 import org.resourceaccounting.contract.ComponentResourceContract;
 import org.resourceaccounting.contract.ResourceContract;
@@ -36,7 +36,7 @@ public abstract class AbstractLocalMonitoringStrategy extends AbstractMonitoring
     }
 
     protected DataForCheckingContract getInfo(ResourcePrincipal principal) {
-        ResourceConsumptionRecorderMBean recorder = MyResourceConsumptionRecorder.getInstance();
+        LowLevelResourceMonitorProxy recorder = MyLowLevelResourceConsumptionRecorder.getInstance();
         long lastCPU = recorder.getExecutedInstruction(principal);
         long lastSent = recorder.getBytesSent(principal);
         long lastReceived = recorder.getBytesReceived(principal);
@@ -49,7 +49,7 @@ public abstract class AbstractLocalMonitoringStrategy extends AbstractMonitoring
     }
 
     protected ResourcePrincipal getPrincipal(ComponentInstance instance) {
-        ResourceConsumptionRecorderMBean recorder = MyResourceConsumptionRecorder.getInstance();
+        LowLevelResourceMonitorProxy recorder = MyLowLevelResourceConsumptionRecorder.getInstance();
         Object obj =KevoreeDeployManager.instance$.getRef(instance.getClass().getName() + "_tg", instance.getName());
         ThreadGroup tg = (ThreadGroup) obj;
         ResourcePrincipal p = recorder.getApplication(tg.getName());

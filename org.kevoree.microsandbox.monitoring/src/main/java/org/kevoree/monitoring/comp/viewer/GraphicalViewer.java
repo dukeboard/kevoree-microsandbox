@@ -2,8 +2,8 @@ package org.kevoree.monitoring.comp.viewer;
 
 import org.kevoree.annotation.*;
 import org.kevoree.framework.AbstractComponentType;
-import org.kevoree.monitoring.comp.MyResourceConsumptionRecorder;
-import org.resourceaccounting.ResourceConsumptionRecorderMBean;
+import org.kevoree.monitoring.comp.MyLowLevelResourceConsumptionRecorder;
+import org.resourceaccounting.LowLevelResourceMonitorProxy;
 
 
 /**
@@ -27,7 +27,7 @@ public class GraphicalViewer extends AbstractComponentType {
     public void startComponent(){
         int frequency = Integer.valueOf(getDictionary().get("frequency").toString());
         Boolean b = Boolean.valueOf((String)getDictionary().get("remote"));
-        ResourceConsumptionRecorderMBean recorder = MyResourceConsumptionRecorder.getInstance();
+        LowLevelResourceMonitorProxy recorder = MyLowLevelResourceConsumptionRecorder.getInstance();
 
         if (b) {
             String address = (String)getDictionary().get("remote_address");

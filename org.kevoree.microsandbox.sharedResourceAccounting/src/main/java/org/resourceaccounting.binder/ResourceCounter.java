@@ -16,16 +16,17 @@ public class ResourceCounter {
     private static ResourceCounterImpl ourInstance = new ResourceCounterImpl();
 
     private static final int MONITORING = 1;
-    private static final int CONTROLLING_PORTS = 2;
+    private static final int SINGLE_PRINCIPAL_MONITORING = 2;
+    private static final int CONTROLLING_PORTS = 4;
 
     private static int monitoringFlags = 0;
 
 
-    private final static synchronized boolean isMonitoring() {
+    private static synchronized boolean isMonitoring() {
         return ( monitoringFlags & MONITORING ) != 0;
     }
 
-    public final static synchronized void setMonitoring(boolean b) {
+    public static synchronized void setMonitoring(boolean b) {
         if (b)
             monitoringFlags |= MONITORING;
         else if (isMonitoring())
@@ -35,11 +36,25 @@ public class ResourceCounter {
         ourInstance.receivers.clear();
     }
 
-    private final static synchronized boolean isControllingPorts() {
+    private static synchronized boolean isMonitoringASinglePrincipal() {
+        return ( monitoringFlags & SINGLE_PRINCIPAL_MONITORING ) != 0;
+    }
+
+    private static synchronized void setSinglePrincipalMonitoring(boolean b) {
+        if (b)
+            monitoringFlags |= SINGLE_PRINCIPAL_MONITORING;
+        else if (isMonitoringASinglePrincipal())
+            monitoringFlags -= SINGLE_PRINCIPAL_MONITORING;
+
+        ourInstance.senders.clear();
+        ourInstance.receivers.clear();
+    }
+
+    private static synchronized boolean isControllingPorts() {
         return ( monitoringFlags & CONTROLLING_PORTS ) != 0;
     }
 
-    private final static synchronized void setControllingPorts(boolean b) {
+    private static synchronized void setControllingPorts(boolean b) {
         if (b)
             monitoringFlags |= CONTROLLING_PORTS;
         else if (isControllingPorts())
@@ -56,15 +71,14 @@ public class ResourceCounter {
             ourInstance.receivers.control(component, port, max);
     }
 
-    public static ResourcePrincipal[] getApplications() {
-        return ourInstance.innerGetApplications();
+    public static synchronized void turnMonitoringSinglePrincipal(boolean on, String appId) {
+        if (on) ourInstance.turnOnMonitoringSinglePrincipal(appId);
+        else ourInstance.turnOnMonitoringSinglePrincipal(null);
+        setSinglePrincipalMonitoring(on);
     }
 
-    public static void increaseInstructions(int n, ResourcePrincipal principal) {
-        if (isMonitoring()) {
-            ResourcePrincipal p = ourInstance.search(principal);
-            ourInstance.innerIncreaseInstructions(n, p);
-        }
+    public static ResourcePrincipal[] getApplications() {
+        return ourInstance.innerGetApplications();
     }
 
     public static long getNbObjects(ResourcePrincipal principal) {
@@ -163,11 +177,24 @@ public class ResourceCounter {
         ourInstance.innerArrayAllocated(obj, principal);
     }
 
+    public static void increaseInstructions(int n, ResourcePrincipal principal) {
+        if (isMonitoring()) {
+            ResourcePrincipal p = ourInstance.search(principal);
+            ourInstance.innerIncreaseInstructions(n, p);
+        }
+        else if (isMonitoringASinglePrincipal()) {
+            if (ourInstance.isPrincipalBeingMonitored(principal)) {
+                ResourcePrincipal p = ourInstance.search(principal);
+                ourInstance.innerIncreaseInstructions(n, p);
+            }
+        }
+    }
+
     public static void reportPortProcessingRequest(Object component, Object port) {
         if (isMonitoring()) {
             ourInstance.senders.addInvocation(component.toString(), port.toString());
         }
-        else if (isControllingPorts()) {
+        if (isControllingPorts()) {
             if (ourInstance.senders.isControlled(component.toString(), port.toString())) {
                 int max = ourInstance.senders.maxAllowed(component.toString(), port.toString());
                 int x0 = 1000000000/ max;
@@ -184,7 +211,7 @@ public class ResourceCounter {
         if (isMonitoring()) {
             ourInstance.receivers.addInvocation(obj.toString(), obj1.toString());
         }
-        else if (isControllingPorts()) {
+        if (isControllingPorts()) {
             if (ourInstance.receivers.isControlled(obj.toString(), obj1.toString())) {
                 int max = ourInstance.receivers.maxAllowed(obj.toString(), obj1.toString());
                 int x0 = 1000000000/ max;
@@ -204,6 +231,13 @@ public class ResourceCounter {
             principal = ourInstance.search(principal);
             ourInstance.innerIncreaseBytesReceived(n, principal);
         }
+        else if (isMonitoringASinglePrincipal()) {
+            ResourcePrincipal principal = get();
+            if (ourInstance.isPrincipalBeingMonitored(principal)) {
+                ResourcePrincipal p = ourInstance.search(principal);
+                ourInstance.innerIncreaseBytesReceived(n, p);
+            }
+        }
         else ourInstance.increaseTotalReceived(n);
     }
 
@@ -212,6 +246,13 @@ public class ResourceCounter {
             ResourcePrincipal principal = get();
             principal = ourInstance.search(principal);
             ourInstance.innerIncreaseBytesSent(n,principal);
+        }
+        else if (isMonitoringASinglePrincipal()) {
+            ResourcePrincipal principal = get();
+            if (ourInstance.isPrincipalBeingMonitored(principal)) {
+                ResourcePrincipal p = ourInstance.search(principal);
+                ourInstance.innerIncreaseBytesSent(n, p);
+            }
         }
         else ourInstance.increaseTotalSent(n);
     }
@@ -222,6 +263,13 @@ public class ResourceCounter {
             principal = ourInstance.search(principal);
             ourInstance.innerIncreaseFileRead(n, principal);
         }
+        else if (isMonitoringASinglePrincipal()) {
+            ResourcePrincipal principal = get();
+            if (ourInstance.isPrincipalBeingMonitored(principal)) {
+                ResourcePrincipal p = ourInstance.search(principal);
+                ourInstance.innerIncreaseFileRead(n, p);
+            }
+        }
         else ourInstance.increaseTotalRead(n);
     }
 
@@ -230,6 +278,13 @@ public class ResourceCounter {
             ResourcePrincipal principal = get();
             principal = ourInstance.search(principal);
             ourInstance.innerIncreaseFileWrite(n, principal);
+        }
+        else if (isMonitoringASinglePrincipal()) {
+            ResourcePrincipal principal = get();
+            if (ourInstance.isPrincipalBeingMonitored(principal)) {
+                ResourcePrincipal p = ourInstance.search(principal);
+                ourInstance.innerIncreaseFileWrite(n, p);
+            }
         }
         else ourInstance.increaseTotalWritten(n);
     }
