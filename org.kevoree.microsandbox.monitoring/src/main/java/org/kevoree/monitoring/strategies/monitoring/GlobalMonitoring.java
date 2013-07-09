@@ -70,8 +70,6 @@ public class GlobalMonitoring extends AbstractMonitoringStrategy {
         double perSent = (sent / threshold.getpDescription().availability_sent)*100;
         double perReceived = (received /  threshold.getpDescription().availability_received) * 100;
 
-        System.out.printf("Sent: %f, Received %f\n", perSent, perReceived);
-
         double perWritten = (written /  threshold.getpDescription().availability_write_disc)*100;
         double perRead = (read /  threshold.getpDescription().availability_read_disc) * 100;
 

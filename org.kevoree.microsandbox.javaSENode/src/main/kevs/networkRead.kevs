@@ -32,7 +32,8 @@ bind MonitoringComponent0.reasoner@node0 => defMSGT_reasoning
 updateDictionary defMSGT_reasoning
 
 addComponent googleReader@node0 : NetworkConsumerFail {
-    network_input_peak_seconds='10000'
+    network_input_peak_seconds='10000',
+    cpu_wall_time = '122'
 }
 
 addGroup sync:BasicGroup

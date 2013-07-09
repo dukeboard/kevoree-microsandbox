@@ -14,7 +14,7 @@ public class RedeployPreviousVersion(modelService: KevoreeModelHandlerService)
                                         : BasicAdaptation(modelService) {
 
 
-    public override fun adapt(nodeName: String?, faultyComponents: List<FaultyComponent>?): Boolean {
+    public override fun adapt(nodeName: String?, faultyComponents: List<FaultyComponent>?): MutableList<FaultyComponent>? {
         throw UnsupportedOperationException()
     }
 }

@@ -54,7 +54,7 @@ public object ComponentInteractionAspect {
             val name = port?.getPortTypeRef()?.getName() as String
             val portObserved : Int = MyResourceConsumptionRecorder.
                     getInstance()?.
-                    getUsesOfProvidedPort(c?.getName(), name)!!
+                    getUsesOfProvidedPort(c?.getName(), name)!! / AllComponentsMonitoring.ELLAPSED_SECONDS
 
             val portExpected = getMaxNumberOfRequest(componentPath, name, modelService)
 
@@ -74,7 +74,7 @@ public object ComponentInteractionAspect {
                             val nameC = other.getName()
                             val nameP = b2.getPort()?.getPortTypeRef()?.getName()
                             val d = MyResourceConsumptionRecorder.
-                                    getInstance()?.getUsesOfRequiredPort(nameC, nameP) as Int / AllComponentsMonitoring.NUMBER_OF_STEPS
+                                    getInstance()?.getUsesOfRequiredPort(nameC, nameP) as Int / AllComponentsMonitoring.ELLAPSED_SECONDS
                             if (d > portExpected) {
                                 result.misUsedProvidedPorts.get(name)?.add(b2?.getPort()!!)
                             }
@@ -84,7 +84,7 @@ public object ComponentInteractionAspect {
             totalObserved += portObserved
         }
         if (!errorOnSinglePortUsage) {
-            if ( totalObserved / 3 > totalExpected) {
+            if ( totalObserved / AllComponentsMonitoring.ELLAPSED_SECONDS > totalExpected) {
                 // ok, there is no violation on single port, but there is violation on the global contract
                 result.wrongUsage = true
                 return result

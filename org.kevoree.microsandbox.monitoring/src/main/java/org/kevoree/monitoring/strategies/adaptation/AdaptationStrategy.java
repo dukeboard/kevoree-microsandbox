@@ -12,5 +12,5 @@ import java.util.List;
  *
  */
 public interface AdaptationStrategy {
-    public boolean adapt(String nodeName, List<FaultyComponent> faultyComponents);
+    public List<FaultyComponent> adapt(String nodeName, List<FaultyComponent> faultyComponents);
 }

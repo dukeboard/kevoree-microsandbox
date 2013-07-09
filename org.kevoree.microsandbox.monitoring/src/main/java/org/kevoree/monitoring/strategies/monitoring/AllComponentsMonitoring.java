@@ -19,6 +19,7 @@ import java.util.*;
 public class AllComponentsMonitoring extends AbstractLocalMonitoringStrategy {
 
     public static final int NUMBER_OF_STEPS = 3;
+    public static final int ELLAPSED_SECONDS = NUMBER_OF_STEPS - 1;
     int count = 0;
 
     EnumMap<Metric, MeasurePoint> a;
@@ -37,6 +38,12 @@ public class AllComponentsMonitoring extends AbstractLocalMonitoringStrategy {
     public void verifyContract(ResourcePrincipal principal, Object obj) {
         if (count == NUMBER_OF_STEPS) {
             DataForCheckingContract data = (DataForCheckingContract)obj;
+            data.lastCPU /= ELLAPSED_SECONDS;
+            data.lastRead /= ELLAPSED_SECONDS;
+            data.lastWrite /= ELLAPSED_SECONDS;
+            data.lastReceived /= ELLAPSED_SECONDS;
+            data.lastSent /= ELLAPSED_SECONDS;
+
             ResourceContract contract = principal.getContract();
             if (reason.contains(Metric.CPU) && contract.getCPU() < data.lastCPU)
                 a.put(Metric.CPU,  new MeasurePoint(data.lastCPU, contract.getCPU()));
@@ -44,7 +51,6 @@ public class AllComponentsMonitoring extends AbstractLocalMonitoringStrategy {
             if (reason.contains(Metric.NetworkS) && contract.getNetworkOut() < data.lastSent)
                 a.put(Metric.NetworkS, new MeasurePoint(data.lastSent, contract.getNetworkOut()));
 
-            System.out.println(principal.toString() + " " + contract.getNetworkIn() + "<" + data.lastReceived);
             if (reason.contains(Metric.NetworkR) && contract.getNetworkIn() < data.lastReceived) {
                 a.put(Metric.NetworkR, new MeasurePoint(data.lastReceived, contract.getNetworkIn()));
             }

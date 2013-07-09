@@ -8,6 +8,7 @@ import org.kevoree.cloner.ModelCloner;
 import org.kevoree.microsandbox.api.communication.MonitoringReporterFactory;
 import org.kevoree.monitoring.sla.FaultyComponent;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -24,7 +25,8 @@ public class KillThemAll extends BasicAdaptation {
     }
 
     @Override
-    public boolean adapt(String nodeName, List<FaultyComponent> faultyComponents) {
+    public List<FaultyComponent> adapt(String nodeName, List<FaultyComponent> faultyComponents) {
+        int index = 0;
         ModelCloner cloner = new ModelCloner();
         UUIDModel uuidModel = modelService.getLastUUIDModel();
         try {
@@ -49,9 +51,9 @@ public class KillThemAll extends BasicAdaptation {
                 }
             }
             modelService.atomicCompareAndSwapModel(uuidModel, clonedModel);
-            return true;
+            return new ArrayList<FaultyComponent>();
         } catch (KevoreeModelUpdateException e) {
-            return false;
+            return faultyComponents;
         }
 
     }

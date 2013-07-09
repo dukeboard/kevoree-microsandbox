@@ -2,6 +2,7 @@ package org.kevoree.microsandbox.samples.network;
 
 import org.kevoree.annotation.ComponentType;
 import org.kevoree.annotation.Start;
+import org.kevoree.microsandbox.api.contract.FullContracted;
 import org.kevoree.microsandbox.api.contract.NetworkContracted;
 
 import java.io.IOException;
@@ -17,7 +18,7 @@ import java.net.URL;
  */
 
 @ComponentType
-public class NetworkConsumerFail extends org.kevoree.framework.AbstractComponentType implements NetworkContracted {
+public class NetworkConsumerFail extends org.kevoree.framework.AbstractComponentType implements FullContracted {
 
     java.util.List<Object> cache = new java.util.ArrayList<Object>();
 

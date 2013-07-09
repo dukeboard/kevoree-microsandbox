@@ -8,5 +8,5 @@ package org.kevoree.microsandbox.api.sla;
  * To change this template use File | Settings | File Templates.
  */
 public enum Metric {
-    CPU, Memory, NetworkR, IORead, IOWrite, NetworkS
+    CPU, Memory, NetworkR, IORead, IOWrite, NetworkS, PortUsage
 }

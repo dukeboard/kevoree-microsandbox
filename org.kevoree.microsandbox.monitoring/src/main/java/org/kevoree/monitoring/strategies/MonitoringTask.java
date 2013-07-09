@@ -19,6 +19,7 @@ import org.kevoree.monitoring.sla.MeasurePoint;
 import org.kevoree.monitoring.strategies.adaptation.ComponentInteractionAspect;
 import org.kevoree.monitoring.strategies.adaptation.KillThemAll;
 import org.kevoree.monitoring.strategies.adaptation.PortUsageStatus;
+import org.kevoree.monitoring.strategies.adaptation.SlowDownComponentInteraction;
 import org.kevoree.monitoring.strategies.monitoring.AbstractLocalMonitoringStrategy;
 import org.kevoree.monitoring.strategies.monitoring.AllComponentsMonitoring;
 import org.kevoree.monitoring.strategies.monitoring.GlobalMonitoring;
@@ -27,6 +28,7 @@ import org.resourceaccounting.ResourcePrincipal;
 
 import java.util.EnumMap;
 import java.util.EnumSet;
+import java.util.List;
 
 /**
  * Created with IntelliJ IDEA.
@@ -121,26 +123,19 @@ public class MonitoringTask implements Runnable, ContractVerificationRequired, M
 //                            System.out.println("\t" + m);
                         currentStrategy.pause();
                         AbstractLocalMonitoringStrategy s =(AbstractLocalMonitoringStrategy)currentStrategy;
-                        boolean misUsedComponents = false;
-                        for (FaultyComponent c : s.getFaultyComponents()) {
+                        List<FaultyComponent> tmpList = s.getFaultyComponents();
+                        for (FaultyComponent c : tmpList) {
                             ComponentsInfoStorage.instance$.getExecutionInfo(c.getComponentPath()).increaseFailures();
                             EnumMap<Metric, MeasurePoint> map = c.getMetrics();
                             for (Metric m : map.keySet())
                                 MonitoringReporterFactory.reporter().sla(c.getComponentPath(),
                                         m, map.get(m).getObserved(), map.get(m).getMax());
-
-                            misUsedComponents |= printJaja(c.getComponentPath(),
-                                    ComponentInteractionAspect.instance$.findMisbehavedComponents(service,
-                                    c.getComponentPath()));
-
-
-
                         }
-                        if (misUsedComponents) {
-                            switchToGlobal();
-                        }
-                        else if (new KillThemAll(service).adapt(nodeName, s.getFaultyComponents())) {
 
+                        tmpList = new SlowDownComponentInteraction(service).adapt(nodeName, tmpList);
+                        tmpList = new KillThemAll(service).adapt(nodeName, tmpList);
+
+                        if (tmpList.isEmpty()) {
                             switchToGlobal();
                         }
                         else {
@@ -163,29 +158,7 @@ public class MonitoringTask implements Runnable, ContractVerificationRequired, M
         gcWatcher = null;
     }
 
-    private boolean printJaja(String path, PortUsageStatus result) {
-        if (result.getWrongUsage()) {
-            for (String s : result.getMisUsedProvidedPorts().keySet()) {
-                String nameOfOrigin = ComponentsInfoStorage.instance$.getExecutionInfo(path).getName();
-                System.out.printf("Port %s is wrongly used\n", s);
-                if (result.getMisUsedProvidedPorts().get(s).isEmpty()) {
-                    MyResourceConsumptionRecorder.getInstance().turnOnPortControllingOn(nameOfOrigin,
-                            s,false,
-                            ComponentInteractionAspect.instance$.getMaxNumberOfRequest(path, s, service));
-                }
-                else
-                    for (Port p : result.getMisUsedProvidedPorts().get(s)) {
-                        ComponentInstance c = (ComponentInstance)p.eContainer();
-                        String portName = p.getPortTypeRef().getName();
-                        System.out.printf("\tby %s.%s\n", c.getName(), portName);
-                        MyResourceConsumptionRecorder.getInstance().turnOnPortControllingOn(c.getName(),
-                                portName,true,
-                                ComponentInteractionAspect.instance$.getMaxNumberOfRequest(path, s, service));
-                    }
-            }
-        }
-        return result.getWrongUsage();
-    }
+
 
     private void switchToSimpleLocal(EnumSet<Metric> reason) {
         MonitoringReporterFactory.reporter().monitoring(false);
