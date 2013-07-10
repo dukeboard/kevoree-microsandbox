@@ -6,6 +6,7 @@ import org.kevoree.api.service.core.handler.KevoreeModelUpdateException;
 import org.kevoree.api.service.core.handler.UUIDModel;
 import org.kevoree.cloner.ModelCloner;
 import org.kevoree.microsandbox.api.communication.MonitoringReporterFactory;
+import org.kevoree.microsandbox.api.event.AdaptationEvent;
 import org.kevoree.monitoring.sla.FaultyComponent;
 
 import java.util.ArrayList;
@@ -33,7 +34,7 @@ public class KillThemAll extends BasicAdaptation {
             ContainerRoot clonedModel = cloner.clone(uuidModel.getModel());
             ContainerNode node = clonedModel.findNodesByID(nodeName);
             for (FaultyComponent c : faultyComponents) {
-                MonitoringReporterFactory.reporter().adaptation(getActionName(), c.getComponentPath());
+                MonitoringReporterFactory.reporter().trigger(new AdaptationEvent(getActionName(), c.getComponentPath()));/*.adaptation(getActionName(), c.getComponentPath());*/
 
                 ComponentInstance cc = clonedModel.findByPath(c.getComponentPath(), ComponentInstance.class);
                 node.removeComponents(cc);

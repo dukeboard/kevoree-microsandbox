@@ -56,7 +56,7 @@ public class AbstractMicroSandboxTester extends TestCase implements JVMStream.Li
 
             Runner.checker.lineHandler = this;
             Runner.main(params);
-            result = block.poll(timeout, TimeUnit.MILLISECONDS);
+            /*result = */block.poll(timeout, TimeUnit.MILLISECONDS);
 
             tempFile.delete();
         } catch (Exception e) {
@@ -69,8 +69,6 @@ public class AbstractMicroSandboxTester extends TestCase implements JVMStream.Li
             fail();
         }*/
         return builder.toString();
-
-
     }
 
 
@@ -86,6 +84,8 @@ public class AbstractMicroSandboxTester extends TestCase implements JVMStream.Li
             if (matcher.find()) {
                 toRemove.add(regex);
                 builder.append(line).append("\n");
+                // If a regex match then we don't need to test the others
+                break;
             }
         }
 
@@ -97,7 +97,7 @@ public class AbstractMicroSandboxTester extends TestCase implements JVMStream.Li
         }*/
         if(toRead.empty()){
             try {
-                block.put("sucess");
+                block.put("success");
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

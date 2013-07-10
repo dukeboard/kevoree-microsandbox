@@ -7,7 +7,6 @@ import org.resourceaccounting.contract.ComponentResourceContract;
  * User: inti
  * Date: 7/1/13
  * Time: 3:58 PM
- * To change this template use File | Settings | File Templates.
  */
 public class KevoreeComponentResourceContract extends ComponentResourceContract {
     public KevoreeComponentResourceContract(long cpu, long mem, long sent, long received) {

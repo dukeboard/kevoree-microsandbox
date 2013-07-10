@@ -3,21 +3,25 @@ package org.kevoree.monitoring.strategies;
 import org.kevoree.ContainerRoot;
 import org.kevoree.api.Bootstraper;
 import org.kevoree.api.service.core.handler.KevoreeModelHandlerService;
-import org.kevoree.api.service.core.handler.ModelListener;
 import org.kevoree.microsandbox.api.communication.MonitoringReporterFactory;
+import org.kevoree.microsandbox.api.event.GlobalMonitoringNotification;
+import org.kevoree.microsandbox.api.event.LocalMonitoringNotification;
 import org.kevoree.microsandbox.api.sla.Metric;
 import org.kevoree.monitoring.comp.MyLowLevelResourceConsumptionRecorder;
-import org.kevoree.monitoring.comp.monitor.ContractVerificationRequired;
 import org.kevoree.monitoring.comp.monitor.GCWatcher;
 import org.kevoree.monitoring.models.SimpleIdAssigner;
-import org.kevoree.monitoring.ranking.*;
+import org.kevoree.monitoring.ranking.ComponentRankerFunctionFactory;
+import org.kevoree.monitoring.ranking.ComponentsInfoStorage;
+import org.kevoree.monitoring.ranking.ComponentsRanker;
 import org.kevoree.monitoring.sla.FaultyComponent;
 import org.kevoree.monitoring.sla.GlobalThreshold;
 import org.kevoree.monitoring.sla.MeasurePoint;
 import org.kevoree.monitoring.strategies.adaptation.KillThemAll;
 import org.kevoree.monitoring.strategies.adaptation.SlowDownComponentInteraction;
-import org.kevoree.monitoring.strategies.monitoring.*;
-import org.resourceaccounting.ResourcePrincipal;
+import org.kevoree.monitoring.strategies.monitoring.FineGrainedMonitoringStrategy;
+import org.kevoree.monitoring.strategies.monitoring.FineGrainedStrategyFactory;
+import org.kevoree.monitoring.strategies.monitoring.GlobalMonitoring;
+import org.kevoree.microsandbox.api.event.ContractViolationEvent;
 
 import java.util.EnumMap;
 import java.util.EnumSet;
@@ -113,8 +117,7 @@ public class MonitoringTask extends AbstractMonitoringTask {
                             ComponentsInfoStorage.instance$.getExecutionInfo(c.getComponentPath()).increaseFailures();
                             EnumMap<Metric, MeasurePoint> map = c.getMetrics();
                             for (Metric m : map.keySet())
-                                MonitoringReporterFactory.reporter().sla(c.getComponentPath(),
-                                        m, map.get(m).getObserved(), map.get(m).getMax());
+                                MonitoringReporterFactory.reporter().trigger(new ContractViolationEvent(c.getComponentPath(), m, map.get(m).getObserved(), map.get(m).getMax()));
                         }
 
                         tmpList = new SlowDownComponentInteraction(service).adapt(nodeName, tmpList);
@@ -146,7 +149,7 @@ public class MonitoringTask extends AbstractMonitoringTask {
 
 
     private void switchToSimpleLocal(EnumSet<Metric> reason) {
-        MonitoringReporterFactory.reporter().monitoring(false);
+        MonitoringReporterFactory.reporter().trigger(new LocalMonitoringNotification())/*.monitoring(false)*/;
         MyLowLevelResourceConsumptionRecorder.getInstance().turnMonitoring(true);
         currentStatus = MonitoringStatus.LOCAL_MONITORING;
         currentStrategy = FineGrainedStrategyFactory.instance$.newMonitor(reason,
@@ -156,7 +159,7 @@ public class MonitoringTask extends AbstractMonitoringTask {
     }
 
     private void switchToGlobal() {
-        MonitoringReporterFactory.reporter().monitoring(true);
+        MonitoringReporterFactory.reporter().trigger(new GlobalMonitoringNotification())/*.monitoring(true)*/;
         MyLowLevelResourceConsumptionRecorder.getInstance().turnMonitoring(false);
         currentStatus = MonitoringStatus.GLOBAL_MONITORING;
         currentStrategy = new GlobalMonitoring(msg, globalThreshold);

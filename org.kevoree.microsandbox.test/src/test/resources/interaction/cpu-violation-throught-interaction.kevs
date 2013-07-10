@@ -17,14 +17,11 @@ addComponent MonitoringComponent0@node0 : MonitoringComponent {
 }
 
 //
-addComponent reasoner0@node0 : ResourceAwareReasoner
+//addComponent reasoner0@node0 : ResourceAwareReasoner
 
-addChannel defMSGT_reasoning : defMSGT
-bind reasoner0.eventHandler@node0 => defMSGT_reasoning
-bind MonitoringComponent0.reasoner@node0 => defMSGT_reasoning
-
-updateDictionary defMSGT_reasoning
-
+//addChannel defMSGT_reasoning : defMSGT
+//bind reasoner0.eventHandler@node0 => defMSGT_reasoning
+//bind MonitoringComponent0.reasoner@node0 => defMSGT_reasoning
 
 addComponent tester0@node0 : CPUConsumerByPrimalityTesting {
     cpu_wall_time='4000000',

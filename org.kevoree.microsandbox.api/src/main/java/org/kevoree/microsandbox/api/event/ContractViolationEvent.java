@@ -64,4 +64,8 @@ public class ContractViolationEvent extends MicrosandboxEvent {
         return "ContractViolation : { path : \"" + instancePath + "\" , metric : \"" + metric.name() + "\" , observedValue : \"" + observedValue + "\" , maxValue : \"" + maxValue + "\" }";
     }
 
+    public String toRegex() {
+        return toString().replace("-1.0", "(\\d*\\.\\d*E?\\d*)").replace("{", "\\{").replace("}", "\\}").replace("[", "\\[").replace("]", "\\]");
+    }
+
 }

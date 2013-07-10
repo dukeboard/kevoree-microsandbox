@@ -2,14 +2,13 @@ package org.kevoree.microsandbox.javase
 
 import org.kevoree.ComponentInstance
 import org.kevoree.Dictionary
-import org.kevoree.DictionaryValue
-import java.lang.ref.WeakReference
 import java.util.ArrayList
-import org.resourceaccounting.contract.ComponentResourceContract
 import org.resourceaccounting.contract.ResourceContract
 import java.util.concurrent.locks.ReentrantLock
-import org.kevoree.microsandbox.api.communication.MonitoringReporterFactory
 import org.kevoree.microsandbox.api.contract.PlatformDescription
+import org.kevoree.microsandbox.api.communication.MonitoringReporterFactory
+import org.kevoree.microsandbox.api.event.ModelComponentAcceptedEvent
+import org.kevoree.microsandbox.api.event.ModelComponentRemovedEvent
 
 /**
  * Created with IntelliJ IDEA.
@@ -101,14 +100,14 @@ public object ControlAdmissionSystem {
                                                                     else
                                                                         KevoreeComponentResourceContract(instr, mem, netOut, netIn)
 
-                MonitoringReporterFactory.reporter()?.controlAdmission_accepted(component.path() + " " +
-                                component.getMetaData() + " " + component.getTypeDefinition()?.getName() )
+                MonitoringReporterFactory.reporter()?.trigger(ModelComponentAcceptedEvent(component.path()))/*controlAdmission_accepted(component.path() + " " +
+                                component.getMetaData() + " " + component.getTypeDefinition()?.getName() )*/
                 return ComponentRegistration(true, contract)
             }
             return ComponentRegistration(false, null)
         }
         else {
-            MonitoringReporterFactory.reporter()?.controlAdmission_accepted(component.path())
+            MonitoringReporterFactory.reporter()?.trigger(ModelComponentAcceptedEvent(component.path()))/*.controlAdmission_accepted(component.path())*/
             return ComponentRegistration(true, null)
         }
     }
@@ -125,7 +124,7 @@ public object ControlAdmissionSystem {
             freeMemory += n.mem
             freeNetworkIn += n.netIn
             freeNetworkOut += n.netOut
-            MonitoringReporterFactory.reporter()?.controlAdmission_removed(c.path())
+            MonitoringReporterFactory.reporter()?.trigger(ModelComponentRemovedEvent(c.path()))/*controlAdmission_removed(c.path())*/
             return true
         }
         return false

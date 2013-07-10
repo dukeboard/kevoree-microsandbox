@@ -19,6 +19,11 @@
     <dependencies>
         <dependency>
             <groupId>org.kevoree.microsandbox</groupId>
+            <artifactId>org.kevoree.microsandbox.api</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.kevoree.microsandbox</groupId>
             <artifactId>org.kevoree.microsandbox.core</artifactId>
             <version>${project.version}</version>
         </dependency>
