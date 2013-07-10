@@ -6,15 +6,15 @@ import org.kevoree.watchdog.child.jvm.JVMStream;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.DelayQueue;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Created with IntelliJ IDEA.
@@ -29,7 +29,10 @@ public class AbstractMicroSandboxTester extends TestCase implements JVMStream.Li
 
     private Stack<String> toRead = new Stack<String>();
 
-    public void runSandbox(String kevsClassLoaderPath, int timeout, List<String> linestoObserve)  {
+    private StringBuilder builder;
+
+    public String runSandbox(String kevsClassLoaderPath, int timeout, List<String> linestoObserve)  {
+        builder = new StringBuilder();
         for(String l : linestoObserve){
             toRead.add(l);
         }
@@ -62,9 +65,11 @@ public class AbstractMicroSandboxTester extends TestCase implements JVMStream.Li
 
         //remove temp kevs file
 
-        if(result == null){
+        /*if(result == null){
             fail();
-        }
+        }*/
+        return builder.toString();
+
 
     }
 
@@ -74,9 +79,22 @@ public class AbstractMicroSandboxTester extends TestCase implements JVMStream.Li
 
         System.out.println(line);
 
-        if(line.equals(toRead.firstElement())){
-            toRead.pop();
+        List<String> toRemove = new ArrayList<String>();
+        for (String regex : toRead) {
+            Pattern pattern = Pattern.compile(regex);
+            Matcher matcher = pattern.matcher(line);
+            if (matcher.find()) {
+                toRemove.add(regex);
+                builder.append(line).append("\n");
+            }
         }
+
+        for (String regex : toRemove) {
+            toRead.remove(regex);
+        }
+        /*if(line.equals(toRead.firstElement())){
+            toRead.pop();
+        }*/
         if(toRead.empty()){
             try {
                 block.put("sucess");
