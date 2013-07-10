@@ -16,6 +16,6 @@ public class CPUContractedTester extends AbstractMicroSandboxTester {
 
     @Test
     public void testGoodComponent() {
-        runSandbox("cpu/cpu-sample-peak-percent-per-hour.kevs", 8000, Arrays.asList("ASKING FOR Integer"));
+        runSandbox("cpu/cpu-sample-peak-percent-per-hour.kevs", 20000, Arrays.asList("ASKING FOR Integer"));
     }
 }

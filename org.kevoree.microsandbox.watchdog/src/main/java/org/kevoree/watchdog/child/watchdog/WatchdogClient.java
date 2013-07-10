@@ -10,6 +10,13 @@ import java.net.InetAddress;
  * Created by duke on 17/05/13.
  */
 public class WatchdogClient implements Runnable {
+
+    private Integer internalPort = -1;
+
+    public WatchdogClient(Integer _internalPort) {
+        internalPort = _internalPort;
+    }
+
     @Override
     public void run() {
         DatagramSocket clientSocket = null;
@@ -17,7 +24,7 @@ public class WatchdogClient implements Runnable {
             clientSocket = new DatagramSocket();
             InetAddress IPAddress = InetAddress.getByName("localhost");
             byte[] sendData = "alive".getBytes();
-            DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, IPAddress, WatchDogCheck.internalPort);
+            DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, IPAddress, internalPort);
             clientSocket.send(sendPacket);
         } catch (Exception e) {
             e.printStackTrace();
@@ -25,7 +32,7 @@ public class WatchdogClient implements Runnable {
             if (clientSocket != null) {
                 try {
                     clientSocket.close();
-                } catch (Exception e){
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
             }

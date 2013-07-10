@@ -101,6 +101,7 @@ public class ChildJVM {
         List<String> commandLine = null;
         commandLine = new ArrayList<String>();
         commandLine.add("java");
+        RuntimeDowloader dwl = new RuntimeDowloader();
 
 
         if (additionalCommandLineArguments != null) {
@@ -113,14 +114,15 @@ public class ChildJVM {
                 commandLine.add(getClasspath() + File.pathSeparator + localJar.getAbsolutePath());
             }
         } else {
+
             if (inheritClasspath) {
                 commandLine.add("-cp");
-                commandLine.add(getClasspath());
+                commandLine.add(dwl.getSharedChildClassJar().getAbsolutePath());
             }
+
         }
 
-        RuntimeDowloader dwl = new RuntimeDowloader();
-        commandLine.add("-Xbootclasspath/p:" + dwl.getExtRTJar().getAbsolutePath()+File.pathSeparatorChar+dwl.getSharedResourceAccounting());
+        commandLine.add("-Xbootclasspath/p:" + dwl.getExtRTJar().getAbsolutePath() + File.pathSeparatorChar + dwl.getSharedResourceAccounting());
         commandLine.add("-javaagent:" + dwl.getExtAgent().getAbsolutePath());
 
         if (inheritedSystemPropertyNames != null && !inheritedSystemPropertyNames.isEmpty()) {
@@ -131,7 +133,7 @@ public class ChildJVM {
             commandLine.addAll(mainClassArguments);
         }
 
-        //System.out.println("Command line : "+commandLine);
+        System.out.println("Command line : " + commandLine);
 
         return commandLine;
     }
