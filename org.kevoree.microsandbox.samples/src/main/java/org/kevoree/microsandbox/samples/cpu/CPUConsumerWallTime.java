@@ -3,7 +3,6 @@ package org.kevoree.microsandbox.samples.cpu;
 import org.kevoree.annotation.*;
 import org.kevoree.framework.AbstractComponentType;
 import org.kevoree.microsandbox.api.contract.CPUContracted;
-import org.kevoree.microsandbox.api.contract.FullContracted;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -16,27 +15,20 @@ import java.util.concurrent.Executors;
  */
 
 @DictionaryType({
-        @DictionaryAttribute(name = "sleepTime", dataType = Integer.class, optional = true)
+        @DictionaryAttribute(name = "nbLoop", dataType = Integer.class, optional = true)
 })
 @ComponentType
-public class CPUConsumerGood extends AbstractComponentType implements FullContracted, Runnable {
+public class CPUConsumerWallTime extends AbstractComponentType implements CPUContracted, Runnable {
 
     @Override
     public void run() {
-        //define an acceptable level of consumption
-        while (true) {
-            //inject
-            try {
-                Thread.sleep(200);
-                int c= 0;
-                for (int i = 0 ; i < 10000000 ; i++) {
-                    c++;
-                }
-            } catch (InterruptedException e) {
-
-            }
+        int nbLoop = Integer.parseInt(getDictionary().get("nbLoop").toString());
+        System.out.println("nbLoop = " + nbLoop);
+        int c = 0;
+        for (int i = 0; i < nbLoop; i++) {
+            c++;
+            System.out.println("c = " + c);
         }
-
     }
 
     ExecutorService pool;
@@ -44,8 +36,11 @@ public class CPUConsumerGood extends AbstractComponentType implements FullContra
     @Start
     public void startComponent() {
         pool = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+        System.out.println("nbProcessors = " + Runtime.getRuntime().availableProcessors());
         for (int i = 0; i < Runtime.getRuntime().availableProcessors(); i++) {
-            pool.submit(new CPUConsumerGood());
+            CPUConsumerWallTime c = new CPUConsumerWallTime();
+            c.getDictionary().putAll(getDictionary());
+            pool.submit(c);
         }
     }
 
