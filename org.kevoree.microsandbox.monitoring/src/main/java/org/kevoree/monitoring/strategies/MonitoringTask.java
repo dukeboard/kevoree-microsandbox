@@ -4,8 +4,8 @@ import org.kevoree.ContainerRoot;
 import org.kevoree.api.Bootstraper;
 import org.kevoree.api.service.core.handler.KevoreeModelHandlerService;
 import org.kevoree.microsandbox.api.communication.MonitoringReporterFactory;
-import org.kevoree.microsandbox.api.event.GlobalMonitoringNotification;
-import org.kevoree.microsandbox.api.event.LocalMonitoringNotification;
+import org.kevoree.microsandbox.api.event.ContractViolationEvent;
+import org.kevoree.microsandbox.api.event.MonitoringNotification;
 import org.kevoree.microsandbox.api.sla.Metric;
 import org.kevoree.monitoring.comp.MyLowLevelResourceConsumptionRecorder;
 import org.kevoree.monitoring.comp.monitor.GCWatcher;
@@ -21,7 +21,6 @@ import org.kevoree.monitoring.strategies.adaptation.SlowDownComponentInteraction
 import org.kevoree.monitoring.strategies.monitoring.FineGrainedMonitoringStrategy;
 import org.kevoree.monitoring.strategies.monitoring.FineGrainedStrategyFactory;
 import org.kevoree.monitoring.strategies.monitoring.GlobalMonitoring;
-import org.kevoree.microsandbox.api.event.ContractViolationEvent;
 
 import java.util.EnumMap;
 import java.util.EnumSet;
@@ -149,7 +148,7 @@ public class MonitoringTask extends AbstractMonitoringTask {
 
 
     private void switchToSimpleLocal(EnumSet<Metric> reason) {
-        MonitoringReporterFactory.reporter().trigger(new LocalMonitoringNotification())/*.monitoring(false)*/;
+        MonitoringReporterFactory.reporter().trigger(new MonitoringNotification(false))/*.monitoring(false)*/;
         MyLowLevelResourceConsumptionRecorder.getInstance().turnMonitoring(true);
         currentStatus = MonitoringStatus.LOCAL_MONITORING;
         currentStrategy = FineGrainedStrategyFactory.instance$.newMonitor(reason,
@@ -159,7 +158,7 @@ public class MonitoringTask extends AbstractMonitoringTask {
     }
 
     private void switchToGlobal() {
-        MonitoringReporterFactory.reporter().trigger(new GlobalMonitoringNotification())/*.monitoring(true)*/;
+        MonitoringReporterFactory.reporter().trigger(new MonitoringNotification(true))/*.monitoring(true)*/;
         MyLowLevelResourceConsumptionRecorder.getInstance().turnMonitoring(false);
         currentStatus = MonitoringStatus.GLOBAL_MONITORING;
         currentStrategy = new GlobalMonitoring(msg, globalThreshold);

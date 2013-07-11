@@ -4,7 +4,7 @@ import org.kevoree.api.Bootstraper;
 import org.kevoree.api.service.core.handler.KevoreeModelHandlerService;
 import org.kevoree.microsandbox.api.communication.MonitoringReporterFactory;
 import org.kevoree.microsandbox.api.event.ContractViolationEvent;
-import org.kevoree.microsandbox.api.event.LocalMonitoringNotification;
+import org.kevoree.microsandbox.api.event.MonitoringNotification;
 import org.kevoree.microsandbox.api.sla.Metric;
 import org.kevoree.monitoring.comp.MyLowLevelResourceConsumptionRecorder;
 import org.kevoree.monitoring.comp.monitor.GCWatcher;
@@ -87,7 +87,7 @@ public class MonitoringTaskAllComponents extends AbstractMonitoringTask {
     }
 
     private void switchToSimpleLocal(EnumSet<Metric> reason) {
-        MonitoringReporterFactory.reporter().trigger(new LocalMonitoringNotification())/*.monitoring(false)*/;
+        MonitoringReporterFactory.reporter().trigger(new MonitoringNotification(false))/*.monitoring(false)*/;
         MyLowLevelResourceConsumptionRecorder.getInstance().turnMonitoring(true);
 
         currentStrategy = new AllComponentsForEver(
