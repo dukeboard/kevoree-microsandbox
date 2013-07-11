@@ -2,14 +2,13 @@ package org.kevoree.monitoring.ranking
 
 import java.util.HashMap
 import org.kevoree.ComponentInstance
-import org.kevoree.library.defaultNodeTypes.context.KevoreeDeployManager
 import org.kevoree.api.service.core.handler.KevoreeModelHandlerService
 import org.kevoree.ContainerNode
 import org.kevoree.monitoring.models.ComponentExecutionInfo
 import org.kevoree.monitoring.models.ModelID
-import org.kevoree.monitoring.models.SimpleModelID
 import org.kevoree.monitoring.models.IdAssigner
-import org.kevoree.monitoring.models.SimpleIdAssigner
+import org.kevoree.log.Log
+import org.kevoree.library.defaultNodeTypes.context.KevoreeDeployManager
 
 /**
  * Created with IntelliJ IDEA.
@@ -44,6 +43,7 @@ public object ComponentsInfoStorage {
                                fn: (ContainerNode, ComponentInstance, ComponentExecutionInfo?) -> Unit): Unit {
         val root = modelService.getLastModel()
         val id = idAssigner?.getID(root)
+        if (id != null) {
         root?.getNodes()?.filter { node -> nodeName.equals(node.getName()) }?.
             forEach {
                 node -> node.getComponents().forEach {
@@ -52,6 +52,9 @@ public object ComponentsInfoStorage {
                         fn(node, instance, i);
                 }
             }
+        } else {
+            Log.warn("Maybe there is a mistake because an id was not found on the model")
+        }
     }
 
     fun refresh(nodeName: String,
