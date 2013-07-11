@@ -12,10 +12,10 @@ import org.kevoree.annotation.DictionaryType;
  * Time: 16:29
  */
 @DictionaryType({
-        @DictionaryAttribute(name = "memory_max_size", optional = true),
-        @DictionaryAttribute(name = "memory_peak_allocation_per_second", optional = true),
-        @DictionaryAttribute(name = "memory_peak_allocation_per_minute", optional = true),
-        @DictionaryAttribute(name = "memory_peak_allocation_per_hour", optional = true)
+        @DictionaryAttribute(name = "memory_max_size", optional = true, dataType = Long.class),
+        @DictionaryAttribute(name = "memory_peak_allocation_per_second", optional = true, dataType = Long.class),
+        @DictionaryAttribute(name = "memory_peak_allocation_per_minute", optional = true, dataType = Long.class),
+        @DictionaryAttribute(name = "memory_peak_allocation_per_hour", optional = true, dataType = Long.class)
 })
 @ComponentFragment
 @ChannelTypeFragment

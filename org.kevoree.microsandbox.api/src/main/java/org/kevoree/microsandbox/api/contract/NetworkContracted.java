@@ -13,12 +13,12 @@ import org.kevoree.annotation.DictionaryType;
  */
 
 @DictionaryType({
-        @DictionaryAttribute(name = "network_input_peak_seconds", optional = true),
-        @DictionaryAttribute(name = "network_output_peak_seconds", optional = true),
-        @DictionaryAttribute(name = "network_input_mean_per_minute", optional = true),
-        @DictionaryAttribute(name = "network_output_mean_per_minute", optional = true),
-        @DictionaryAttribute(name = "network_input_mean_per_hour", optional = true),
-        @DictionaryAttribute(name = "network_output_mean_per_hour", optional = true)
+        @DictionaryAttribute(name = "network_input_peak_seconds", optional = true, dataType = Integer.class),
+        @DictionaryAttribute(name = "network_output_peak_seconds", optional = true, dataType = Integer.class),
+        @DictionaryAttribute(name = "network_input_mean_per_minute", optional = true, dataType = Integer.class),
+        @DictionaryAttribute(name = "network_output_mean_per_minute", optional = true, dataType = Integer.class),
+        @DictionaryAttribute(name = "network_input_mean_per_hour", optional = true, dataType = Integer.class),
+        @DictionaryAttribute(name = "network_output_mean_per_hour", optional = true, dataType = Integer.class)
 })
 @ComponentFragment
 @ChannelTypeFragment
