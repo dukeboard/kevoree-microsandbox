@@ -16,4 +16,4 @@ addComponent MonitoringComponent0@node0 : MonitoringComponent {
     net_out_threshold='80'
 }
 
-addComponent cpuComponent@node0 : CPUConsumerWallTime {nbLoop = '20', cpu_wall_time = '30000'}
+addComponent cpuComponent@node0 : CPUConsumerWallTime {nbLoop = '20000', cpu_wall_time = '30000'}

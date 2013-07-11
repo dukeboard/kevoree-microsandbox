@@ -27,8 +27,9 @@ public class CPUConsumerWallTime extends AbstractComponentType implements CPUCon
         int c = 0;
         for (int i = 0; i < nbLoop; i++) {
             c++;
-            System.out.println("c = " + c);
+//            System.out.println("c = " + c);
         }
+        System.out.println("end of loop");
     }
 
     ExecutorService pool;
