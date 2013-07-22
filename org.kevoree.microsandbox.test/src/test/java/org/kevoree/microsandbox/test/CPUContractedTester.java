@@ -27,7 +27,7 @@ public class CPUContractedTester extends AbstractMicroSandboxTester {
         String monitoringRegex = notification.toRegex();
         ContractViolationEvent violation = new ContractViolationEvent("nodes[node0]/components[cpuComponent]", Metric.CPU, -1.0, maxValue1);
         String violationRegex = violation.toRegex();
-        String result = runSandbox("cpu/cpu-sample-wall-time-good.kevs", 200000, Arrays.asList(monitoringRegex, violationRegex));
+        String result = runSandbox("cpu/cpu-sample-wall-time-good.kevs", 20000, Arrays.asList(monitoringRegex, violationRegex));
         Assert.assertEquals("".equals(result) || result == null, true);
     }
 
@@ -39,7 +39,7 @@ public class CPUContractedTester extends AbstractMicroSandboxTester {
         ContractViolationEvent violation = new ContractViolationEvent("nodes[node0]/components[cpuComponent]", Metric.CPU, -1.0, maxValue1);
         String violationRegex = violation.toRegex();
 
-        String result = runSandbox("cpu/cpu-sample-wall-time-fail.kevs", 200000, Arrays.asList(monitoringRegex, violationRegex));
+        String result = runSandbox("cpu/cpu-sample-wall-time-fail.kevs", 20000, Arrays.asList(monitoringRegex, violationRegex));
 
         Assert.assertEquals(result.contains(notification.toString()), true);
 

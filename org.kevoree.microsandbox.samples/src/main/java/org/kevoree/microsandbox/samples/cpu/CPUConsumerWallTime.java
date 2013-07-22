@@ -15,7 +15,7 @@ import java.util.concurrent.Executors;
  */
 
 @DictionaryType({
-        @DictionaryAttribute(name = "nbLoop", dataType = Integer.class, optional = true)
+        @DictionaryAttribute(name = "nbLoop", dataType = Integer.class, optional = false)
 })
 @ComponentType
 public class CPUConsumerWallTime extends AbstractComponentType implements CPUContracted, Runnable {
