@@ -16,7 +16,7 @@ import org.kevoreeadaptation.AdaptationPrimitive;
 /**
  * Created by duke on 24/06/13.
  */
-@DictionaryType({
+@DictionaryType({// FIXME How did you choose the default value ?
         @DictionaryAttribute(name = "availability_memory", defaultValue = "180000000"),
         @DictionaryAttribute(name = "availability_sent", defaultValue = "18000"),
         @DictionaryAttribute(name = "availability_received", defaultValue = "18000"),

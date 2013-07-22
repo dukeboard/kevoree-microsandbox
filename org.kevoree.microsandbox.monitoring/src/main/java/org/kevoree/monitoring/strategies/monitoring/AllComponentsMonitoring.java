@@ -43,11 +43,13 @@ public class AllComponentsMonitoring extends FineGrainedMonitoringStrategy {
             data.lastSent /= ELAPSED_SECONDS;
 
             ResourceContract contract = principal.getContract();
-            if (reason.contains(Metric.CPU) && contract.getCPU() < data.lastCPU)
+            if (reason.contains(Metric.CPU) && contract.getCPU() < data.lastCPU) {
                 a.put(Metric.CPU,  new MeasurePoint(data.lastCPU, contract.getCPU()));
+            }
 
-            if (reason.contains(Metric.NetworkS) && contract.getNetworkOut() < data.lastSent)
+            if (reason.contains(Metric.NetworkS) && contract.getNetworkOut() < data.lastSent) {
                 a.put(Metric.NetworkS, new MeasurePoint(data.lastSent, contract.getNetworkOut()));
+            }
 
             if (reason.contains(Metric.NetworkR) && contract.getNetworkIn() < data.lastReceived) {
                 a.put(Metric.NetworkR, new MeasurePoint(data.lastReceived, contract.getNetworkIn()));
@@ -65,9 +67,10 @@ public class AllComponentsMonitoring extends FineGrainedMonitoringStrategy {
                 a.put(Metric.IORead, new MeasurePoint(data.lastRead, contract.getRead()));
             }
 
-            if (!a.isEmpty())
+            if (!a.isEmpty()) {
                 faultyComponents.add(new FaultyComponent(currentComponent.path(),a,
                         new HashSet<String>(), new HashSet<String>()));
+            }
         }
 
     }

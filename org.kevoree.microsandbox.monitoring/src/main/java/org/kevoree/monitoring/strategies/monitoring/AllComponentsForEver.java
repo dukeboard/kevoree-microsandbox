@@ -37,11 +37,13 @@ public class AllComponentsForEver extends FineGrainedMonitoringStrategy {
         EnumMap<Metric, MeasurePoint> a = new EnumMap<Metric, MeasurePoint>(Metric.class);
 
         System.out.printf("CPU %d %d\n", contract.getCPU() , data.lastCPU);
-        if (contract.getCPU() < data.lastCPU)
+        if (contract.getCPU() < data.lastCPU) {
             a.put(Metric.CPU,  new MeasurePoint(data.lastCPU, contract.getCPU()));
+        }
 
-        if (contract.getNetworkOut() < data.lastSent)
+        if (contract.getNetworkOut() < data.lastSent) {
             a.put(Metric.NetworkS, new MeasurePoint(data.lastSent, contract.getNetworkOut()));
+        }
 
         if (contract.getNetworkIn() < data.lastReceived) {
             a.put(Metric.NetworkR, new MeasurePoint(data.lastReceived, contract.getNetworkIn()));

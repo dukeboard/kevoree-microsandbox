@@ -1,6 +1,5 @@
 package org.resourceaccounting.memory;
 
-import java.lang.ref.ReferenceQueue;
 import java.lang.ref.WeakReference;
 
 /**

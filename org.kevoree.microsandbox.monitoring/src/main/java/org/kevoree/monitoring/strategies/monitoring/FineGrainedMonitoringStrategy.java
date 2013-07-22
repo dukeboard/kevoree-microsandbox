@@ -42,11 +42,10 @@ public abstract class FineGrainedMonitoringStrategy extends AbstractMonitoringSt
         long lastCPU = recorder.getExecutedInstruction(principal);
         long lastSent = recorder.getBytesSent(principal);
         long lastReceived = recorder.getBytesReceived(principal);
+        long lastMemory = recorder.getMemoryConsumption(principal);
         long lastWrite = recorder.getWrittenBytes(principal);
         long lastRead = recorder.getReadBytes(principal);
-        DataForCheckingContract r = new DataForCheckingContract(lastCPU, lastSent,
-                lastReceived,
-                recorder.getMemoryConsumption(principal), lastWrite, lastRead);
+        DataForCheckingContract r = new DataForCheckingContract(lastCPU, lastSent, lastReceived, lastMemory, lastWrite, lastRead);
         return r;
     }
 

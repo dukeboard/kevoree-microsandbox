@@ -148,7 +148,7 @@ public class MonitoringTask extends AbstractMonitoringTask {
 
 
     private void switchToSimpleLocal(EnumSet<Metric> reason) {
-        MonitoringReporterFactory.reporter().trigger(new MonitoringNotification(false))/*.monitoring(false)*/;
+        MonitoringReporterFactory.reporter().trigger(new MonitoringNotification(false, reason))/*.monitoring(false)*/;
         MyLowLevelResourceConsumptionRecorder.getInstance().turnMonitoring(true);
         currentStatus = MonitoringStatus.LOCAL_MONITORING;
         currentStrategy = FineGrainedStrategyFactory.instance$.newMonitor(reason,

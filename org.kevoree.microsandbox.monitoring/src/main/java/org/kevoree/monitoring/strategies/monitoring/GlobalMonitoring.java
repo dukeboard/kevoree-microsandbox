@@ -42,6 +42,7 @@ public class GlobalMonitoring extends AbstractMonitoringStrategy {
             // threshold has been surpassed, try to identify why
             actionOnContractViolation(Metric.Memory);
         }
+        // FIXME why only memory and what about the other (network, cpu, io)
     }
 
     @Override
