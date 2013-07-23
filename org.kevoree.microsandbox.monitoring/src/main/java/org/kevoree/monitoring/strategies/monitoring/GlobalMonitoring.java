@@ -42,7 +42,6 @@ public class GlobalMonitoring extends AbstractMonitoringStrategy {
             // threshold has been surpassed, try to identify why
             actionOnContractViolation(Metric.Memory);
         }
-        // FIXME why only memory and what about the other (network, cpu, io)
     }
 
     @Override
@@ -73,8 +72,7 @@ public class GlobalMonitoring extends AbstractMonitoringStrategy {
         double perWritten = (written /  threshold.getpDescription().availability_write_disc)*100;
         double perRead = (read /  threshold.getpDescription().availability_read_disc) * 100;
 
-        if (!firstTime) {
-
+        if (!firstTime) { // FIXME why avoid the check for the first time ?
             if (cpuUsage > threshold.getCpu_threshold() && cpuUsage < 99) {
                 actionOnContractViolation(Metric.CPU);
             }

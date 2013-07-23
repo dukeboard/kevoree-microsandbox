@@ -6,14 +6,14 @@ merge 'mvn:org.kevoree.microsandbox/org.kevoree.microsandbox.monitoring/1.0-SNAP
 merge 'mvn:org.kevoree.microsandbox/org.kevoree.microsandbox.samples/1.0-SNAPSHOT'
 
 // Node definition
-addNode node0 : MonitoredNode {availability_memory='150000000', availability_instr='200000000', availability_received="150000"}
+addNode node0 : MonitoredNode {availability_memory='150000000', availability_instr='200000000', availability_received="15000"}
 
 //
 addComponent MonitoringComponent0@node0 : MonitoringComponent {
     memory_threshold='65',
     cpu_threshold='10',
-    net_in_threshold='80',
+    net_in_threshold='10',
     net_out_threshold='80'
 }
 
-addComponent networkComponent@node0 : NetworkConsumerInputPeakSecond {url = "http://www.google.com", sleepTime = "20", network_input_peak_seconds = '20000', violate="true"}
+addComponent networkComponent@node0 : NetworkConsumerInputPeakSecond {url = "http://localhost:8080/", sleepTime = "20", network_input_peak_seconds = '10000', violate="true"}

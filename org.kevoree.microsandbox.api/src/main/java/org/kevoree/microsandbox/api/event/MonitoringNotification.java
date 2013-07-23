@@ -30,11 +30,11 @@ public class MonitoringNotification extends MicrosandboxEvent {
         if (global) {
         return "MON GLOBAL";
         } else {
-            return "MON LOCAL" + reason;
+            return "MON LOCAL " + reason;
         }
     }
 
     public String toRegex() {
-        return toString();
+        return toString().replace("[", "\\[").replace("]", "\\]");
     }
 }

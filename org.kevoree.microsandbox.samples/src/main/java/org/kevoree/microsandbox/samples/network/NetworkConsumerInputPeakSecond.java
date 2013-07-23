@@ -31,27 +31,32 @@ public class NetworkConsumerInputPeakSecond extends AbstractComponentType implem
     public void startComponent() {
         new Thread(new Runnable() {
             public void run() {
+                int total = 0;
                 int c = 0;
                 byte[] bytes = new byte[1024];
                 String urlString = getDictionary().get("url").toString();
                 int sleepTime = Integer.parseInt(getDictionary().get("sleepTime").toString());
                 boolean violate = "true".equals(getDictionary().get("violate").toString());
                 int valueViolation = Integer.parseInt(getDictionary().get("network_input_peak_seconds").toString());
-                while ((!violate && c + 1024 <= valueViolation) || violate) {
+                while ((!violate && total + c <= valueViolation) || violate) {
+                    c = 0;
                     InputStream stream = null;
                     try {
                         URL url = new URL(urlString);
                         stream = url.openStream();
                         int n;
                         while ((n = stream.read(bytes)) != -1) {
-//                            String ss = new String(bytes,n);
                             c += n;
                         }
-                        System.out.println("total received: " + c);
+                        total += c;
+//                        System.out.println("total received: " + total);
                         Thread.sleep(sleepTime);
                     } catch (MalformedURLException ignored) {
+                        ignored.printStackTrace();
                     } catch (IOException ignored) {
+                        ignored.printStackTrace();
                     } catch (InterruptedException ignored) {
+                        ignored.printStackTrace();
                     } finally {
                         if (stream != null) {
                             try {
