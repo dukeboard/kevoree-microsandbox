@@ -79,10 +79,10 @@ public class AllComponentsForEver extends FineGrainedMonitoringStrategy {
                         new HashSet<String>(), new HashSet<String>()));
         }
         if (faultyComponents.size() > 0) {
-            EnumSet<Metric> tmp = EnumSet.noneOf(Metric.class);
+//            EnumSet<Metric> tmp = EnumSet.noneOf(Metric.class);
             cancel();
             this.faultyComponents = faultyComponents;
-            actionOnContractViolation(tmp);
+            actionOnContractViolation(new Metric[0]);
         }
     }
 
@@ -103,8 +103,8 @@ public class AllComponentsForEver extends FineGrainedMonitoringStrategy {
             }
             // if someone is violating the contract then trigger adaptation
             if (faultyComponents.size() > 0) {
-                EnumSet<Metric> tmp = EnumSet.noneOf(Metric.class);
-                actionOnContractViolation(tmp);
+//                EnumSet<Metric> tmp = EnumSet.noneOf(Metric.class);
+                actionOnContractViolation(new Metric[0]);
             }
         }
 

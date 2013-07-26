@@ -94,8 +94,8 @@ public class AllComponentsMonitoring extends FineGrainedMonitoringStrategy {
             }
             // if someone is violating the contract then trigger adaptation
             if (faultyComponents.size() > 0) {
-                EnumSet<Metric> tmp = EnumSet.noneOf(Metric.class);
-                actionOnContractViolation(tmp);
+//                EnumSet<Metric> tmp = EnumSet.noneOf(Metric.class);
+                actionOnContractViolation(new Metric[0]);
             }
             else {
                 // pass to Global Monitoring

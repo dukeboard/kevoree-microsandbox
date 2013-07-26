@@ -1,6 +1,5 @@
 package org.kevoree.monitoring.comp.monitor;
 
-import org.kevoree.ComponentInstance;
 import org.kevoree.annotation.*;
 import org.kevoree.framework.AbstractComponentType;
 import org.kevoree.framework.MessagePort;

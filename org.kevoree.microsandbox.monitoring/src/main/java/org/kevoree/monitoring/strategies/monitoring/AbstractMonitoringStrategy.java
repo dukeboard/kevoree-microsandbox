@@ -66,13 +66,14 @@ public abstract class AbstractMonitoringStrategy extends TimerTask implements Mo
         contractViolation = true;
     }
 
-    public synchronized void actionOnContractViolation( EnumSet<Metric> metrics) {
+    // FIXME Why do you define this method while the interface have another one ?
+    /*public synchronized void actionOnContractViolation( EnumSet<Metric> metrics) {
         // notify about action
         for (Metric m : metrics)
             violationOn.add(m);
         synchronized (msg) { msg.notify(); }
         contractViolation = true;
-    }
+    }*/
 
     @Override
     public synchronized boolean isThereContractViolation() {
