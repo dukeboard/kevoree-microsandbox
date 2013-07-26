@@ -1,9 +1,6 @@
 package org.kevoree.microsandbox.samples.network;
 
-import org.kevoree.annotation.ComponentType;
-import org.kevoree.annotation.DictionaryAttribute;
-import org.kevoree.annotation.DictionaryType;
-import org.kevoree.annotation.Start;
+import org.kevoree.annotation.*;
 import org.kevoree.framework.AbstractComponentType;
 import org.kevoree.microsandbox.api.contract.FullContracted;
 
@@ -27,8 +24,10 @@ import java.net.URL;
 @ComponentType
 public class NetworkConsumerInputPeakSecond extends AbstractComponentType implements FullContracted {
 
+    private boolean running;
     @Start
     public void startComponent() {
+        running = true;
         new Thread(new Runnable() {
             public void run() {
                 int total = 0;
@@ -38,7 +37,7 @@ public class NetworkConsumerInputPeakSecond extends AbstractComponentType implem
                 int sleepTime = Integer.parseInt(getDictionary().get("sleepTime").toString());
                 boolean violate = "true".equals(getDictionary().get("violate").toString());
                 int valueViolation = Integer.parseInt(getDictionary().get("network_input_peak_seconds").toString());
-                while ((!violate && total + c <= valueViolation) || violate) {
+                while (((!violate && total + c <= valueViolation) || violate) && running) {
                     c = 0;
                     InputStream stream = null;
                     try {
@@ -69,6 +68,10 @@ public class NetworkConsumerInputPeakSecond extends AbstractComponentType implem
                 }
             }
         }).start();
+    }
+    @Stop
+    public void stop() {
+        running = false;
     }
 
 }
