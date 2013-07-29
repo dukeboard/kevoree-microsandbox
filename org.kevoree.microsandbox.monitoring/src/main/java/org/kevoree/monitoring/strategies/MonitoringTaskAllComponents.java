@@ -67,6 +67,7 @@ public class MonitoringTaskAllComponents extends AbstractMonitoringTask {
                         MonitoringReporterFactory.reporter().trigger(new ContractViolationEvent(c.getComponentPath(), m, map.get(m).getObserved(), map.get(m).getMax()));
                 }
 
+                // FIXME in Monitoring component, reconfiguration must be avoid. Monitoring event must be sent to something else which is able to take decision
                 tmpList = new SlowDownComponentInteraction(service).adapt(nodeName, tmpList);
                 tmpList = new KillThemAll(service).adapt(nodeName, tmpList);
 
