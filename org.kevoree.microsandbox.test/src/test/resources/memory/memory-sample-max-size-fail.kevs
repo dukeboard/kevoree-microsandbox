@@ -16,4 +16,4 @@ addComponent MonitoringComponent0@node0 : MonitoringComponent {
     net_out_threshold='80'
 }
 
-addComponent memoryComponent@node0 : MemoryConsumerMaxSize {dataSize = '20000', memory_max_size = '600000', sleepTime = "500", violate="false"}
+addComponent memoryComponent@node0 : MemoryConsumerMaxSize {dataSize = '200000', memory_max_size = '30000', sleepTime = "2000", violate="true"}

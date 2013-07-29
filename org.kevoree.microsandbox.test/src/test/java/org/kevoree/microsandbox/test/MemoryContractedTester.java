@@ -26,7 +26,7 @@ public class MemoryContractedTester extends AbstractMicroSandboxTester {
         String monitoringRegex = notification.toRegex();
         ContractViolationEvent violation = new ContractViolationEvent("nodes[node0]/components[memoryComponent]", Metric.Memory, -1.0, maxValue1);
         String violationRegex = violation.toRegex();
-        String result = runSandbox("memory/memory-sample-max-size-good.kevs", 2000000, Arrays.asList(monitoringRegex, violationRegex));
+        String result = runSandbox("memory/memory-sample-max-size-good.kevs", 30000, Arrays.asList(monitoringRegex, violationRegex));
         Assert.assertEquals("".equals(result) || result == null, true);
     }
 
@@ -38,7 +38,7 @@ public class MemoryContractedTester extends AbstractMicroSandboxTester {
         ContractViolationEvent violation = new ContractViolationEvent("nodes[node0]/components[memoryComponent]", Metric.Memory, -1.0, maxValue1);
         String violationRegex = violation.toRegex();
 
-        String result = runSandbox("cpu/cpu-sample-wall-time-fail.kevs", 20000, Arrays.asList(monitoringRegex, violationRegex));
+        String result = runSandbox("memory/memory-sample-max-size-fail.kevs", 200000, Arrays.asList(monitoringRegex, violationRegex));
 
         Assert.assertEquals(result.contains(notification.toString()), true);
 
