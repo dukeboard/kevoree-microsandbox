@@ -31,7 +31,7 @@
         <dependency>
             <groupId>org.kevoree.corelibrary.javase</groupId>
             <artifactId>org.kevoree.library.javase.javaseNode</artifactId>
-            <version>${kevoree.version}</version>
+            <version>${kevoree.corelibrary.version}</version>
         </dependency>
     </dependencies>
 
