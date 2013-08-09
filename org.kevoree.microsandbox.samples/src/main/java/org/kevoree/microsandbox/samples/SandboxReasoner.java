@@ -5,7 +5,7 @@ import org.kevoree.annotation.ComponentType;
 import org.kevoree.annotation.Start;
 import org.kevoree.annotation.Stop;
 import org.kevoree.api.service.core.handler.UUIDModel;
-import org.kevoree.cloner.ModelCloner;
+import org.kevoree.cloner.DefaultModelCloner;
 import org.kevoree.framework.AbstractComponentType;
 import org.kevoree.library.defaultNodeTypes.context.KevoreeDeployManager;
 import org.kevoree.log.Log;
@@ -29,7 +29,7 @@ public class SandboxReasoner extends AbstractComponentType implements Runnable {
 
     private ScheduledExecutorService schduler = null;
     private ThreadMXBean tbean = null;
-    private ModelCloner cloner = new ModelCloner();
+    private DefaultModelCloner cloner = new DefaultModelCloner();
 
     @Start
     public void start() {
