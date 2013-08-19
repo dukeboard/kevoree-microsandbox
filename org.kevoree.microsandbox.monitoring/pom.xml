@@ -12,16 +12,11 @@
     <modelVersion>4.0.0</modelVersion>
     <artifactId>org.kevoree.microsandbox.monitoring</artifactId>
 
-    <properties>
-        <kevoree.version>2.0.0-SNAPSHOT</kevoree.version>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    </properties>
-
     <dependencies>
         <dependency>
             <groupId>org.kevoree.corelibrary.javase</groupId>
             <artifactId>org.kevoree.library.javase.javaseNode</artifactId>
-            <version>${kevoree.version}</version>
+            <version>${kevoree.corelibrary.version}</version>
         </dependency>
         <dependency>
             <groupId>org.kevoree.microsandbox</groupId>

@@ -2,15 +2,15 @@
 addRepo "http://maven.kevoree.org/daum/snapshots"
 
 
-merge 'mvn:org.kevoree.microsandbox/org.kevoree.microsandbox.javasenode/1.0-SNAPSHOT'
-merge "mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.fakeDomo/2.0.0-SNAPSHOT"
-merge "mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.swingUI/2.0.0-SNAPSHOT"
+merge 'mvn:org.kevoree.microsandbox/org.kevoree.microsandbox.javasenode/{project;version}'
+merge "mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.fakeDomo/{kevoree.corelibrary.version}"
+merge "mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.swingUI/{kevoree.corelibrary.version}"
 
-merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.jexxus/2.0.0-SNAPSHOT'
-merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.defaultChannels/2.0.0-SNAPSHOT'
+merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.jexxus/{kevoree.corelibrary.version}'
+merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.defaultChannels/{kevoree.corelibrary.version}'
 
-merge 'mvn:org.kevoree.microsandbox/org.kevoree.microsandbox.monitoring/1.0-SNAPSHOT'
-merge 'mvn:org.kevoree.microsandbox/org.kevoree.microsandbox.samples/1.0-SNAPSHOT'
+merge 'mvn:org.kevoree.microsandbox/org.kevoree.microsandbox.monitoring/{project;version}'
+merge 'mvn:org.kevoree.microsandbox/org.kevoree.microsandbox.samples/{project;version}'
 
 addNode node0:MonitoredNode {
     availability_memory='150000000',
@@ -54,8 +54,8 @@ addComponent writer0@node0 : IOWriterGood {
 }
 
 
-addChannel defMSGT419 : defMSGT {}
-addChannel defMSGT360 : defMSGT {}
+addChannel defMSGT419 : defMSGT
+addChannel defMSGT360 : defMSGT
 
 bind FakeConso509.showText@node0 => defMSGT360
 bind FakeConso509.textEntered@node0 => defMSGT419

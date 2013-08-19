@@ -1,5 +1,5 @@
-merge "mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.javaseNode/2.0.0-SNAPSHOT"
-merge "mvn:org.kevoree.microsandbox/org.kevoree.microsandbox.samples/1.0-SNAPSHOT"
+merge 'mvn:org.kevoree.microsandbox/org.kevoree.microsandbox.javasenode/{project;version}'
+merge "mvn:org.kevoree.microsandbox/org.kevoree.microsandbox.samples/{project.version}"
 
 addNode node0 : JavaSENode
 // TODO both component must have the same contract
