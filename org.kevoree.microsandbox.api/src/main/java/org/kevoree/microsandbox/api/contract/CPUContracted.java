@@ -1,7 +1,5 @@
 package org.kevoree.microsandbox.api.contract;
 
-import org.kevoree.annotation.ChannelTypeFragment;
-import org.kevoree.annotation.ComponentFragment;
 import org.kevoree.annotation.DictionaryAttribute;
 import org.kevoree.annotation.DictionaryType;
 
@@ -19,8 +17,8 @@ import org.kevoree.annotation.DictionaryType;
         @DictionaryAttribute(name = "cpu_mean_percent_per_hour", dataType = Long.class, optional = true)
         /* Thread affinity Core dispatch */
 })
-@ComponentFragment
-@ChannelTypeFragment
+//@ComponentType
+//@ChannelType
 public interface CPUContracted {
 
 }

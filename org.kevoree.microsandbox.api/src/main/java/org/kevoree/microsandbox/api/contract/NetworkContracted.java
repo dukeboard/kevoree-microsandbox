@@ -1,7 +1,5 @@
 package org.kevoree.microsandbox.api.contract;
 
-import org.kevoree.annotation.ChannelTypeFragment;
-import org.kevoree.annotation.ComponentFragment;
 import org.kevoree.annotation.DictionaryAttribute;
 import org.kevoree.annotation.DictionaryType;
 
@@ -20,7 +18,7 @@ import org.kevoree.annotation.DictionaryType;
         @DictionaryAttribute(name = "network_input_mean_per_hour", optional = true, dataType = Integer.class),
         @DictionaryAttribute(name = "network_output_mean_per_hour", optional = true, dataType = Integer.class)
 })
-@ComponentFragment
-@ChannelTypeFragment
+//@ComponentType
+//@ChannelType
 public interface NetworkContracted {
 }

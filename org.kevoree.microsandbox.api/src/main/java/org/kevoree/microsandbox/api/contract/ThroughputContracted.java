@@ -1,7 +1,5 @@
 package org.kevoree.microsandbox.api.contract;
 
-import org.kevoree.annotation.ChannelTypeFragment;
-import org.kevoree.annotation.ComponentFragment;
 import org.kevoree.annotation.DictionaryAttribute;
 import org.kevoree.annotation.DictionaryType;
 
@@ -17,7 +15,7 @@ import org.kevoree.annotation.DictionaryType;
         @DictionaryAttribute(name = "throughput_msg_per_minute", optional = true),
         @DictionaryAttribute(name = "throughput_msg_per_hour", optional = true)
 })
-@ComponentFragment
-@ChannelTypeFragment
+//@ComponentType
+//@ChannelType
 public interface ThroughputContracted {
 }

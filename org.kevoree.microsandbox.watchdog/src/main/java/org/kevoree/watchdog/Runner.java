@@ -51,7 +51,7 @@ public class Runner {
         //String kevoreeVersion = "RELEASE";
 
         if (args.length > 0) {
-            kevoreeVersion = args[0].toString();
+            kevoreeVersion = args[0];
         }
 
         if (kevoreeVersion.equals("LATEST")) {
