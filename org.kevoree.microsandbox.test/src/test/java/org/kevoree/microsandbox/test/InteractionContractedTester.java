@@ -40,13 +40,13 @@ public class InteractionContractedTester extends AbstractMicroSandboxTester {
         Matcher m = pattern.matcher(resultsArray[0]);
         if (m.find()) {
             double value = Double.parseDouble(m.group(1));
-            Assert.assertEquals(value > maxValue1, true);
+            Assert.assertEquals(true, value > maxValue1);
 
             pattern = Pattern.compile(violationRegex2);
             m = pattern.matcher(resultsArray[1]);
             if (m.find()) {
                 value = Double.parseDouble(m.group(1));
-                Assert.assertEquals(value > maxValue2, true);
+                Assert.assertEquals(true, value > maxValue2);
             } else {
                 fail("Unable to find needed events");
             }
@@ -76,12 +76,12 @@ public class InteractionContractedTester extends AbstractMicroSandboxTester {
         Matcher m = pattern.matcher(resultsArray[0]);
         if (m.find()) {
             double value = Double.parseDouble(m.group(1));
-            Assert.assertEquals(value > maxValue1, true);
+            Assert.assertEquals(true, value > maxValue1);
             pattern = Pattern.compile(violationRegex1);
             m = pattern.matcher(resultsArray[1]);
             if (m.find()) {
                 value = Double.parseDouble(m.group(1));
-                Assert.assertEquals(value > maxValue2, true);
+                Assert.assertEquals(true, value > maxValue2);
             } else {
                 fail("Unable to find needed events");
             }

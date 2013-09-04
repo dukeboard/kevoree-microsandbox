@@ -1,8 +1,5 @@
 package org.kevoree.microsandbox.api.contract;
 
-import org.kevoree.annotation.ChannelTypeFragment;
-import org.kevoree.annotation.ComponentFragment;
-
 /**
  * Created with IntelliJ IDEA.
  * User: duke
@@ -10,8 +7,8 @@ import org.kevoree.annotation.ComponentFragment;
  * Time: 14:02
  */
 
-@ChannelTypeFragment
-@ComponentFragment
+//@ChannelType
+//@ComponentType
 public interface FullContracted extends CPUContracted, MemoryContracted, NetworkContracted {
 
 

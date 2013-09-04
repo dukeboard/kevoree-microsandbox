@@ -1,7 +1,6 @@
 package org.kevoree.microsandbox.api.contract;
 
-import org.kevoree.annotation.ChannelTypeFragment;
-import org.kevoree.annotation.ComponentFragment;
+import org.kevoree.annotation.ChannelType;
 import org.kevoree.annotation.DictionaryAttribute;
 import org.kevoree.annotation.DictionaryType;
 
@@ -17,8 +16,8 @@ import org.kevoree.annotation.DictionaryType;
         @DictionaryAttribute(name = "memory_peak_allocation_per_minute", optional = true, dataType = Long.class),
         @DictionaryAttribute(name = "memory_peak_allocation_per_hour", optional = true, dataType = Long.class)
 })
-@ComponentFragment
-@ChannelTypeFragment
+//@ComponentType
+//@ChannelType
 public interface MemoryContracted {
 
 }

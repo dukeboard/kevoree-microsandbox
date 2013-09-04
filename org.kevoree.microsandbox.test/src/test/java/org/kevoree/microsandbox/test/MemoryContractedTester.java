@@ -27,7 +27,7 @@ public class MemoryContractedTester extends AbstractMicroSandboxTester {
         ContractViolationEvent violation = new ContractViolationEvent("nodes[node0]/components[memoryComponent]", Metric.Memory, -1.0, maxValue1);
         String violationRegex = violation.toRegex();
         String result = runSandbox("memory/memory-sample-max-size-good.kevs", 30000, Arrays.asList(monitoringRegex, violationRegex));
-        Assert.assertEquals("".equals(result) || result == null, true);
+        Assert.assertEquals(true, "".equals(result) || result == null);
     }
 
     @Test
@@ -40,14 +40,14 @@ public class MemoryContractedTester extends AbstractMicroSandboxTester {
 
         String result = runSandbox("memory/memory-sample-max-size-fail.kevs", 200000, Arrays.asList(monitoringRegex, violationRegex));
 
-        Assert.assertEquals(result.contains(notification.toString()), true);
+        Assert.assertEquals(true, result.contains(notification.toString()));
 
         String[] resultsArray = result.split("\n");
         Pattern pattern = Pattern.compile(violationRegex);
         Matcher m = pattern.matcher(resultsArray[1]);
         if (m.find()) {
             double value = Double.parseDouble(m.group(1));
-            Assert.assertEquals(value > maxValue1, true);
+            Assert.assertEquals(true, value > maxValue1);
         }
     }
 }
