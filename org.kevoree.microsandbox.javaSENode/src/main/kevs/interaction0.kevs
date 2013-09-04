@@ -1,13 +1,13 @@
 addRepo "http://maven.kevoree.org/daum/snapshots"
 
 
-merge 'mvn:org.kevoree.microsandbox/org.kevoree.microsandbox.javasenode/{project;version}'
+merge 'mvn:org.kevoree.microsandbox/org.kevoree.microsandbox.javasenode/{project.version}'
 
 merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.jexxus/{kevoree.corelibrary.version}'
 merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.defaultChannels/{kevoree.corelibrary.version}'
 
-merge 'mvn:org.kevoree.microsandbox/org.kevoree.microsandbox.monitoring/{project;version}'
-merge 'mvn:org.kevoree.microsandbox/org.kevoree.microsandbox.samples/{project;version}'
+merge 'mvn:org.kevoree.microsandbox/org.kevoree.microsandbox.monitoring/{project.version}'
+merge 'mvn:org.kevoree.microsandbox/org.kevoree.microsandbox.samples/{project.version}'
 
 addNode node0:MonitoredNode {
     availability_memory='150000000',
@@ -23,7 +23,7 @@ addComponent MonitoringComponent0@node0 : MonitoringComponent {
 
 addComponent reasoner0@node0 : ResourceAwareReasoner { }
 
-addChannel defMSGT_reasoning : defMSGT {}
+addChannel defMSGT_reasoning : defMSG {}
 bind reasoner0.eventHandler@node0 => defMSGT_reasoning
 bind MonitoringComponent0.reasoner@node0 => defMSGT_reasoning
 
@@ -38,7 +38,7 @@ addComponent generator0@node0 : NumberGenerator {
     frequency = '50'
 }
 
-addChannel channelForNumbers : defMSGT {}
+addChannel channelForNumbers : defMSG {}
 
 bind tester0.primalityTester@node0 => channelForNumbers
 bind generator0.numbers@node0 => channelForNumbers

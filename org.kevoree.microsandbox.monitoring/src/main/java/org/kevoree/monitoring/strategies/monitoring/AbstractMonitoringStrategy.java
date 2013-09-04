@@ -48,12 +48,14 @@ public abstract class AbstractMonitoringStrategy extends TimerTask implements Mo
     public void pause() {
         // stop the monitoring
         timerForCPU.cancel();
+        timerForCPU.purge();
     }
 
     @Override
     public void stop() {
         // stop the monitoring
         timerForCPU.cancel();
+        timerForCPU.purge();
         previousCPU = 0;
     }
 

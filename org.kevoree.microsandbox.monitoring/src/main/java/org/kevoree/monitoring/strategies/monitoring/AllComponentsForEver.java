@@ -2,6 +2,8 @@ package org.kevoree.monitoring.strategies.monitoring;
 
 import org.kevoree.ComponentInstance;
 import org.kevoree.microsandbox.api.sla.Metric;
+import org.kevoree.monitoring.ranking.ComponentRankerFunctionFactory;
+import org.kevoree.monitoring.ranking.ComponentsRanker;
 import org.kevoree.monitoring.sla.FaultyComponent;
 import org.kevoree.monitoring.sla.MeasurePoint;
 import org.resourceaccounting.ResourcePrincipal;
@@ -18,9 +20,12 @@ import java.util.*;
  */
 public class AllComponentsForEver extends FineGrainedMonitoringStrategy {
     private int count = 0;
+    private Object lock = new Object();
+    private RankChecker rankChecker;
 
-    public AllComponentsForEver(List<ComponentInstance> ranking, Object msg) {
+    public AllComponentsForEver(List<ComponentInstance> ranking, Object msg, RankChecker rankChecker) {
         super(null, ranking, msg);
+        this.rankChecker =rankChecker;
     }
 
     @Override
@@ -71,42 +76,55 @@ public class AllComponentsForEver extends FineGrainedMonitoringStrategy {
             ResourcePrincipal principal = getPrincipal(component);
             DataForCheckingContract data = getInfo(principal);
             ResourceContract contract = principal.getContract();
+            System.out.printf("%s %d %d\n", component.getName(), data.lastMem, contract.getMemory());
             if (contract.getMemory() < data.lastMem) {
                 b.put(Metric.Memory, new MeasurePoint(data.lastMem, contract.getMemory()));
             }
             if (!b.isEmpty())
-                faultyComponents.add(new FaultyComponent(currentComponent.path(),b,
+                faultyComponents.add(new FaultyComponent(component.path(),b,
                         new HashSet<String>(), new HashSet<String>()));
         }
         if (faultyComponents.size() > 0) {
 //            EnumSet<Metric> tmp = EnumSet.noneOf(Metric.class);
             cancel();
-            this.faultyComponents = faultyComponents;
-            actionOnContractViolation(new Metric[0]);
+            synchronized (lock) {
+                this.faultyComponents = faultyComponents;
+                for (FaultyComponent c :faultyComponents) {
+                    System.out.println(c.getComponentPath());
+                }
+                actionOnContractViolation(new Metric[0]);
+            }
         }
     }
 
     @Override
     public void run() {
-        System.out.println("HERE I am 0");
         count++;
         if (count >= 2) {
-            System.out.println("HERE I am 1" + ranking.size());
-            faultyComponents.clear();
-            Iterator<ComponentInstance> it = ranking.iterator();
-            while (it.hasNext()) {
-                currentComponent = it.next();
-                ResourcePrincipal principal = getPrincipal(currentComponent);
-                makeContractAvailable(principal, currentComponent);
-                DataForCheckingContract data = getInfo(principal);
-                verifyContract(principal, data);
-            }
-            // if someone is violating the contract then trigger adaptation
-            if (faultyComponents.size() > 0) {
-//                EnumSet<Metric> tmp = EnumSet.noneOf(Metric.class);
-                actionOnContractViolation(new Metric[0]);
+            synchronized (lock) {
+                faultyComponents.clear();
+                checkRanking();
+                Iterator<ComponentInstance> it = ranking.iterator();
+                while (it.hasNext()) {
+                    currentComponent = it.next();
+                    ResourcePrincipal principal = getPrincipal(currentComponent);
+                    makeContractAvailable(principal, currentComponent);
+                    DataForCheckingContract data = getInfo(principal);
+                    verifyContract(principal, data);
+                }
+                // if someone is violating the contract then trigger adaptation
+                if (faultyComponents.size() > 0) {
+    //                EnumSet<Metric> tmp = EnumSet.noneOf(Metric.class);
+                    actionOnContractViolation(new Metric[0]);
+                }
             }
         }
 
+    }
+
+    private void checkRanking() {
+        if (ranking.size() == 0) {
+            ranking = rankChecker.getRanking();
+        }
     }
 }

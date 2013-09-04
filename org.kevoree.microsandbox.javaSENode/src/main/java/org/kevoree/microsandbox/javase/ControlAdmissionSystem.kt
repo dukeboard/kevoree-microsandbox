@@ -106,11 +106,11 @@ public object ControlAdmissionSystem {
                                 component.getMetaData() + " " + component.getTypeDefinition()?.getName() )*/
                 return ComponentRegistration(true, contract)
             } else if (freeMemory < mem) {
-                Log.error("Contract is not valid because the memory needed ({}) is highest than the memory allowed ({})", mem, freeMemory)
+                Log.error("Contract is not valid because the memory needed ({}) is higher than the memory allowed ({})", mem, freeMemory)
             } else if (freeNetworkIn < netIn) {
-                Log.error("Contract is not valid because the Network received data needed ({}) is highest than the Network received allowed ({})", netIn, freeNetworkIn)
+                Log.error("Contract is not valid because the Network received data needed ({}) is higher than the Network received allowed ({})", netIn, freeNetworkIn)
             } else if (freeNetworkOut < netOut) {
-                Log.error("Contract is not valid because the Network sent data needed ({}) is highest than the Network sent data allowed ({})", netOut, freeNetworkOut)
+                Log.error("Contract is not valid because the Network sent data needed ({}) is higher than the Network sent data allowed ({})", netOut, freeNetworkOut)
             }
             return ComponentRegistration(false, null)
         }

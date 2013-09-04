@@ -24,7 +24,7 @@ import java.util.List;
 public abstract class FineGrainedMonitoringStrategy extends AbstractMonitoringStrategy {
     public static final int NUMBER_OF_STEPS = 3;
     public static final int ELAPSED_SECONDS = NUMBER_OF_STEPS - 1;
-    protected final List<ComponentInstance> ranking;
+    protected List<ComponentInstance> ranking;
     protected ComponentInstance currentComponent;
     protected EnumSet<Metric> reason;
 

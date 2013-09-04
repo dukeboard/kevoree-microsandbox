@@ -1,5 +1,6 @@
 package org.kevoree.monitoring.strategies;
 
+import org.kevoree.ComponentInstance;
 import org.kevoree.api.Bootstraper;
 import org.kevoree.api.service.core.handler.KevoreeModelHandlerService;
 import org.kevoree.microsandbox.api.communication.MonitoringReporterFactory;
@@ -18,7 +19,9 @@ import org.kevoree.monitoring.strategies.adaptation.KillThemAll;
 import org.kevoree.monitoring.strategies.adaptation.SlowDownComponentInteraction;
 import org.kevoree.monitoring.strategies.monitoring.AllComponentsForEver;
 import org.kevoree.monitoring.strategies.monitoring.FineGrainedMonitoringStrategy;
+import org.kevoree.monitoring.strategies.monitoring.RankChecker;
 
+import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.EnumSet;
 import java.util.List;
@@ -30,7 +33,7 @@ import java.util.List;
  * Time: 5:03 PM
  *
  */
-public class MonitoringTaskAllComponents extends AbstractMonitoringTask {
+public class MonitoringTaskAllComponents extends AbstractMonitoringTask implements RankChecker {
 
     public MonitoringTaskAllComponents(String nodeName,
                           String nameOfRankerFunction,
@@ -67,16 +70,16 @@ public class MonitoringTaskAllComponents extends AbstractMonitoringTask {
                         MonitoringReporterFactory.reporter().trigger(new ContractViolationEvent(c.getComponentPath(), m, map.get(m).getObserved(), map.get(m).getMax()));
                 }
 
-                // FIXME in Monitoring component, reconfiguration must be avoid. Monitoring event must be sent to something else which is able to take decision
+                // FIXME in Monitoring component, reconfiguration must be avoid. Monitoring event must be sent to something else which is able to take decisions
                 tmpList = new SlowDownComponentInteraction(service).adapt(nodeName, tmpList);
                 tmpList = new KillThemAll(service).adapt(nodeName, tmpList);
 
                 if (tmpList.isEmpty()) {
-                    currentStrategy.init(0);
+                    switchToSimpleLocal(EnumSet.allOf(Metric.class));
                 }
                 else {
                     // TODO: the system cannot perform an adaptation. Die
-                    System.err.println("Why I am here");
+                    System.err.println("Why am I here?");
                     System.exit(3);
                 }
             }
@@ -91,11 +94,20 @@ public class MonitoringTaskAllComponents extends AbstractMonitoringTask {
         MonitoringReporterFactory.reporter().trigger(new MonitoringNotification(false, reason))/*.monitoring(false)*/;
         MyLowLevelResourceConsumptionRecorder.getInstance().turnMonitoring(true);
 
-        currentStrategy = new AllComponentsForEver(
-                ComponentsRanker.instance$.rank(nodeName, service, bootstraper,
-                        ComponentRankerFunctionFactory.instance$.get(nameOfRankerFunction)), msg);
+        currentStrategy = new AllComponentsForEver( new ArrayList<ComponentInstance>(), msg, this);
         currentStrategy.init(0);
     }
 
 
+    @Override
+    public List<ComponentInstance> getRanking() {
+        try {
+
+            return ComponentsRanker.instance$.rank(nodeName, service, bootstraper,
+                    ComponentRankerFunctionFactory.instance$.get(nameOfRankerFunction));
+        }
+        catch (Exception e) {
+            return new ArrayList<ComponentInstance>();
+        }
+    }
 }

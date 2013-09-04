@@ -2,7 +2,9 @@ package org.kevoree.microsandbox.samples;
 
 import org.kevoree.annotation.*;
 import org.kevoree.framework.AbstractComponentType;
+import org.kevoree.microsandbox.api.contract.CPUContracted;
 import org.kevoree.microsandbox.api.contract.FullContracted;
+import org.kevoree.microsandbox.api.contract.MemoryContracted;
 
 /**
  * Created with IntelliJ IDEA.
@@ -20,7 +22,7 @@ import org.kevoree.microsandbox.api.contract.FullContracted;
 })
 @ComponentType
 public class MemoryConsumer extends AbstractComponentType
-        implements FullContracted {
+        implements MemoryContracted, CPUContracted {
 
     private int size;
 

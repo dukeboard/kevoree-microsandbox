@@ -66,7 +66,7 @@ public class MonitoringComponent extends AbstractComponentType implements Micros
                 break;
             }
         if (description == null) {
-            System.out.println("panic: Why the platform description isn't here");
+            System.out.println("panic: Why the platform description isn't here?");
             System.exit(0);
         }
 
@@ -90,13 +90,14 @@ public class MonitoringComponent extends AbstractComponentType implements Micros
                     getModelService(),
                     getBootStrapperService());
 
-            getModelService().registerModelListener((MonitoringTask)monitoringTask);
+            getModelService().registerModelListener(monitoringTask);
         }
         else {
             monitoringTask = new MonitoringTaskAllComponents(getNodeName(),
                                 componentRankFunction,
                                 getModelService(),
                                 getBootStrapperService());
+            getModelService().registerModelListener(monitoringTask);
         }
         new Thread(monitoringTask).start();
     }
