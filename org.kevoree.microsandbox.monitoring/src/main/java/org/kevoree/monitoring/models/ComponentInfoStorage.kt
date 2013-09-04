@@ -15,6 +15,7 @@ import org.kevoree.microsandbox.api.contract.ThroughputContracted
 import org.kevoree.microsandbox.api.contract.FullContracted
 import org.kevoree.Instance
 import org.kevoree.TypeDefinition
+import org.kevoree.annotation.DictionaryType
 import org.kevoree.library.defaultNodeTypes.context.KevoreeDeployManager
 
 /**
@@ -60,7 +61,7 @@ public object ComponentsInfoStorage {
                 // only component that define contract must be monitor ?
                 // TODO maybe define a "helper" if we plan to define new typeDefinition for new type of contract
                 if (isContractedComponent(instance)) {
-                    val i = ComponentsInfoStorage.getOrIncludeInfo(instance, id!!)
+                    val i = ComponentsInfoStorage.getOrIncludeInfo(instance, id)
                     fn(node!!, instance, i);
                 }
             }
@@ -81,14 +82,40 @@ public object ComponentsInfoStorage {
     }
 
     fun isContractedComponent(instance: Instance): Boolean {
-        return (isTypeOf(instance.getTypeDefinition()!!, javaClass<FullContracted>().getSimpleName())
+        /*return (isTypeOf(instance.getTypeDefinition()!!, javaClass<FullContracted>().getSimpleName())
         || isTypeOf(instance.getTypeDefinition()!!, javaClass<MemoryContracted>().getSimpleName())
         || isTypeOf(instance.getTypeDefinition()!!, javaClass<CPUContracted>().getSimpleName())
         || isTypeOf(instance.getTypeDefinition()!!, javaClass<NetworkContracted>().getSimpleName())
-        || isTypeOf(instance.getTypeDefinition()!!, javaClass<ThroughputContracted>().getSimpleName()))
+        || isTypeOf(instance.getTypeDefinition()!!, javaClass<ThroughputContracted>().getSimpleName()))*/
+        return isContractedComponent(instance.getTypeDefinition()!!)
     }
 
     fun isTypeOf(typeDefinition: TypeDefinition, superTypeName: String): Boolean {
         return superTypeName.equals(typeDefinition.getName()) || typeDefinition.getSuperTypes().find{ superType -> isTypeOf(superType, superTypeName) } != null
+    }
+
+    fun isContractedComponent(typeDefinition: TypeDefinition): Boolean {
+        val isFullContracted = javaClass<FullContracted>().getAnnotation(javaClass<DictionaryType>())?.value()?.toList()?.all {
+            dictionaryAttribute ->
+            typeDefinition.getDictionaryType()?.getAttributes()?.filter{ attribute -> attribute.getName().equals(dictionaryAttribute.name()) }?.size() == 1
+        }
+        val isMemoryContracted = javaClass<MemoryContracted>().getAnnotation(javaClass<DictionaryType>())?.value()?.toList()?.all {
+            dictionaryAttribute ->
+            typeDefinition.getDictionaryType()?.getAttributes()?.filter{ attribute -> attribute.getName().equals(dictionaryAttribute.name()) }?.size() == 1
+        }
+        val isCPUContracted = javaClass<CPUContracted>().getAnnotation(javaClass<DictionaryType>())?.value()?.toList()?.all {
+            dictionaryAttribute ->
+            typeDefinition.getDictionaryType()?.getAttributes()?.filter{ attribute -> attribute.getName().equals(dictionaryAttribute.name()) }?.size() == 1
+        }
+        val isNetworkContracted = javaClass<NetworkContracted>().getAnnotation(javaClass<DictionaryType>())?.value()?.toList()?.all {
+            dictionaryAttribute ->
+            typeDefinition.getDictionaryType()?.getAttributes()?.filter{ attribute -> attribute.getName().equals(dictionaryAttribute.name()) }?.size() == 1
+        }
+        val isThroughputContracted = javaClass<ThroughputContracted>().getAnnotation(javaClass<DictionaryType>())?.value()?.toList()?.all {
+            dictionaryAttribute ->
+            typeDefinition.getDictionaryType()?.getAttributes()?.filter{ attribute -> attribute.getName().equals(dictionaryAttribute.name()) }?.size() == 1
+        }
+
+        return (isFullContracted != null && isFullContracted!!) || (isMemoryContracted != null && isMemoryContracted!!) || (isCPUContracted != null && isCPUContracted!!) || (isNetworkContracted != null && isNetworkContracted!!) || (isThroughputContracted != null && isThroughputContracted!!)
     }
 }
