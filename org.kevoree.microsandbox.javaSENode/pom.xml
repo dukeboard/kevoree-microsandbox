@@ -47,11 +47,6 @@
             <artifactId>org.kevoree.library.javase.javaseNode</artifactId>
             <version>${kevoree.corelibrary.version}</version>
         </dependency>
-        <dependency>
-            <groupId>org.kevoree.microsandbox</groupId>
-            <artifactId>org.kevoree.microsandbox.api</artifactId>
-            <version>${project.version}</version>
-        </dependency>
     </dependencies>
 
     <build>
