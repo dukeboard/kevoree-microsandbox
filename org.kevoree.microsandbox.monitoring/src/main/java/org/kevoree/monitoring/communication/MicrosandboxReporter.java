@@ -8,7 +8,6 @@ import org.kevoree.microsandbox.api.event.MicrosandboxEvent;
  * User: inti
  * Date: 7/5/13
  * Time: 10:00 AM
- * To change this template use File | Settings | File Templates.
  */
 public class MicrosandboxReporter extends AbstractMicrosandboxReporter {
 
@@ -20,7 +19,7 @@ public class MicrosandboxReporter extends AbstractMicrosandboxReporter {
     }
 
     @Override
-    protected void dispatchEvent(MicrosandboxEvent event) {
+    public void trigger(MicrosandboxEvent event) {
         if (microsandboxEventListener != null)
             microsandboxEventListener.notifyEvent(event);
     }

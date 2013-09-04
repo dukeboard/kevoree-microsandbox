@@ -11,6 +11,8 @@ import org.kevoree.microsandbox.api.communication.MonitoringReporterFactory
 import org.kevoree.microsandbox.api.sla.Metric
 import org.kevoree.monitoring.strategies.monitoring.AllComponentsMonitoring
 import org.kevoree.monitoring.strategies.monitoring.FineGrainedMonitoringStrategy
+import org.kevoree.microsandbox.api.event.AdaptationEvent
+import org.kevoree.microsandbox.api.event.ContractViolationEvent
 
 /**
  * Created with IntelliJ IDEA.
@@ -40,7 +42,7 @@ public class SlowDownComponentInteraction(service : KevoreeModelHandlerService)
                 val maxAllowed = ComponentInteractionAspect.getMaxNumberOfRequest(path, s, modelService!!)
                 val usage = MyLowLevelResourceConsumptionRecorder.getInstance()?.getUsesOfProvidedPort(nameOfOrigin, s) as Int /
                             FineGrainedMonitoringStrategy.ELAPSED_SECONDS
-                MonitoringReporterFactory.reporter()?.sla(path, Metric.PortUsage, usage.toDouble(), maxAllowed.toDouble())
+                MonitoringReporterFactory.reporter()?.trigger(ContractViolationEvent(path, Metric.PortUsage, usage.toDouble(), maxAllowed.toDouble()))
 
                 if (result.misUsedProvidedPorts.get(s)?.isEmpty()!!)
                 {
@@ -52,7 +54,7 @@ public class SlowDownComponentInteraction(service : KevoreeModelHandlerService)
                     {
                         var c : ComponentInstance? = (p?.eContainer() as ComponentInstance?)
                         var portName : String? = p?.getPortTypeRef()?.getName()
-                        MonitoringReporterFactory.reporter()?.adaptation("SlowDownInteraction", "${c?.getName()}${portName}" )
+                        MonitoringReporterFactory.reporter()?.trigger(AdaptationEvent("SlowDownInteraction", "${c?.getName()}${portName}"))/*.adaptation("SlowDownInteraction", "${c?.getName()}${portName}" )*/
                         MyLowLevelResourceConsumptionRecorder.getInstance()?.turnOnPortControllingOn(c?.getName(), portName, true,
                                 maxAllowed)
                     }

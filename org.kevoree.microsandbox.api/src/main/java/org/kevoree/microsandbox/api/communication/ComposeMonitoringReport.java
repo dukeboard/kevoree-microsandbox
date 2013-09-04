@@ -1,6 +1,6 @@
 package org.kevoree.microsandbox.api.communication;
 
-import org.kevoree.microsandbox.api.sla.Metric;
+import org.kevoree.microsandbox.api.event.MicrosandboxEvent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,7 +20,7 @@ public class ComposeMonitoringReport implements MonitoringReporter {
         reporters.add(r);
     }
 
-    @Override
+    /*@Override
     public void monitoring(boolean global) {
         for (MonitoringReporter r : reporters) {
             r.monitoring(global);
@@ -59,6 +59,13 @@ public class ComposeMonitoringReport implements MonitoringReporter {
     public void controlAdmission_updated(String componentPath) {
         for (MonitoringReporter r : reporters) {
             r.controlAdmission_updated(componentPath);
+        }
+    }*/
+
+    @Override
+    public void trigger(MicrosandboxEvent event) {
+        for (MonitoringReporter r : reporters) {
+            r.trigger(event);
         }
     }
 }

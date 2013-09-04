@@ -1,8 +1,5 @@
 package org.kevoree.microsandbox.api.communication;
 
-import org.kevoree.microsandbox.api.event.*;
-import org.kevoree.microsandbox.api.sla.Metric;
-
 /**
  * Created with IntelliJ IDEA.
  * User: inti
@@ -11,9 +8,9 @@ import org.kevoree.microsandbox.api.sla.Metric;
  *
  */
 public abstract class AbstractMicrosandboxReporter implements MonitoringReporter {
-    protected abstract void dispatchEvent(MicrosandboxEvent event);
+//    protected abstract void dispatchEvent(MicrosandboxEvent event);
 
-    @Override
+    /*@Override
     public void monitoring(boolean global) { }
 
     @Override
@@ -38,5 +35,5 @@ public abstract class AbstractMicrosandboxReporter implements MonitoringReporter
     @Override
     public void controlAdmission_updated(String componentPath) {
         dispatchEvent(new ModelComponentUpdatedEvent(componentPath));
-    }
+    }*/
 }

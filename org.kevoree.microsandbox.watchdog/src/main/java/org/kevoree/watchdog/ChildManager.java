@@ -14,7 +14,7 @@ public class ChildManager implements Runnable {
     @Override
     public void run() {
         try {
-            if(subProcess!=null){
+            if (subProcess != null) {
                 subProcess.destroyChild();
             }
         } catch (Exception e) {

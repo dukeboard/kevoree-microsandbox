@@ -37,11 +37,13 @@ public class AllComponentsForEver extends FineGrainedMonitoringStrategy {
         EnumMap<Metric, MeasurePoint> a = new EnumMap<Metric, MeasurePoint>(Metric.class);
 
         System.out.printf("CPU %d %d\n", contract.getCPU() , data.lastCPU);
-        if (contract.getCPU() < data.lastCPU)
+        if (contract.getCPU() < data.lastCPU) {
             a.put(Metric.CPU,  new MeasurePoint(data.lastCPU, contract.getCPU()));
+        }
 
-        if (contract.getNetworkOut() < data.lastSent)
+        if (contract.getNetworkOut() < data.lastSent) {
             a.put(Metric.NetworkS, new MeasurePoint(data.lastSent, contract.getNetworkOut()));
+        }
 
         if (contract.getNetworkIn() < data.lastReceived) {
             a.put(Metric.NetworkR, new MeasurePoint(data.lastReceived, contract.getNetworkIn()));
@@ -77,10 +79,10 @@ public class AllComponentsForEver extends FineGrainedMonitoringStrategy {
                         new HashSet<String>(), new HashSet<String>()));
         }
         if (faultyComponents.size() > 0) {
-            EnumSet<Metric> tmp = EnumSet.noneOf(Metric.class);
+//            EnumSet<Metric> tmp = EnumSet.noneOf(Metric.class);
             cancel();
             this.faultyComponents = faultyComponents;
-            actionOnContractViolation(tmp);
+            actionOnContractViolation(new Metric[0]);
         }
     }
 
@@ -101,8 +103,8 @@ public class AllComponentsForEver extends FineGrainedMonitoringStrategy {
             }
             // if someone is violating the contract then trigger adaptation
             if (faultyComponents.size() > 0) {
-                EnumSet<Metric> tmp = EnumSet.noneOf(Metric.class);
-                actionOnContractViolation(tmp);
+//                EnumSet<Metric> tmp = EnumSet.noneOf(Metric.class);
+                actionOnContractViolation(new Metric[0]);
             }
         }
 

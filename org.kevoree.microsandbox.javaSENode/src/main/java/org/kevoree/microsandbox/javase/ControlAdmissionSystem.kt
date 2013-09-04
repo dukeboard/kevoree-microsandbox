@@ -2,14 +2,14 @@ package org.kevoree.microsandbox.javase
 
 import org.kevoree.ComponentInstance
 import org.kevoree.Dictionary
-import org.kevoree.DictionaryValue
-import java.lang.ref.WeakReference
 import java.util.ArrayList
-import org.resourceaccounting.contract.ComponentResourceContract
 import org.resourceaccounting.contract.ResourceContract
 import java.util.concurrent.locks.ReentrantLock
-import org.kevoree.microsandbox.api.communication.MonitoringReporterFactory
 import org.kevoree.microsandbox.api.contract.PlatformDescription
+import org.kevoree.microsandbox.api.communication.MonitoringReporterFactory
+import org.kevoree.microsandbox.api.event.ModelComponentAcceptedEvent
+import org.kevoree.microsandbox.api.event.ModelComponentRemovedEvent
+import org.kevoree.log.Log
 
 /**
  * Created with IntelliJ IDEA.
@@ -83,6 +83,7 @@ public object ControlAdmissionSystem {
                 }
                 i++
             }
+            // FIXME why instr doesn't appear on the condition ?
             if (mem < freeMemory
                     && netIn < freeNetworkIn
                     && netOut < freeNetworkOut) {
@@ -96,19 +97,25 @@ public object ControlAdmissionSystem {
                             mem as Long, netIn as Long, netOut as Long))
                 lock.unlock()
 
-                val contract : KevoreeComponentResourceContract? = if (mem.toInt() == 0 && instr.toInt() == 0)
-                                                                        null
-                                                                    else
+                val contract : KevoreeComponentResourceContract? = /*if (mem.toInt() == 0 && instr.toInt() == 0)
+                                                                        null // FIXME why this condition => It seems to be useless
+                                                                    else*/
                                                                         KevoreeComponentResourceContract(instr, mem, netOut, netIn)
 
-                MonitoringReporterFactory.reporter()?.controlAdmission_accepted(component.path() + " " +
-                                component.getMetaData() + " " + component.getTypeDefinition()?.getName() )
+                MonitoringReporterFactory.reporter()?.trigger(ModelComponentAcceptedEvent(component.path()))/*controlAdmission_accepted(component.path() + " " +
+                                component.getMetaData() + " " + component.getTypeDefinition()?.getName() )*/
                 return ComponentRegistration(true, contract)
+            } else if (freeMemory < mem) {
+                Log.error("Contract is not valid because the memory needed ({}) is highest than the memory allowed ({})", mem, freeMemory)
+            } else if (freeNetworkIn < netIn) {
+                Log.error("Contract is not valid because the Network received data needed ({}) is highest than the Network received allowed ({})", netIn, freeNetworkIn)
+            } else if (freeNetworkOut < netOut) {
+                Log.error("Contract is not valid because the Network sent data needed ({}) is highest than the Network sent data allowed ({})", netOut, freeNetworkOut)
             }
             return ComponentRegistration(false, null)
         }
         else {
-            MonitoringReporterFactory.reporter()?.controlAdmission_accepted(component.path())
+            MonitoringReporterFactory.reporter()?.trigger(ModelComponentAcceptedEvent(component.path()))/*.controlAdmission_accepted(component.path())*/
             return ComponentRegistration(true, null)
         }
     }
@@ -125,7 +132,7 @@ public object ControlAdmissionSystem {
             freeMemory += n.mem
             freeNetworkIn += n.netIn
             freeNetworkOut += n.netOut
-            MonitoringReporterFactory.reporter()?.controlAdmission_removed(c.path())
+            MonitoringReporterFactory.reporter()?.trigger(ModelComponentRemovedEvent(c.path()))/*controlAdmission_removed(c.path())*/
             return true
         }
         return false

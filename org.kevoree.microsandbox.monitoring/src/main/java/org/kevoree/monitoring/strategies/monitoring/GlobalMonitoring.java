@@ -72,8 +72,8 @@ public class GlobalMonitoring extends AbstractMonitoringStrategy {
         double perWritten = (written /  threshold.getpDescription().availability_write_disc)*100;
         double perRead = (read /  threshold.getpDescription().availability_read_disc) * 100;
 
+        // avoid to check when the previous measurement doesn't exist because its use may imply erroneous estimation
         if (!firstTime) {
-
             if (cpuUsage > threshold.getCpu_threshold() && cpuUsage < 99) {
                 actionOnContractViolation(Metric.CPU);
             }

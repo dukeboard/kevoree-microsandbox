@@ -7,6 +7,8 @@ import java.io.InputStream;
 import java.net.URL;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
+import java.util.jar.JarOutputStream;
+import java.util.zip.ZipEntry;
 
 /**
  * Created by duke on 16/05/13.
@@ -61,15 +63,15 @@ public class RuntimeDowloader {
             CallInstrumenter.createRTIntrumentedJar(runtimeFile);
             System.out.println("Done");
         }
-        System.out.println("Extended JAR  : "+runtimeFile.getAbsoluteFile());
+        System.out.println("Extended JAR  : " + runtimeFile.getAbsoluteFile());
         return runtimeFile;
     }
 
-    public File getExtAgent(){
+    public File getExtAgent() {
         String tempPath = getTempPath();
-        File agentFile = new File(tempPath + File.separator + "ext-agent"+Version.VERSION+".jar");
+        File agentFile = new File(tempPath + File.separator + "ext-agent" + Version.VERSION + ".jar");
         try {
-//            if (!agentFile.exists()) {
+            if (!agentFile.exists() || Version.VERSION.contains("SNAPSHOT")) {
                 FileOutputStream fos = new FileOutputStream(agentFile);
                 InputStream is = this.getClass().getClassLoader().getResourceAsStream("resourceMonitorJavaAgent.jar");
                 byte data[] = new byte[1024];
@@ -79,18 +81,18 @@ public class RuntimeDowloader {
                 }
                 is.close();
                 fos.close();
-//            }
-        } catch (Exception e){
+            }
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return agentFile;
     }
 
-    public File getSharedResourceAccounting(){
+    public File getSharedResourceAccounting() {
         String tempPath = getTempPath();
-        File agentFile = new File(tempPath + File.separator + "shared-res-"+Version.VERSION+".jar");
+        File agentFile = new File(tempPath + File.separator + "shared-res-" + Version.VERSION + ".jar");
         try {
-//            if (!agentFile.exists()) {
+            if (!agentFile.exists() || Version.VERSION.contains("SNAPSHOT")) {
                 FileOutputStream fos = new FileOutputStream(agentFile);
                 InputStream is = this.getClass().getClassLoader().getResourceAsStream("sharedResourceAccounting.jar");
                 byte data[] = new byte[1024];
@@ -100,8 +102,39 @@ public class RuntimeDowloader {
                 }
                 is.close();
                 fos.close();
-//            }
-        } catch (Exception e){
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return agentFile;
+    }
+
+    public File getSharedChildClassJar() {
+        String tempPath = getTempPath();
+        File agentFile = new File(tempPath + File.separator + "shared-childjvm-" + Version.VERSION + ".jar");
+        try {
+            if (!agentFile.exists() || Version.VERSION.contains("SNAPSHOT")) {
+                FileOutputStream fos = new FileOutputStream(agentFile);
+                JarOutputStream jarOut = new JarOutputStream(fos);
+
+                String[] files = new String[]{"org/kevoree/watchdog/child/watchdog/ChildRunner.class", "org/kevoree/watchdog/child/watchdog/WatchdogClient.class"};
+                for (int i = 0; i < files.length; i++) {
+                    String file = files[i];
+                    jarOut.putNextEntry(new ZipEntry(file));
+                    InputStream is = this.getClass().getClassLoader().getResourceAsStream(file);
+                    byte data[] = new byte[1024];
+                    int count;
+                    while ((count = is.read(data, 0, 1024)) != -1) {
+                        jarOut.write(data, 0, count);
+                    }
+                    jarOut.closeEntry();
+                    is.close();
+                }
+
+                jarOut.close();
+                fos.close();
+            }
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return agentFile;

@@ -10,8 +10,10 @@
     <description>Kevoree MicroSandbox</description>
 
     <properties>
-        <kevoree.version>2.0.0-SNAPSHOT</kevoree.version>
+        <kevoree.version>2.0.4-SNAPSHOT</kevoree.version>
+        <kevoree.corelibrary.version>2.0.0-SNAPSHOT</kevoree.corelibrary.version>
         <kotlin.version>0.5.748</kotlin.version>
+        <!-- Unable to update version because the new one (0.5.998) has a bug which cause failure of compilation -->
     </properties>
 
     <licenses>
@@ -151,14 +153,11 @@
         </snapshotRepository>
     </distributionManagement>
 
+
     <repositories>
         <repository>
-            <id>kevoree-libs-release-local</id>
-            <url>http://maven.kevoree.org/release</url>
-        </repository>
-        <repository>
-            <id>kevoree-snapshots</id>
-            <url>http://maven.kevoree.org/snapshots</url>
+            <id>kevoree-oss</id>
+            <url>https://oss.sonatype.org/content/groups/public/</url>
         </repository>
         <repository>
             <id>jetbrains-release</id>
@@ -168,18 +167,13 @@
 
     <pluginRepositories>
         <pluginRepository>
-            <id>plugin.kevoree-github</id>
+            <id>kevoree-oss.plugin</id>
             <url>https://oss.sonatype.org/content/groups/public/</url>
         </pluginRepository>
         <pluginRepository>
-            <id>plugin.kevoree-snapshots</id>
-            <url>https://oss.sonatype.org/content/groups/public/</url>
-        </pluginRepository>
-        <pluginRepository>
-            <id>jetbrains-release</id>
+            <id>jetbrains-all</id>
             <url>http://repository.jetbrains.com/all</url>
         </pluginRepository>
-
     </pluginRepositories>
 
     <modules>

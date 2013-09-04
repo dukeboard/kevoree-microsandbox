@@ -50,11 +50,14 @@ open class MonitoredAddInstance(val c: Instance,
         if (c is ComponentInstance) {
             val cc : ComponentInstance = c as ComponentInstance
             val r = ControlAdmissionSystem.registerComponent(cc)
-            if (!r.valid)
+            if (!r.valid) {
+                Log.error("Unable to execute {} because the contract is not valid", this.toString())
                 return false
+            }
 
-            if (r.contract != null)
+            if (r.contract != null) {
                 KevoreeDeployManager.putRef(c.javaClass.getName()+"_contract",c.getName(),  r.contract!!)
+            }
 
         }
 
@@ -120,5 +123,9 @@ open class MonitoredAddInstance(val c: Instance,
 
     }
 
+
+    public override fun toString(): String? {
+        return "MonitoredAddInstance " + c.getName() + "@" + nodeName + ":" + c.getTypeDefinition()!!.getName()
+    }
 }
 

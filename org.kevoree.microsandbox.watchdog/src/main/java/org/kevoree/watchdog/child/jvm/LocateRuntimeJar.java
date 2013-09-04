@@ -33,7 +33,7 @@ public class LocateRuntimeJar {
 
         } else {
             //TODO for unix, I just want to see this working
-            return new File("/usr/lib/jvm/java-1.7.0-openjdk-i386/jre/lib/rt.jar");
+            return new File(System.getProperty("java.home") + File.separator + "lib" + File.separator + "rt.jar");
         }
         return null;
     }
