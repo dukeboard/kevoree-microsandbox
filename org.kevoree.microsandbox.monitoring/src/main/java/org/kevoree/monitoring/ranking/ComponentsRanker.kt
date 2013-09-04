@@ -43,7 +43,7 @@ public object ComponentsRanker {
         )
 
         val currentTime = System.nanoTime()
-        println("number of components before sorting is " + components.size)
+//        println("number of components before sorting is " + components.size)
         return components.sort(comparator { (a,b) -> componentRankerFunction(a,b) as Int })
     }
 
