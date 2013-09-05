@@ -20,7 +20,7 @@ addNode node0:JavaSENode {
 
 addComponent dacapoExecuter0@node0 : RunningDacapoComponent {
     dacapo_path = '/home/inti/Downloads/dacapo-2006-10-MR2.jar',
-    dacapo_test = 'xalan'
+    dacapo_test = 'antlr' // 'hsqldb' 'fop' 'pmd' 'jython' 'chart' 'antlr'
 }
 
 addGroup sync:BasicGroup

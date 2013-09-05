@@ -90,7 +90,8 @@ public class RunningDacapoComponent extends AbstractComponentType {
                 Class<?> cl = loader.loadClass("Harness");
                 Method method = cl.getMethod("main", new Class[]{String[].class});
 
-                method.invoke(null,new Object[]{new String[]{test}});
+                method.invoke(null,new Object[]{new String[]{"-noDigestOutput",
+                        test}});
 
             } catch (ClassNotFoundException e) {
                 e.printStackTrace();
@@ -100,6 +101,7 @@ public class RunningDacapoComponent extends AbstractComponentType {
                 e.printStackTrace();
             } catch (InvocationTargetException e) {
                 e.printStackTrace();
+                System.err.println("Not a big deal if the test has finished");
             }
         }
     }
