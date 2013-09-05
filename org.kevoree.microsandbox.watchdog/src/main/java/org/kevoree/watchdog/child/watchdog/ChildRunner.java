@@ -25,7 +25,7 @@ public class ChildRunner {
         try {
             configureSystemProps();
             client = new WatchdogClient(internalPort);
-            pool.scheduleAtFixedRate(client, 0, checkTime / 2, TimeUnit.MILLISECONDS);
+            pool.scheduleAtFixedRate(client, 0, checkTime / 4, TimeUnit.MILLISECONDS);
             URL[] kevURLS = new URL[1];
             Object kevRuntime = System.getProperty("kevruntime");
             kevURLS[0] = new File(kevRuntime.toString()).toURI().toURL();
@@ -46,7 +46,7 @@ public class ChildRunner {
     public static final String pingPortProperty = "ping.port";
     public static final String pingTimeoutProperty = "ping.timeout";
     public static Integer internalPort = 9999;
-    public static Integer checkTime = 3000;
+    public static Integer checkTime = 10000;
 
     public static void configureSystemProps() {
         //Configuration of property
