@@ -67,7 +67,9 @@ public class MonitoringTaskAllComponents extends AbstractMonitoringTask implemen
                     ComponentsInfoStorage.instance$.getExecutionInfo(c.getComponentPath()).increaseFailures();
                     EnumMap<Metric, MeasurePoint> map = c.getMetrics();
                     for (Metric m : map.keySet())
-                        MonitoringReporterFactory.reporter().trigger(new ContractViolationEvent(c.getComponentPath(), m, map.get(m).getObserved(), map.get(m).getMax()));
+                        MonitoringReporterFactory.reporter().trigger(
+                                new ContractViolationEvent(c.getComponentPath(),
+                                        m, map.get(m).getObserved(), map.get(m).getMax()));
                 }
 
                 // FIXME in Monitoring component, reconfiguration must be avoid. Monitoring event must be sent to something else which is able to take decisions

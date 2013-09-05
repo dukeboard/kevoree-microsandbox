@@ -43,7 +43,7 @@ public class AllComponentsMonitoring extends FineGrainedMonitoringStrategy {
             data.lastSent /= ELAPSED_SECONDS;
 
             ResourceContract contract = principal.getContract();
-            if (reason.contains(Metric.CPU) && contract.getCPU() < data.lastCPU) {
+            if (reason.contains(Metric.CPU) && contract.getCPU() > 0 && contract.getCPU() < data.lastCPU) {
                 a.put(Metric.CPU,  new MeasurePoint(data.lastCPU, contract.getCPU()));
             }
 
@@ -55,7 +55,8 @@ public class AllComponentsMonitoring extends FineGrainedMonitoringStrategy {
                 a.put(Metric.NetworkR, new MeasurePoint(data.lastReceived, contract.getNetworkIn()));
             }
 
-            if (reason.contains(Metric.Memory) && contract.getMemory() < data.lastMem) {
+            // TODO : I am wondering if this is OK? Shouldn't I do this inside onGCVerifyContract?
+            if (reason.contains(Metric.Memory) && contract.getMemory() > 0 && contract.getMemory() < data.lastMem) {
                 a.put(Metric.Memory, new MeasurePoint(data.lastMem, contract.getMemory()));
             }
 

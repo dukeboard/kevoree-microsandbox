@@ -41,8 +41,7 @@ public class AllComponentsForEver extends FineGrainedMonitoringStrategy {
 
         EnumMap<Metric, MeasurePoint> a = new EnumMap<Metric, MeasurePoint>(Metric.class);
 
-        System.out.printf("CPU %d %d\n", contract.getCPU() , data.lastCPU);
-        if (contract.getCPU() < data.lastCPU) {
+        if (contract.getCPU() > 0 && contract.getCPU() < data.lastCPU) {
             a.put(Metric.CPU,  new MeasurePoint(data.lastCPU, contract.getCPU()));
         }
 
@@ -76,13 +75,11 @@ public class AllComponentsForEver extends FineGrainedMonitoringStrategy {
             ResourcePrincipal principal = getPrincipal(component);
             DataForCheckingContract data = getInfo(principal);
             ResourceContract contract = principal.getContract();
-            System.out.printf("%s %d %d\n", component.getName(), data.lastMem, contract.getMemory());
-            if (contract.getMemory() < data.lastMem) {
+            if (contract.getMemory() > 0 && contract.getMemory() < data.lastMem) {
                 b.put(Metric.Memory, new MeasurePoint(data.lastMem, contract.getMemory()));
-            }
-            if (!b.isEmpty())
                 faultyComponents.add(new FaultyComponent(component.path(),b,
                         new HashSet<String>(), new HashSet<String>()));
+            }
         }
         if (faultyComponents.size() > 0) {
 //            EnumSet<Metric> tmp = EnumSet.noneOf(Metric.class);
