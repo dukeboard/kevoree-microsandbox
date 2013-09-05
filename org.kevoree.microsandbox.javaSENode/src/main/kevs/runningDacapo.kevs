@@ -14,14 +14,16 @@ merge 'mvn:org.kevoree.microsandbox/org.kevoree.microsandbox.samples/{project.ve
 
 addNode node0:MonitoredNode {
     availability_memory='150000000',
-    availability_instr='200000000'
+    availability_instr='200000000',
+    availability_write_disc='10000000',
+    availability_read_disc='10000000'
 }
 
 addComponent MonitoringComponent0@node0 : MonitoringComponent {
-    memory_threshold='65',
-    cpu_threshold='40',
-    net_in_threshold='80',
-    net_out_threshold='80',
+    memory_threshold='85',
+    cpu_threshold='90',
+    net_in_threshold='90',
+    net_out_threshold='90',
     adaptiveMonitoring='true'
 }
 
@@ -34,38 +36,11 @@ bind MonitoringComponent0.reasoner@node0 => defMSGT_reasoning
 
 updateDictionary defMSGT_reasoning
 
-addComponent FakeConso509@node0 : FakeConsole { singleFrame='true' }
-addComponent FakeConso510@node0 : FakeConsole {}
-addComponent fread@node0 : FileExplorer { basedir='.' }
 
-addComponent memoryConsumer0@node0 : MemoryConsumer {
-    cpu_wall_time='200000',
-    memory_max_size='20',
-   // network_input_peak_seconds='234',
-   // network_output_peak_seconds='234',
-    amount = '1024000'
+addComponent dacapoExecuter0@node0 : RunningDacapoComponent {
+    dacapo_path = '/home/inti/Downloads/dacapo-2006-10-MR2.jar',
+    dacapo_test = 'xalan'
 }
-
-addComponent cpuConsumer0@node0 : CPUConsumerWallTime {
-    cpu_wall_time='2000000'
-}
-
-addComponent writer0@node0 : IOWriterGood {
-}
-
-
-addChannel defMSGT419 : defMSG {}
-addChannel defMSGT360 : defMSG {}
-
-bind FakeConso509.showText@node0 => defMSGT360
-bind FakeConso509.textEntered@node0 => defMSGT419
-bind FakeConso510.showText@node0 => defMSGT419
-bind FakeConso510.textEntered@node0 => defMSGT360
-
-updateDictionary FakeConso510@node0
-updateDictionary defMSGT360
-updateDictionary defMSGT419
-updateDictionary FakeConso509@node0
 
 addGroup sync:BasicGroup
 addToGroup sync node0

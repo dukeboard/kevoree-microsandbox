@@ -12,29 +12,10 @@ merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.defaultChan
 merge 'mvn:org.kevoree.microsandbox/org.kevoree.microsandbox.monitoring/{project.version}'
 merge 'mvn:org.kevoree.microsandbox/org.kevoree.microsandbox.samples/{project.version}'
 
-addNode node0:MonitoredNode {
-    availability_memory='150000000',
-    availability_instr='200000000',
-    availability_write_disc='10000000',
-    availability_read_disc='10000000'
+addNode node0:JavaSENode {
 }
 
-addComponent MonitoringComponent0@node0 : MonitoringComponent {
-    memory_threshold='85',
-    cpu_threshold='90',
-    net_in_threshold='90',
-    net_out_threshold='90',
-    adaptiveMonitoring='true'
-}
 
-addComponent reasoner0@node0 : ResourceAwareReasoner {
-}
-
-addChannel defMSGT_reasoning : defMSG {}
-bind reasoner0.eventHandler@node0 => defMSGT_reasoning
-bind MonitoringComponent0.reasoner@node0 => defMSGT_reasoning
-
-updateDictionary defMSGT_reasoning
 
 
 addComponent dacapoExecuter0@node0 : RunningDacapoComponent {
