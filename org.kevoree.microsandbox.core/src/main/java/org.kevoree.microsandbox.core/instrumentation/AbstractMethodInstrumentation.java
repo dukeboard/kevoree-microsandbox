@@ -9,7 +9,7 @@ public abstract class AbstractMethodInstrumentation extends InstructionAdapter {
 
     protected final static String MONITOR_INSTRUCTIONS_EVENT_NAME = "increaseInstructions";
     protected final static String MONITOR_INSTRUCTIONS_EVENT_SIG =
-            "(ILorg/resourceaccounting/ResourcePrincipal;)V";
+            "(I)V";
 
     /**
      * Name of the class
@@ -37,9 +37,9 @@ public abstract class AbstractMethodInstrumentation extends InstructionAdapter {
      * @param count
      */
     protected void registerCPUConsumption(int count) {
-        if (count == 0) return; // TODO : Add COMPUTE_FRAMES to ClassWriter constructor
+        if (count == 0) return;
         this.iconst(count);
-        loadResourcePrincipal();
+//        loadResourcePrincipal();
         this.invokestatic(ExtraInstrumentationRules.MONITOR_CLASS_NAME,
                 MONITOR_INSTRUCTIONS_EVENT_NAME,
                 MONITOR_INSTRUCTIONS_EVENT_SIG);
