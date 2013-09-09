@@ -2,6 +2,7 @@ package org.kevoree.microsandbox.test;
 
 import junit.framework.TestCase;
 import org.kevoree.watchdog.Runner;
+import org.kevoree.watchdog.WatchDogCheck;
 import org.kevoree.watchdog.child.jvm.JVMStream;
 
 import java.io.File;
@@ -54,7 +55,7 @@ public class AbstractMicroSandboxTester extends TestCase implements JVMStream.Li
             params[0] = "LATEST";
             params[1] = tempFile.getAbsolutePath();
 
-            Runner.checker.lineHandler = this;
+            WatchDogCheck.lineHandler = this;
             Runner.main(params);
             /*result = */block.poll(timeout, TimeUnit.MILLISECONDS);
 
@@ -68,6 +69,7 @@ public class AbstractMicroSandboxTester extends TestCase implements JVMStream.Li
         /*if(result == null){
             fail();
         }*/
+
         return builder.toString();
     }
 

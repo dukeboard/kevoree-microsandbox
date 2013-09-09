@@ -19,7 +19,7 @@ import java.util.regex.Pattern;
  * @author Erwan Daubert
  * @version 1.0
  */
-public class CPUContractedTester extends AbstractMicroSandboxTester {
+public class CPUContractedTest extends AbstractMicroSandboxTester {
 
     @Test
     public void testNoContractViolation() {
