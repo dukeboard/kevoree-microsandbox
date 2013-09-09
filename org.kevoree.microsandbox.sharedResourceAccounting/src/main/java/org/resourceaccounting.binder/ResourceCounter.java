@@ -19,7 +19,7 @@ public class ResourceCounter {
     private static final int SINGLE_PRINCIPAL_MONITORING = 2;
     private static final int CONTROLLING_PORTS = 4;
 
-    private static int monitoringFlags = 0;
+    private static int monitoringFlags = 0; // TODO : FIX
 
 
     private static synchronized boolean isMonitoring() {
@@ -82,33 +82,33 @@ public class ResourceCounter {
     }
 
     public static long getNbObjects(ResourcePrincipal principal) {
-        ResourcePrincipal p = ourInstance.search(principal);
-        return ourInstance.innerGetNbObjects(p);
+//        ResourcePrincipal p = ourInstance.search(principal);
+        return ourInstance.innerGetNbObjects(principal);
     }
 
     public static long getNbInstructions(ResourcePrincipal principal) {
-        ResourcePrincipal p = ourInstance.search(principal);
-        return ourInstance.innerGetNbInstructions(p);
+//        ResourcePrincipal p = ourInstance.search(principal);
+        return ourInstance.innerGetNbInstructions(principal);
     }
 
     public static long getNbBytesSent(ResourcePrincipal principal) {
-        ResourcePrincipal p = ourInstance.search(principal);
-        return ourInstance.innerGetNbBytesSent(p);
+//        ResourcePrincipal p = ourInstance.search(principal);
+        return ourInstance.innerGetNbBytesSent(principal);
     }
 
     public static long getNbBytesReceived(ResourcePrincipal principal) {
-        ResourcePrincipal p = ourInstance.search(principal);
-        return ourInstance.innerGetNbBytesReceived(p);
+//        ResourcePrincipal p = ourInstance.search(principal);
+        return ourInstance.innerGetNbBytesReceived(principal);
     }
 
     public static long getNbWrittenBytes(ResourcePrincipal principal) {
-        ResourcePrincipal p = ourInstance.search(principal);
-        return ourInstance.innerGetNbWrittenBytes(p);
+//        ResourcePrincipal p = ourInstance.search(principal);
+        return ourInstance.innerGetNbWrittenBytes(principal);
     }
 
     public static long getNbReadBytes(ResourcePrincipal principal) {
-        ResourcePrincipal p = ourInstance.search(principal);
-        return ourInstance.innerGetNbReadBytes(p);
+//        ResourcePrincipal p = ourInstance.search(principal);
+        return ourInstance.innerGetNbReadBytes(principal);
     }
 
     public static long getTotalSent() {
@@ -132,8 +132,8 @@ public class ResourceCounter {
      * @return
      */
     public static ResourcePrincipal get() {
-        Thread th = Thread.currentThread();
-        return ourInstance.get(th);
+//        Thread th = Thread.currentThread();
+        return ourInstance.get();
 
     }
 
@@ -151,7 +151,7 @@ public class ResourceCounter {
 
     public static int reportObjectCreation(Object obj) {
         ResourcePrincipal principal = get();
-        principal = ourInstance.search(principal);
+//        principal = ourInstance.search(principal);
         ourInstance.innerIncreaseObjects(obj, principal);
 //        java.lang.Class cl = obj.getClass();
 //        try {
@@ -173,21 +173,22 @@ public class ResourceCounter {
 
     public static void reportNewArray(Object obj) {
         ResourcePrincipal principal = get();
-        principal = ourInstance.search(principal);
+//        principal = ourInstance.search(principal);
         ourInstance.innerArrayAllocated(obj, principal);
     }
 
-    public static void increaseInstructions(int n, ResourcePrincipal principal) {
-        if (isMonitoring()) {
-            ResourcePrincipal p = ourInstance.search(principal);
-            ourInstance.innerIncreaseInstructions(n, p);
-        }
-        else if (isMonitoringASinglePrincipal()) {
-            if (ourInstance.isPrincipalBeingMonitored(principal)) {
-                ResourcePrincipal p = ourInstance.search(principal);
-                ourInstance.innerIncreaseInstructions(n, p);
-            }
-        }
+    public static void increaseInstructions(int n) {
+        ResourcePrincipal principal = get();
+//        if (isMonitoring()) {
+//            ResourcePrincipal p = ourInstance.search(principal);
+            ourInstance.innerIncreaseInstructions(n, principal);
+//        }
+//        else if (isMonitoringASinglePrincipal()) {
+//            if (ourInstance.isPrincipalBeingMonitored(principal)) {
+//                ResourcePrincipal p = ourInstance.search(principal);
+//                ourInstance.innerIncreaseInstructions(n, p);
+//            }
+//        }
     }
 
     public static void reportPortProcessingRequest(Object component, Object port) {
@@ -228,14 +229,14 @@ public class ResourceCounter {
     public static void reportNetworkDataRead(int n) {
         if (isMonitoring()) {
             ResourcePrincipal principal = get();
-            principal = ourInstance.search(principal);
+//            principal = ourInstance.search(principal);
             ourInstance.innerIncreaseBytesReceived(n, principal);
         }
         else if (isMonitoringASinglePrincipal()) {
             ResourcePrincipal principal = get();
             if (ourInstance.isPrincipalBeingMonitored(principal)) {
-                ResourcePrincipal p = ourInstance.search(principal);
-                ourInstance.innerIncreaseBytesReceived(n, p);
+//                ResourcePrincipal p = ourInstance.search(principal);
+                ourInstance.innerIncreaseBytesReceived(n, principal);
             }
         }
         else ourInstance.increaseTotalReceived(n);
@@ -244,14 +245,14 @@ public class ResourceCounter {
     public static void reportNetworkDataWrite(int n) {
         if (isMonitoring()) {
             ResourcePrincipal principal = get();
-            principal = ourInstance.search(principal);
+//            principal = ourInstance.search(principal);
             ourInstance.innerIncreaseBytesSent(n,principal);
         }
         else if (isMonitoringASinglePrincipal()) {
             ResourcePrincipal principal = get();
             if (ourInstance.isPrincipalBeingMonitored(principal)) {
-                ResourcePrincipal p = ourInstance.search(principal);
-                ourInstance.innerIncreaseBytesSent(n, p);
+//                ResourcePrincipal p = ourInstance.search(principal);
+                ourInstance.innerIncreaseBytesSent(n, principal);
             }
         }
         else ourInstance.increaseTotalSent(n);
@@ -260,14 +261,14 @@ public class ResourceCounter {
     public static void reportFileDataRead(int n) {
         if (isMonitoring()) {
             ResourcePrincipal principal = get();
-            principal = ourInstance.search(principal);
+//            principal = ourInstance.search(principal);
             ourInstance.innerIncreaseFileRead(n, principal);
         }
         else if (isMonitoringASinglePrincipal()) {
             ResourcePrincipal principal = get();
             if (ourInstance.isPrincipalBeingMonitored(principal)) {
-                ResourcePrincipal p = ourInstance.search(principal);
-                ourInstance.innerIncreaseFileRead(n, p);
+//                ResourcePrincipal p = ourInstance.search(principal);
+                ourInstance.innerIncreaseFileRead(n, principal);
             }
         }
         else ourInstance.increaseTotalRead(n);
@@ -276,14 +277,14 @@ public class ResourceCounter {
     public static void reportFileDataWrite(int n) {
         if (isMonitoring()) {
             ResourcePrincipal principal = get();
-            principal = ourInstance.search(principal);
+//            principal = ourInstance.search(principal);
             ourInstance.innerIncreaseFileWrite(n, principal);
         }
         else if (isMonitoringASinglePrincipal()) {
             ResourcePrincipal principal = get();
             if (ourInstance.isPrincipalBeingMonitored(principal)) {
-                ResourcePrincipal p = ourInstance.search(principal);
-                ourInstance.innerIncreaseFileWrite(n, p);
+//                ResourcePrincipal p = ourInstance.search(principal);
+                ourInstance.innerIncreaseFileWrite(n, principal);
             }
         }
         else ourInstance.increaseTotalWritten(n);

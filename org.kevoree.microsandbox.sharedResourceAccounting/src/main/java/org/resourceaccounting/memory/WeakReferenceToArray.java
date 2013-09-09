@@ -9,7 +9,7 @@ import java.lang.ref.WeakReference;
  * Time: 2:20 PM
  * To change this template use File | Settings | File Templates.
  */
-public class WeakReferenceToArray extends WeakReference<Object> {
+public final class WeakReferenceToArray extends WeakReference<Object> {
 
     private final int size;
 

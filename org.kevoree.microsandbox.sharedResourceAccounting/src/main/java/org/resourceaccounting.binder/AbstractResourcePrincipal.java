@@ -4,6 +4,10 @@ import org.resourceaccounting.contract.ComponentResourceContract;
 import org.resourceaccounting.contract.ResourceContract;
 import org.resourceaccounting.ResourcePrincipal;
 
+import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
 /**
  * Created with IntelliJ IDEA.
  * User: inti
@@ -23,20 +27,24 @@ public abstract class AbstractResourcePrincipal<T> implements ResourcePrincipal 
 
     private static int lastID = 3;
     protected int id;
-    protected long nbObjects;
-    protected long nbInstructions;
+    protected AtomicLong nbObjects = new AtomicLong(0);
+    protected AtomicLong nbInstructions = new AtomicLong(0);
     protected int nbBytesSent;
     protected int nbBytesReceived;
     protected long nbBytesWrite;
     protected long nbBytesRead;
 
-    protected long last_nbInstructions;
+//    protected long last_nbInstructions;
     protected int last_nbBytesSent;
     protected int last_nbBytesReceived;
     protected long last_nbBytesWrite;
     protected long last_nbBytesRead;
 
     protected transient ResourceContract contract;
+
+
+//    private transient Lock lockInstructions = new ReentrantLock();
+//    private transient Lock lockMemory = new ReentrantLock();
 
     public ResourceContract getContract() {
         return contract;
@@ -57,11 +65,17 @@ public abstract class AbstractResourcePrincipal<T> implements ResourcePrincipal 
     }
 
     public void increaseExecutedInstructions(int n) {
-        nbInstructions += n;
+        nbInstructions.addAndGet(n);
+//        lockInstructions.lock();
+//            nbInstructions += n;
+//        lockInstructions.unlock();
     }
 
     public void increaseOwnedObjects(int n) {
-        nbObjects += n;
+        nbObjects.addAndGet(n);
+//        lockMemory.lock();
+//            nbObjects += n;
+//        lockMemory.unlock();
     }
 
     public void increaseBytesSent(int n) {
@@ -81,13 +95,17 @@ public abstract class AbstractResourcePrincipal<T> implements ResourcePrincipal 
     }
 
     public final long getExecutedInstructions() {
-        long tmp = nbInstructions - last_nbInstructions;
-        last_nbInstructions = nbInstructions;
-        return tmp;
+        return nbInstructions.getAndSet(0);
+//        lockInstructions.lock();
+//            long tmp1 =
+//            long tmp = nbInstructions - last_nbInstructions;
+//            last_nbInstructions = nbInstructions;
+//        lockInstructions.unlock();
+//        return tmp;
     }
 
     public final long getAllocatedObjects() {
-        return nbObjects;
+        return nbObjects.get();
     }
 
     public long getBytesSent() {

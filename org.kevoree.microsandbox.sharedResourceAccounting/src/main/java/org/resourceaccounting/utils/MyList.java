@@ -17,7 +17,7 @@ public class MyList<E> {
         count = 0;
     }
 
-    public void add(E element) {
+    public synchronized void add(E element) {
         if (count == elements.length) {
             Object[] tmp = new Object[elements.length << 1];
             System.arraycopy(elements, 0, tmp, 0, count);
@@ -25,23 +25,23 @@ public class MyList<E> {
         }
         elements[count++] = element;
     }
+//
+//    public int size() {
+//        return count;
+//    }
+//
+//    private E get(int i) {
+//        return (E)elements[i];
+//    }
 
-    public int size() {
-        return count;
-    }
-
-    public E get(int i) {
-        return (E)elements[i];
-    }
-
-    public int indexOf(E element) {
+    private int indexOf(E element) {
         for (int i = 0 ; i < count ; i++)
             if (elements[i].equals(element))
                 return i;
         return -1;
     }
 
-    public void remove(E element) {
+    public synchronized void remove(E element) {
         int index = indexOf(element);
         if (index != -1) {
             for (int i = index ; i < count - 1 ; i++)
@@ -50,22 +50,22 @@ public class MyList<E> {
         }
     }
 
-    public void removeIndex(int index) {
-        if (index != -1) {
-            for (int i = index ; i < count - 1 ; i++)
-                elements[i] = elements[i+1];
-            count --;
-        }
-    }
-
-    public void push(E element) {
-        add(element);
-    }
-
-    public E peek() throws RuntimeException {
-        if (count > 0) {
-            return (E)elements[count - 1];
-        }
-        throw new RuntimeException("Error in MyList.peek");
-    }
+//    public synchronized void removeIndex(int index) {
+//        if (index != -1) {
+//            for (int i = index ; i < count - 1 ; i++)
+//                elements[i] = elements[i+1];
+//            count --;
+//        }
+//    }
+//
+//    public synchronized void push(E element) {
+//        add(element);
+//    }
+//
+//    public synchronized E peek() throws RuntimeException {
+//        if (count > 0) {
+//            return (E)elements[count - 1];
+//        }
+//        throw new RuntimeException("Error in MyList.peek");
+//    }
 }

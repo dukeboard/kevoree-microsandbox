@@ -5,7 +5,9 @@ import org.resourceaccounting.contract.ResourceContract;
 import org.resourceaccounting.contract.ResourceContractProvider;
 import org.resourceaccounting.ResourcePrincipal;
 import org.resourceaccounting.invocations.InvocationAmountTable;
-import org.resourceaccounting.utils.Set;
+
+import java.util.HashSet;
+import java.util.Set;
 
 
 /**
@@ -18,7 +20,6 @@ import org.resourceaccounting.utils.Set;
  */
 class ResourceCounterImpl {
 
-    private int countOfPrincipals = 0;
     private long totalReceived = 0;
     private long totalSent = 0;
     private long totalWritten = 0;
@@ -27,12 +28,12 @@ class ResourceCounterImpl {
     private long lastTotalSent;
     private long lastTotalRead;
     private long lastTotalWritten;
-
     public InvocationAmountTable senders = new InvocationAmountTable();
+
     public InvocationAmountTable receivers = new InvocationAmountTable();
 
     // is the principal being monitored when the system is monitoring a single component
-    private Set<ResourcePrincipal> monitoredPrincipals = new Set<ResourcePrincipal>();
+    private Set<ResourcePrincipal> monitoredPrincipals = new HashSet<ResourcePrincipal>();
 
     long getTotalReceived() {
         long tmp = totalReceived - lastTotalReceived;
@@ -59,7 +60,8 @@ class ResourceCounterImpl {
     }
 
 
-    private ResourcePrincipal[] principals = new ResourcePrincipal[1000];
+//    private int countOfPrincipals = 0;
+//    private ResourcePrincipal[] principals = new ResourcePrincipal[1000];
     private ResourcePrincipal[] cachePrincipals = new ResourcePrincipal[0];
 
     private ResourceContractProvider resourceContractProvider;
@@ -74,36 +76,32 @@ class ResourceCounterImpl {
     }
 
     ResourcePrincipal[] innerGetApplications() {
-        synchronized (this) {
 
-            if (cachePrincipals.length != countOfPrincipals)
-                cachePrincipals = new ResourcePrincipal[countOfPrincipals];
-
-            System.arraycopy(principals, 0 , cachePrincipals, 0, countOfPrincipals);
-            return cachePrincipals;
-        }
+        return ThreadGroupResourcePrincipal.getAll();
+//            if (cachePrincipals.length != countOfPrincipals)
+//                cachePrincipals = new ResourcePrincipal[countOfPrincipals];
+//
+//            System.arraycopy(principals, 0 , cachePrincipals, 0, countOfPrincipals);
+//            cachePrincipals = ThreadGroupResourcePrincipal.getAll();
+//            return cachePrincipals;
     }
 
     final void innerIncreaseInstructions(int n, ResourcePrincipal principal) {
-        synchronized (principal) {
-            principal.increaseExecutedInstructions(n);
-        }
+//        synchronized (principal) {
+        principal.increaseExecutedInstructions(n);
+//        }
     }
 
     public void innerIncreaseObjects(Object object, ResourcePrincipal principal) {
-        synchronized (principal) {
-            int n = (int) objectSizeProvider.sizeOf(object);
-            principal.increaseOwnedObjects(n);
-        }
+        int n = (int) objectSizeProvider.sizeOf(object);
+        principal.increaseOwnedObjects(n);
     }
 
     public void innerDecreaseObjects(Object object, ResourcePrincipal principal) {
         if (principal == null)
             return;
-        synchronized (principal) {
-            int n = (int) objectSizeProvider.sizeOf(object);
-            principal.increaseOwnedObjects(-n);
-        }
+        int n = (int) objectSizeProvider.sizeOf(object);
+        principal.increaseOwnedObjects(-n);
     }
 
     public void innerArrayAllocated(Object obj, ResourcePrincipal principal) {
@@ -142,15 +140,11 @@ class ResourceCounterImpl {
     }
 
     final long innerGetNbObjects(ResourcePrincipal principal) {
-        synchronized (principal) {
-            return principal.getAllocatedObjects();
-        }
+        return principal.getAllocatedObjects();
     }
 
     final long innerGetNbInstructions(ResourcePrincipal principal) {
-        synchronized (principal) {
-            return principal.getExecutedInstructions();
-        }
+        return principal.getExecutedInstructions();
     }
 
     long innerGetNbBytesSent(ResourcePrincipal principal) {
@@ -182,53 +176,44 @@ class ResourceCounterImpl {
      * ResourcePrincipals are never removed from the set; hence, any new ResourcePrincipal must be
      * different to all previous
      *
-     * @param principal
+     * @param
      * @return
      */
-    ResourcePrincipal search(ResourcePrincipal principal) {
-        synchronized (this) {
-            ResourcePrincipal real = principal;
-            if (principal == null) return null;
-
-            for (int i = 0 ; i < countOfPrincipals; i++) {
-                if (principals[i].equals(real))
-                    return principals[i];
-            }
-            if (countOfPrincipals == principals.length) {
-                ResourcePrincipal[] pTmp = new ResourcePrincipal[countOfPrincipals *2];
-                System.arraycopy(principals, 0 , pTmp, 0, countOfPrincipals);
-                principals = pTmp;
-            }
-            principals[countOfPrincipals++] = real;
-
-            return principals[countOfPrincipals -1];
-        }
-    }
+//    ResourcePrincipal search(ResourcePrincipal principal) {
+//        synchronized (this) {
+//            ResourcePrincipal real = principal;
+//            if (principal == null) return null;
+//
+//            for (int i = 0 ; i < countOfPrincipals; i++) {
+//                if (principals[i].equals(real))
+//                    return principals[i];
+//            }
+//            if (countOfPrincipals == principals.length) {
+//                ResourcePrincipal[] pTmp = new ResourcePrincipal[countOfPrincipals *2];
+//                System.arraycopy(principals, 0 , pTmp, 0, countOfPrincipals);
+//                principals = pTmp;
+//            }
+//            principals[countOfPrincipals++] = real;
+//
+//            return principals[countOfPrincipals -1];
+//        }
+//    }
 
     public ResourcePrincipal search(String appId) {
-        synchronized (this) {
-            for (int i = 0 ; i < countOfPrincipals; i++)
-                if (principals[i].toString().equals(appId))
-                    return  principals[i];
-            return null;
-        }
+        return ThreadGroupResourcePrincipal.get(appId);
+//            for (int i = 0 ; i < countOfPrincipals; i++)
+//                if (principals[i].toString().equals(appId))
+//                    return  principals[i];
+//            return null;
     }
 
     public ResourcePrincipal search(int id) {
-        synchronized (this) {
-            for (int i = 0 ; i < countOfPrincipals; i++) {
-                if (principals[i].getId() == id)
-                    return principals[i];
-            }
-        }
-        return null;
+        return ThreadGroupResourcePrincipal.get(id);
     }
 
-    ResourcePrincipal get(Thread th) {
-        synchronized (this) {
-            // not inside one invocation
-            return ThreadGroupResourcePrincipal.get(th);
-        }
+    ResourcePrincipal get() {
+        // not inside one invocation
+        return ThreadGroupResourcePrincipal.get();
     }
 
     void setResourceContractProvider(ResourceContractProvider resourceContractProvider) {
@@ -264,8 +249,9 @@ class ResourceCounterImpl {
 
     public void turnOnMonitoringSinglePrincipal(String appId) {
         if (appId == null) {
-            for (int i = 0 ; i < monitoredPrincipals.size() ; i++)
-                ((ThreadGroupResourcePrincipal)monitoredPrincipals.getElement(i)).markAsMonitored(false);
+            for (ResourcePrincipal rp : monitoredPrincipals) {
+                ((ThreadGroupResourcePrincipal)rp).markAsMonitored(false);
+            }
             monitoredPrincipals.clear();
             return;
         }

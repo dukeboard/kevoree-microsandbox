@@ -1,9 +1,10 @@
 package org.resourceaccounting.memory;
 
-import org.resourceaccounting.utils.MyList;
 
 import java.lang.ref.Reference;
 import java.lang.ref.ReferenceQueue;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created with IntelliJ IDEA.
@@ -15,7 +16,7 @@ import java.lang.ref.ReferenceQueue;
 public class PrincipalReferenceQueue extends ReferenceQueue<Object>
         implements Runnable{
 
-    MyList<WeakReferenceToArray> rf;
+    Set<WeakReferenceToArray> rf;
 
     private ReferenceLostListener listener;
 
@@ -36,7 +37,7 @@ public class PrincipalReferenceQueue extends ReferenceQueue<Object>
 
     public PrincipalReferenceQueue(ReferenceLostListener l) {
         listener = l;
-        rf = new MyList<WeakReferenceToArray>();
+        rf = new HashSet<WeakReferenceToArray>();
         Thread th = new Thread(this);
         th.setDaemon(false);
         th.start();
