@@ -25,7 +25,7 @@ addComponent MonitoringComponent0@node0 : MonitoringComponent {
 
 addComponent reasoner0@node0 : ResourceAwareReasoner { }
 
-addChannel defMSGT_reasoning : defMSGT {}
+addChannel defMSGT_reasoning : defMSG {}
 bind reasoner0.eventHandler@node0 => defMSGT_reasoning
 bind MonitoringComponent0.reasoner@node0 => defMSGT_reasoning
 
