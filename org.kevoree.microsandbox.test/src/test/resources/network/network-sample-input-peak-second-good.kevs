@@ -13,7 +13,8 @@ addComponent MonitoringComponent0@node0 : MonitoringComponent {
     memory_threshold='65',
     cpu_threshold='10',
     net_in_threshold='10',
-    net_out_threshold='80'
+    net_out_threshold='80',
+    componentRankFunction = 'model_history'
 }
 
 addComponent networkComponent@node0 : NetworkConsumerInputPeakSecond {url = "http://localhost:8080/", sleepTime = "20", network_input_peak_seconds = '10000', violate="false"}
