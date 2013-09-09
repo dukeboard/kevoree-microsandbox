@@ -25,6 +25,8 @@ import org.kevoree.framework.AbstractChannelFragment
 import org.kevoree.log.Log
 import org.kevoree.DictionaryValue
 import org.kevoree.impl.DictionaryAttributeImpl
+import org.resourceaccounting.binder.MonitoringStatusList
+import org.resourceaccounting.contract.ResourceContract
 
 /**
  * Created with IntelliJ IDEA.
@@ -47,6 +49,7 @@ open class MonitoredAddInstance(val c: Instance,
 
     override fun execute(): Boolean {
 
+        var contract : ResourceContract? = null
         if (c is ComponentInstance) {
             val cc : ComponentInstance = c as ComponentInstance
             val r = ControlAdmissionSystem.registerComponent(cc)
@@ -56,6 +59,7 @@ open class MonitoredAddInstance(val c: Instance,
             }
 
             if (r.contract != null) {
+                contract = r.contract
                 KevoreeDeployManager.putRef(c.javaClass.getName()+"_contract",c.getName(),  r.contract!!)
             }
 
@@ -64,6 +68,23 @@ open class MonitoredAddInstance(val c: Instance,
         val model = c.getTypeDefinition()!!.eContainer() as ContainerRoot
         val node = model.findNodesByID(nodeName)
         deployUnit = typeDefinitionAspect.foundRelevantDeployUnit(c.getTypeDefinition()!!, node!!)!!
+        if (c is ComponentInstance) {
+            val loader : ClassLoader? = bs.getKevoreeClassLoaderHandler().getKevoreeClassLoader(deployUnit)
+            if (loader != null) {
+                println("Classloader for " + c.getName() + " is " + loader.javaClass.getCanonicalName() +
+                    "and has " + (loader as KevoreeJarClassLoaderCoverageInjection).loadedClasses.size +
+                    " loaded classes and hash " + loader.hashCode())
+
+                if (contract!=null) {
+                    MonitoringStatusList.instance()?.includeApp("kev/"+c.path(), loader.hashCode(),
+                            contract?.getMemory()!=0,
+                            contract?.getCPU()!=0)
+                    MonitoringStatusList.instance()?.setMonitored("kev/"+c.path(), true)
+                }
+
+            }
+        }
+
         val nodeType = node!!.getTypeDefinition()
         nodeTypeName = typeDefinitionAspect.foundRelevantHostNodeType(nodeType as NodeType,
                 c.getTypeDefinition()!!)!!.getName()

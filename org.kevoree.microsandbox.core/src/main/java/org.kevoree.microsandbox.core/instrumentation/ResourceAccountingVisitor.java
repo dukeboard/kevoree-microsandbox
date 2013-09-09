@@ -16,18 +16,22 @@ import org.kevoree.microsandbox.core.instrumentation.memory.MemoryAllocationMeth
 public class ResourceAccountingVisitor extends ClassVisitor {
 
 
+    private final boolean instructions;
+    private final boolean memory;
     boolean hasFinalize = false;
     private String className;
     private boolean shouldAddField;
     private boolean isEnum = false;
 
-    public ResourceAccountingVisitor(ClassVisitor classVisitor) {
+    public ResourceAccountingVisitor(ClassVisitor classVisitor, boolean memory, boolean instructions) {
         super(Opcodes.ASM4, classVisitor);
+        this.memory = memory;
+        this.instructions = instructions;
     }
 
     @Override
     public MethodVisitor visitMethod(int flags, String methodName, String signature, String s3, String[] strings) {
-        if (shouldAddField && methodName.equals("finalize") && signature.equals("()V")) {
+        if (memory && shouldAddField && methodName.equals("finalize") && signature.equals("()V")) {
             hasFinalize = true;
             return new AdaptingExistentFinalizeInRT(className,
                     super.visitMethod(flags,
@@ -39,16 +43,18 @@ public class ResourceAccountingVisitor extends ClassVisitor {
         return getMethodInstrumenting(flags, methodName, signature, s3, strings);
     }
 
-    private AbstractMethodInstrumentation getMethodInstrumenting(int flags, String methodName,
+    private MethodVisitor getMethodInstrumenting(int flags, String methodName,
                                                                  String signature,
                                                                  String s3,
                                                                  String[] strings) {
 
         MethodVisitor mv = super.visitMethod(flags, methodName, signature, s3, strings);
-        if (!isEnum) {
+        if (memory && !isEnum) {
             mv = new MemoryAllocationMethodInstrumentation(mv,className,true);
         }
-        return new InstructionAccountingMethodInstrumentation(mv, className);
+        return instructions?
+                new InstructionAccountingMethodInstrumentation(mv, className) :
+                mv;
     }
 
     @Override
@@ -68,7 +74,7 @@ public class ResourceAccountingVisitor extends ClassVisitor {
     @Override
     public void visitEnd() {
         // add a finalize method if the class does not have one
-        if (shouldAddField && !hasFinalize) {
+        if (memory && shouldAddField && !hasFinalize) {
             InstructionAdapter mv = new InstructionAdapter(super.visitMethod(Opcodes.ACC_PUBLIC,
                     "finalize", "()V", null, new String[]{"java/lang/Throwable"}));
             mv.visitCode();
@@ -81,6 +87,7 @@ public class ResourceAccountingVisitor extends ClassVisitor {
             mv.visitMaxs(3, 3);
             mv.visitEnd();
         }
+        // add the field always
         if (shouldAddField) {
             // add a field to store the owner resource principal, used in finalize
             FieldVisitor fv = cv.visitField(Opcodes.ACC_PUBLIC,

@@ -127,7 +127,7 @@ public class Main {
 
             createMyIntegerClass(jar, outputStream, cmd);
             modifySocketClasses(jar, outputStream, cmd);
-            modifyFileClasses(jar, outputStream, cmd);
+            //modifyFileClasses(jar, outputStream, cmd);
 
 
 //            for (int i = 0 ; i < ExtraInstrumentationRules.extras.size(); i++)

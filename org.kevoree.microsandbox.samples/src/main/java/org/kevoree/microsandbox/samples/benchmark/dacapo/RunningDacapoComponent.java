@@ -2,6 +2,9 @@ package org.kevoree.microsandbox.samples.benchmark.dacapo;
 
 import org.kevoree.annotation.*;
 import org.kevoree.framework.AbstractComponentType;
+import org.kevoree.framework.kaspects.TypeDefinitionAspect;
+import org.kevoree.microsandbox.api.contract.CPUContracted;
+import org.kevoree.microsandbox.api.contract.MemoryContracted;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -24,63 +27,18 @@ import java.util.jar.JarFile;
  */
 @DictionaryType({
         @DictionaryAttribute(name = "dacapo_path",dataType = String.class),
-        @DictionaryAttribute(name = "dacapo_test", dataType = String.class)
+        @DictionaryAttribute(name = "dacapo_test", dataType = String.class),
+        @DictionaryAttribute(name = "dacapo_n", dataType = Integer.class, defaultValue = "1")
 })
 @ComponentType
-public class RunningDacapoComponent extends AbstractComponentType {
+public class RunningDacapoComponent extends AbstractComponentType
+                    implements MemoryContracted, CPUContracted {
 
 
     private String path;
     private String test;
+    private Integer n;
     private ClassLoader loader;
-
-    class DacapoClassLoader extends ClassLoader {
-
-        private Hashtable classes = new Hashtable();
-
-        public DacapoClassLoader() {
-            super(DacapoClassLoader.class.getClassLoader()); //calls the parent class loader's constructor
-        }
-
-        @Override
-        public Class<?> loadClass(String name) throws ClassNotFoundException {
-                return findClass(name);
-        }
-
-        public Class findClass(String className) {
-            byte classByte[];
-            Class result = null;
-
-            result = (Class) classes.get(className); //checks in cached classes
-            if (result != null) {
-                return result;
-            }
-
-            try {
-                return findSystemClass(className);
-            } catch (Exception e) {
-            }
-
-            try {
-                JarFile jar = new JarFile(path);
-                JarEntry entry = jar.getJarEntry(className + ".class");
-                InputStream is = jar.getInputStream(entry);
-                ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
-                int nextValue = is.read();
-                while (-1 != nextValue) {
-                    byteStream.write(nextValue);
-                    nextValue = is.read();
-                }
-
-                classByte = byteStream.toByteArray();
-                result = defineClass(className, classByte, 0, classByte.length, null);
-                classes.put(className, result);
-                return result;
-            } catch (Exception e) {
-                return null;
-            }
-        }
-    }
 
     class DacapoExecuter implements Runnable {
 
@@ -90,7 +48,10 @@ public class RunningDacapoComponent extends AbstractComponentType {
                 Class<?> cl = loader.loadClass("Harness");
                 Method method = cl.getMethod("main", new Class[]{String[].class});
 
-                method.invoke(null,new Object[]{new String[]{"-noDigestOutput",
+                method.invoke(null,new Object[]{new String[]{
+                        "-noValidation",
+                        "-n",
+                        n.toString(),
                         test}});
 
             } catch (ClassNotFoundException e) {
@@ -111,8 +72,9 @@ public class RunningDacapoComponent extends AbstractComponentType {
     public void start() {
         path = getDictionary().get("dacapo_path").toString();
         test = getDictionary().get("dacapo_test").toString();
+        n = Integer.parseInt(getDictionary().get("dacapo_n").toString());
         try {
-            loader = new URLClassLoader(new URL[]{new File(path).toURI().toURL()});
+            loader = new URLClassLoader(new URL[]{new File(path).toURI().toURL()}, this.getClass().getClassLoader());
         } catch (MalformedURLException e) {
             e.printStackTrace();
         }

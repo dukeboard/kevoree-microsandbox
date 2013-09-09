@@ -26,7 +26,7 @@ public class Testing {
             byte[] content = new byte[(int)f.length()];
             file.read(content);
             file.close();
-            CoverageRuntime.instance$.instrument(cmd.instrument(content, "KevsParser"));
+            CoverageRuntime.instance$.instrument(cmd.instrument(content, "KevsParser",true,true));
         } catch (IOException e) {
             assert(false);
         }

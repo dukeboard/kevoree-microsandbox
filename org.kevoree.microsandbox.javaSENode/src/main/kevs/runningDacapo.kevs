@@ -21,7 +21,7 @@ addNode node0:MonitoredNode {
 
 addComponent MonitoringComponent0@node0 : MonitoringComponent {
     memory_threshold='85',
-    cpu_threshold='90',
+    cpu_threshold='99',
     net_in_threshold='90',
     net_out_threshold='90',
     adaptiveMonitoring='true'
@@ -39,7 +39,10 @@ updateDictionary defMSGT_reasoning
 
 addComponent dacapoExecuter0@node0 : RunningDacapoComponent {
     dacapo_path = '/home/inti/Downloads/dacapo-2006-10-MR2.jar',
-    dacapo_test = 'xalan'
+    dacapo_test = 'jython',
+    dacapo_n ='4',
+    cpu_wall_time = '7000000000',
+    memory_max_size = '25000000'
 }
 
 addGroup sync:BasicGroup

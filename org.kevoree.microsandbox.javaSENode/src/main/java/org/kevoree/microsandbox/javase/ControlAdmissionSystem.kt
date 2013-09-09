@@ -44,6 +44,7 @@ public object ControlAdmissionSystem {
      */
     fun init(platformDescription : PlatformDescription) : Unit {
         description = platformDescription
+        // TODO : no parece estar bien
         freeMemory = Math.min(Runtime.getRuntime().freeMemory(), description?.availability_memory as Long)
         freeNetworkIn = description?.availability_received as Long
         freeNetworkOut = description?.availability_sent as Long
@@ -102,7 +103,8 @@ public object ControlAdmissionSystem {
                                                                     else*/
                                                                         KevoreeComponentResourceContract(instr, mem, netOut, netIn)
 
-                MonitoringReporterFactory.reporter()?.trigger(ModelComponentAcceptedEvent(component.path()))/*controlAdmission_accepted(component.path() + " " +
+                MonitoringReporterFactory.reporter()?.trigger(ModelComponentAcceptedEvent(component.path()))
+                /*controlAdmission_accepted(component.path() + " " +
                                 component.getMetaData() + " " + component.getTypeDefinition()?.getName() )*/
                 return ComponentRegistration(true, contract)
             } else if (freeMemory < mem) {

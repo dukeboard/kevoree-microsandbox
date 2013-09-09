@@ -25,9 +25,12 @@ open class KevoreeJarClassLoaderCoverageInjection() : KevoreeJarClassLoader() {
 
     private var cmd : InstrumenterCommand = InstrumenterCommand()
 
+    private val id : Int;
+
 
     KevoreeJarClassLoaderCoverageInjection() {
         CoverageRuntime.init()
+        id = IdGenerator.instance()?.next()!!
     }
 
     override fun internal_defineClass(className: String, bytes: ByteArray): Class<out Any?>? {
@@ -49,4 +52,8 @@ open class KevoreeJarClassLoaderCoverageInjection() : KevoreeJarClassLoader() {
         return clazz
     }
 
+
+    public override fun hashCode(): Int {
+        return id;
+    }
 }
