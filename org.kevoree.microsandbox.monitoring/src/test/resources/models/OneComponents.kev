@@ -1,0 +1,453 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<org.kevoree:ContainerRoot xmlns:org.kevoree="http://kevoree/1.0" xmlns:xsi="http://wwww.w3.org/2001/XMLSchema-instance" xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" generated_KMF_ID="171619591378719083852">
+<nodes xsi:type="org.kevoree:ContainerNode" name="node0" metaData="x=50,y=50" started="true" typeDefinition="//@typeDefinitions.12">
+<dictionary xsi:type="org.kevoree:Dictionary" generated_KMF_ID="46776721378719117998">
+<values xsi:type="org.kevoree:DictionaryValue" value="150000000" generated_KMF_ID="331690901378719117998" attribute="//@typeDefinitions.12/@dictionaryType/@attributes.6">
+</values>
+<values xsi:type="org.kevoree:DictionaryValue" value="200000000" generated_KMF_ID="331262641378719117998" attribute="//@typeDefinitions.12/@dictionaryType/@attributes.5">
+</values>
+</dictionary>
+<components xsi:type="org.kevoree:ComponentInstance" name="cpu" started="true" typeDefinition="//@typeDefinitions.3">
+<dictionary xsi:type="org.kevoree:Dictionary" generated_KMF_ID="109630181378719117998">
+<values xsi:type="org.kevoree:DictionaryValue" value="4000000" generated_KMF_ID="319685221378719117998" attribute="//@typeDefinitions.3/@dictionaryType/@attributes.6">
+</values>
+<values xsi:type="org.kevoree:DictionaryValue" value="all=8;primalityTester=8" generated_KMF_ID="80695791378719117998" attribute="//@typeDefinitions.3/@dictionaryType/@attributes.4">
+</values>
+</dictionary>
+<provided xsi:type="org.kevoree:Port" generated_KMF_ID="125363981378719117998" portTypeRef="//@typeDefinitions.3/@provided.0">
+</provided>
+</components>
+</nodes>
+<typeDefinitions xsi:type="org.kevoree:NodeType" name="StatefulJavaSENode" factoryBean="org.kevoree.library.defaultNodeTypes.StatefulJavaSENodeFactory" bean="org.kevoree.library.defaultNodeTypes.StatefulJavaSENode" abstract="false" deployUnits="//@deployUnits.22" superTypes="//@typeDefinitions.14" managedPrimitiveTypes="//@adaptationPrimitiveTypes.0 //@adaptationPrimitiveTypes.2 //@adaptationPrimitiveTypes.1 //@adaptationPrimitiveTypes.3 //@adaptationPrimitiveTypes.5 //@adaptationPrimitiveTypes.4 //@adaptationPrimitiveTypes.6 //@adaptationPrimitiveTypes.7 //@adaptationPrimitiveTypes.8 //@adaptationPrimitiveTypes.9 //@adaptationPrimitiveTypes.10 //@adaptationPrimitiveTypes.11 //@adaptationPrimitiveTypes.12 //@adaptationPrimitiveTypes.13 //@adaptationPrimitiveTypes.14 //@adaptationPrimitiveTypes.15 //@adaptationPrimitiveTypes.16 //@adaptationPrimitiveTypes.17 //@adaptationPrimitiveTypes.18 //@adaptationPrimitiveTypes.19 //@adaptationPrimitiveTypes.20">
+<dictionaryType xsi:type="org.kevoree:DictionaryType" generated_KMF_ID="83476001378457010411">
+<attributes xsi:type="org.kevoree:DictionaryAttribute" name="coreLogLevel" optional="true" state="false" datatype="enum=INFO,WARN,DEBUG,ERROR,FINE" fragmentDependant="false">
+</attributes>
+<attributes xsi:type="org.kevoree:DictionaryAttribute" name="logLevel" optional="true" state="false" datatype="enum=INFO,WARN,DEBUG,ERROR,FINE" fragmentDependant="false">
+</attributes>
+<attributes xsi:type="org.kevoree:DictionaryAttribute" name="storageLocation" optional="true" state="false" fragmentDependant="false">
+</attributes>
+<defaultValues xsi:type="org.kevoree:DictionaryValue" value="WARN" generated_KMF_ID="159689011378457010419" attribute="//@typeDefinitions.0/@dictionaryType/@attributes.0">
+</defaultValues>
+<defaultValues xsi:type="org.kevoree:DictionaryValue" value="INFO" generated_KMF_ID="212994621378457010417" attribute="//@typeDefinitions.0/@dictionaryType/@attributes.1">
+</defaultValues>
+<defaultValues xsi:type="org.kevoree:DictionaryValue" generated_KMF_ID="268875611378457010452" attribute="//@typeDefinitions.0/@dictionaryType/@attributes.2">
+</defaultValues>
+</dictionaryType>
+<managedPrimitiveTypeRefs xsi:type="org.kevoree:AdaptationPrimitiveTypeRef" maxTime="120000" generated_KMF_ID="129314651378457010448" ref="//@adaptationPrimitiveTypes.17">
+</managedPrimitiveTypeRefs>
+<managedPrimitiveTypeRefs xsi:type="org.kevoree:AdaptationPrimitiveTypeRef" maxTime="120000" generated_KMF_ID="16325391378457010450" ref="//@adaptationPrimitiveTypes.13">
+</managedPrimitiveTypeRefs>
+</typeDefinitions>
+<typeDefinitions xsi:type="org.kevoree:ComponentType" name="IOWriterGood" factoryBean="org.kevoree.microsandbox.samples.io.IOWriterGoodFactory" bean="org.kevoree.microsandbox.samples.io.IOWriterGood" abstract="false" deployUnits="//@deployUnits.29">
+</typeDefinitions>
+<typeDefinitions xsi:type="org.kevoree:ComponentType" name="FakeVideoAnalyzer" factoryBean="org.kevoree.microsandbox.samples.FakeVideoAnalyzerFactory" bean="org.kevoree.microsandbox.samples.FakeVideoAnalyzer" abstract="false" deployUnits="//@deployUnits.29">
+</typeDefinitions>
+<typeDefinitions xsi:type="org.kevoree:ComponentType" name="CPUConsumerByPrimalityTesting" factoryBean="org.kevoree.microsandbox.samples.interaction.CPUConsumerByPrimalityTestingFactory" bean="org.kevoree.microsandbox.samples.interaction.CPUConsumerByPrimalityTesting" abstract="false" deployUnits="//@deployUnits.29">
+<dictionaryType xsi:type="org.kevoree:DictionaryType" generated_KMF_ID="189271731378713625556">
+<attributes xsi:type="org.kevoree:DictionaryAttribute" name="throughput_msg_per_minute" optional="true" state="false" fragmentDependant="false">
+</attributes>
+<attributes xsi:type="org.kevoree:DictionaryAttribute" name="throughput_msg_per_hour" optional="true" state="false" fragmentDependant="false">
+</attributes>
+<attributes xsi:type="org.kevoree:DictionaryAttribute" name="cpu_mean_percent_per_hour" optional="true" state="false" datatype="raw=java.lang.Long" fragmentDependant="false">
+</attributes>
+<attributes xsi:type="org.kevoree:DictionaryAttribute" name="cpu_peak_percent_per_second" optional="true" state="false" datatype="raw=java.lang.Long" fragmentDependant="false">
+</attributes>
+<attributes xsi:type="org.kevoree:DictionaryAttribute" name="throughput_msg_per_second" optional="true" state="false" fragmentDependant="false">
+</attributes>
+<attributes xsi:type="org.kevoree:DictionaryAttribute" name="cpu_mean_percent_per_minute" optional="true" state="false" datatype="raw=java.lang.Long" fragmentDependant="false">
+</attributes>
+<attributes xsi:type="org.kevoree:DictionaryAttribute" name="cpu_wall_time" optional="true" state="false" datatype="raw=java.lang.Double" fragmentDependant="false">
+</attributes>
+</dictionaryType>
+<provided xsi:type="org.kevoree:PortTypeRef" name="primalityTester" optional="false" noDependency="false" ref="//@typeDefinitions.16">
+<mappings xsi:type="org.kevoree:PortTypeMapping" beanMethodName="tester" serviceMethodName="process" generated_KMF_ID="268680081378713625558">
+</mappings>
+<mappings xsi:type="org.kevoree:PortTypeMapping" beanMethodName="tester" serviceMethodName="process" generated_KMF_ID="129845501378713625558">
+</mappings>
+</provided>
+</typeDefinitions>
+<typeDefinitions xsi:type="org.kevoree:ComponentType" name="MemoryConsumer" factoryBean="org.kevoree.microsandbox.samples.MemoryConsumerFactory" bean="org.kevoree.microsandbox.samples.MemoryConsumer" abstract="false" deployUnits="//@deployUnits.29">
+<dictionaryType xsi:type="org.kevoree:DictionaryType" generated_KMF_ID="100573391378713625480">
+<attributes xsi:type="org.kevoree:DictionaryAttribute" name="amount" optional="false" state="false" fragmentDependant="false">
+</attributes>
+<attributes xsi:type="org.kevoree:DictionaryAttribute" name="memory_max_size" optional="true" state="false" datatype="raw=java.lang.Long" fragmentDependant="false">
+</attributes>
+<attributes xsi:type="org.kevoree:DictionaryAttribute" name="memory_peak_allocation_per_minute" optional="true" state="false" datatype="raw=java.lang.Long" fragmentDependant="false">
+</attributes>
+<attributes xsi:type="org.kevoree:DictionaryAttribute" name="cpu_mean_percent_per_hour" optional="true" state="false" datatype="raw=java.lang.Long" fragmentDependant="false">
+</attributes>
+<attributes xsi:type="org.kevoree:DictionaryAttribute" name="cpu_peak_percent_per_second" optional="true" state="false" datatype="raw=java.lang.Long" fragmentDependant="false">
+</attributes>
+<attributes xsi:type="org.kevoree:DictionaryAttribute" name="cpu_mean_percent_per_minute" optional="true" state="false" datatype="raw=java.lang.Long" fragmentDependant="false">
+</attributes>
+<attributes xsi:type="org.kevoree:DictionaryAttribute" name="cpu_wall_time" optional="true" state="false" datatype="raw=java.lang.Double" fragmentDependant="false">
+</attributes>
+<attributes xsi:type="org.kevoree:DictionaryAttribute" name="memory_peak_allocation_per_second" optional="true" state="false" datatype="raw=java.lang.Long" fragmentDependant="false">
+</attributes>
+<attributes xsi:type="org.kevoree:DictionaryAttribute" name="memory_peak_allocation_per_hour" optional="true" state="false" datatype="raw=java.lang.Long" fragmentDependant="false">
+</attributes>
+<defaultValues xsi:type="org.kevoree:DictionaryValue" value="102400" generated_KMF_ID="153351831378713625481" attribute="//@typeDefinitions.4/@dictionaryType/@attributes.0">
+</defaultValues>
+</dictionaryType>
+<provided xsi:type="org.kevoree:PortTypeRef" name="input" optional="false" noDependency="false" ref="//@typeDefinitions.16">
+<mappings xsi:type="org.kevoree:PortTypeMapping" beanMethodName="handlerInputPort" serviceMethodName="process" generated_KMF_ID="283135941378713625499">
+</mappings>
+<mappings xsi:type="org.kevoree:PortTypeMapping" beanMethodName="handlerInputPort" serviceMethodName="process" generated_KMF_ID="134954261378713625501">
+</mappings>
+</provided>
+</typeDefinitions>
+<typeDefinitions xsi:type="org.kevoree:ComponentType" name="RunningDacapoComponent" factoryBean="org.kevoree.microsandbox.samples.benchmark.dacapo.RunningDacapoComponentFactory" bean="org.kevoree.microsandbox.samples.benchmark.dacapo.RunningDacapoComponent" abstract="false" deployUnits="//@deployUnits.29">
+<dictionaryType xsi:type="org.kevoree:DictionaryType" generated_KMF_ID="76076491378713625547">
+<attributes xsi:type="org.kevoree:DictionaryAttribute" name="dacapo_test" optional="false" state="false" datatype="raw=java.lang.String" fragmentDependant="false">
+</attributes>
+<attributes xsi:type="org.kevoree:DictionaryAttribute" name="dacapo_path" optional="false" state="false" datatype="raw=java.lang.String" fragmentDependant="false">
+</attributes>
+</dictionaryType>
+</typeDefinitions>
+<typeDefinitions xsi:type="org.kevoree:ComponentType" name="SandboxReasoner" factoryBean="org.kevoree.microsandbox.samples.SandboxReasonerFactory" bean="org.kevoree.microsandbox.samples.SandboxReasoner" abstract="false" deployUnits="//@deployUnits.29">
+</typeDefinitions>
+<typeDefinitions xsi:type="org.kevoree:ComponentType" name="NetworkConsumerInputPeakSecond" factoryBean="org.kevoree.microsandbox.samples.network.NetworkConsumerInputPeakSecondFactory" bean="org.kevoree.microsandbox.samples.network.NetworkConsumerInputPeakSecond" abstract="false" deployUnits="//@deployUnits.29">
+<dictionaryType xsi:type="org.kevoree:DictionaryType" generated_KMF_ID="286305341378713625559">
+<attributes xsi:type="org.kevoree:DictionaryAttribute" name="violate" optional="false" state="false" datatype="enum=true,false" fragmentDependant="false">
+</attributes>
+<attributes xsi:type="org.kevoree:DictionaryAttribute" name="sleepTime" optional="false" state="false" datatype="raw=java.lang.Integer" fragmentDependant="false">
+</attributes>
+<attributes xsi:type="org.kevoree:DictionaryAttribute" name="url" optional="false" state="false" datatype="raw=java.lang.String" fragmentDependant="false">
+</attributes>
+<defaultValues xsi:type="org.kevoree:DictionaryValue" value="false" generated_KMF_ID="228381601378713625559" attribute="//@typeDefinitions.7/@dictionaryType/@attributes.0">
+</defaultValues>
+</dictionaryType>
+</typeDefinitions>
+<typeDefinitions xsi:type="org.kevoree:ComponentType" name="NumberGenerator" factoryBean="org.kevoree.microsandbox.samples.interaction.NumberGeneratorFactory" bean="org.kevoree.microsandbox.samples.interaction.NumberGenerator" abstract="false" deployUnits="//@deployUnits.29">
+<dictionaryType xsi:type="org.kevoree:DictionaryType" generated_KMF_ID="283285231378713625554">
+<attributes xsi:type="org.kevoree:DictionaryAttribute" name="frequency" optional="false" state="false" fragmentDependant="false">
+</attributes>
+<defaultValues xsi:type="org.kevoree:DictionaryValue" value="300" generated_KMF_ID="136608761378713625554" attribute="//@typeDefinitions.8/@dictionaryType/@attributes.0">
+</defaultValues>
+</dictionaryType>
+<required xsi:type="org.kevoree:PortTypeRef" name="numbers" optional="true" noDependency="true" ref="//@typeDefinitions.16">
+</required>
+</typeDefinitions>
+<typeDefinitions xsi:type="org.kevoree:ComponentType" name="CPUConsumerWallTime" factoryBean="org.kevoree.microsandbox.samples.cpu.CPUConsumerWallTimeFactory" bean="org.kevoree.microsandbox.samples.cpu.CPUConsumerWallTime" abstract="false" deployUnits="//@deployUnits.29">
+<dictionaryType xsi:type="org.kevoree:DictionaryType" generated_KMF_ID="212809401378713625552">
+<attributes xsi:type="org.kevoree:DictionaryAttribute" name="nbLoop" optional="false" state="false" datatype="raw=java.lang.Integer" fragmentDependant="false">
+</attributes>
+<attributes xsi:type="org.kevoree:DictionaryAttribute" name="cpu_mean_percent_per_hour" optional="true" state="false" datatype="raw=java.lang.Long" fragmentDependant="false">
+</attributes>
+<attributes xsi:type="org.kevoree:DictionaryAttribute" name="cpu_peak_percent_per_second" optional="true" state="false" datatype="raw=java.lang.Long" fragmentDependant="false">
+</attributes>
+<attributes xsi:type="org.kevoree:DictionaryAttribute" name="cpu_mean_percent_per_minute" optional="true" state="false" datatype="raw=java.lang.Long" fragmentDependant="false">
+</attributes>
+<attributes xsi:type="org.kevoree:DictionaryAttribute" name="cpu_wall_time" optional="true" state="false" datatype="raw=java.lang.Double" fragmentDependant="false">
+</attributes>
+</dictionaryType>
+</typeDefinitions>
+<typeDefinitions xsi:type="org.kevoree:ComponentType" name="ThroughputProducerFail" factoryBean="org.kevoree.microsandbox.samples.throughput.ThroughputProducerFailFactory" bean="org.kevoree.microsandbox.samples.throughput.ThroughputProducerFail" abstract="false" deployUnits="//@deployUnits.29">
+<dictionaryType xsi:type="org.kevoree:DictionaryType" generated_KMF_ID="139539981378713625537">
+<attributes xsi:type="org.kevoree:DictionaryAttribute" name="throughput_msg_per_minute" optional="true" state="false" fragmentDependant="false">
+</attributes>
+<attributes xsi:type="org.kevoree:DictionaryAttribute" name="throughput_msg_per_hour" optional="true" state="false" fragmentDependant="false">
+</attributes>
+<attributes xsi:type="org.kevoree:DictionaryAttribute" name="throughput_msg_per_second" optional="true" state="false" fragmentDependant="false">
+</attributes>
+</dictionaryType>
+<required xsi:type="org.kevoree:PortTypeRef" name="output" optional="false" noDependency="true" ref="//@typeDefinitions.16">
+</required>
+</typeDefinitions>
+<typeDefinitions xsi:type="org.kevoree:ComponentType" name="SimpleComponent" factoryBean="org.kevoree.microsandbox.samples.update.SimpleComponentFactory" bean="org.kevoree.microsandbox.samples.update.SimpleComponent" abstract="false" deployUnits="//@deployUnits.29">
+</typeDefinitions>
+<typeDefinitions xsi:type="org.kevoree:NodeType" name="MonitoredNode" factoryBean="org.kevoree.microsandbox.javase.MonitoredNodeFactory" bean="org.kevoree.microsandbox.javase.MonitoredNode" abstract="false" deployUnits="//@deployUnits.20" superTypes="//@typeDefinitions.14" managedPrimitiveTypes="//@adaptationPrimitiveTypes.0 //@adaptationPrimitiveTypes.1 //@adaptationPrimitiveTypes.2 //@adaptationPrimitiveTypes.3 //@adaptationPrimitiveTypes.4 //@adaptationPrimitiveTypes.5 //@adaptationPrimitiveTypes.6 //@adaptationPrimitiveTypes.7 //@adaptationPrimitiveTypes.8 //@adaptationPrimitiveTypes.9 //@adaptationPrimitiveTypes.10 //@adaptationPrimitiveTypes.11 //@adaptationPrimitiveTypes.12 //@adaptationPrimitiveTypes.13 //@adaptationPrimitiveTypes.14 //@adaptationPrimitiveTypes.15 //@adaptationPrimitiveTypes.16 //@adaptationPrimitiveTypes.17 //@adaptationPrimitiveTypes.18 //@adaptationPrimitiveTypes.19 //@adaptationPrimitiveTypes.20">
+<dictionaryType xsi:type="org.kevoree:DictionaryType" generated_KMF_ID="192873731378713620312">
+<attributes xsi:type="org.kevoree:DictionaryAttribute" name="coreLogLevel" optional="true" state="false" datatype="enum=INFO,WARN,DEBUG,ERROR,FINE" fragmentDependant="false">
+</attributes>
+<attributes xsi:type="org.kevoree:DictionaryAttribute" name="availability_write_disc" optional="false" state="false" fragmentDependant="false">
+</attributes>
+<attributes xsi:type="org.kevoree:DictionaryAttribute" name="logLevel" optional="true" state="false" datatype="enum=INFO,WARN,DEBUG,ERROR,FINE" fragmentDependant="false">
+</attributes>
+<attributes xsi:type="org.kevoree:DictionaryAttribute" name="availability_received" optional="false" state="false" fragmentDependant="false">
+</attributes>
+<attributes xsi:type="org.kevoree:DictionaryAttribute" name="availability_read_disc" optional="false" state="false" fragmentDependant="false">
+</attributes>
+<attributes xsi:type="org.kevoree:DictionaryAttribute" name="availability_instr" optional="false" state="false" fragmentDependant="false">
+</attributes>
+<attributes xsi:type="org.kevoree:DictionaryAttribute" name="availability_memory" optional="false" state="false" fragmentDependant="false">
+</attributes>
+<attributes xsi:type="org.kevoree:DictionaryAttribute" name="availability_sent" optional="false" state="false" fragmentDependant="false">
+</attributes>
+<defaultValues xsi:type="org.kevoree:DictionaryValue" value="18000" generated_KMF_ID="172362801378713620349" attribute="//@typeDefinitions.12/@dictionaryType/@attributes.4">
+</defaultValues>
+<defaultValues xsi:type="org.kevoree:DictionaryValue" value="WARN" generated_KMF_ID="47879091378713620319" attribute="//@typeDefinitions.12/@dictionaryType/@attributes.0">
+</defaultValues>
+<defaultValues xsi:type="org.kevoree:DictionaryValue" value="18000" generated_KMF_ID="223535681378713620349" attribute="//@typeDefinitions.12/@dictionaryType/@attributes.7">
+</defaultValues>
+<defaultValues xsi:type="org.kevoree:DictionaryValue" value="180000000" generated_KMF_ID="86859121378713620348" attribute="//@typeDefinitions.12/@dictionaryType/@attributes.6">
+</defaultValues>
+<defaultValues xsi:type="org.kevoree:DictionaryValue" value="INFO" generated_KMF_ID="185433861378713620318" attribute="//@typeDefinitions.12/@dictionaryType/@attributes.2">
+</defaultValues>
+<defaultValues xsi:type="org.kevoree:DictionaryValue" value="18000" generated_KMF_ID="264840111378713620349" attribute="//@typeDefinitions.12/@dictionaryType/@attributes.1">
+</defaultValues>
+<defaultValues xsi:type="org.kevoree:DictionaryValue" value="180000000" generated_KMF_ID="140166951378713620349" attribute="//@typeDefinitions.12/@dictionaryType/@attributes.5">
+</defaultValues>
+<defaultValues xsi:type="org.kevoree:DictionaryValue" value="18000" generated_KMF_ID="210055451378713620349" attribute="//@typeDefinitions.12/@dictionaryType/@attributes.3">
+</defaultValues>
+</dictionaryType>
+<managedPrimitiveTypeRefs xsi:type="org.kevoree:AdaptationPrimitiveTypeRef" maxTime="120000" generated_KMF_ID="4414751378713620346" ref="//@adaptationPrimitiveTypes.13">
+</managedPrimitiveTypeRefs>
+<managedPrimitiveTypeRefs xsi:type="org.kevoree:AdaptationPrimitiveTypeRef" maxTime="120000" generated_KMF_ID="58983691378713620343" ref="//@adaptationPrimitiveTypes.17">
+</managedPrimitiveTypeRefs>
+</typeDefinitions>
+<typeDefinitions xsi:type="org.kevoree:ComponentType" name="MemoryConsumerMaxSize" factoryBean="org.kevoree.microsandbox.samples.memory.MemoryConsumerMaxSizeFactory" bean="org.kevoree.microsandbox.samples.memory.MemoryConsumerMaxSize" abstract="false" deployUnits="//@deployUnits.29">
+<dictionaryType xsi:type="org.kevoree:DictionaryType" generated_KMF_ID="291424431378713625475">
+<attributes xsi:type="org.kevoree:DictionaryAttribute" name="violate" optional="false" state="false" datatype="enum=true,false" fragmentDependant="false">
+</attributes>
+<attributes xsi:type="org.kevoree:DictionaryAttribute" name="memory_max_size" optional="true" state="false" datatype="raw=java.lang.Long" fragmentDependant="false">
+</attributes>
+<attributes xsi:type="org.kevoree:DictionaryAttribute" name="dataSize" optional="false" state="false" datatype="raw=java.lang.Integer" fragmentDependant="false">
+</attributes>
+<attributes xsi:type="org.kevoree:DictionaryAttribute" name="memory_peak_allocation_per_minute" optional="true" state="false" datatype="raw=java.lang.Long" fragmentDependant="false">
+</attributes>
+<attributes xsi:type="org.kevoree:DictionaryAttribute" name="sleepTime" optional="false" state="false" datatype="raw=java.lang.Integer" fragmentDependant="false">
+</attributes>
+<attributes xsi:type="org.kevoree:DictionaryAttribute" name="memory_peak_allocation_per_second" optional="true" state="false" datatype="raw=java.lang.Long" fragmentDependant="false">
+</attributes>
+<attributes xsi:type="org.kevoree:DictionaryAttribute" name="memory_peak_allocation_per_hour" optional="true" state="false" datatype="raw=java.lang.Long" fragmentDependant="false">
+</attributes>
+<defaultValues xsi:type="org.kevoree:DictionaryValue" value="false" generated_KMF_ID="30092181378713625476" attribute="//@typeDefinitions.13/@dictionaryType/@attributes.0">
+</defaultValues>
+</dictionaryType>
+</typeDefinitions>
+<typeDefinitions xsi:type="org.kevoree:NodeType" name="JavaSENode" factoryBean="org.kevoree.library.defaultNodeTypes.JavaSENodeFactory" bean="org.kevoree.library.defaultNodeTypes.JavaSENode" abstract="false" deployUnits="//@deployUnits.22" managedPrimitiveTypes="//@adaptationPrimitiveTypes.0 //@adaptationPrimitiveTypes.1 //@adaptationPrimitiveTypes.2 //@adaptationPrimitiveTypes.3 //@adaptationPrimitiveTypes.4 //@adaptationPrimitiveTypes.5 //@adaptationPrimitiveTypes.6 //@adaptationPrimitiveTypes.7 //@adaptationPrimitiveTypes.8 //@adaptationPrimitiveTypes.9 //@adaptationPrimitiveTypes.10 //@adaptationPrimitiveTypes.11 //@adaptationPrimitiveTypes.12 //@adaptationPrimitiveTypes.13 //@adaptationPrimitiveTypes.15 //@adaptationPrimitiveTypes.14 //@adaptationPrimitiveTypes.17 //@adaptationPrimitiveTypes.16 //@adaptationPrimitiveTypes.18 //@adaptationPrimitiveTypes.20 //@adaptationPrimitiveTypes.19">
+<dictionaryType xsi:type="org.kevoree:DictionaryType" generated_KMF_ID="269153731378457010453">
+<attributes xsi:type="org.kevoree:DictionaryAttribute" name="coreLogLevel" optional="true" state="false" datatype="enum=INFO,WARN,DEBUG,ERROR,FINE" fragmentDependant="false">
+</attributes>
+<attributes xsi:type="org.kevoree:DictionaryAttribute" name="logLevel" optional="true" state="false" datatype="enum=INFO,WARN,DEBUG,ERROR,FINE" fragmentDependant="false">
+</attributes>
+<defaultValues xsi:type="org.kevoree:DictionaryValue" value="WARN" generated_KMF_ID="146893271378457010454" attribute="//@typeDefinitions.14/@dictionaryType/@attributes.0">
+</defaultValues>
+<defaultValues xsi:type="org.kevoree:DictionaryValue" value="INFO" generated_KMF_ID="193924481378457010454" attribute="//@typeDefinitions.14/@dictionaryType/@attributes.1">
+</defaultValues>
+</dictionaryType>
+<managedPrimitiveTypeRefs xsi:type="org.kevoree:AdaptationPrimitiveTypeRef" maxTime="120000" generated_KMF_ID="235703951378457010455" ref="//@adaptationPrimitiveTypes.17">
+</managedPrimitiveTypeRefs>
+<managedPrimitiveTypeRefs xsi:type="org.kevoree:AdaptationPrimitiveTypeRef" maxTime="120000" generated_KMF_ID="40152611378457010455" ref="//@adaptationPrimitiveTypes.13">
+</managedPrimitiveTypeRefs>
+</typeDefinitions>
+<typeDefinitions xsi:type="org.kevoree:ComponentType" name="SciMarkBench" factoryBean="org.kevoree.microsandbox.samples.benchmark.SciMarkBenchFactory" bean="org.kevoree.microsandbox.samples.benchmark.SciMarkBench" abstract="false" deployUnits="//@deployUnits.29">
+<dictionaryType xsi:type="org.kevoree:DictionaryType" generated_KMF_ID="213235901378713625549">
+<attributes xsi:type="org.kevoree:DictionaryAttribute" name="large" optional="true" state="false" datatype="enum=false,true" fragmentDependant="false">
+</attributes>
+<defaultValues xsi:type="org.kevoree:DictionaryValue" value="false" generated_KMF_ID="242487891378713625549" attribute="//@typeDefinitions.15/@dictionaryType/@attributes.0">
+</defaultValues>
+</dictionaryType>
+<required xsi:type="org.kevoree:PortTypeRef" name="result" optional="true" noDependency="true" ref="//@typeDefinitions.16">
+</required>
+<provided xsi:type="org.kevoree:PortTypeRef" name="trigger" optional="false" noDependency="false" ref="//@typeDefinitions.16">
+<mappings xsi:type="org.kevoree:PortTypeMapping" beanMethodName="trigger" serviceMethodName="process" generated_KMF_ID="308213231378713625551">
+</mappings>
+<mappings xsi:type="org.kevoree:PortTypeMapping" beanMethodName="trigger" serviceMethodName="process" generated_KMF_ID="6581001378713625551">
+</mappings>
+</provided>
+</typeDefinitions>
+<typeDefinitions xsi:type="org.kevoree:MessagePortType" name="org.kevoree.framework.MessagePort" abstract="false" synchrone="false">
+</typeDefinitions>
+<repositories xsi:type="org.kevoree:Repository" url="http://maven.kevoree.org/release">
+</repositories>
+<repositories xsi:type="org.kevoree:Repository" url="http://repo.maven.apache.org/maven2">
+</repositories>
+<repositories xsi:type="org.kevoree:Repository" url="http://repository.jetbrains.com/all">
+</repositories>
+<repositories xsi:type="org.kevoree:Repository" url="https://oss.sonatype.org/content/groups/public/">
+</repositories>
+<repositories xsi:type="org.kevoree:Repository" url="https://oss.sonatype.org/content/repositories/snapshots">
+</repositories>
+<repositories xsi:type="org.kevoree:Repository" url="https://oss.sonatype.org/service/local/staging/deploy/maven2">
+</repositories>
+<repositories xsi:type="org.kevoree:Repository" url="http://maven.kevoree.org/snapshots">
+</repositories>
+<repositories xsi:type="org.kevoree:Repository" url="http://maven.kevoree.org/archiva/repository/daum/snapshots/">
+</repositories>
+<repositories xsi:type="org.kevoree:Repository" url="http://maven.kevoree.org/daum/snapshots">
+</repositories>
+<libraries xsi:type="org.kevoree:TypeLibrary" name="JavaSE" subTypes="//@typeDefinitions.0 //@typeDefinitions.12 //@typeDefinitions.14 //@typeDefinitions.15">
+</libraries>
+<deployUnits xsi:type="org.kevoree:DeployUnit" groupName="fr.inria.jfilter" unitName="jfilter-library" version="1.3" type="jar" generated_KMF_ID="84114241378713620336" targetNodeType="//@typeDefinitions.14">
+</deployUnits>
+<deployUnits xsi:type="org.kevoree:DeployUnit" groupName="org.kevoree" unitName="org.kevoree.api" version="2.0.12" type="jar" generated_KMF_ID="296716151378713620335" targetNodeType="//@typeDefinitions.14">
+</deployUnits>
+<deployUnits xsi:type="org.kevoree:DeployUnit" groupName="xml-apis" unitName="xml-apis" version="1.0.b2" type="jar" generated_KMF_ID="262982461378713620335" targetNodeType="//@typeDefinitions.14">
+</deployUnits>
+<deployUnits xsi:type="org.kevoree:DeployUnit" groupName="org.kevoree.log" unitName="org.kevoree.log" version="1" type="jar" generated_KMF_ID="268442051378713620335" targetNodeType="//@typeDefinitions.14">
+</deployUnits>
+<deployUnits xsi:type="org.kevoree:DeployUnit" groupName="org.apache.maven" unitName="maven-artifact-manager" version="2.1.0" type="jar" generated_KMF_ID="2163791378713620334" targetNodeType="//@typeDefinitions.14">
+</deployUnits>
+<deployUnits xsi:type="org.kevoree:DeployUnit" groupName="org.jetbrains.kotlin" unitName="kotlin-stdlib" version="0.5.748" type="jar" generated_KMF_ID="58497111378713620333" targetNodeType="//@typeDefinitions.14">
+</deployUnits>
+<deployUnits xsi:type="org.kevoree:DeployUnit" groupName="org.ow2.asm" unitName="asm-all" version="4.1" type="jar" generated_KMF_ID="211056051378713620335" targetNodeType="//@typeDefinitions.14">
+</deployUnits>
+<deployUnits xsi:type="org.kevoree:DeployUnit" groupName="commons-validator" unitName="commons-validator" version="1.2.0" type="jar" generated_KMF_ID="229574851378713620335" targetNodeType="//@typeDefinitions.14">
+</deployUnits>
+<deployUnits xsi:type="org.kevoree:DeployUnit" groupName="org.apache.velocity" unitName="velocity" version="1.5" type="jar" generated_KMF_ID="267149091378713620334" targetNodeType="//@typeDefinitions.14">
+</deployUnits>
+<deployUnits xsi:type="org.kevoree:DeployUnit" groupName="org.kevoree" unitName="org.kevoree.kcl" version="2.0.12" type="jar" generated_KMF_ID="59940851378713620336" targetNodeType="//@typeDefinitions.14">
+</deployUnits>
+<deployUnits xsi:type="org.kevoree:DeployUnit" groupName="org.jetbrains.kotlin" unitName="kotlin-runtime" version="0.5.998" type="jar" generated_KMF_ID="178682891378457010441" targetNodeType="//@typeDefinitions.14">
+</deployUnits>
+<deployUnits xsi:type="org.kevoree:DeployUnit" groupName="org.kevoree.tools" unitName="org.kevoree.tools.annotation.api" version="2.0.12" type="jar" generated_KMF_ID="302196091378713620335" targetNodeType="//@typeDefinitions.14">
+</deployUnits>
+<deployUnits xsi:type="org.kevoree:DeployUnit" groupName="org.kevoree" unitName="org.kevoree.framework" version="2.0.12" type="jar" generated_KMF_ID="19463131378713620335" targetNodeType="//@typeDefinitions.14">
+</deployUnits>
+<deployUnits xsi:type="org.kevoree:DeployUnit" groupName="org.kevoree" unitName="org.kevoree.kompare" version="2.0.12" type="jar" generated_KMF_ID="6293731378713620336" targetNodeType="//@typeDefinitions.14">
+</deployUnits>
+<deployUnits xsi:type="org.kevoree:DeployUnit" groupName="org.apache.maven.doxia" unitName="doxia-sink-api" version="1.1" type="jar" generated_KMF_ID="63327911378713620334" targetNodeType="//@typeDefinitions.14">
+</deployUnits>
+<deployUnits xsi:type="org.kevoree:DeployUnit" groupName="org.kevoree" unitName="org.kevoree.model.context" version="2.0.12" type="jar" generated_KMF_ID="48756571378713620335" targetNodeType="//@typeDefinitions.14">
+</deployUnits>
+<deployUnits xsi:type="org.kevoree:DeployUnit" groupName="org.kevoree" unitName="org.kevoree.maven.resolver" version="1" type="jar" generated_KMF_ID="121933321378713620336" targetNodeType="//@typeDefinitions.14">
+</deployUnits>
+<deployUnits xsi:type="org.kevoree:DeployUnit" groupName="junit" unitName="junit" version="4.8.1" type="jar" generated_KMF_ID="309488581378713620335" targetNodeType="//@typeDefinitions.14">
+</deployUnits>
+<deployUnits xsi:type="org.kevoree:DeployUnit" groupName="commons-lang" unitName="commons-lang" version="2.4" type="jar" generated_KMF_ID="202388931378713620334" targetNodeType="//@typeDefinitions.14">
+</deployUnits>
+<deployUnits xsi:type="org.kevoree:DeployUnit" groupName="commons-digester" unitName="commons-digester" version="1.6" type="jar" generated_KMF_ID="240743131378713620335" targetNodeType="//@typeDefinitions.14">
+</deployUnits>
+<deployUnits xsi:type="org.kevoree:DeployUnit" groupName="org.kevoree.microsandbox" unitName="org.kevoree.microsandbox.javasenode" version="1.0-SNAPSHOT" hashcode="201309091000214" type="jar" generated_KMF_ID="135373371378713620323" requiredLibs="//@deployUnits.0 //@deployUnits.1 //@deployUnits.2 //@deployUnits.3 //@deployUnits.4 //@deployUnits.5 //@deployUnits.6 //@deployUnits.7 //@deployUnits.8 //@deployUnits.9 //@deployUnits.11 //@deployUnits.12 //@deployUnits.13 //@deployUnits.14 //@deployUnits.15 //@deployUnits.16 //@deployUnits.17 //@deployUnits.18 //@deployUnits.19 //@deployUnits.21 //@deployUnits.22 //@deployUnits.23 //@deployUnits.25 //@deployUnits.28 //@deployUnits.27 //@deployUnits.26 //@deployUnits.30 //@deployUnits.31 //@deployUnits.32 //@deployUnits.33 //@deployUnits.34 //@deployUnits.35 //@deployUnits.37 //@deployUnits.36 //@deployUnits.38 //@deployUnits.39 //@deployUnits.41 //@deployUnits.40 //@deployUnits.42 //@deployUnits.43 //@deployUnits.44 //@deployUnits.45 //@deployUnits.46 //@deployUnits.47 //@deployUnits.48 //@deployUnits.49 //@deployUnits.50 //@deployUnits.51 //@deployUnits.52 //@deployUnits.53 //@deployUnits.54 //@deployUnits.55 //@deployUnits.56 //@deployUnits.57 //@deployUnits.58 //@deployUnits.59 //@deployUnits.60 //@deployUnits.61 //@deployUnits.62 //@deployUnits.63 //@deployUnits.64 //@deployUnits.65 //@deployUnits.66 //@deployUnits.67 //@deployUnits.68" targetNodeType="//@typeDefinitions.14">
+</deployUnits>
+<deployUnits xsi:type="org.kevoree:DeployUnit" groupName="org.apache.maven" unitName="maven-project" version="2.1.0" type="jar" generated_KMF_ID="69424961378713620334" targetNodeType="//@typeDefinitions.14">
+</deployUnits>
+<deployUnits xsi:type="org.kevoree:DeployUnit" groupName="org.kevoree.corelibrary.javase" unitName="org.kevoree.library.javase.javaseNode" version="2.0.4" hashcode="201309061043966" type="jar" generated_KMF_ID="164268751378713620336" requiredLibs="//@deployUnits.0 //@deployUnits.34 //@deployUnits.1 //@deployUnits.3 //@deployUnits.9 //@deployUnits.24 //@deployUnits.23 //@deployUnits.61 //@deployUnits.42 //@deployUnits.10 //@deployUnits.44 //@deployUnits.11 //@deployUnits.12 //@deployUnits.13 //@deployUnits.15" targetNodeType="//@typeDefinitions.14">
+</deployUnits>
+<deployUnits xsi:type="org.kevoree:DeployUnit" groupName="org.kevoree.tools" unitName="org.kevoree.tools.javase.framework" version="2.0.12" type="jar" generated_KMF_ID="210906741378713620335" targetNodeType="//@typeDefinitions.14">
+</deployUnits>
+<deployUnits xsi:type="org.kevoree:DeployUnit" groupName="org.jetbrains.kotlin" unitName="kotlin-stdlib" version="0.5.998" type="jar" generated_KMF_ID="104445231378457010441" targetNodeType="//@typeDefinitions.14">
+</deployUnits>
+<deployUnits xsi:type="org.kevoree:DeployUnit" groupName="org.jetbrains.kotlin" unitName="kotlin-runtime" version="0.5.748" type="jar" generated_KMF_ID="16133651378713620333" targetNodeType="//@typeDefinitions.14">
+</deployUnits>
+<deployUnits xsi:type="org.kevoree:DeployUnit" groupName="org.apache.maven.doxia" unitName="doxia-site-renderer" version="1.1.2" type="jar" generated_KMF_ID="108772771378713620334" targetNodeType="//@typeDefinitions.14">
+</deployUnits>
+<deployUnits xsi:type="org.kevoree:DeployUnit" groupName="org.codehaus.plexus" unitName="plexus-i18n" version="1.0-beta-7" type="jar" generated_KMF_ID="164063461378713620334" targetNodeType="//@typeDefinitions.14">
+</deployUnits>
+<deployUnits xsi:type="org.kevoree:DeployUnit" groupName="commons-collections" unitName="commons-collections" version="3.2" type="jar" generated_KMF_ID="56253811378713620335" targetNodeType="//@typeDefinitions.14">
+</deployUnits>
+<deployUnits xsi:type="org.kevoree:DeployUnit" groupName="org.kevoree.microsandbox" unitName="org.kevoree.microsandbox.samples" version="1.0-SNAPSHOT" hashcode="201309091000398" type="jar" generated_KMF_ID="94005511378713625476" requiredLibs="//@deployUnits.0 //@deployUnits.1 //@deployUnits.34 //@deployUnits.3 //@deployUnits.53 //@deployUnits.22 //@deployUnits.9 //@deployUnits.23 //@deployUnits.61 //@deployUnits.24 //@deployUnits.42 //@deployUnits.10 //@deployUnits.44 //@deployUnits.11 //@deployUnits.12 //@deployUnits.13 //@deployUnits.15" targetNodeType="//@typeDefinitions.14">
+</deployUnits>
+<deployUnits xsi:type="org.kevoree:DeployUnit" groupName="org.kevoree.microsandbox" unitName="org.kevoree.microsandbox.core" version="1.0-SNAPSHOT" type="jar" generated_KMF_ID="258484601378713620333" targetNodeType="//@typeDefinitions.14">
+</deployUnits>
+<deployUnits xsi:type="org.kevoree:DeployUnit" groupName="org.jacoco" unitName="jacoco-maven-plugin" version="0.6.2.201302030002" type="jar" generated_KMF_ID="38513391378713620333" targetNodeType="//@typeDefinitions.14">
+</deployUnits>
+<deployUnits xsi:type="org.kevoree:DeployUnit" groupName="org.apache.maven" unitName="maven-settings" version="2.1.0" type="jar" generated_KMF_ID="137810291378713620334" targetNodeType="//@typeDefinitions.14">
+</deployUnits>
+<deployUnits xsi:type="org.kevoree:DeployUnit" groupName="org.kevoree.tools" unitName="org.kevoree.tools.aether.framework" version="2.0.12" type="jar" generated_KMF_ID="312203941378713620336" targetNodeType="//@typeDefinitions.14">
+</deployUnits>
+<deployUnits xsi:type="org.kevoree:DeployUnit" groupName="org.kevoree.modeling" unitName="org.kevoree.modeling.microframework" version="1.4.7" type="jar" generated_KMF_ID="38436771378713620336" targetNodeType="//@typeDefinitions.14">
+</deployUnits>
+<deployUnits xsi:type="org.kevoree:DeployUnit" groupName="org.apache.maven.wagon" unitName="wagon-provider-api" version="1.0-beta-5" type="jar" generated_KMF_ID="199001951378713620334" targetNodeType="//@typeDefinitions.14">
+</deployUnits>
+<deployUnits xsi:type="org.kevoree:DeployUnit" groupName="commons-codec" unitName="commons-codec" version="1.2" type="jar" generated_KMF_ID="301950441378713620334" targetNodeType="//@typeDefinitions.14">
+</deployUnits>
+<deployUnits xsi:type="org.kevoree:DeployUnit" groupName="commons-logging" unitName="commons-logging" version="1.0.4" type="jar" generated_KMF_ID="176400861378713620335" targetNodeType="//@typeDefinitions.14">
+</deployUnits>
+<deployUnits xsi:type="org.kevoree:DeployUnit" groupName="org.jacoco" unitName="org.jacoco.core" version="0.6.2.201302030002" type="jar" generated_KMF_ID="164309651378713620335" targetNodeType="//@typeDefinitions.14">
+</deployUnits>
+<deployUnits xsi:type="org.kevoree:DeployUnit" groupName="org.codehaus.plexus" unitName="plexus-velocity" version="1.1.7" type="jar" generated_KMF_ID="246977471378713620334" targetNodeType="//@typeDefinitions.14">
+</deployUnits>
+<deployUnits xsi:type="org.kevoree:DeployUnit" groupName="org.apache.maven.reporting" unitName="maven-reporting-api" version="2.1.0" type="jar" generated_KMF_ID="240436931378713620334" targetNodeType="//@typeDefinitions.14">
+</deployUnits>
+<deployUnits xsi:type="org.kevoree:DeployUnit" groupName="org.apache.maven" unitName="maven-repository-metadata" version="2.1.0" type="jar" generated_KMF_ID="128184301378713620334" targetNodeType="//@typeDefinitions.14">
+</deployUnits>
+<deployUnits xsi:type="org.kevoree:DeployUnit" groupName="org.jgrapht" unitName="jgrapht-jdk1.5" version="0.7.3" type="jar" generated_KMF_ID="82298751378713620336" targetNodeType="//@typeDefinitions.14">
+</deployUnits>
+<deployUnits xsi:type="org.kevoree:DeployUnit" groupName="org.apache.maven" unitName="maven-plugin-api" version="2.1.0" type="jar" generated_KMF_ID="29631531378713620334" targetNodeType="//@typeDefinitions.14">
+</deployUnits>
+<deployUnits xsi:type="org.kevoree:DeployUnit" groupName="org.kevoree" unitName="org.kevoree.model" version="2.0.12" type="jar" generated_KMF_ID="305200471378713620336" targetNodeType="//@typeDefinitions.14">
+</deployUnits>
+<deployUnits xsi:type="org.kevoree:DeployUnit" groupName="org.codehaus.plexus" unitName="plexus-utils" version="1.5.6" type="jar" generated_KMF_ID="311082071378713620334" targetNodeType="//@typeDefinitions.14">
+</deployUnits>
+<deployUnits xsi:type="org.kevoree:DeployUnit" groupName="org.apache.maven.doxia" unitName="doxia-module-xhtml" version="1.1.2" type="jar" generated_KMF_ID="290208151378713620334" targetNodeType="//@typeDefinitions.14">
+</deployUnits>
+<deployUnits xsi:type="org.kevoree:DeployUnit" groupName="org.codehaus.plexus" unitName="plexus-container-default" version="1.0-alpha-9-stable-1" type="jar" generated_KMF_ID="207147511378713620334" targetNodeType="//@typeDefinitions.14">
+</deployUnits>
+<deployUnits xsi:type="org.kevoree:DeployUnit" groupName="org.apache.maven" unitName="maven-plugin-registry" version="2.1.0" type="jar" generated_KMF_ID="14434221378713620334" targetNodeType="//@typeDefinitions.14">
+</deployUnits>
+<deployUnits xsi:type="org.kevoree:DeployUnit" groupName="org.codehaus.plexus" unitName="plexus-interpolation" version="1.8.1" type="jar" generated_KMF_ID="333060031378713620334" targetNodeType="//@typeDefinitions.14">
+</deployUnits>
+<deployUnits xsi:type="org.kevoree:DeployUnit" groupName="oro" unitName="oro" version="2.0.8" type="jar" generated_KMF_ID="235337881378713620335" targetNodeType="//@typeDefinitions.14">
+</deployUnits>
+<deployUnits xsi:type="org.kevoree:DeployUnit" groupName="org.apache.maven.doxia" unitName="doxia-core" version="1.1.2" type="jar" generated_KMF_ID="148386751378713620334" targetNodeType="//@typeDefinitions.14">
+</deployUnits>
+<deployUnits xsi:type="org.kevoree:DeployUnit" groupName="org.apache.maven.doxia" unitName="doxia-decoration-model" version="1.1.2" type="jar" generated_KMF_ID="98522391378713620334" targetNodeType="//@typeDefinitions.14">
+</deployUnits>
+<deployUnits xsi:type="org.kevoree:DeployUnit" groupName="org.kevoree.microsandbox" unitName="org.kevoree.microsandbox.api" version="1.0-SNAPSHOT" type="jar" generated_KMF_ID="96524051378713620333" targetNodeType="//@typeDefinitions.14">
+</deployUnits>
+<deployUnits xsi:type="org.kevoree:DeployUnit" groupName="classworlds" unitName="classworlds" version="1.1-alpha-2" type="jar" generated_KMF_ID="255924201378713620334" targetNodeType="//@typeDefinitions.14">
+</deployUnits>
+<deployUnits xsi:type="org.kevoree:DeployUnit" groupName="commons-beanutils" unitName="commons-beanutils" version="1.7.0" type="jar" generated_KMF_ID="40422581378713620335" targetNodeType="//@typeDefinitions.14">
+</deployUnits>
+<deployUnits xsi:type="org.kevoree:DeployUnit" groupName="org.apache.maven.reporting" unitName="maven-reporting-impl" version="2.1" type="jar" generated_KMF_ID="12107351378713620334" targetNodeType="//@typeDefinitions.14">
+</deployUnits>
+<deployUnits xsi:type="org.kevoree:DeployUnit" groupName="org.apache.maven.doxia" unitName="doxia-module-fml" version="1.1.2" type="jar" generated_KMF_ID="56170061378713620334" targetNodeType="//@typeDefinitions.14">
+</deployUnits>
+<deployUnits xsi:type="org.kevoree:DeployUnit" groupName="commons-httpclient" unitName="commons-httpclient" version="3.1" type="jar" generated_KMF_ID="138112811378713620334" targetNodeType="//@typeDefinitions.14">
+</deployUnits>
+<deployUnits xsi:type="org.kevoree:DeployUnit" groupName="org.kevoree.microsandbox" unitName="org.kevoree.microsandbox.sharedResourceAccounting" version="1.0-SNAPSHOT" type="jar" generated_KMF_ID="180058791378713620335" targetNodeType="//@typeDefinitions.14">
+</deployUnits>
+<deployUnits xsi:type="org.kevoree:DeployUnit" groupName="org.apache.maven" unitName="maven-model" version="2.1.0" type="jar" generated_KMF_ID="101519901378713620334" targetNodeType="//@typeDefinitions.14">
+</deployUnits>
+<deployUnits xsi:type="org.kevoree:DeployUnit" groupName="org.kevoree" unitName="org.kevoree.adaptation.model" version="2.0.12" type="jar" generated_KMF_ID="52542721378713620335" targetNodeType="//@typeDefinitions.14">
+</deployUnits>
+<deployUnits xsi:type="org.kevoree:DeployUnit" groupName="org.apache.maven" unitName="maven-artifact" version="2.1.0" type="jar" generated_KMF_ID="189735511378713620334" targetNodeType="//@typeDefinitions.14">
+</deployUnits>
+<deployUnits xsi:type="org.kevoree:DeployUnit" groupName="xerces" unitName="xercesImpl" version="2.8.1" type="jar" generated_KMF_ID="170808831378713620334" targetNodeType="//@typeDefinitions.14">
+</deployUnits>
+<deployUnits xsi:type="org.kevoree:DeployUnit" groupName="backport-util-concurrent" unitName="backport-util-concurrent" version="3.1" type="jar" generated_KMF_ID="255627051378713620334" targetNodeType="//@typeDefinitions.14">
+</deployUnits>
+<deployUnits xsi:type="org.kevoree:DeployUnit" groupName="org.jacoco" unitName="org.jacoco.agent" version="0.6.2.201302030002" type="jar" generated_KMF_ID="156531901378713620335" targetNodeType="//@typeDefinitions.14">
+</deployUnits>
+<deployUnits xsi:type="org.kevoree:DeployUnit" groupName="org.apache.maven.doxia" unitName="doxia-logging-api" version="1.1" type="jar" generated_KMF_ID="5750511378713620334" targetNodeType="//@typeDefinitions.14">
+</deployUnits>
+<deployUnits xsi:type="org.kevoree:DeployUnit" groupName="org.jacoco" unitName="org.jacoco.report" version="0.6.2.201302030002" type="jar" generated_KMF_ID="22632401378713620335" targetNodeType="//@typeDefinitions.14">
+</deployUnits>
+<deployUnits xsi:type="org.kevoree:DeployUnit" groupName="org.apache.maven" unitName="maven-profile" version="2.1.0" type="jar" generated_KMF_ID="250700991378713620334" targetNodeType="//@typeDefinitions.14">
+</deployUnits>
+<adaptationPrimitiveTypes xsi:type="org.kevoree:AdaptationPrimitiveType" name="UpdateFragmentBinding">
+</adaptationPrimitiveTypes>
+<adaptationPrimitiveTypes xsi:type="org.kevoree:AdaptationPrimitiveType" name="UpdateDictionaryInstance">
+</adaptationPrimitiveTypes>
+<adaptationPrimitiveTypes xsi:type="org.kevoree:AdaptationPrimitiveType" name="UpdateBinding">
+</adaptationPrimitiveTypes>
+<adaptationPrimitiveTypes xsi:type="org.kevoree:AdaptationPrimitiveType" name="RemoveThirdParty">
+</adaptationPrimitiveTypes>
+<adaptationPrimitiveTypes xsi:type="org.kevoree:AdaptationPrimitiveType" name="RemoveInstance">
+</adaptationPrimitiveTypes>
+<adaptationPrimitiveTypes xsi:type="org.kevoree:AdaptationPrimitiveType" name="RemoveType">
+</adaptationPrimitiveTypes>
+<adaptationPrimitiveTypes xsi:type="org.kevoree:AdaptationPrimitiveType" name="StartInstance">
+</adaptationPrimitiveTypes>
+<adaptationPrimitiveTypes xsi:type="org.kevoree:AdaptationPrimitiveType" name="UpdateType">
+</adaptationPrimitiveTypes>
+<adaptationPrimitiveTypes xsi:type="org.kevoree:AdaptationPrimitiveType" name="AddFragmentBinding">
+</adaptationPrimitiveTypes>
+<adaptationPrimitiveTypes xsi:type="org.kevoree:AdaptationPrimitiveType" name="StartThirdParty">
+</adaptationPrimitiveTypes>
+<adaptationPrimitiveTypes xsi:type="org.kevoree:AdaptationPrimitiveType" name="AddBinding">
+</adaptationPrimitiveTypes>
+<adaptationPrimitiveTypes xsi:type="org.kevoree:AdaptationPrimitiveType" name="RemoveBinding">
+</adaptationPrimitiveTypes>
+<adaptationPrimitiveTypes xsi:type="org.kevoree:AdaptationPrimitiveType" name="StopInstance">
+</adaptationPrimitiveTypes>
+<adaptationPrimitiveTypes xsi:type="org.kevoree:AdaptationPrimitiveType" name="UpdateDeployUnit">
+</adaptationPrimitiveTypes>
+<adaptationPrimitiveTypes xsi:type="org.kevoree:AdaptationPrimitiveType" name="UpdateInstance">
+</adaptationPrimitiveTypes>
+<adaptationPrimitiveTypes xsi:type="org.kevoree:AdaptationPrimitiveType" name="RemoveFragmentBinding">
+</adaptationPrimitiveTypes>
+<adaptationPrimitiveTypes xsi:type="org.kevoree:AdaptationPrimitiveType" name="RemoveDeployUnit">
+</adaptationPrimitiveTypes>
+<adaptationPrimitiveTypes xsi:type="org.kevoree:AdaptationPrimitiveType" name="AddDeployUnit">
+</adaptationPrimitiveTypes>
+<adaptationPrimitiveTypes xsi:type="org.kevoree:AdaptationPrimitiveType" name="AddThirdParty">
+</adaptationPrimitiveTypes>
+<adaptationPrimitiveTypes xsi:type="org.kevoree:AdaptationPrimitiveType" name="AddInstance">
+</adaptationPrimitiveTypes>
+<adaptationPrimitiveTypes xsi:type="org.kevoree:AdaptationPrimitiveType" name="AddType">
+</adaptationPrimitiveTypes>
+</org.kevoree:ContainerRoot>

@@ -63,7 +63,7 @@ public class MonitoringTask extends AbstractMonitoringTask {
 
     @Override
     public void modelUpdated() {
-        ComponentsInfoStorage.instance$.refresh(nodeName, service);
+        ComponentsInfoStorage.instance.refresh(nodeName, service);
     }
 
     @Override
@@ -84,7 +84,7 @@ public class MonitoringTask extends AbstractMonitoringTask {
     public void run() {
         System.out.printf("Initiating Monitoring task\n");
 
-        ComponentsInfoStorage.instance$.setIdAssigner(new SimpleIdAssigner(service));
+        ComponentsInfoStorage.instance.setIdAssigner(new SimpleIdAssigner(service));
 
         gcWatcher = new GCWatcher();
         gcWatcher.addContractVerificationRequieredListener(this);
@@ -113,7 +113,7 @@ public class MonitoringTask extends AbstractMonitoringTask {
                         FineGrainedMonitoringStrategy s =(FineGrainedMonitoringStrategy)currentStrategy;
                         List<FaultyComponent> tmpList = s.getFaultyComponents();
                         for (FaultyComponent c : tmpList) {
-                            ComponentsInfoStorage.instance$.getExecutionInfo(c.getComponentPath()).increaseFailures();
+                            ComponentsInfoStorage.instance.getExecutionInfo(c.getComponentPath()).increaseFailures();
                             EnumMap<Metric, MeasurePoint> map = c.getMetrics();
                             for (Metric m : map.keySet())
                                 MonitoringReporterFactory.reporter().trigger(new ContractViolationEvent(c.getComponentPath(), m, map.get(m).getObserved(), map.get(m).getMax()));
