@@ -65,7 +65,7 @@ public class MonitoringComponent extends AbstractComponentType implements Micros
         double io_write = Long.valueOf(getDictionary().get("io_out_threshold").toString());
 
         if (getDictionary().get("componentRankFunction") != null && getDictionary().get("componentRankFunction").equals("model_history")) {
-            modelRanker = new ModelRankingAlgorithm(getModelService(), getBootStrapperService(), ComponentsInfoStorage.instance);
+            modelRanker = new ModelRankingAlgorithm(getModelService(), getBootStrapperService(), ComponentsInfoStorage.object$.getInstance());
             ComponentRankerFunctionFactory.instance$.setModelRanker(modelRanker);
             getModelService().registerModelListener(modelRanker);
         }
