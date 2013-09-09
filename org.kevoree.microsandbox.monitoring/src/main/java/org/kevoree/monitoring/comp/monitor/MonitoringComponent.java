@@ -10,6 +10,9 @@ import org.kevoree.microsandbox.api.contract.PlatformDescription;
 import org.kevoree.microsandbox.api.event.MicrosandboxEvent;
 import org.kevoree.monitoring.communication.MicrosandboxEventListener;
 import org.kevoree.monitoring.communication.MicrosandboxReporter;
+import org.kevoree.monitoring.ranking.ComponentRankerFunctionFactory;
+import org.kevoree.monitoring.ranking.ComponentsInfoStorage;
+import org.kevoree.monitoring.ranking.ModelRankingAlgorithm;
 import org.kevoree.monitoring.sla.GlobalThreshold;
 import org.kevoree.monitoring.strategies.AbstractMonitoringTask;
 import org.kevoree.monitoring.strategies.MonitoringTask;
@@ -50,6 +53,8 @@ import org.kevoree.monitoring.strategies.monitoring.FineGrainedStrategyFactory;
 public class MonitoringComponent extends AbstractComponentType implements MicrosandboxEventListener {
     AbstractMonitoringTask monitoringTask;
 
+    private ModelRankingAlgorithm modelRanker;
+
     @Start
     public void startComponent() {
         double cpu = Double.valueOf(getDictionary().get("cpu_threshold").toString());
@@ -58,6 +63,12 @@ public class MonitoringComponent extends AbstractComponentType implements Micros
         double net_sent = Double.valueOf(getDictionary().get("net_out_threshold").toString());
         double io_read = Long.valueOf(getDictionary().get("io_in_threshold").toString());
         double io_write = Long.valueOf(getDictionary().get("io_out_threshold").toString());
+
+        if (getDictionary().get("componentRankFunction") != null && getDictionary().get("componentRankFunction").equals("model_history")) {
+            modelRanker = new ModelRankingAlgorithm(getModelService(), getBootStrapperService(), ComponentsInfoStorage.instance);
+            ComponentRankerFunctionFactory.instance$.setModelRanker(modelRanker);
+            getModelService().registerModelListener(modelRanker);
+        }
 
         PlatformDescription description = null;
         for (String key : KevoreeDeployManager.instance$.getInternalMap().keySet())
@@ -105,6 +116,7 @@ public class MonitoringComponent extends AbstractComponentType implements Micros
     @Stop
     public void stopComponent() {
         monitoringTask.stop();
+        getModelService().unregisterModelListener(modelRanker);
     }
 
     @Update

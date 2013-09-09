@@ -3,8 +3,8 @@ addRepo "http://maven.kevoree.org/daum/snapshots"
 
 merge 'mvn:org.kevoree.microsandbox/org.kevoree.microsandbox.javasenode/{project.version}'
 
-merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.jexxus/{kevoree.version.version}'
-merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.defaultChannels/{kevoree.version.version}'
+merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.jexxus/{kevoree.corelibrary.version}'
+merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.defaultChannels/{kevoree.corelibrary.version}'
 
 merge 'mvn:org.kevoree.microsandbox/org.kevoree.microsandbox.monitoring/{project.version}'
 merge 'mvn:org.kevoree.microsandbox/org.kevoree.microsandbox.samples/{project.version}'
@@ -18,7 +18,8 @@ addComponent MonitoringComponent0@node0 : MonitoringComponent {
     memory_threshold='65',
     cpu_threshold='10',
     net_in_threshold='80',
-    net_out_threshold='80'
+    net_out_threshold='80',
+    componentRankFunction = 'model_history'
 }
 
 addComponent tester0@node0 : CPUConsumerByPrimalityTesting {
@@ -34,7 +35,7 @@ addComponent generator1@node0 : NumberGenerator {
     frequency = '200'
 }
 
-addChannel channelForNumbers : defMSGT
+addChannel channelForNumbers : defMSG
 
 bind tester0.primalityTester@node0 => channelForNumbers
 bind generator0.numbers@node0 => channelForNumbers

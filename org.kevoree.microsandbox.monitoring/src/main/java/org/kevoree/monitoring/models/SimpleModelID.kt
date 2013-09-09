@@ -15,9 +15,9 @@ class SimpleModelID(val id : Int) : ModelID {
         }
         return false;
     }
-    public override fun isTheSameAs(other: ((ModelID?) -> Boolean)?): Boolean {
+    /*public override fun isTheSameAs(other: ((ModelID?) -> Boolean)?): Boolean {
         return other!!(this)
-    }
+    }*/
 
 
     public override fun toString(): String? = id.toString()

@@ -1,9 +1,9 @@
 addRepo 'http://maven.kevoree.org/daum/snapshots'
 
-merge 'mvn:org.kevoree.microsandbox/org.kevoree.microsandbox.javasenode/1.0-SNAPSHOT'
-merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.defaultChannels/2.0.0-SNAPSHOT'
-merge 'mvn:org.kevoree.microsandbox/org.kevoree.microsandbox.monitoring/1.0-SNAPSHOT'
-merge 'mvn:org.kevoree.microsandbox/org.kevoree.microsandbox.samples/1.0-SNAPSHOT'
+merge 'mvn:org.kevoree.microsandbox/org.kevoree.microsandbox.javasenode/{project.version}'
+merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.defaultChannels/{kevoree.corelibrary.version}'
+merge 'mvn:org.kevoree.microsandbox/org.kevoree.microsandbox.monitoring/{project.version}'
+merge 'mvn:org.kevoree.microsandbox/org.kevoree.microsandbox.samples/{project.version}'
 
 // Node definition
 addNode node0 : MonitoredNode {availability_memory='150000000', availability_instr='200000000'}
@@ -13,7 +13,8 @@ addComponent MonitoringComponent0@node0 : MonitoringComponent {
     memory_threshold='65',
     cpu_threshold='10',
     net_in_threshold='80',
-    net_out_threshold='80'
+    net_out_threshold='80',
+    componentRankFunction = 'model_history'
 }
 
 addComponent cpuComponent@node0 : CPUConsumerWallTime {nbLoop = '20000', cpu_wall_time = '30000'}

@@ -38,7 +38,7 @@ public class SlowDownComponentInteraction(service : KevoreeModelHandlerService)
         {
             for (s : String in result.misUsedProvidedPorts.keySet())
             {
-                var nameOfOrigin : String? = ComponentsInfoStorage.getExecutionInfo(path)?.getName()
+                var nameOfOrigin : String? = ComponentsInfoStorage.instance.getExecutionInfo(path)?.getName()
                 val maxAllowed = ComponentInteractionAspect.getMaxNumberOfRequest(path, s, modelService!!)
                 val usage = MyLowLevelResourceConsumptionRecorder.getInstance()?.getUsesOfProvidedPort(nameOfOrigin, s) as Int /
                             FineGrainedMonitoringStrategy.ELAPSED_SECONDS

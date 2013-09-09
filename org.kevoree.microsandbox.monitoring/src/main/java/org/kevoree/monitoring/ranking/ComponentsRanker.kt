@@ -35,7 +35,7 @@ public object ComponentsRanker {
         val components : MutableList<ComponentInstance> =
                 ArrayList<ComponentInstance>()
 
-        ComponentsInfoStorage.updateListOfComponents(nodeName, modelService, {
+        ComponentsInfoStorage.instance.updateListOfComponents(nodeName, modelService, {
                 (node, instance, info) ->
                     updateInfo(instance, info, node, bootstrapService)
                     components.add(instance)

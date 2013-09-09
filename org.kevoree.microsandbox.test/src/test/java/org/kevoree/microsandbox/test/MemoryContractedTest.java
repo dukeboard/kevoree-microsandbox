@@ -18,7 +18,7 @@ import java.util.regex.Pattern;
  * @author Erwan Daubert
  * @version 1.0
  */
-public class MemoryContractedTester extends AbstractMicroSandboxTester {
+public class MemoryContractedTest extends AbstractMicroSandboxTester {
     @Test
     public void testNoContractViolation() {
         double maxValue1 = 30000.0;

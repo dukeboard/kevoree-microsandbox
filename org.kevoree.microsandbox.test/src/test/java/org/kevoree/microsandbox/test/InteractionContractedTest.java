@@ -17,7 +17,7 @@ import java.util.regex.Pattern;
  * @author Erwan Daubert
  * @version 1.0
  */
-public class InteractionContractedTester extends AbstractMicroSandboxTester {
+public class InteractionContractedTest extends AbstractMicroSandboxTester {
 
     @Test
     public void testDetectViolationAboutCPUDueToInteraction() {

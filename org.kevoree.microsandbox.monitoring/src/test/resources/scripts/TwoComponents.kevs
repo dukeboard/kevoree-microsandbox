@@ -1,0 +1,19 @@
+addRepo "http://maven.kevoree.org/release"
+addRepo "http://repo.maven.apache.org/maven2"
+addRepo "https://oss.sonatype.org/content/groups/public/"
+addRepo "http://repository.jetbrains.com/all"
+addRepo "https://oss.sonatype.org/content/repositories/snapshots"
+addRepo "http://maven.kevoree.org/snapshots"
+addRepo "https://oss.sonatype.org/service/local/staging/deploy/maven2"
+addRepo "http://maven.kevoree.org/archiva/repository/daum/snapshots/"
+addRepo "http://maven.kevoree.org/daum/snapshots"
+
+merge 'mvn:org.kevoree.microsandbox/org.kevoree.microsandbox.javasenode/1.0-SNAPSHOT'
+merge 'mvn:org.kevoree.microsandbox/org.kevoree.microsandbox.samples/1.0-SNAPSHOT'
+
+addNode node0:MonitoredNode
+
+updateDictionary node0{availability_instr="200000000",availability_memory="150000000"}
+
+addComponent memory@node0 : MemoryConsumer
+addComponent cpu@node0 : CPUConsumerByPrimalityTesting {throughput_msg_per_second='all=8;primalityTester=8',cpu_wall_time='4000000'}

@@ -25,9 +25,14 @@ import org.kevoree.library.defaultNodeTypes.context.KevoreeDeployManager
  * Time: 9:19 PM
  *
  */
-public object ComponentsInfoStorage {
+public open class ComponentsInfoStorage {
 
-    private val info: HashMap<String, ComponentExecutionInfo> = HashMap<String, ComponentExecutionInfo>()
+    // Allow to override it - still have the same behavior but we use ComponentsInfoStorage.instance instead of ComponentsInfoStorage.instance$ in java and we need to use ComponentsInfoStorage.instance in kotlin
+    class object {
+        val instance = ComponentsInfoStorage()
+    }
+
+    protected val info: HashMap<String, ComponentExecutionInfo> = HashMap<String, ComponentExecutionInfo>()
 
     var idAssigner: IdAssigner? = null
 
@@ -61,7 +66,7 @@ public object ComponentsInfoStorage {
                 // only component that define contract must be monitor ?
                 // TODO maybe define a "helper" if we plan to define new typeDefinition for new type of contract
                 if (isContractedComponent(instance)) {
-                    val i = ComponentsInfoStorage.getOrIncludeInfo(instance, id)
+                    val i = ComponentsInfoStorage.instance.getOrIncludeInfo(instance, id)
                     fn(node!!, instance, i);
                 }
             }
@@ -74,7 +79,7 @@ public object ComponentsInfoStorage {
     fun refresh(nodeName: String,
                 modelService: KevoreeModelHandlerService): Unit {
         val id = idAssigner?.getID(modelService.getLastModel())
-        ComponentsInfoStorage.updateListOfComponents(nodeName, modelService, {
+        ComponentsInfoStorage.instance.updateListOfComponents(nodeName, modelService, {
             (node, instance, info) ->
             if (idAssigner?.isNewVersion(instance.path(), id) as Boolean)
                 info?.markNewVersion(id)

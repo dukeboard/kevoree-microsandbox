@@ -33,7 +33,7 @@ import java.util.regex.Pattern;
  */
 // needed to be able to use @BeforeClass (why ?)
 @RunWith(JUnit4.class)
-public class NetworkContractedTester extends AbstractMicroSandboxTester {
+public class NetworkContractedTest extends AbstractMicroSandboxTester {
 
     private static final String webContent = "<!DOCTYPE html><html><head>\n" +
             "    \n" +
