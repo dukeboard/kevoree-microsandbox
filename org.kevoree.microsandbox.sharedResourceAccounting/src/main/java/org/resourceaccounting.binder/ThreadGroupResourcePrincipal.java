@@ -106,7 +106,7 @@ public class ThreadGroupResourcePrincipal extends AbstractResourcePrincipal<Long
 
     private static Principals principalsLocal = new Principals();
 
-    public static ResourcePrincipal get() {
+    public final static ResourcePrincipal get() {
         return principalsLocal.get();
 //        //return unique;
 //        try {

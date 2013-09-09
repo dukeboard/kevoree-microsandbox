@@ -211,7 +211,7 @@ class ResourceCounterImpl {
         return ThreadGroupResourcePrincipal.get(id);
     }
 
-    ResourcePrincipal get() {
+    final ResourcePrincipal get() {
         // not inside one invocation
         return ThreadGroupResourcePrincipal.get();
     }

@@ -20,6 +20,7 @@ import org.kevoree.monitoring.strategies.adaptation.SlowDownComponentInteraction
 import org.kevoree.monitoring.strategies.monitoring.AllComponentsForEver;
 import org.kevoree.monitoring.strategies.monitoring.FineGrainedMonitoringStrategy;
 import org.kevoree.monitoring.strategies.monitoring.RankChecker;
+import org.kevoree.monitoring.strategies.monitoring.RecordingAllComponentsForEver;
 
 import java.util.ArrayList;
 import java.util.EnumMap;
@@ -33,13 +34,12 @@ import java.util.List;
  * Time: 5:03 PM
  *
  */
-public class MonitoringTaskAllComponents extends AbstractMonitoringTask implements RankChecker {
+public class RecordingTaskAllComponents extends AbstractMonitoringTask implements RankChecker {
 
-    public MonitoringTaskAllComponents(String nodeName,
-                          String nameOfRankerFunction,
-                          KevoreeModelHandlerService service,
-                          Bootstraper bootstraper) {
-        super(bootstraper,service,nameOfRankerFunction,nodeName);
+    public RecordingTaskAllComponents(String nodeName,
+                                      KevoreeModelHandlerService service,
+                                      Bootstraper bootstraper) {
+        super(bootstraper,service,"",nodeName);
     }
 
 
@@ -58,33 +58,9 @@ public class MonitoringTaskAllComponents extends AbstractMonitoringTask implemen
         stopped = false;
         while (!isStopped()) {
             waitMessage();
-            if (isStopped()) continue;
-            if (currentStrategy.isThereContractViolation()) {
-                currentStrategy.pause();
-                FineGrainedMonitoringStrategy s =(FineGrainedMonitoringStrategy)currentStrategy;
-                List<FaultyComponent> tmpList = s.getFaultyComponents();
-                for (FaultyComponent c : tmpList) {
-                    ComponentsInfoStorage.object$.getInstance().getExecutionInfo(c.getComponentPath()).increaseFailures();
-                    EnumMap<Metric, MeasurePoint> map = c.getMetrics();
-                    for (Metric m : map.keySet())
-                        MonitoringReporterFactory.reporter().trigger(
-                                new ContractViolationEvent(c.getComponentPath(),
-                                        m, map.get(m).getObserved(), map.get(m).getMax()));
-                }
-
-                // FIXME in Monitoring component, reconfiguration must be avoid. Monitoring event must be sent to something else which is able to take decisions
-                tmpList = new SlowDownComponentInteraction(service).adapt(nodeName, tmpList);
-                tmpList = new KillThemAll(service).adapt(nodeName, tmpList);
-
-                if (tmpList.isEmpty()) {
-                    switchToSimpleLocal(EnumSet.allOf(Metric.class));
-                }
-                else {
-                    // TODO: the system cannot perform an adaptation. Die
-                    System.err.println("Why am I here?");
-                    System.exit(3);
-                }
-            }
+            try {
+                Thread.sleep(1);
+            } catch (InterruptedException e) { }
         }
 
         currentStrategy.stop();
@@ -93,10 +69,9 @@ public class MonitoringTaskAllComponents extends AbstractMonitoringTask implemen
     }
 
     private void switchToSimpleLocal(EnumSet<Metric> reason) {
-        MonitoringReporterFactory.reporter().trigger(new MonitoringNotification(false, reason))/*.monitoring(false)*/;
         MyLowLevelResourceConsumptionRecorder.getInstance().turnMonitoring(true);
 
-        currentStrategy = new AllComponentsForEver( new ArrayList<ComponentInstance>(), msg, this);
+        currentStrategy = new RecordingAllComponentsForEver(new ArrayList<ComponentInstance>(), msg, this);
         currentStrategy.init(0);
     }
 
