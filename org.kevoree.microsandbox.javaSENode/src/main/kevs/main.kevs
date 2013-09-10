@@ -40,14 +40,11 @@ addComponent fread@node0 : FileExplorer { basedir='.' }
 addComponent memoryConsumer0@node0 : MemoryConsumer {
     memory_max_size='20',
     cpu_wall_time='200000',
-    network_input_peak_seconds='234',
-    network_output_peak_seconds='234',
-    amount = '302400'
+    amount = '3024000'
 }
 
-addComponent cpuConsumer0@node0 : CPUConsumerGood {
-    cpu_wall_time='2000000',
-    memory_max_size='3000'
+addComponent cpuConsumer0@node0 : CPUConsumerWallTime {
+    cpu_wall_time='2000000'
 }
 
 addComponent writer0@node0 : IOWriterGood {
