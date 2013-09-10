@@ -36,6 +36,7 @@ import java.util.List;
 public class MonitoringTask extends AbstractMonitoringTask {
 
     private final GlobalThreshold globalThreshold;
+    private long timeAtTheBeginning;
 
     public MonitoringTask(String nodeName,
                           GlobalThreshold globalThreshold,
@@ -63,7 +64,7 @@ public class MonitoringTask extends AbstractMonitoringTask {
 
     @Override
     public void modelUpdated() {
-        ComponentsInfoStorage.instance.refresh(nodeName, service);
+        ComponentsInfoStorage.object$.getInstance().refresh(nodeName, service);
     }
 
     @Override
@@ -84,7 +85,7 @@ public class MonitoringTask extends AbstractMonitoringTask {
     public void run() {
         System.out.printf("Initiating Monitoring task\n");
 
-        ComponentsInfoStorage.instance.setIdAssigner(new SimpleIdAssigner(service));
+        ComponentsInfoStorage.object$.getInstance().setIdAssigner(new SimpleIdAssigner(service));
 
         gcWatcher = new GCWatcher();
         gcWatcher.addContractVerificationRequieredListener(this);
@@ -102,6 +103,7 @@ public class MonitoringTask extends AbstractMonitoringTask {
                         System.out.println("Switching to local monitoring " + currentStrategy.getViolationOn());
                         currentStrategy.pause();
                         switchToSimpleLocal(currentStrategy.getViolationOn());
+                        timeAtTheBeginning = System.currentTimeMillis();
                     }
                     break;
                 case LOCAL_MONITORING:
@@ -113,13 +115,14 @@ public class MonitoringTask extends AbstractMonitoringTask {
                         FineGrainedMonitoringStrategy s =(FineGrainedMonitoringStrategy)currentStrategy;
                         List<FaultyComponent> tmpList = s.getFaultyComponents();
                         for (FaultyComponent c : tmpList) {
-                            ComponentsInfoStorage.instance.getExecutionInfo(c.getComponentPath()).increaseFailures();
+                            ComponentsInfoStorage.object$.getInstance().getExecutionInfo(c.getComponentPath()).increaseFailures();
                             EnumMap<Metric, MeasurePoint> map = c.getMetrics();
                             for (Metric m : map.keySet())
                                 MonitoringReporterFactory.reporter().trigger(new ContractViolationEvent(c.getComponentPath(), m, map.get(m).getObserved(), map.get(m).getMax()));
                         }
 
-                        // FIXME in Monitoring component, reconfiguration must be avoid. Monitoring event must be sent to something else which is able to take decision
+                        // FIXME in Monitoring component, reconfiguration must be avoid.
+                        // Monitoring event must be sent to something else which is able to take decision
                         tmpList = new SlowDownComponentInteraction(service).adapt(nodeName, tmpList);
                         tmpList = new KillThemAll(service).adapt(nodeName, tmpList);
 
@@ -159,7 +162,8 @@ public class MonitoringTask extends AbstractMonitoringTask {
     }
 
     private void switchToGlobal() {
-        MonitoringReporterFactory.reporter().trigger(new MonitoringNotification(true))/*.monitoring(true)*/;
+        MonitoringReporterFactory.reporter().trigger(new MonitoringNotification(true,
+                System.currentTimeMillis() - timeAtTheBeginning))/*.monitoring(true)*/;
         MyLowLevelResourceConsumptionRecorder.getInstance().turnMonitoring(false);
         currentStatus = MonitoringStatus.GLOBAL_MONITORING;
         currentStrategy = new GlobalMonitoring(msg, globalThreshold);

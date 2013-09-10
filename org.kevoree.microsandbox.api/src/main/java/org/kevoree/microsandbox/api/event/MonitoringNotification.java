@@ -13,22 +13,25 @@ import java.util.EnumSet;
  * @version 1.0
  */
 public class MonitoringNotification extends MicrosandboxEvent {
+    private final long timeUsedInPreviousMode;
     private boolean global;
     private EnumSet<Metric> reason;
 
-    public MonitoringNotification(boolean global) {
+    public MonitoringNotification(boolean global, long timeUsedInPreviousMode) {
         this.global = global;
+        this.timeUsedInPreviousMode = timeUsedInPreviousMode;
     }
 
     public MonitoringNotification(boolean global, EnumSet<Metric> reason) {
         this.global = global;
         this.reason = reason;
+        timeUsedInPreviousMode = 0; // Who care in this case?
     }
 
     @Override
     public String toString() {
         if (global) {
-        return "MON GLOBAL";
+        return String.format("MON GLOBAL (It spent %d milliseconds in the last local monitoring round)\n", timeUsedInPreviousMode);
         } else {
             return "MON LOCAL " + reason;
         }
