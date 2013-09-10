@@ -22,7 +22,7 @@ public class MemoryContractedTest extends AbstractMicroSandboxTester {
     @Test
     public void testNoContractViolation() {
         double maxValue1 = 30000.0;
-        MonitoringNotification notification = new MonitoringNotification(false);
+        MonitoringNotification notification = new MonitoringNotification(false,0);
         String monitoringRegex = notification.toRegex();
         ContractViolationEvent violation = new ContractViolationEvent("nodes[node0]/components[memoryComponent]", Metric.Memory, -1.0, maxValue1);
         String violationRegex = violation.toRegex();
@@ -33,7 +33,7 @@ public class MemoryContractedTest extends AbstractMicroSandboxTester {
     @Test
     public void testContractViolation() {
         double maxValue1 = 30000.0;
-        MonitoringNotification notification = new MonitoringNotification(false);
+        MonitoringNotification notification = new MonitoringNotification(false,0);
         String monitoringRegex = notification.toRegex();
         ContractViolationEvent violation = new ContractViolationEvent("nodes[node0]/components[memoryComponent]", Metric.Memory, -1.0, maxValue1);
         String violationRegex = violation.toRegex();
