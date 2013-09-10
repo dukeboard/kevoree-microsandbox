@@ -1,7 +1,9 @@
 package org.kevoree.monitoring.strategies.monitoring;
 
 import org.kevoree.ComponentInstance;
+import org.kevoree.Port;
 import org.kevoree.microsandbox.api.sla.Metric;
+import org.kevoree.monitoring.comp.MyLowLevelResourceConsumptionRecorder;
 import org.kevoree.monitoring.sla.FaultyComponent;
 import org.kevoree.monitoring.sla.MeasurePoint;
 import org.resourceaccounting.ResourcePrincipal;
@@ -21,6 +23,17 @@ public class RecordingAllComponentsForEver extends FineGrainedMonitoringStrategy
     private Object lock = new Object();
     private RankChecker rankChecker;
 
+    class Info {
+        long maxCPU = 0;
+        long maxSent = 0;
+        long maxReceived = 0;
+        long maxWritten = 0;
+        long maxRead = 0;
+        long maxReserved = 0;
+    }
+    private HashMap<String, Info> infos = new HashMap<String, Info>();
+
+
     public RecordingAllComponentsForEver(List<ComponentInstance> ranking, Object msg, RankChecker rankChecker) {
         super(null, ranking, msg);
         this.rankChecker =rankChecker;
@@ -29,7 +42,6 @@ public class RecordingAllComponentsForEver extends FineGrainedMonitoringStrategy
     @Override
     public void verifyContract(ResourcePrincipal principal, Object obj) {
         DataForCheckingContract data = (DataForCheckingContract)obj;
-        ResourceContract contract = principal.getContract();
 
         data.lastCPU /= ELAPSED_SECONDS;
         data.lastRead /= ELAPSED_SECONDS;
@@ -37,57 +49,89 @@ public class RecordingAllComponentsForEver extends FineGrainedMonitoringStrategy
         data.lastReceived /= ELAPSED_SECONDS;
         data.lastSent /= ELAPSED_SECONDS;
 
-        EnumMap<Metric, MeasurePoint> a = new EnumMap<Metric, MeasurePoint>(Metric.class);
+        boolean flag = false;
+        synchronized (lock) {
+            String key = principal.toString();
+            Info info = infos.containsKey(key)?
+                    infos.get(key) :
+                    infos.put(key, new Info()); // what a crazy behavior the one of this method (side effects and return value)
 
-        if (contract.getCPU() > 0 && contract.getCPU() < data.lastCPU) {
-            a.put(Metric.CPU,  new MeasurePoint(data.lastCPU, contract.getCPU()));
+            info = infos.get(key);
+
+            if (info.maxCPU < data.lastCPU) {
+                info.maxCPU = data.lastCPU;
+                flag = true;
+            }
+
+            if (info.maxSent < data.lastSent) {
+                info.maxSent = data.lastSent;
+                flag = true;
+            }
+
+            if (info.maxReceived < data.lastReceived) {
+                info.maxReceived = data.lastReceived;
+                flag = true;
+            }
+
+            if (info.maxWritten < data.lastWrite) {
+                info.maxWritten = data.lastWrite;
+                flag = true;
+            }
+
+            if (info.maxRead < data.lastRead) {
+                info.maxRead = data.lastRead;
+                flag = true;
+            }
+
+            if (flag) {
+
+
+                System.out.printf("Component %s is consuming CPU: %d, MEM: %d, S: %d, R: %d, W: %d, Re: %d\n",
+                        principal.toString(), info.maxCPU, info.maxReserved,
+                        info.maxSent, info.maxReceived, info.maxWritten, info.maxRead);
+
+                for (Port port : currentComponent.getProvided()) {
+                    String name = port.getPortTypeRef().getName();
+                    int usage = MyLowLevelResourceConsumptionRecorder.getInstance().getUsesOfProvidedPort(key, name)
+                            / FineGrainedMonitoringStrategy.ELAPSED_SECONDS;
+                    System.out.printf("\tPort usage for %s is %d\n", name, usage);
+                }
+            }
         }
 
-        if (contract.getNetworkOut() < data.lastSent) {
-            a.put(Metric.NetworkS, new MeasurePoint(data.lastSent, contract.getNetworkOut()));
-        }
 
-        if (contract.getNetworkIn() < data.lastReceived) {
-            a.put(Metric.NetworkR, new MeasurePoint(data.lastReceived, contract.getNetworkIn()));
-        }
-
-        if (contract.getWrite() < data.lastWrite) {
-            a.put(Metric.IOWrite, new MeasurePoint(data.lastWrite, contract.getWrite()));
-        }
-
-        if (contract.getRead() < data.lastRead) {
-            a.put(Metric.IORead, new MeasurePoint(data.lastRead, contract.getRead()));
-        }
-
-        if (!a.isEmpty())
-            faultyComponents.add(new FaultyComponent(currentComponent.path(),a,
-                    new HashSet<String>(), new HashSet<String>()));
 
     }
 
     @Override
     public void onGCVerifyContract(long used, long max) {
-        ArrayList<FaultyComponent> faultyComponents = new ArrayList<FaultyComponent>();
         for (ComponentInstance component : ranking) {
-            EnumMap<Metric, MeasurePoint> b = new EnumMap<Metric, MeasurePoint>(Metric.class);
             ResourcePrincipal principal = getPrincipal(component);
             DataForCheckingContract data = getInfo(principal);
-            ResourceContract contract = principal.getContract();
-            if (contract.getMemory() > 0 && contract.getMemory() < data.lastMem) {
-                b.put(Metric.Memory, new MeasurePoint(data.lastMem, contract.getMemory()));
-                faultyComponents.add(new FaultyComponent(component.path(),b,
-                        new HashSet<String>(), new HashSet<String>()));
-            }
-        }
-        if (faultyComponents.size() > 0) {
-//            EnumSet<Metric> tmp = EnumSet.noneOf(Metric.class);
-            cancel();
+            boolean flag = false;
             synchronized (lock) {
-                this.faultyComponents = faultyComponents;
-                for (FaultyComponent c :faultyComponents) {
-                    System.out.println(c.getComponentPath());
+                String key = principal.toString();
+                Info info = (infos.containsKey(key))?
+                        infos.get(key) :
+                        infos.put(key, new Info());
+                info = infos.get(key);
+
+                if (info.maxReserved < data.lastMem) {
+                    info.maxReserved = data.lastMem;
+                    flag = true;
                 }
-                actionOnContractViolation(new Metric[0]);
+                if (flag) {
+                    System.out.printf("Component %s is consuming CPU: %d, MEM: %d, S: %d, R: %d, W: %d, Re: %d\n",
+                            principal.toString(), info.maxCPU, info.maxReserved,
+                            info.maxSent, info.maxReceived, info.maxWritten, info.maxRead);
+
+                    for (Port port : component.getProvided()) {
+                        String name = port.getPortTypeRef().getName();
+                        int usage = MyLowLevelResourceConsumptionRecorder.getInstance().getUsesOfProvidedPort(key, name)
+                                / FineGrainedMonitoringStrategy.ELAPSED_SECONDS;
+                        System.out.printf("\tPort usage for %s is %d\n", name, usage);
+                    }
+                }
             }
         }
     }
@@ -96,25 +140,16 @@ public class RecordingAllComponentsForEver extends FineGrainedMonitoringStrategy
     public void run() {
         count++;
         if (count >= 2) {
-            synchronized (lock) {
-                faultyComponents.clear();
-                checkRanking();
-                Iterator<ComponentInstance> it = ranking.iterator();
-                while (it.hasNext()) {
-                    currentComponent = it.next();
-                    ResourcePrincipal principal = getPrincipal(currentComponent);
-                    makeContractAvailable(principal, currentComponent);
-                    DataForCheckingContract data = getInfo(principal);
-                    verifyContract(principal, data);
-                }
-                // if someone is violating the contract then trigger adaptation
-                if (faultyComponents.size() > 0) {
-    //                EnumSet<Metric> tmp = EnumSet.noneOf(Metric.class);
-                    actionOnContractViolation(new Metric[0]);
-                }
+            checkRanking();
+            Iterator<ComponentInstance> it = ranking.iterator();
+            while (it.hasNext()) {
+                currentComponent = it.next();
+//                System.out.println(currentComponent.path());
+                ResourcePrincipal principal = getPrincipal(currentComponent);
+                DataForCheckingContract data = getInfo(principal);
+                verifyContract(principal, data);
             }
         }
-
     }
 
     private void checkRanking() {

@@ -53,13 +53,13 @@ public class RecordingTaskAllComponents extends AbstractMonitoringTask implement
         gcWatcher.addContractVerificationRequieredListener(this);
         gcWatcher.register();
 
-        switchToSimpleLocal(EnumSet.allOf(Metric.class));
+        switchToSimpleLocal();
 
         stopped = false;
         while (!isStopped()) {
             waitMessage();
             try {
-                Thread.sleep(1);
+                Thread.sleep(1000);
             } catch (InterruptedException e) { }
         }
 
@@ -68,7 +68,7 @@ public class RecordingTaskAllComponents extends AbstractMonitoringTask implement
         gcWatcher = null;
     }
 
-    private void switchToSimpleLocal(EnumSet<Metric> reason) {
+    private void switchToSimpleLocal() {
         MyLowLevelResourceConsumptionRecorder.getInstance().turnMonitoring(true);
 
         currentStrategy = new RecordingAllComponentsForEver(new ArrayList<ComponentInstance>(), msg, this);

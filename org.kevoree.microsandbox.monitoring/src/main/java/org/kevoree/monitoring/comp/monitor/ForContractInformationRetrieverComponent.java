@@ -29,15 +29,13 @@ import org.kevoree.monitoring.strategies.monitoring.FineGrainedStrategyFactory;
  */
 @Requires( {
  @RequiredPort(name = "output" , type = PortType.MESSAGE, optional = true),
- @RequiredPort(name = "reasoner", type = PortType.MESSAGE,
-         className = MicrosandboxEvent.class, optional = true)
 })
 @DictionaryType( {
         @DictionaryAttribute(name = "log_file", defaultValue = "")
 }
 )
 @ComponentType
-public class ForContractInformationRetrieverComponent extends AbstractComponentType implements MicrosandboxEventListener {
+public class ForContractInformationRetrieverComponent extends AbstractComponentType {
     AbstractMonitoringTask monitoringTask;
 
     private ModelRankingAlgorithm modelRanker;
@@ -54,11 +52,6 @@ public class ForContractInformationRetrieverComponent extends AbstractComponentT
         if (description == null) {
             System.out.println("panic: Why the platform description isn't here?");
             System.exit(0);
-        }
-
-        if (MonitoringReporterFactory.reporter() instanceof ComposeMonitoringReport) {
-            ((ComposeMonitoringReport)MonitoringReporterFactory.reporter()).addReporter(
-                    new MicrosandboxReporter(this));
         }
 
         monitoringTask = new RecordingTaskAllComponents(getNodeName(),
@@ -79,13 +72,5 @@ public class ForContractInformationRetrieverComponent extends AbstractComponentT
     public void updateComponent() {
         stopComponent();
         startComponent();
-    }
-
-    @Override
-    public void notifyEvent(MicrosandboxEvent monitoringEvent) {
-        if (isPortBinded("reasoner")) {
-            MessagePort port = getPortByName("reasoner", MessagePort.class);
-            port.process(monitoringEvent);
-        }
     }
 }
