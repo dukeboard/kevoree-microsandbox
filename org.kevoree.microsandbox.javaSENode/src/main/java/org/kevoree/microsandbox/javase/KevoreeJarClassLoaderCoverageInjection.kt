@@ -10,6 +10,7 @@ import org.kevoree.kcl.KevoreeJarClassLoader
 import org.kevoree.microsandbox.core.CoverageRuntime
 import org.kevoree.microsandbox.core.instrumentation.ExtraInstrumentationRules
 import org.kevoree.microsandbox.core.instrumentation.InstrumenterCommand
+import java.util.concurrent.atomic.AtomicInteger
 
 /**
  * Created with IntelliJ IDEA.

@@ -21,8 +21,6 @@ public class BinderClassTransformer implements ClassFileTransformer {
 
     private InstrumenterCommand cmd = new InstrumenterCommand();
 
-
-
     boolean debug = false;
 
     public BinderClassTransformer(Instrumentation inst, boolean debug) {
@@ -43,10 +41,16 @@ public class BinderClassTransformer implements ClassFileTransformer {
 
         boolean instr_mem = false;
         boolean instr_instr = false;
+        ClassLoader original = classLoader;
         classLoader = searchProperLoader(classLoader);
         if (classLoader != null) {
             int hash = classLoader.hashCode();
             String appId = MonitoringStatusList.instance().getAppId(hash);
+            // I should save this class to retransform it as soon as the system decides
+            // FIXME: It's really important allowing to have different versions of the same class (but not now)
+            // In fact, the solution is close to using a Pair<Name, ClassLoader> as key
+            // I say "close" because of the hierarchy between classloaders
+            MonitoringStatusList.instance().saveClassName(appId, className, original);
             if (MonitoringStatusList.instance().isMonitored(appId)) {
                 instr_mem = MonitoringStatusList.instance().isMemoryMonitored(appId);
                 instr_instr = MonitoringStatusList.instance().isCPUMonitored(appId);
