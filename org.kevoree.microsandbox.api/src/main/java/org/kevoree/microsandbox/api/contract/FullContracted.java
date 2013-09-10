@@ -9,7 +9,7 @@ package org.kevoree.microsandbox.api.contract;
 
 //@ChannelType
 //@ComponentType
-public interface FullContracted extends CPUContracted, MemoryContracted, NetworkContracted {
+public interface FullContracted extends CPUContracted, MemoryContracted, NetworkContracted, ThroughputContracted {
 
 
 
