@@ -4,21 +4,11 @@ import org.kevoree.annotation.*;
 import org.kevoree.framework.AbstractComponentType;
 import org.kevoree.framework.MessagePort;
 import org.kevoree.library.defaultNodeTypes.context.KevoreeDeployManager;
-import org.kevoree.microsandbox.api.communication.ComposeMonitoringReport;
-import org.kevoree.microsandbox.api.communication.MonitoringReporterFactory;
 import org.kevoree.microsandbox.api.contract.PlatformDescription;
-import org.kevoree.microsandbox.api.event.MicrosandboxEvent;
-import org.kevoree.monitoring.communication.MicrosandboxEventListener;
-import org.kevoree.monitoring.communication.MicrosandboxReporter;
-import org.kevoree.monitoring.ranking.ComponentRankerFunctionFactory;
-import org.kevoree.monitoring.ranking.ComponentsInfoStorage;
 import org.kevoree.monitoring.ranking.ModelRankingAlgorithm;
-import org.kevoree.monitoring.sla.GlobalThreshold;
 import org.kevoree.monitoring.strategies.AbstractMonitoringTask;
-import org.kevoree.monitoring.strategies.MonitoringTask;
-import org.kevoree.monitoring.strategies.MonitoringTaskAllComponents;
+
 import org.kevoree.monitoring.strategies.RecordingTaskAllComponents;
-import org.kevoree.monitoring.strategies.monitoring.FineGrainedStrategyFactory;
 
 /**
  * Created with IntelliJ IDEA.
