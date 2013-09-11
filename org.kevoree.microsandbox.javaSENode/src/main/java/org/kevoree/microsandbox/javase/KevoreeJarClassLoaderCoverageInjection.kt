@@ -11,6 +11,7 @@ import org.kevoree.microsandbox.core.CoverageRuntime
 import org.kevoree.microsandbox.core.instrumentation.ExtraInstrumentationRules
 import org.kevoree.microsandbox.core.instrumentation.InstrumenterCommand
 import java.util.concurrent.atomic.AtomicInteger
+import org.resourceaccounting.binder.MonitoringStatusList
 
 /**
  * Created with IntelliJ IDEA.
@@ -35,6 +36,8 @@ open class KevoreeJarClassLoaderCoverageInjection() : KevoreeJarClassLoader() {
     }
 
     override fun internal_defineClass(className: String, bytes: ByteArray): Class<out Any?>? {
+//        println(className + " MIERDA PRIETA " + Thread.currentThread().getThreadGroup()?.getName())\
+//        MonitoringStatusList.instance()?.saveClassName(Thread.currentThread().getThreadGroup()?.getName(), className, this)
         val x: ByteArray =  if (!ExtraInstrumentationRules.isInstrumentable(className.replace('.','/'))) {
                                 bytes
                             }

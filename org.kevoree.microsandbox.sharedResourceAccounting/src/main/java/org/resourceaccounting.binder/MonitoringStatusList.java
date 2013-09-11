@@ -1,5 +1,7 @@
 package org.resourceaccounting.binder;
 
+import java.lang.instrument.Instrumentation;
+import java.lang.instrument.UnmodifiableClassException;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -12,9 +14,11 @@ import java.util.concurrent.atomic.AtomicInteger;
  * User: inti
  * Date: 9/8/13
  * Time: 10:59 PM
- * To change this template use File | Settings | File Templates.
  */
 public class MonitoringStatusList {
+
+
+    private Instrumentation globalInst;
     private static MonitoringStatusList singleton = new MonitoringStatusList();
     private MonitoringStatusList() { }
 
@@ -31,24 +35,20 @@ public class MonitoringStatusList {
     }
 
     private static class MyKey {
-        private static AtomicInteger lastId = new AtomicInteger(1);
 
         private final int id;
         public String className;
         public WeakReference<ClassLoader> loaderWeakReference;
 
         public MyKey(String className, ClassLoader loader) {
+            id = className.hashCode() ^ loader.hashCode();
             this.className = className;
             loaderWeakReference = new WeakReference<ClassLoader>(loader);
-            id = lastId.incrementAndGet();
         }
 
         @Override
         public int hashCode() {
-            ClassLoader loader = loaderWeakReference.get();
-            if (loader == null)
-                return 0;
-            return className.hashCode() ^ loader.hashCode();
+            return id;
         }
 
         private String getClassName() {
@@ -75,13 +75,29 @@ public class MonitoringStatusList {
     }
 
     public synchronized String getAppId(int idLoader) {
-        return  (classLoaderIdToPrincipalId.containsKey(idLoader))?
+        return classLoaderIdToPrincipalId.containsKey(idLoader)?
                 classLoaderIdToPrincipalId.get(idLoader):
                 "";
+//        for (String appId : classLoaderIdToPrincipalId.keySet()) {
+//            int idL = classLoaderIdToPrincipalId.get(appId);
+//            if (idLoader == idL && classes.containsKey(appId) && classes.get(appId).contains(className))
+//                return appId;
+//        }
+//        return "";
     }
 
-    public synchronized void setMonitored(String appId, boolean on) {
+    synchronized void setMonitored(String appId, boolean on) {
         if (map.containsKey(appId)) {
+            Status s = map.get(appId);
+            if (s.monitored != on) {
+                s.monitored = on;
+                retransformClasses(appId);
+            }
+        }
+    }
+
+    void setMonitoringAll(boolean on) {
+        for (String appId : map.keySet()) {
             Status s = map.get(appId);
             if (s.monitored != on) {
                 s.monitored = on;
@@ -101,7 +117,7 @@ public class MonitoringStatusList {
     public synchronized boolean isMemoryMonitored(String appId) {
         if (map.containsKey(appId)) {
             Status s = map.get(appId);
-            return s.monitored && s.memMonitored;
+            return s.memMonitored;
         }
         return false;
     }
@@ -125,31 +141,44 @@ public class MonitoringStatusList {
                 classes.put(appId, set);
             }
             MyKey key = new MyKey(className, loader);
-            set.add(new MyKey(className, loader));
+            set.add(key);
         }
     }
 
-    private synchronized void retransformClasses(String appId) {
-        if (classes.containsKey(appId)) {
-            ArrayList<Class<?>> clazzes = new ArrayList<Class<?>>();
-            for (MyKey key : classes.get(appId)) {
-                String name = key.getClassName();
-                ClassLoader loader = key.getLoader();
-                if (loader != null) {
-                    try {
-                        Class<?> clazz = loader.loadClass(name);
-                        clazzes.add(clazz);
-                    } catch (ClassNotFoundException e) {
+    private void retransformClasses(String appId) {
+        if (classes.containsKey(appId) && globalInst != null) {
+            Status status = map.get(appId);
+            if (status.memMonitored && !status.cpuMonitored)
+                return;
+            if (status.cpuMonitored || status.memMonitored) {
+                ArrayList<Class<?>> clazzes = new ArrayList<Class<?>>();
+                for (MyKey key : classes.get(appId)) {
+                    String name = key.getClassName();
+                    ClassLoader loader = key.getLoader();
+                    if (loader != null) {
+                        try {
+                            System.out.println("Getting class "+name+" for retransformation by using loader: " + loader.hashCode());
+                            Class<?> clazz = loader.loadClass(name.replace('/', '.'));
+                            clazzes.add(clazz);
+                        } catch (ClassNotFoundException e) {
 
+                        }
                     }
                 }
+                // now retransform all these classes
+                Class<?>[] a = new Class[clazzes.size()];
+                clazzes.toArray(a);
+                try {
+                    globalInst.retransformClasses(a);
+                } catch (UnmodifiableClassException e) {
+                    e.printStackTrace();
+                }
             }
-            // now retransform all these classes
-            Class<?>[] a = new Class[clazzes.size()];
-            clazzes.toArray(a);
-
         }
     }
 
+    public void setGlobalInst(Instrumentation globalInst) {
+        this.globalInst = globalInst;
+    }
 
 }

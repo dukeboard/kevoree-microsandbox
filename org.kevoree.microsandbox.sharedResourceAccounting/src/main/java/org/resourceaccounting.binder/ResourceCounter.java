@@ -27,10 +27,13 @@ public class ResourceCounter {
     }
 
     public static synchronized void setMonitoring(boolean b) {
-        if (b)
+        if (b) {
             monitoringFlags |= MONITORING;
-        else if (isMonitoring())
+        }
+        else if (isMonitoring()) {
             monitoringFlags -= MONITORING;
+        }
+        MonitoringStatusList.instance().setMonitoringAll(b);
 
         ourInstance.senders.clear();
         ourInstance.receivers.clear();
@@ -75,6 +78,7 @@ public class ResourceCounter {
         if (on) ourInstance.turnOnMonitoringSinglePrincipal(appId);
         else ourInstance.turnOnMonitoringSinglePrincipal(null);
         setSinglePrincipalMonitoring(on);
+        MonitoringStatusList.instance().setMonitored(appId, on);
     }
 
     public static ResourcePrincipal[] getApplications() {

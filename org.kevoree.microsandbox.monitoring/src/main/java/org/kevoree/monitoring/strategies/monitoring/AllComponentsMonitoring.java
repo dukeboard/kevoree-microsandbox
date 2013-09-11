@@ -89,6 +89,8 @@ public class AllComponentsMonitoring extends FineGrainedMonitoringStrategy {
                 currentComponent = it.next();
                 a = new EnumMap<Metric, MeasurePoint>(Metric.class);
                 ResourcePrincipal principal = getPrincipal(currentComponent);
+                if (principal == null)
+                    continue;
                 makeContractAvailable(principal, currentComponent);
                 DataForCheckingContract data = getInfo(principal);
                 verifyContract(principal, data);

@@ -11,6 +11,7 @@ package org.resourceaccounting.binderinjector;
 
 import org.kevoree.microsandbox.core.instrumentation.strategies.DefaultResourceContractProvider;
 import org.resourceaccounting.ObjectSizeProvider;
+import org.resourceaccounting.binder.MonitoringStatusList;
 import org.resourceaccounting.binder.ResourceCounter;
 
 import java.lang.instrument.Instrumentation;
@@ -33,6 +34,7 @@ public class ResourceCounterAgent {
                 return globalInst.getObjectSize(obj);
             }
         });
+        MonitoringStatusList.instance().setGlobalInst(globalInst);
 
         boolean debug = agentArgs != null && agentArgs.length() > 0 &&  agentArgs.equals("debug");
         inst.addTransformer(new BinderClassTransformer(inst, debug),true);

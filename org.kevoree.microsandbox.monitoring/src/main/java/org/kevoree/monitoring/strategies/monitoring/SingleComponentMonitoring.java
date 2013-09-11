@@ -92,6 +92,8 @@ public class SingleComponentMonitoring extends FineGrainedMonitoringStrategy {
 
             a = new EnumMap<Metric, MeasurePoint>(Metric.class);
             ResourcePrincipal principal = getPrincipal(currentComponent);
+            if (principal == null)
+                return;
             makeContractAvailable(principal, currentComponent);
             DataForCheckingContract data = getInfo(principal);
             verifyContract(principal, data);

@@ -107,6 +107,8 @@ public class RecordingAllComponentsForEver extends FineGrainedMonitoringStrategy
     public void onGCVerifyContract(long used, long max) {
         for (ComponentInstance component : ranking) {
             ResourcePrincipal principal = getPrincipal(component);
+            if (principal == null)
+                continue;
             DataForCheckingContract data = getInfo(principal);
             boolean flag = false;
             synchronized (lock) {
@@ -146,6 +148,8 @@ public class RecordingAllComponentsForEver extends FineGrainedMonitoringStrategy
                 currentComponent = it.next();
 //                System.out.println(currentComponent.path());
                 ResourcePrincipal principal = getPrincipal(currentComponent);
+                if (principal == null)
+                    continue;
                 DataForCheckingContract data = getInfo(principal);
                 verifyContract(principal, data);
             }

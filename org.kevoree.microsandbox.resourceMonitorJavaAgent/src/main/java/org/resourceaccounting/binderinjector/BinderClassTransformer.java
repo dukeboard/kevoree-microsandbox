@@ -46,15 +46,18 @@ public class BinderClassTransformer implements ClassFileTransformer {
         if (classLoader != null) {
             int hash = classLoader.hashCode();
             String appId = MonitoringStatusList.instance().getAppId(hash);
-            // I should save this class to retransform it as soon as the system decides
-            // FIXME: It's really important allowing to have different versions of the same class (but not now)
+            // I should save this class to re-transform it as soon as the system decides
             // In fact, the solution is close to using a Pair<Name, ClassLoader> as key
             // I say "close" because of the hierarchy between classloaders
             MonitoringStatusList.instance().saveClassName(appId, className, original);
             if (MonitoringStatusList.instance().isMonitored(appId)) {
                 instr_mem = MonitoringStatusList.instance().isMemoryMonitored(appId);
                 instr_instr = MonitoringStatusList.instance().isCPUMonitored(appId);
-//                System.out.printf("Classloader %d %s %s %s %s\n",hash, appId, className,instr_mem, instr_instr);
+                System.out.printf("Classloader %d %s %s %s %s 000\n",hash, appId, className,instr_mem, instr_instr);
+            }
+            else if (MonitoringStatusList.instance().isMemoryMonitored(appId)) {
+                instr_mem = true;
+                System.out.printf("Classloader %d %s %s %s %s 111\n",hash, appId, className,instr_mem, instr_instr);
             }
         }
 

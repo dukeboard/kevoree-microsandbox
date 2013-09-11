@@ -73,6 +73,8 @@ public class AllComponentsForEver extends FineGrainedMonitoringStrategy {
         for (ComponentInstance component : ranking) {
             EnumMap<Metric, MeasurePoint> b = new EnumMap<Metric, MeasurePoint>(Metric.class);
             ResourcePrincipal principal = getPrincipal(component);
+            if (principal == null)
+                continue;
             DataForCheckingContract data = getInfo(principal);
             ResourceContract contract = principal.getContract();
             if (contract.getMemory() > 0 && contract.getMemory() < data.lastMem) {
@@ -105,6 +107,8 @@ public class AllComponentsForEver extends FineGrainedMonitoringStrategy {
                 while (it.hasNext()) {
                     currentComponent = it.next();
                     ResourcePrincipal principal = getPrincipal(currentComponent);
+                    if (principal == null)
+                        continue;
                     makeContractAvailable(principal, currentComponent);
                     DataForCheckingContract data = getInfo(principal);
                     verifyContract(principal, data);

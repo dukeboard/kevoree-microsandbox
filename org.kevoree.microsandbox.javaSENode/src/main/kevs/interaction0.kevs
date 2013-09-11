@@ -16,7 +16,7 @@ addNode node0:MonitoredNode {
 
 addComponent MonitoringComponent0@node0 : MonitoringComponent {
     memory_threshold='65',
-    cpu_threshold='10',
+    cpu_threshold='3',
     net_in_threshold='80',
     net_out_threshold='80'
 }
@@ -35,7 +35,11 @@ addComponent tester0@node0 : CPUConsumerByPrimalityTesting {
 }
 
 addComponent generator0@node0 : NumberGenerator {
-    frequency = '50'
+    frequency = '20'
+}
+
+addComponent measurer@node0 : MeasuringCPUUsage {
+
 }
 
 addChannel channelForNumbers : defMSG {}
