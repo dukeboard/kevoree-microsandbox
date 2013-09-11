@@ -157,7 +157,7 @@ public class MonitoringStatusList {
                     ClassLoader loader = key.getLoader();
                     if (loader != null) {
                         try {
-                            System.out.println("Getting class "+name+" for retransformation by using loader: " + loader.hashCode());
+//                            System.out.println("Getting class "+name+" for retransformation by using loader: " + loader.hashCode());
                             Class<?> clazz = loader.loadClass(name.replace('/', '.'));
                             clazzes.add(clazz);
                         } catch (ClassNotFoundException e) {

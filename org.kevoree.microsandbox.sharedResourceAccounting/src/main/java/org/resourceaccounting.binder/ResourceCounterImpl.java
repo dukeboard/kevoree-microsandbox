@@ -211,11 +211,6 @@ class ResourceCounterImpl {
         return ThreadGroupResourcePrincipal.get(id);
     }
 
-    final ResourcePrincipal get() {
-        // not inside one invocation
-        return ThreadGroupResourcePrincipal.get();
-    }
-
     void setResourceContractProvider(ResourceContractProvider resourceContractProvider) {
         this.resourceContractProvider = resourceContractProvider;
     }

@@ -53,11 +53,11 @@ public class BinderClassTransformer implements ClassFileTransformer {
             if (MonitoringStatusList.instance().isMonitored(appId)) {
                 instr_mem = MonitoringStatusList.instance().isMemoryMonitored(appId);
                 instr_instr = MonitoringStatusList.instance().isCPUMonitored(appId);
-                System.out.printf("Classloader %d %s %s %s %s 000\n",hash, appId, className,instr_mem, instr_instr);
+//                System.out.printf("Classloader %d %s %s %s %s 000\n",hash, appId, className,instr_mem, instr_instr);
             }
             else if (MonitoringStatusList.instance().isMemoryMonitored(appId)) {
                 instr_mem = true;
-                System.out.printf("Classloader %d %s %s %s %s 111\n",hash, appId, className,instr_mem, instr_instr);
+//                System.out.printf("Classloader %d %s %s %s %s 111\n",hash, appId, className,instr_mem, instr_instr);
             }
         }
 

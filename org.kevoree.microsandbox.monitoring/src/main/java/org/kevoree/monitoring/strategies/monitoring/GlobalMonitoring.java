@@ -57,6 +57,7 @@ public class GlobalMonitoring extends AbstractMonitoringStrategy {
 
         boolean firstTime = previousCPU == 0;
         double diff = sum - previousCPU;
+        if (diff < 0) diff = 0;
         previousCPU = sum;
         double cpuUsage = Math.min(99, diff/(elapsedTime*nCPUs)*100);
 

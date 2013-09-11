@@ -12,6 +12,8 @@ import org.resourceaccounting.contract.ResourceContract;
 import org.resourceaccounting.contract.ResourceContractProvider;
 import org.resourceaccounting.ResourcePrincipal;
 
+import java.util.concurrent.atomic.AtomicLong;
+
 public class ResourceCounter {
     private static ResourceCounterImpl ourInstance = new ResourceCounterImpl();
 
@@ -33,10 +35,10 @@ public class ResourceCounter {
         else if (isMonitoring()) {
             monitoringFlags -= MONITORING;
         }
-        MonitoringStatusList.instance().setMonitoringAll(b);
-
         ourInstance.senders.clear();
         ourInstance.receivers.clear();
+
+        MonitoringStatusList.instance().setMonitoringAll(b);
     }
 
     private static synchronized boolean isMonitoringASinglePrincipal() {
@@ -136,9 +138,12 @@ public class ResourceCounter {
      * @return
      */
     public static ResourcePrincipal get() {
-//        Thread th = Thread.currentThread();
-        return ourInstance.get();
+        return ThreadGroupResourcePrincipal.get();
 
+    }
+
+    public static AtomicLong getPrincipalCounter() {
+        return ThreadGroupResourcePrincipal.getPrincipalCounter();
     }
 
     public static void setResourceContractProvider(ResourceContractProvider provider) {

@@ -10,6 +10,7 @@ import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadMXBean;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -74,6 +75,11 @@ public class ThreadGroupResourcePrincipal extends AbstractResourcePrincipal<Long
             tg = tg.getParent();
         }
         return (tg == null)? null : tg.getName();
+    }
+
+    public static AtomicLong getPrincipalCounter() {
+        ThreadGroupResourcePrincipal p = (ThreadGroupResourcePrincipal)get();
+        return p.nbInstructions;
     }
 
     private static class Principals extends ThreadLocal<ResourcePrincipal> {

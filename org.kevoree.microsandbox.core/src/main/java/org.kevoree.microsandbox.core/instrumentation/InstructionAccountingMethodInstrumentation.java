@@ -1,6 +1,8 @@
 package org.kevoree.microsandbox.core.instrumentation;
 
 import org.objectweb.asm.*;
+import org.objectweb.asm.commons.AnalyzerAdapter;
+import org.objectweb.asm.commons.LocalVariablesSorter;
 
 /**
 * Created with IntelliJ IDEA.
@@ -20,6 +22,9 @@ public class InstructionAccountingMethodInstrumentation extends AbstractMethodIn
      * Current opcode index in bytecode array for this method
      */
     private int readInstructions;
+
+//    public LocalVariablesSorter lvs;
+//    public AnalyzerAdapter aa;
 
 
     public InstructionAccountingMethodInstrumentation(MethodVisitor methodVisitor, String className) {
@@ -47,7 +52,19 @@ public class InstructionAccountingMethodInstrumentation extends AbstractMethodIn
         super.visitTypeInsn(opcode, involvedClass);
     }
 
+//    private int time;
+//    private int maxStack;
 
+//    @Override
+//    public void visitCode() {
+//        mv.visitCode();
+//        mv.visitMethodInsn(Opcodes.INVOKESTATIC, ExtraInstrumentationRules.MONITOR_CLASS_NAME,
+//                "getPrincipalCounter",
+//                "()Ljava/util/concurrent/atomic/AtomicLong;");
+//        time = lvs.newLocal(Type.getType("Ljava/util/concurrent/atomic/AtomicLong;"));
+//        mv.visitVarInsn(Opcodes.ASTORE, time);
+//        maxStack = 4;
+//    }
 
     @Override
     public void visitInsn(int opcode) {
@@ -56,9 +73,21 @@ public class InstructionAccountingMethodInstrumentation extends AbstractMethodIn
         if (b) {
             // register the consumption of resources
             registerConsumption();
+//            mv.visitMethodInsn(Opcodes.INVOKESTATIC, "java/lang/System",
+//                    "currentTimeMillis", "()J");
+//            mv.visitVarInsn(Opcodes.LLOAD, time);
+//            mv.visitInsn(Opcodes.LSUB);
+//            mv.visitInsn(Opcodes.POP);
+//            maxStack = Math.max(aa.stack.size() + 4, maxStack);
         }
         // generate he normal instruction
         super.visitInsn(opcode);
+    }
+
+    @Override
+    public void visitMaxs(int maxStack, int maxLocals) {
+//        mv.visitMaxs(Math.max(this.maxStack, maxStack), maxLocals);
+        super.visitMaxs(maxStack + 3, maxLocals);
     }
 
     /**
@@ -139,17 +168,16 @@ public class InstructionAccountingMethodInstrumentation extends AbstractMethodIn
         super.visitMultiANewArrayInsn(s, i);
     }
 
-    @Override
-    public void visitMaxs(int maxStack, int maxLocals) {
-        super.visitMaxs(maxStack + 3, maxLocals);
-    }
-
     /**
      * Generate the code to notify about CPU and Memory Allocation
      */
     private void registerConsumption() {
         int countI = readInstructions - lastMarkOfBasicBlockBorder;
         registerCPUConsumption(countI);
+//        mv.visitVarInsn(Opcodes.ALOAD, time);
+//        lconst(countI);
+//        mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL,"java/util/concurrent/atomic/AtomicLong","addAndGet","(J)J");
+//        mv.visitInsn(Opcodes.POP2);
         lastMarkOfBasicBlockBorder = readInstructions;
     }
 }

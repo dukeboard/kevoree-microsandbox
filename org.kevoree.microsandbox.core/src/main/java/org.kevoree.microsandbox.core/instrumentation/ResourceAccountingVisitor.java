@@ -1,9 +1,11 @@
 package org.kevoree.microsandbox.core.instrumentation;
 
 import org.objectweb.asm.*;
+import org.objectweb.asm.commons.AnalyzerAdapter;
 import org.objectweb.asm.commons.InstructionAdapter;
 import org.kevoree.microsandbox.core.instrumentation.memory.AdaptingExistentFinalizeInRT;
 import org.kevoree.microsandbox.core.instrumentation.memory.MemoryAllocationMethodInstrumentation;
+import org.objectweb.asm.commons.LocalVariablesSorter;
 
 /**
 * Created with IntelliJ IDEA.
@@ -52,9 +54,14 @@ public class ResourceAccountingVisitor extends ClassVisitor {
         if (memory && !isEnum) {
             mv = new MemoryAllocationMethodInstrumentation(mv,className,true);
         }
-        return instructions?
-                new InstructionAccountingMethodInstrumentation(mv, className) :
-                mv;
+        if (instructions) {
+            InstructionAccountingMethodInstrumentation mi = new InstructionAccountingMethodInstrumentation(mv, className);
+//            mi.aa = new AnalyzerAdapter(className, flags, methodName, signature, mi);
+//            mi.lvs = new LocalVariablesSorter(flags, signature, mi.aa);
+//            return mi.lvs;
+            return mi;
+        }
+        return mv;
     }
 
     @Override
