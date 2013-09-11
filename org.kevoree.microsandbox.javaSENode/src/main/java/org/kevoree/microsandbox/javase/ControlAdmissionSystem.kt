@@ -45,7 +45,7 @@ public object ControlAdmissionSystem {
     fun init(platformDescription : PlatformDescription) : Unit {
         description = platformDescription
         // TODO : no parece estar bien
-        freeMemory = Math.min(Runtime.getRuntime().freeMemory(), description?.availability_memory as Long)
+        freeMemory = Math.min(Runtime.getRuntime().totalMemory(), description?.availability_memory!!)
         freeNetworkIn = description?.availability_received as Long
         freeNetworkOut = description?.availability_sent as Long
         freeRead = description?.availability_read_disc as Long
