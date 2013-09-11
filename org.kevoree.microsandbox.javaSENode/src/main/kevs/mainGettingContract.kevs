@@ -21,22 +21,63 @@ addComponent RecordingComponent0@node0 : ForContractInformationRetrieverComponen
 
 }
 
+addComponent ThresholdCalculator@node0 : MeasuringCPUUsage{
+
+}
+
+addComponent ContractCreator0@node0 : ContractCreatorComponent {
+    kevs_file = '/home/inti/Desktop/setup.kevs'
+}
+
+addChannel cpu_channel : defMSG
+addChannel mem_channel : defMSG
+addChannel components_channel : defMSG
+
+bind ThresholdCalculator.maximumCPU@node0 => cpu_channel
+bind ContractCreator0.CPUThreshold@node0 => cpu_channel
+
+bind ThresholdCalculator.maximumMem@node0 => mem_channel
+bind ContractCreator0.MemThreshold@node0 => mem_channel
+
+bind RecordingComponent0.output@node0 => components_channel
+bind ContractCreator0.componentProcessor@node0 => components_channel
+
+updateDictionary cpu_channel
+updateDictionary mem_channel
+updateDictionary components_channel
+
 addComponent FakeConso509@node0 : FakeConsole { singleFrame='true' }
 addComponent FakeConso510@node0 : FakeConsole {}
 addComponent fread@node0 : FileExplorer { basedir='.' }
 
-addComponent memoryConsumer0@node0 : MemoryConsumer {
-    memory_max_size='20',
-    cpu_wall_time='200000',
-    amount = '302400'
+//addComponent memoryConsumer0@node0 : MemoryConsumer {
+//    memory_max_size='20',
+//    cpu_wall_time='200000',
+//    amount = '302400'
+//}
+
+//addComponent cpuConsumer0@node0 : CPUConsumerWallTime {
+//    cpu_wall_time='2000000'
+//}
+
+//addComponent writer0@node0 : IOWriterGood {
+//}
+
+addComponent tester0@node0 : CPUConsumerByPrimalityTesting {
+    cpu_wall_time='4000000',
+    throughput_msg_per_second='all=8;primalityTester=8'
 }
 
-addComponent cpuConsumer0@node0 : CPUConsumerWallTime {
-    cpu_wall_time='2000000'
+addComponent generator0@node0 : NumberGenerator {
+    frequency = '20'
 }
 
-addComponent writer0@node0 : IOWriterGood {
-}
+addChannel channelForNumbers : defMSG {}
+
+bind tester0.primalityTester@node0 => channelForNumbers
+bind generator0.numbers@node0 => channelForNumbers
+
+updateDictionary channelForNumbers
 
 addChannel defMSGT419 : defMSG
 addChannel defMSGT360 : defMSG

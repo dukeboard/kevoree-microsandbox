@@ -1,7 +1,9 @@
-package org.kevoree.microsandbox.samples.benchmark.cpuusage;
+package org.kevoree.monitoring.comp.monitor;
 
 import org.kevoree.annotation.*;
 import org.kevoree.framework.AbstractComponentType;
+import org.kevoree.framework.MessagePort;
+import org.resourceaccounting.ResourcePrincipal;
 
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadMXBean;
@@ -15,6 +17,10 @@ import java.util.TimerTask;
  * Time: 2:22 PM
  * To change this template use File | Settings | File Templates.
  */
+@Requires({
+        @RequiredPort(name = "maximumCPU", optional = true, type = PortType.MESSAGE),
+        @RequiredPort(name = "maximumMem", optional = true, type = PortType.MESSAGE)
+})
 @ComponentType
 public class MeasuringCPUUsage extends AbstractComponentType {
 
@@ -26,7 +32,14 @@ public class MeasuringCPUUsage extends AbstractComponentType {
     double cpuUsageCumulative = 0;
     int time = 0;
 
-    class Measuring extends TimerTask {
+    double maximumCPUUsage = 0;
+
+    int count = 0;
+
+    GCWatcher gcWatcher = new GCWatcher();
+    Timer t = new Timer();
+
+    class Measuring extends TimerTask implements ContractVerificationRequired {
 
         @Override
         public void run() {
@@ -51,21 +64,48 @@ public class MeasuringCPUUsage extends AbstractComponentType {
 
             // avoid to check when the previous measurement doesn't exist because its use may imply erroneous estimation
             if (!firstTime) {
-                System.out.printf("Last %f , total %f\n", cpuUsage, cpuUsageCumulative/(100*time)*100);
+//                System.out.printf("Last %f , total %f\n", cpuUsage, cpuUsageCumulative/(100*time)*100);
             }
+
+            // skip initial values because the overhead is due deployment
+            if (count > 5) {
+                if (cpuUsage > maximumCPUUsage)  {
+                    maximumCPUUsage = cpuUsage;
+                    MessagePort p = getPortByName("maximumCPU",MessagePort.class);
+                    p.process(maximumCPUUsage);
+                }
+            }
+            count++;
+        }
+
+        @Override
+        public void verifyContract(ResourcePrincipal principal, Object obj) {
+        }
+
+        @Override
+        public void onGCVerifyContract(long used, long max) {
+            double u = used;
+            u /= max;
+            u *= 100;
+            MessagePort p = getPortByName("maximumMem",MessagePort.class);
+            p.process(maximumCPUUsage);
         }
     }
 
 
     @Start
     public void start() {
-        Timer t = new Timer();
-        t.schedule(new Measuring(),(long)ELAPSED_TIME,(long)ELAPSED_TIME);
+        gcWatcher.register();
+        Measuring m = new Measuring();
+        gcWatcher.addContractVerificationRequieredListener(m);
+        t.schedule(m,(long)ELAPSED_TIME,(long)ELAPSED_TIME);
     }
 
     @Stop
     public void stop() {
-
+        t.cancel();
+        t.purge();
+        gcWatcher.unregister();
     }
 
     @Update

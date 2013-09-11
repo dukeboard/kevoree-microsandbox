@@ -4,6 +4,8 @@ import org.kevoree.ComponentInstance;
 import org.kevoree.Port;
 import org.kevoree.microsandbox.api.sla.Metric;
 import org.kevoree.monitoring.comp.MyLowLevelResourceConsumptionRecorder;
+import org.kevoree.monitoring.comp.monitor.InfoForContractCreation;
+import org.kevoree.monitoring.comp.monitor.NewMetricReporter;
 import org.kevoree.monitoring.sla.FaultyComponent;
 import org.kevoree.monitoring.sla.MeasurePoint;
 import org.resourceaccounting.ResourcePrincipal;
@@ -19,24 +21,20 @@ import java.util.*;
  *
  */
 public class RecordingAllComponentsForEver extends FineGrainedMonitoringStrategy {
+    private final NewMetricReporter reporter;
     private int count = 0;
     private Object lock = new Object();
     private RankChecker rankChecker;
 
-    class Info {
-        long maxCPU = 0;
-        long maxSent = 0;
-        long maxReceived = 0;
-        long maxWritten = 0;
-        long maxRead = 0;
-        long maxReserved = 0;
-    }
-    private HashMap<String, Info> infos = new HashMap<String, Info>();
+
+    private HashMap<String, InfoForContractCreation> infos = new HashMap<String, InfoForContractCreation>();
 
 
-    public RecordingAllComponentsForEver(List<ComponentInstance> ranking, Object msg, RankChecker rankChecker) {
+    public RecordingAllComponentsForEver(List<ComponentInstance> ranking, Object msg, RankChecker rankChecker,
+                                         NewMetricReporter reporter) {
         super(null, ranking, msg);
         this.rankChecker =rankChecker;
+        this.reporter = reporter;
     }
 
     @Override
@@ -52,11 +50,12 @@ public class RecordingAllComponentsForEver extends FineGrainedMonitoringStrategy
         boolean flag = false;
         synchronized (lock) {
             String key = principal.toString();
-            Info info = infos.containsKey(key)?
+            InfoForContractCreation info = infos.containsKey(key)?
                     infos.get(key) :
-                    infos.put(key, new Info()); // what a crazy behavior the one of this method (side effects and return value)
+                    infos.put(key, new InfoForContractCreation()); // what a crazy behavior the one of this method (side effects and return value)
 
             info = infos.get(key);
+            info.path = key;
 
             if (info.maxCPU < data.lastCPU) {
                 info.maxCPU = data.lastCPU;
@@ -83,19 +82,31 @@ public class RecordingAllComponentsForEver extends FineGrainedMonitoringStrategy
                 flag = true;
             }
 
+            int total = 0;
+            String nameComponent = currentComponent.getName();
+            for (Port port : currentComponent.getProvided()) {
+                String name = port.getPortTypeRef().getName();
+                int usage = MyLowLevelResourceConsumptionRecorder.getInstance().getUsesOfProvidedPort(nameComponent, name)
+                        / count;
+
+//                System.out.println("++++++++++++++++++++++++++++++++++" + usage + "+++++++++++++++++++++++++++++");
+
+                boolean b = info.updatePortUsage(name, usage);
+                flag = flag || b;
+//                System.out.printf("\tPort usage for %s is %d\n", name, usage);
+                total += usage;
+            }
+            if (total > info.allPortCalls) {
+                info.allPortCalls = total;
+                flag = true;
+            }
+
             if (flag) {
+                reporter.report(key, info);
+//                System.out.printf("Component %s is consuming CPU: %d, MEM: %d, S: %d, R: %d, W: %d, Re: %d\n",
+//                        principal.toString(), info.maxCPU, info.maxReserved,
+//                        info.maxSent, info.maxReceived, info.maxWritten, info.maxRead);
 
-
-                System.out.printf("Component %s is consuming CPU: %d, MEM: %d, S: %d, R: %d, W: %d, Re: %d\n",
-                        principal.toString(), info.maxCPU, info.maxReserved,
-                        info.maxSent, info.maxReceived, info.maxWritten, info.maxRead);
-
-                for (Port port : currentComponent.getProvided()) {
-                    String name = port.getPortTypeRef().getName();
-                    int usage = MyLowLevelResourceConsumptionRecorder.getInstance().getUsesOfProvidedPort(key, name)
-                            / FineGrainedMonitoringStrategy.ELAPSED_SECONDS;
-                    System.out.printf("\tPort usage for %s is %d\n", name, usage);
-                }
             }
         }
 
@@ -113,26 +124,21 @@ public class RecordingAllComponentsForEver extends FineGrainedMonitoringStrategy
             boolean flag = false;
             synchronized (lock) {
                 String key = principal.toString();
-                Info info = (infos.containsKey(key))?
+                InfoForContractCreation info = (infos.containsKey(key))?
                         infos.get(key) :
-                        infos.put(key, new Info());
+                        infos.put(key, new InfoForContractCreation());
                 info = infos.get(key);
+                info.path = key;
 
                 if (info.maxReserved < data.lastMem) {
                     info.maxReserved = data.lastMem;
+                    reporter.report(key, info);
                     flag = true;
                 }
                 if (flag) {
-                    System.out.printf("Component %s is consuming CPU: %d, MEM: %d, S: %d, R: %d, W: %d, Re: %d\n",
-                            principal.toString(), info.maxCPU, info.maxReserved,
-                            info.maxSent, info.maxReceived, info.maxWritten, info.maxRead);
-
-                    for (Port port : component.getProvided()) {
-                        String name = port.getPortTypeRef().getName();
-                        int usage = MyLowLevelResourceConsumptionRecorder.getInstance().getUsesOfProvidedPort(key, name)
-                                / FineGrainedMonitoringStrategy.ELAPSED_SECONDS;
-                        System.out.printf("\tPort usage for %s is %d\n", name, usage);
-                    }
+//                    System.out.printf("Component %s is consuming CPU: %d, MEM: %d, S: %d, R: %d, W: %d, Re: %d\n",
+//                            principal.toString(), info.maxCPU, info.maxReserved,
+//                            info.maxSent, info.maxReceived, info.maxWritten, info.maxRead);
                 }
             }
         }

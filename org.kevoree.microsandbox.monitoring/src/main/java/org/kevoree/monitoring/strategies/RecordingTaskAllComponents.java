@@ -9,6 +9,7 @@ import org.kevoree.microsandbox.api.event.MonitoringNotification;
 import org.kevoree.microsandbox.api.sla.Metric;
 import org.kevoree.monitoring.comp.MyLowLevelResourceConsumptionRecorder;
 import org.kevoree.monitoring.comp.monitor.GCWatcher;
+import org.kevoree.monitoring.comp.monitor.NewMetricReporter;
 import org.kevoree.monitoring.models.SimpleIdAssigner;
 import org.kevoree.monitoring.ranking.ComponentRankerFunctionFactory;
 import org.kevoree.monitoring.ranking.ComponentsInfoStorage;
@@ -36,10 +37,13 @@ import java.util.List;
  */
 public class RecordingTaskAllComponents extends AbstractMonitoringTask implements RankChecker {
 
+    private final NewMetricReporter reporter;
+
     public RecordingTaskAllComponents(String nodeName,
                                       KevoreeModelHandlerService service,
-                                      Bootstraper bootstraper) {
+                                      Bootstraper bootstraper, NewMetricReporter reporter) {
         super(bootstraper,service,"",nodeName);
+        this.reporter = reporter;
     }
 
 
@@ -70,8 +74,7 @@ public class RecordingTaskAllComponents extends AbstractMonitoringTask implement
 
     private void switchToSimpleLocal() {
         MyLowLevelResourceConsumptionRecorder.getInstance().turnMonitoring(true);
-
-        currentStrategy = new RecordingAllComponentsForEver(new ArrayList<ComponentInstance>(), msg, this);
+        currentStrategy = new RecordingAllComponentsForEver(new ArrayList<ComponentInstance>(), msg, this, reporter);
         currentStrategy.init(0);
     }
 

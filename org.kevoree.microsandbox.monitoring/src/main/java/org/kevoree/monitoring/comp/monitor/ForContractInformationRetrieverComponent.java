@@ -30,12 +30,9 @@ import org.kevoree.monitoring.strategies.monitoring.FineGrainedStrategyFactory;
 @Requires( {
  @RequiredPort(name = "output" , type = PortType.MESSAGE, optional = true),
 })
-@DictionaryType( {
-        @DictionaryAttribute(name = "log_file", defaultValue = "")
-}
-)
 @ComponentType
-public class ForContractInformationRetrieverComponent extends AbstractComponentType {
+public class ForContractInformationRetrieverComponent extends AbstractComponentType
+            implements NewMetricReporter{
     AbstractMonitoringTask monitoringTask;
 
     private ModelRankingAlgorithm modelRanker;
@@ -56,7 +53,7 @@ public class ForContractInformationRetrieverComponent extends AbstractComponentT
 
         monitoringTask = new RecordingTaskAllComponents(getNodeName(),
                             getModelService(),
-                            getBootStrapperService());
+                            getBootStrapperService(), this);
         getModelService().registerModelListener(monitoringTask);
 
         new Thread(monitoringTask).start();
@@ -72,5 +69,11 @@ public class ForContractInformationRetrieverComponent extends AbstractComponentT
     public void updateComponent() {
         stopComponent();
         startComponent();
+    }
+
+    @Override
+    public void report(String component, InfoForContractCreation info) {
+        MessagePort p = getPortByName("output", MessagePort.class);
+        p.process(info);
     }
 }

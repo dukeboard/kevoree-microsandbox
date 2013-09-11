@@ -38,16 +38,13 @@ addComponent generator0@node0 : NumberGenerator {
     frequency = '20'
 }
 
-addComponent measurer@node0 : MeasuringCPUUsage {
-
-}
-
 addChannel channelForNumbers : defMSG {}
 
 bind tester0.primalityTester@node0 => channelForNumbers
 bind generator0.numbers@node0 => channelForNumbers
 
 updateDictionary channelForNumbers
+
 
 addGroup sync:BasicGroup
 addToGroup sync node0
