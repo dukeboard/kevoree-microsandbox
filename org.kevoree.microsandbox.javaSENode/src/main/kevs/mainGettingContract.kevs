@@ -46,23 +46,6 @@ updateDictionary cpu_channel
 updateDictionary mem_channel
 updateDictionary components_channel
 
-addComponent FakeConso509@node0 : FakeConsole { singleFrame='true' }
-addComponent FakeConso510@node0 : FakeConsole {}
-addComponent fread@node0 : FileExplorer { basedir='.' }
-
-//addComponent memoryConsumer0@node0 : MemoryConsumer {
-//    memory_max_size='20',
-//    cpu_wall_time='200000',
-//    amount = '302400'
-//}
-
-//addComponent cpuConsumer0@node0 : CPUConsumerWallTime {
-//    cpu_wall_time='2000000'
-//}
-
-//addComponent writer0@node0 : IOWriterGood {
-//}
-
 addComponent tester0@node0 : CPUConsumerByPrimalityTesting {
     cpu_wall_time='4000000',
     throughput_msg_per_second='all=8;primalityTester=8'
@@ -79,18 +62,6 @@ bind generator0.numbers@node0 => channelForNumbers
 
 updateDictionary channelForNumbers
 
-addChannel defMSGT419 : defMSG
-addChannel defMSGT360 : defMSG
-
-bind FakeConso509.showText@node0 => defMSGT360
-bind FakeConso509.textEntered@node0 => defMSGT419
-bind FakeConso510.showText@node0 => defMSGT419
-bind FakeConso510.textEntered@node0 => defMSGT360
-
-updateDictionary FakeConso510@node0
-updateDictionary defMSGT360
-updateDictionary defMSGT419
-updateDictionary FakeConso509@node0
 
 addGroup sync:BasicGroup
 addToGroup sync node0
