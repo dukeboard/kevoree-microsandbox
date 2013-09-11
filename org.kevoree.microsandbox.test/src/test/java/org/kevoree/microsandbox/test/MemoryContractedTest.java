@@ -7,6 +7,7 @@ import org.kevoree.microsandbox.api.event.MonitoringNotification;
 import org.kevoree.microsandbox.api.sla.Metric;
 
 import java.util.Arrays;
+import java.util.EnumSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -32,8 +33,10 @@ public class MemoryContractedTest extends AbstractMicroSandboxTester {
 
     @Test
     public void testContractViolation() {
-        double maxValue1 = 30000.0;
-        MonitoringNotification notification = new MonitoringNotification(false,0);
+        double maxValue1 = 600000.0;
+        EnumSet<Metric> reason =  EnumSet.noneOf(Metric.class);
+        reason.add(Metric.Memory);
+        MonitoringNotification notification = new MonitoringNotification(false, reason);
         String monitoringRegex = notification.toRegex();
         ContractViolationEvent violation = new ContractViolationEvent("nodes[node0]/components[memoryComponent]", Metric.Memory, -1.0, maxValue1);
         String violationRegex = violation.toRegex();
