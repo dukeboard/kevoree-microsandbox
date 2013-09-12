@@ -142,9 +142,9 @@ public class ResourceCounter {
 
     }
 
-    public static AtomicLong getPrincipalCounter() {
-        return ThreadGroupResourcePrincipal.getPrincipalCounter();
-    }
+//    public static AtomicLong getPrincipalCounter() {
+//        return ThreadGroupResourcePrincipal.getPrincipalCounter();
+//    }
 
     public static void setResourceContractProvider(ResourceContractProvider provider) {
         ourInstance.setResourceContractProvider(provider);
@@ -187,10 +187,12 @@ public class ResourceCounter {
     }
 
     public static void increaseInstructions(int n) {
-        ResourcePrincipal principal = get();
+        AtomicLong local = ThreadGroupResourcePrincipal.getThreadInstructionCounter();
+        local.addAndGet(n);
+//        ResourcePrincipal principal = get();
 //        if (isMonitoring()) {
 //            ResourcePrincipal p = ourInstance.search(principal);
-            ourInstance.innerIncreaseInstructions(n, principal);
+//        ourInstance.innerIncreaseInstructions(n, principal);
 //        }
 //        else if (isMonitoringASinglePrincipal()) {
 //            if (ourInstance.isPrincipalBeingMonitored(principal)) {

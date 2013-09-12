@@ -28,13 +28,11 @@ public abstract class AbstractResourcePrincipal<T> implements ResourcePrincipal 
     private static int lastID = 3;
     protected int id;
     protected AtomicLong nbObjects = new AtomicLong(0);
-    protected AtomicLong nbInstructions = new AtomicLong(0);
     protected int nbBytesSent;
     protected int nbBytesReceived;
     protected long nbBytesWrite;
     protected long nbBytesRead;
 
-//    protected long last_nbInstructions;
     protected int last_nbBytesSent;
     protected int last_nbBytesReceived;
     protected long last_nbBytesWrite;
@@ -64,13 +62,6 @@ public abstract class AbstractResourcePrincipal<T> implements ResourcePrincipal 
         id = lastID++;
     }
 
-    public void increaseExecutedInstructions(int n) {
-        nbInstructions.addAndGet(n);
-//        lockInstructions.lock();
-//            nbInstructions += n;
-//        lockInstructions.unlock();
-    }
-
     public void increaseOwnedObjects(int n) {
         nbObjects.addAndGet(n);
 //        lockMemory.lock();
@@ -92,16 +83,6 @@ public abstract class AbstractResourcePrincipal<T> implements ResourcePrincipal 
 
     public void increaseFileRead(int n) {
         nbBytesRead += n;
-    }
-
-    public final long getExecutedInstructions() {
-        return nbInstructions.getAndSet(0);
-//        lockInstructions.lock();
-//            long tmp1 =
-//            long tmp = nbInstructions - last_nbInstructions;
-//            last_nbInstructions = nbInstructions;
-//        lockInstructions.unlock();
-//        return tmp;
     }
 
     public final long getAllocatedObjects() {

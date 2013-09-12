@@ -10,6 +10,7 @@ import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadMXBean;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.Vector;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -28,7 +29,7 @@ public class ThreadGroupResourcePrincipal extends AbstractResourcePrincipal<Long
      * Name of the thread group
      */
     private String text = "MainThreadGroup";
-    private Set<Long> threadsId = new HashSet<Long>();
+//    private Set<Long> threadsId = new HashSet<Long>();
     private transient PrincipalReferenceQueue principalReferenceQueue;
 
     private static transient Lock lock = new ReentrantLock();
@@ -49,7 +50,7 @@ public class ThreadGroupResourcePrincipal extends AbstractResourcePrincipal<Long
             }
             bean.setThreadCpuTimeEnabled(true);
         }
-        threadsId.add(object);
+//        threadsId.add(object);
         principalReferenceQueue = new PrincipalReferenceQueue(this);
     }
 
@@ -58,8 +59,9 @@ public class ThreadGroupResourcePrincipal extends AbstractResourcePrincipal<Long
      */
     private static HashMap<String, ResourcePrincipal> map = new HashMap<String, ResourcePrincipal>();
     private static HashMap<Integer, ResourcePrincipal> map2 = new HashMap<Integer, ResourcePrincipal>();
+    private Vector<AtomicLong> counters = new Vector<AtomicLong>();
 
-    private static ResourcePrincipal unique = new ThreadGroupResourcePrincipal(-1L);
+    private static ThreadGroupResourcePrincipal unique = new ThreadGroupResourcePrincipal(-1L);
 
     private static ThreadMXBean bean;
 
@@ -77,35 +79,104 @@ public class ThreadGroupResourcePrincipal extends AbstractResourcePrincipal<Long
         return (tg == null)? null : tg.getName();
     }
 
-    public static AtomicLong getPrincipalCounter() {
-        ThreadGroupResourcePrincipal p = (ThreadGroupResourcePrincipal)get();
-        return p.nbInstructions;
+//    public static AtomicLong getPrincipalCounter() {
+//        ThreadGroupResourcePrincipal p = (ThreadGroupResourcePrincipal)get();
+//        return p.nbInstructions;
+//    }
+
+    @Override
+    public void increaseExecutedInstructions(int n) {
+        throw new RuntimeException("Never call this in a ThreadGroupResourcePrincipal");
+    }
+
+    @Override
+    public long getExecutedInstructions() {
+        try {
+            lockInstance.lock();
+            long sum = 0;
+            for (int i = 0 ; i < counters.size() ; ++i)
+                sum += counters.get(i).getAndSet(0);
+            return sum;
+        }
+        finally {
+            lockInstance.unlock();
+        }
+    }
+
+    private static class ThreadLocalInstructionCounter
+            extends ThreadLocal<AtomicLong> {
+        @Override
+        protected AtomicLong initialValue() {
+            ThreadGroupResourcePrincipal principal = null;
+            Thread thread = Thread.currentThread();
+            try {
+                lock.lock();
+                String nameOfGroup = locateGroup(thread, "kev/");
+                if (nameOfGroup == null) {
+                    principal = unique;
+                }else if (map.containsKey(nameOfGroup)) {
+                    principal = (ThreadGroupResourcePrincipal)map.get(nameOfGroup);
+                } else {
+                    principal = new ThreadGroupResourcePrincipal(thread.getId());
+                    principal.text = nameOfGroup;
+                    map.put(nameOfGroup, principal);
+                    map2.put(principal.getId(), principal);
+                }
+            }
+            finally {
+                lock.unlock();
+            }
+            try {
+                principal.lockInstance.lock();
+                AtomicLong atomicLong = new AtomicLong();
+                principal.counters.add(atomicLong);
+//                principal.threadsId.add(thread.getId());
+                return atomicLong;
+            }
+            finally {
+                principal.lockInstance.unlock();
+            }
+        }
+    }
+
+    private static ThreadLocalInstructionCounter instructionsCounter = new ThreadLocalInstructionCounter();
+
+    public static AtomicLong getThreadInstructionCounter() {
+        return instructionsCounter.get();
+
     }
 
     private static class Principals extends ThreadLocal<ResourcePrincipal> {
         @Override
         protected ResourcePrincipal initialValue() {
+            ThreadGroupResourcePrincipal principal = null;
+            Thread thread = Thread.currentThread();
             try {
-                Thread thread = Thread.currentThread();
                 lock.lock();
                 String nameOfGroup = locateGroup(thread, "kev/");
-                if (nameOfGroup == null)
-                    return unique;
-
-                if (map.containsKey(nameOfGroup)) {
-                    ThreadGroupResourcePrincipal p = (ThreadGroupResourcePrincipal)map.get(nameOfGroup);
-                    p.threadsId.add(thread.getId());
-                    return p;
+                if (nameOfGroup == null) {
+                    principal = unique;
+                }else if (map.containsKey(nameOfGroup)) {
+                    principal = (ThreadGroupResourcePrincipal)map.get(nameOfGroup);
+                } else {
+                    principal = new ThreadGroupResourcePrincipal(thread.getId());
+                    principal.text = nameOfGroup;
+                    map.put(nameOfGroup, principal);
+                    map2.put(principal.getId(), principal);
                 }
-
-                ThreadGroupResourcePrincipal tmp = new ThreadGroupResourcePrincipal(thread.getId());
-                tmp.text = nameOfGroup;
-                map.put(nameOfGroup, tmp);
-                map2.put(tmp.getId(), tmp);
-                return tmp;
             }
             finally {
                 lock.unlock();
+            }
+            try {
+                AtomicLong atomicLong = new AtomicLong();
+                principal.lockInstance.lock();
+                principal.counters.add(atomicLong);
+//                principal.threadsId.add(thread.getId());
+                return principal;
+            }
+            finally {
+                principal.lockInstance.unlock();
             }
         }
     }
@@ -184,13 +255,13 @@ public class ThreadGroupResourcePrincipal extends AbstractResourcePrincipal<Long
     @Override
     public long getCPUUsage() {
         long result = 0;
-        for (Long l : threadsId) {
-            if (l != -1) {
-                long r = bean.getThreadCpuTime(l);
-                if (r != -1)
-                    result += r;
-            }
-        }
+//        for (Long l : threadsId) {
+//            if (l != -1) {
+//                long r = bean.getThreadCpuTime(l);
+//                if (r != -1)
+//                    result += r;
+//            }
+//        }
 
         return result;
     }
