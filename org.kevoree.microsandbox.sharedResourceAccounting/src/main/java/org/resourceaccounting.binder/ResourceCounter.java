@@ -142,9 +142,9 @@ public class ResourceCounter {
 
     }
 
-//    public static AtomicLong getPrincipalCounter() {
-//        return ThreadGroupResourcePrincipal.getPrincipalCounter();
-//    }
+    public static AtomicLong getPrincipalCounter() {
+        return ThreadGroupResourcePrincipal.getPrincipalCounter();
+    }
 
     public static void setResourceContractProvider(ResourceContractProvider provider) {
         ourInstance.setResourceContractProvider(provider);

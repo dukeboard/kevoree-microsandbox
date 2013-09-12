@@ -56,8 +56,8 @@ public class ResourceAccountingVisitor extends ClassVisitor {
         }
         if (instructions) {
             InstructionAccountingMethodInstrumentation mi = new InstructionAccountingMethodInstrumentation(mv, className);
-//            mi.aa = new AnalyzerAdapter(className, flags, methodName, signature, mi);
-//            mi.lvs = new LocalVariablesSorter(flags, signature, mi.aa);
+//////            mi.aa = new AnalyzerAdapter(className, flags, methodName, signature, mi);
+//            mi.lvs = new LocalVariablesSorter(flags, signature, mi);
 //            return mi.lvs;
             return mi;
         }
@@ -95,7 +95,7 @@ public class ResourceAccountingVisitor extends ClassVisitor {
             mv.visitEnd();
         }
         // add the field always
-        if (shouldAddField) {
+        if (memory && shouldAddField) {
             // add a field to store the owner resource principal, used in finalize
             FieldVisitor fv = cv.visitField(Opcodes.ACC_PUBLIC,
                     "__principalID__",

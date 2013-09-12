@@ -24,7 +24,7 @@ public class InstructionAccountingMethodInstrumentation extends AbstractMethodIn
     private int readInstructions;
 
 //    public LocalVariablesSorter lvs;
-//    public AnalyzerAdapter aa;
+//////    public AnalyzerAdapter aa;
 
 
     public InstructionAccountingMethodInstrumentation(MethodVisitor methodVisitor, String className) {
@@ -54,7 +54,7 @@ public class InstructionAccountingMethodInstrumentation extends AbstractMethodIn
 
 //    private int time;
 //    private int maxStack;
-
+//
 //    @Override
 //    public void visitCode() {
 //        mv.visitCode();
@@ -63,7 +63,7 @@ public class InstructionAccountingMethodInstrumentation extends AbstractMethodIn
 //                "()Ljava/util/concurrent/atomic/AtomicLong;");
 //        time = lvs.newLocal(Type.getType("Ljava/util/concurrent/atomic/AtomicLong;"));
 //        mv.visitVarInsn(Opcodes.ASTORE, time);
-//        maxStack = 4;
+//        maxStack = 2;
 //    }
 
     @Override
@@ -86,7 +86,7 @@ public class InstructionAccountingMethodInstrumentation extends AbstractMethodIn
 
     @Override
     public void visitMaxs(int maxStack, int maxLocals) {
-//        mv.visitMaxs(Math.max(this.maxStack, maxStack), maxLocals);
+//        mv.visitMaxs(Math.max(this.maxStack, maxStack + 6), maxLocals);
         super.visitMaxs(maxStack + 3, maxLocals);
     }
 

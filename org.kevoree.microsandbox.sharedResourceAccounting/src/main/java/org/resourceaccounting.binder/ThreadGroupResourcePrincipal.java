@@ -79,10 +79,9 @@ public class ThreadGroupResourcePrincipal extends AbstractResourcePrincipal<Long
         return (tg == null)? null : tg.getName();
     }
 
-//    public static AtomicLong getPrincipalCounter() {
-//        ThreadGroupResourcePrincipal p = (ThreadGroupResourcePrincipal)get();
-//        return p.nbInstructions;
-//    }
+    public static AtomicLong getPrincipalCounter() {
+        return instructionsCounter.get();
+    }
 
     @Override
     public void increaseExecutedInstructions(int n) {

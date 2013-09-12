@@ -53,7 +53,7 @@ public class MonitoringTaskAllComponents extends AbstractMonitoringTask implemen
         gcWatcher.addContractVerificationRequieredListener(this);
         gcWatcher.register();
 
-        switchToSimpleLocal(EnumSet.allOf(Metric.class));
+        switchToSimpleLocal(EnumSet.allOf(Metric.class), true);
 
         stopped = false;
         while (!isStopped()) {
@@ -77,7 +77,7 @@ public class MonitoringTaskAllComponents extends AbstractMonitoringTask implemen
                 tmpList = new KillThemAll(service).adapt(nodeName, tmpList);
 
                 if (tmpList.isEmpty()) {
-                    switchToSimpleLocal(EnumSet.allOf(Metric.class));
+                    switchToSimpleLocal(EnumSet.allOf(Metric.class),false);
                 }
                 else {
                     // TODO: the system cannot perform an adaptation. Die
@@ -92,9 +92,10 @@ public class MonitoringTaskAllComponents extends AbstractMonitoringTask implemen
         gcWatcher = null;
     }
 
-    private void switchToSimpleLocal(EnumSet<Metric> reason) {
+    private void switchToSimpleLocal(EnumSet<Metric> reason, boolean b) {
         MonitoringReporterFactory.reporter().trigger(new MonitoringNotification(false, reason))/*.monitoring(false)*/;
-        MyLowLevelResourceConsumptionRecorder.getInstance().turnMonitoring(true);
+        if (b)
+            MyLowLevelResourceConsumptionRecorder.getInstance().turnMonitoring(true);
 
         currentStrategy = new AllComponentsForEver( new ArrayList<ComponentInstance>(), msg, this);
         currentStrategy.init(0);
