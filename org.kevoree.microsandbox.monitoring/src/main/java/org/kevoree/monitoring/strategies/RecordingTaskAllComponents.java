@@ -3,10 +3,6 @@ package org.kevoree.monitoring.strategies;
 import org.kevoree.ComponentInstance;
 import org.kevoree.api.Bootstraper;
 import org.kevoree.api.service.core.handler.KevoreeModelHandlerService;
-import org.kevoree.microsandbox.api.communication.MonitoringReporterFactory;
-import org.kevoree.microsandbox.api.event.ContractViolationEvent;
-import org.kevoree.microsandbox.api.event.MonitoringNotification;
-import org.kevoree.microsandbox.api.sla.Metric;
 import org.kevoree.monitoring.comp.MyLowLevelResourceConsumptionRecorder;
 import org.kevoree.monitoring.comp.monitor.GCWatcher;
 import org.kevoree.monitoring.comp.monitor.NewMetricReporter;
@@ -14,18 +10,10 @@ import org.kevoree.monitoring.models.SimpleIdAssigner;
 import org.kevoree.monitoring.ranking.ComponentRankerFunctionFactory;
 import org.kevoree.monitoring.ranking.ComponentsInfoStorage;
 import org.kevoree.monitoring.ranking.ComponentsRanker;
-import org.kevoree.monitoring.sla.FaultyComponent;
-import org.kevoree.monitoring.sla.MeasurePoint;
-import org.kevoree.monitoring.strategies.adaptation.KillThemAll;
-import org.kevoree.monitoring.strategies.adaptation.SlowDownComponentInteraction;
-import org.kevoree.monitoring.strategies.monitoring.AllComponentsForEver;
-import org.kevoree.monitoring.strategies.monitoring.FineGrainedMonitoringStrategy;
 import org.kevoree.monitoring.strategies.monitoring.RankChecker;
 import org.kevoree.monitoring.strategies.monitoring.RecordingAllComponentsForEver;
 
 import java.util.ArrayList;
-import java.util.EnumMap;
-import java.util.EnumSet;
 import java.util.List;
 
 /**
