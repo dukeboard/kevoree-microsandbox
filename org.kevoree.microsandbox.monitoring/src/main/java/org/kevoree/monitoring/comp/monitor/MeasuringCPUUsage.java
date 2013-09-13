@@ -38,6 +38,7 @@ public class MeasuringCPUUsage extends AbstractComponentType {
 
     GCWatcher gcWatcher = new GCWatcher();
     Timer t = new Timer();
+    private double maximumMem;
 
     class Measuring extends TimerTask implements ContractVerificationRequired {
 
@@ -87,8 +88,11 @@ public class MeasuringCPUUsage extends AbstractComponentType {
             double u = used;
             u /= max;
             u *= 100;
-            MessagePort p = getPortByName("maximumMem",MessagePort.class);
-            p.process(maximumCPUUsage);
+            if (u > maximumMem) {
+                maximumMem = u;
+                MessagePort p = getPortByName("maximumMem",MessagePort.class);
+                p.process(maximumMem);
+            }
         }
     }
 
