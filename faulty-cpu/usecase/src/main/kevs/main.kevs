@@ -1,0 +1,63 @@
+addRepo "http://maven.kevoree.org/release"
+addRepo "http://maven.kevoree.org/snapshots"
+addRepo "http://maven.kevoree.org/daum/release"
+addRepo "http://maven.kevoree.org/daum/snapshots"
+addRepo "http://repo.maven.apache.org/maven2"
+addRepo "http://repo.typesafe.com/typesafe/releases/"
+
+merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.defaultChannels/{kevoree.corelibrary.version}'
+merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.jexxus/{kevoree.corelibrary.version}'
+merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.javaseNode/{kevoree.corelibrary.version}'
+
+merge "mvn:org.kevoree.microsandbox.experiment/followManager/1.0.0-SNAPSHOT"
+merge "mvn:org.kevoree.microsandbox.experiment/followResource/1.0.0-SNAPSHOT"
+merge "mvn:org.kevoree.microsandbox.experiment/videoViewer/1.0.0-SNAPSHOT"
+merge "mvn:org.kevoree.microsandbox.experiment/webBrowser/1.0.0-SNAPSHOT"
+merge "mvn:org.kevoree.microsandbox.experiment/wsServer/1.0.0-SNAPSHOT"
+merge "mvn:org.kevoree.microsandbox.experiment/webbitHTTPServer/1.0.0-SNAPSHOT"
+merge "mvn:org.kevoree.microsandbox.experiment/webSocketClientHandler/1.0.0-SNAPSHOT"
+merge "mvn:org.kevoree.microsandbox.experiment/copter-video/1.0.0-SNAPSHOT"
+
+addNode node0:JavaSENode { logLevel = "FINE", coreLogLevel = "FINE"}
+
+addComponent WsServer650@node0 : WsServer {port='8092'}
+addComponent SprayWebS142@node0 : WebbitHTTPServer {port='9500'}
+
+addComponent Resources407@node0 : ResourcesPage {urlPattern='/media/', patternToRemove = '/media/'}
+addComponent FollowMan511@node0 : FollowManager {urlPattern='/',current='jed'}
+
+addComponent javaFXWebBrowser@node0 : JavaFXWebBrowser
+addComponent websockletJavaFXHandler@node0 : WebSocketClientHandler
+
+addComponent  videoDisplay@node0 : JavaFXVideoDisplay
+// TODO this component must be located on another node
+addComponent mediaSender@node0 : FakeCopterMediaSender { url = 'file:///home/edaubert/Vidéos/BigBuckBunny_640x360.m4v'}
+
+addChannel channelMediaSender : defMSG
+
+addChannel defSERVIC618 : defSERVICE
+addChannel defMSG472 : defMSG
+addChannel defMSG222 : defMSG
+addChannel webSocketHandlerMessage : defMSG
+
+bind mediaSender.media@node0 => channelMediaSender
+bind videoDisplay.media@node0 => channelMediaSender
+
+
+bind SprayWebS142.request@node0 => defMSG472
+bind SprayWebS142.response@node0 => defMSG222
+
+bind FollowMan511.request@node0 => defMSG472
+bind FollowMan511.content@node0 => defMSG222
+
+bind Resources407.request@node0 => defMSG472
+bind Resources407.content@node0 => defMSG222
+
+bind WsServer650.service@node0 => defSERVIC618
+bind FollowMan511.ws@node0 => defSERVIC618
+
+bind javaFXWebBrowser.handle@node0 => webSocketHandlerMessage
+bind websockletJavaFXHandler.handle@node0 => webSocketHandlerMessage
+
+addGroup group1208104496:BasicGroup
+addToGroup group1208104496 node0

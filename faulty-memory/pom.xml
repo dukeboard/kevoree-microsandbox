@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>org.kevoree.microsandbox.experiment.fault.memory</groupId>
+    <artifactId>faulty-memory</artifactId>
+    <packaging>pom</packaging>
+    <version>1.0.0-SNAPSHOT</version>
+
+    <parent>
+        <groupId>org.kevoree.microsandbox.experiment</groupId>
+        <artifactId>microsandbox.experiment</artifactId>
+        <version>1.0.0-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+
+    <modules>
+        <!--<module>firefighter-api</module>-->
+        <module>followManager</module>
+        <module>followResource</module>
+        <!--<module>javafx</module>-->
+        <module>videoViewer</module>
+        <module>webBrowser</module>
+        <module>wsServer</module>
+        <module>webbitHTTPServer</module>
+        <module>webSocketClientHandler</module>
+        <!--<module>copter-video</module>-->
+        <module>usecase</module>
+        <module>usecase-contracted</module>
+    </modules>
+</project>

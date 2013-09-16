@@ -1,0 +1,223 @@
+<html lang="en" xmlns="http://www.w3.org/1999/html">
+<head>
+
+    <title>Followers</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no"/>
+    <script type="text/javascript" src="http://maps.google.com/maps/api/js?v=3.exp&sensor=false"></script>
+
+    <link type="text/css" rel="stylesheet" href="media/css/demo_page.css"/>
+    <link type="text/css" rel="stylesheet" href="media/css/demo_table.css"/>
+    <script type="text/javascript" language="javascript" src="media/js/jquery-1.7.2.js"></script>
+    <script type="text/javascript" language="javascript" src="media/js/dataTables.js"></script>
+    <script type="text/javascript" language="javascript" src="media/js/dataTablesHelper.js"></script>
+    <script type="text/javascript" language="javascript" src="media/js/hashmap.js"></script>
+    <script type="text/javascript" language="javascript" src="media/js/plot.js"></script>
+
+
+    <script type="text/javascript" charset="utf-8">
+        var myp, data, olddata, carte, my_map;
+        function showMessage(text) {
+            document.getElementById('text').innerHTML = text;
+        }
+        //////////////////////
+        function prepData(range, amount) {
+            var arr = new Array(amount);
+            for (var i = 0; i < amount; i++) {
+                arr[i] = (Math.random() - 0.5) * range;
+                //document.write(arr[i]+" ");
+            }
+            return arr;
+        }
+        ////////
+        function recalc() {
+            var sumDiff = 0;
+            var diff = 0;
+
+
+            for (var i = 0; i < 20; i++) {
+                diff = data[i] - olddata[i];
+                data[i] -= diff / 100;
+                sumDiff += Math.abs(diff);
+            }
+            if (sumDiff < 10) {
+                olddata = prepData(10, 20);
+            }
+
+            myp.data = data;
+            myp.plot();
+
+        }
+        function initialiser() {
+            var latlng = new google.maps.LatLng(48.12107, -1.610556);
+            var options = {
+                center: latlng,
+                zoom: 10,
+                mapTypeId: google.maps.MapTypeId.ROADMAP
+            };
+            carte = new google.maps.Map(document.getElementById("carte"), options);
+
+
+            myp.id = "canv";
+            myp.horizontalNR = 10;
+            myp.fSize = 12;
+            myp.plotColor = 'rgba(200,232,53,1)';
+            myp.enumerateP = 1;
+            myp.enumerateH = 1;
+            myp.enumerateV = 1;
+            data = prepData(10, 20);
+            olddata = data;
+            <!--  var t = setInterval('recalc()',20);          -->
+        }
+
+        function update_follower(lat, lon, id) {
+            if (carte != undefined) {
+                if (my_map.get(id) == undefined) {
+                    var latLng = new google.maps.LatLng(lat, lon);
+                    var marker = new google.maps.Marker({
+                        position: latLng,
+                        map: carte,
+                        title: id,
+                        icon: 'media/images/firegihter.png'
+                    });
+
+                    google.maps.event.addListener(marker, 'click', function () {
+                        carte.setZoom(8);
+                        carte.setCenter(marker.getPosition());
+                    });
+
+                    my_map.put(id, marker);
+                } else {
+                    var marker = my_map.get(id);
+                    var latLng = new google.maps.LatLng(lat, lon);
+                    marker.setPosition(latLng);
+                    <!-- move to carte.panTo(latLng);      -->
+                }
+            }
+
+        }
+        function onMessageReceived(data) {
+            var oTable = $('#followers').dataTable();
+            var obj = jQuery.parseJSON(data);
+
+            if (obj.event == 'ADD') {
+                oTable.fnAddData([
+                    obj.id,
+                    obj.lat,
+                    obj.lon,
+                    obj.accuracy,
+                    obj.altitude,
+                    obj.temperature,
+                    obj.heartmonitor,
+                    obj.safety_distance,
+                    obj.isfollowed
+                ]);
+
+                var lat = parseInt(obj.lat) / 1000000;
+                var lon = parseInt(obj.lon) / 1000000;
+
+                update_follower(lat, lon, obj.id);
+
+            } else if (obj.event == 'UPDATE') {
+                var rowID = findRowIndexUsingCol(obj.id, '#followers', 0);
+                oTable.fnUpdate([obj.id,
+                    obj.lat,
+                    obj.lon,
+                    obj.accuracy,
+                    obj.altitude,
+                    obj.temperature,
+                    obj.heartmonitor,
+                    obj.safety_distance,
+                    obj.isfollowed], rowID);
+
+                var lat = parseInt(obj.lat) / 1000000;
+                var lon = parseInt(obj.lon) / 1000000;
+
+                update_follower(lat, lon, obj.id);
+
+            } else if (obj.event == 'DELETE') {
+                var rowID = findRowIndexUsingCol(obj.id, '#followers', 0);
+                oTable.fnDeleteRow(rowID);
+                var marker = my_map.get(obj.id);
+                marker.setMap(null);
+                my_map.del(obj.id);
+            }
+        }
+
+
+        $(document).ready(function () {
+            myp = new MakeDraw();
+            data = prepData(10, 20);
+            olddata = data;
+            <!--  var t = setInterval('recalc()',20);       -->
+
+            carte = undefined;
+            my_map = new HashMap();
+            var javaFXClient = navigator.appVersion.indexOf("JavaFX") > 0;
+
+
+            $('#followers').dataTable({
+                "aoColumns": [
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null
+                ] });
+
+//            var connected = false;
+            if (!javaFXClient) {
+                <!-- todo port websock -->
+                var ip = location.hostname;
+                var ws = new WebSocket('ws://' + ip + ':8092/followmanager');
+                showMessage('Connecting...');
+
+                ws.onopen = function () {
+                    showMessage('Connected!');
+                };
+
+                ws.onclose = function () {
+                    showMessage('Lost connection');
+                };
+
+                ws.onmessage = function (evt) {
+                    var data = evt.data;
+                    onMessageReceived(data);
+                };
+            }
+            initialiser();
+        });
+    </script>
+</head>
+<body>
+<div id="text"></div>
+<div id="container">
+    <div id="demo">
+        <table cellpadding="0" cellspacing="0" border="0" class="display" id="followers">
+            <thead>
+            <tr>
+                <th>Matricule</th>
+                <th>Latitude</th>
+                <th>Longitude</th>
+                <th>Accuracy</th>
+                <th>Altitude</th>
+                <th>Temperature</th>
+                <th>Heart Monitor</th>
+                <th>Safety Distance</th>
+                <th>Is Followed</th>
+            </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </div>
+    <div class="spacer"></div>
+</div>
+<div id="carte" style="width:100%; height:100%"></div>
+<!--<canvas width="400" height="300" id="canv"></canvas>-->
+</body>
+</html>

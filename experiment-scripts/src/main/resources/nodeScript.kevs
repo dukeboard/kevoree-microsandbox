@@ -1,0 +1,16 @@
+addRepo "http://maven.kevoree.org/release"
+addRepo "http://maven.kevoree.org/snapshots"
+addRepo "http://maven.kevoree.org/daum/release"
+addRepo "http://maven.kevoree.org/daum/snapshots"
+addRepo "http://repo.maven.apache.org/maven2"
+
+merge "mvn:org.kevoree.corelibrary.sky/org.kevoree.library.sky.minicloud/{kevoree.corelibrary.version}"
+
+merge 'mvn:org.kevoree.microsandbox/org.kevoree.microsandbox.javasenode/{kevoree.microsandbox.version}'
+merge 'mvn:org.kevoree.microsandbox/org.kevoree.microsandbox.monitoring/{kevoree.microsandbox.version}'
+
+
+addNode node0 : JavaSENode { coreLogLevel="WARN",logLevel="WARN"}
+
+// TODO specify availability memory/cpu...
+addNode monitoredNode:MonitoredNode {logLevel = "INFO", coreLogLevel = "INFO"}

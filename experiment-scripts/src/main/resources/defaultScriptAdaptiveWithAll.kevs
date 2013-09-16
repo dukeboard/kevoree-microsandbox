@@ -1,0 +1,34 @@
+addRepo "http://maven.kevoree.org/release"
+addRepo "http://maven.kevoree.org/snapshots"
+addRepo "http://maven.kevoree.org/daum/release"
+addRepo "http://maven.kevoree.org/daum/snapshots"
+addRepo "http://repo.maven.apache.org/maven2"
+
+//merge "mvn:org.kevoree.corelibrary.sky/org.kevoree.library.sky.minicloud/{kevoree.corelibrary.version}"
+
+merge 'mvn:org.kevoree.microsandbox/org.kevoree.microsandbox.javasenode/{kevoree.microsandbox.version}'
+merge 'mvn:org.kevoree.microsandbox/org.kevoree.microsandbox.monitoring/{kevoree.microsandbox.version}'
+
+
+//addNode node0 : MiniCloudNode { coreLogLevel="WARN",logLevel="WARN"}
+
+// TODO specify availability memory/cpu...
+addNode node0:MonitoredNode
+{ logLevel = "INFO",
+    coreLogLevel = "INFO",
+    availability_memory='1073741824', //1 GB
+    availability_instr='200000000'
+}
+
+//addChild monitoredNode@node0
+
+addComponent monitoringComponent@node0 //monitoredNode
+: MonitoringComponent {
+    memory_threshold='21.499658', // TODO specifiy good value
+    cpu_threshold='46.025537', // TODO specifiy good value
+    net_in_threshold='80000000', // TODO specifiy good value
+    net_out_threshold='80000000', // TODO specifiy good value
+    //componentRankFunction = 'model_history',
+    adaptiveMonitoring='true',
+    fineGrainedStrategy='all-components'
+}

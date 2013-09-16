@@ -1,0 +1,30 @@
+merge "mvn:org.kevoree.corelibrary.sky/org.kevoree.library.sky.api/{kevoree.corelibrary.version}"
+merge "mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.defaultChannels/{kevoree.corelibrary.version}"
+merge "mvn:org.kevoree.komponents/http-samples/{project.version}"
+merge "mvn:org.kevoree.komponents/http-webbit/{project.version}"
+
+addNode node0 : PJavaSENode {logLevel="DEBUG"}
+addComponent webserver@node0 : WebbitHTTPServer
+
+addComponent favicon@node0 : FaviconHandler { urlPattern='/favicon*' }
+addComponent page@node0 : HelloWorldHandler { urlPattern='/'}
+addComponent page1@node0 : StaticFileHandler { urlPattern='/video/', path = '/home/edaubert/Vidéos/', patternToRemove="/video/", contained = 'false', defaultFile = 'We.Bought.A.Zoo.2011.TRUEFRENCH.BDRip.XviD-TiCKETS.CD1.avi'}
+
+addChannel request : defMSG
+addChannel response : defMSG
+
+bind webserver.request@node0 => request
+bind webserver.response@node0 => response
+
+bind page.request@node0 => request
+bind page.content@node0 => response
+
+bind page1.request@node0 => request
+bind page1.content@node0 => response
+
+bind favicon.request@node0 => request
+bind favicon.content@node0 => response
+
+//merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.jexxus/{kevoree.corelibrary.version}'
+//addGroup group1208104496:BasicGroup
+//addToGroup group1208104496 node0

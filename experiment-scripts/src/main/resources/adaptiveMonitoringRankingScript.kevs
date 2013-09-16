@@ -1,0 +1,10 @@
+
+addComponent monitoringComponent@monitoredNode : MonitoringComponent {
+	cpu_threshold = '50.471203',
+	memory_threshold = '50.471203',
+//    net_in_threshold='80', // TODO specifiy good value
+//    net_out_threshold='80', // TODO specifiy good value
+    componentRankFunction = 'model_history',
+    adaptiveMonitoring = 'true',
+    fineGrainedStrategy = 'single-monitoring'
+}
