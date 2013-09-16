@@ -21,7 +21,7 @@ public interface LowLevelResourceMonitorProxy {
     long getReadBytes(ResourcePrincipal appId);
     ResourcePrincipal[] getApplications();
     ResourcePrincipal getApplication(String appId);
-    void turnMonitoring(boolean on);
+    void turnMonitoring(boolean on, boolean changeInstrumentingStatus);
 
     /**
      * Enable the monitoring of one principal

@@ -51,6 +51,16 @@ public class MonitoringStatusList {
             return id;
         }
 
+        @Override
+        public boolean equals(Object obj) {
+            if (obj == null)
+                return false;
+            if (!(obj instanceof MyKey))
+                return false;
+            MyKey k = (MyKey)obj;
+            return k.id == id;
+        }
+
         private String getClassName() {
             return className;
         }
@@ -151,7 +161,9 @@ public class MonitoringStatusList {
             if (status.memMonitored && !status.cpuMonitored)
                 return;
             if (status.cpuMonitored || status.memMonitored) {
-                ArrayList<Class<?>> clazzes = new ArrayList<Class<?>>();
+                Class<?>[] a = new Class[classes.get(appId).size()];
+                System.out.printf("Classes for %s are %d\n", appId, a.length);
+                int c = 0;
                 for (MyKey key : classes.get(appId)) {
                     String name = key.getClassName();
                     ClassLoader loader = key.getLoader();
@@ -159,15 +171,13 @@ public class MonitoringStatusList {
                         try {
 //                            System.out.println("Getting class "+name+" for retransformation by using loader: " + loader.hashCode());
                             Class<?> clazz = loader.loadClass(name.replace('/', '.'));
-                            clazzes.add(clazz);
+                            a[c++] = clazz;
                         } catch (ClassNotFoundException e) {
 
                         }
                     }
                 }
                 // now retransform all these classes
-                Class<?>[] a = new Class[clazzes.size()];
-                clazzes.toArray(a);
                 try {
                     globalInst.retransformClasses(a);
                 } catch (UnmodifiableClassException e) {

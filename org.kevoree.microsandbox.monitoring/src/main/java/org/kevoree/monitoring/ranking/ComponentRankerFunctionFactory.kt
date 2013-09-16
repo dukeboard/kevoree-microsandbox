@@ -28,9 +28,10 @@ public object ComponentRankerFunctionFactory {
             }
             "number_of_failures" -> {
                 (a,b) ->
+
                 val x = ComponentsInfoStorage.instance.getExecutionInfo(a.path() as String)
                 val y = ComponentsInfoStorage.instance.getExecutionInfo(b.path() as String)
-                if ((x?.getFailures() as Int) < y?.getFailures() as Int)
+                if ((x?.getFailures() as Int) > y?.getFailures() as Int)
                     -1
                 else
                     1

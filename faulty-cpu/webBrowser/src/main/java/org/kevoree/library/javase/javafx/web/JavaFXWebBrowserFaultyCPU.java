@@ -63,7 +63,7 @@ public class JavaFXWebBrowserFaultyCPU extends AbstractComponentType implements 
 
     @Start
     public void start() {
-        fault = new CPUFault();
+        fault = new CPUFault(2, 23000);
         fault.create();
         initialized = false;
         messagesToHandle = new ArrayList<String>();

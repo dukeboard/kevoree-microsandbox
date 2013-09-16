@@ -30,5 +30,5 @@ addComponent monitoringComponent@node0 //monitoredNode
     net_out_threshold='80000000', // TODO specifiy good value
     //componentRankFunction = 'model_history',
     adaptiveMonitoring='true',
-    fineGrainedStrategy='single-component'
+    fineGrainedStrategy='single-monitoring'
 }

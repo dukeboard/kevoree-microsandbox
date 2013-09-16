@@ -19,6 +19,7 @@ import org.kevoree.monitoring.strategies.adaptation.KillThemAll;
 import org.kevoree.monitoring.strategies.adaptation.SlowDownComponentInteraction;
 import org.kevoree.monitoring.strategies.monitoring.AllComponentsForEver;
 import org.kevoree.monitoring.strategies.monitoring.FineGrainedMonitoringStrategy;
+import org.kevoree.monitoring.strategies.monitoring.FineGrainedStrategyFactory;
 import org.kevoree.monitoring.strategies.monitoring.RankChecker;
 
 import java.util.ArrayList;
@@ -95,7 +96,8 @@ public class MonitoringTaskAllComponents extends AbstractMonitoringTask implemen
     private void switchToSimpleLocal(EnumSet<Metric> reason, boolean b) {
         MonitoringReporterFactory.reporter().trigger(new MonitoringNotification(false, reason))/*.monitoring(false)*/;
         if (b)
-            MyLowLevelResourceConsumptionRecorder.getInstance().turnMonitoring(true);
+            MyLowLevelResourceConsumptionRecorder.getInstance().turnMonitoring(true,
+                    !FineGrainedStrategyFactory.instance$.isSingleMonitoring());
 
         currentStrategy = new AllComponentsForEver( new ArrayList<ComponentInstance>(), msg, this);
         currentStrategy.init(0);

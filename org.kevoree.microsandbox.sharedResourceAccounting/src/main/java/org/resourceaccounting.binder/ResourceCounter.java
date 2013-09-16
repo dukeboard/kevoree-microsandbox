@@ -28,7 +28,7 @@ public class ResourceCounter {
         return ( monitoringFlags & MONITORING ) != 0;
     }
 
-    public static synchronized void setMonitoring(boolean b) {
+    public static synchronized void setMonitoring(boolean b, boolean changeInstrumentingStatus) {
         if (b) {
             monitoringFlags |= MONITORING;
         }
@@ -38,7 +38,8 @@ public class ResourceCounter {
         ourInstance.senders.clear();
         ourInstance.receivers.clear();
 
-        MonitoringStatusList.instance().setMonitoringAll(b);
+        if (changeInstrumentingStatus)
+            MonitoringStatusList.instance().setMonitoringAll(b);
     }
 
     private static synchronized boolean isMonitoringASinglePrincipal() {

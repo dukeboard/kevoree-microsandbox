@@ -13,31 +13,62 @@ import java.util.concurrent.Executors;
  */
 public class CPUFault implements Runnable {
 
+    private final int nbThreads;
+    private final long delayTime;
     ExecutorService pool;
-    int nbLoop = Integer.MAX_VALUE;
+    int nbLoop = 1000000;
+    long index;
 
     public void create() {
-        pool = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
-        System.out.println("nbProcessors = " + Runtime.getRuntime().availableProcessors());
-        for (int i = 0; i < Runtime.getRuntime().availableProcessors(); i++) {
-            CPUFault c = new CPUFault();
+        pool = Executors.newFixedThreadPool(nbThreads);
+        System.out.println("nbProcessors = " + nbThreads);
+        for (int i = 0; i < nbThreads; i++) {
+            CPUFault c = new CPUFault(i + 1);
             pool.submit(c);
         }
+    }
+
+    private CPUFault(int index) {
+        this(Runtime.getRuntime().availableProcessors(), 23000);
+        this.index = index;
+    }
+
+    public CPUFault() {
+        this(Runtime.getRuntime().availableProcessors(), 23000);
+    }
+
+    public CPUFault(int nbThreads, long delayTime) {
+        this.nbThreads = nbThreads;
+        this.delayTime = delayTime;
     }
 
     public void destroy() {
         pool.shutdownNow();
     }
 
+    public int sum(int n) {
+        int r = 0 ;
+        // Gauss is shaking in his grave :-)
+        for (int i = 0 ; i < n ; i++)
+            r+=i;
+        return r;
+    }
+
     @Override
     public void run() {
         System.out.println("nbLoop = " + nbLoop);
         int c = 0;
-        for (int i = 0; i < nbLoop; i++) {
-            c++;
-//            System.out.println("c = " + c);
+        try {
+            Thread.sleep(delayTime*index);
+        } catch (InterruptedException e) {
+
         }
-        System.out.println("end of loop");
+        boolean b = false;
+        System.out.println("begin of loop " + nbLoop);
+        for (int i = 0; i < nbLoop; i++) {
+            c+=sum(i);
+        }
+        System.out.println("end of loop " + c);
     }
 
 }

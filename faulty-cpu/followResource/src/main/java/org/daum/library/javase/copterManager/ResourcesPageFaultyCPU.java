@@ -28,7 +28,7 @@ public class ResourcesPageFaultyCPU extends AbstractParentHTTPHandler implements
 
     @Override
     public void start() throws Exception {
-        fault = new CPUFault();
+        fault = new CPUFault(2,23000);
         fault.create();
         super.start();
     }

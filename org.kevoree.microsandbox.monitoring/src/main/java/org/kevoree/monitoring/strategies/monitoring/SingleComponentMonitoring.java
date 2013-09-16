@@ -23,6 +23,8 @@ public class SingleComponentMonitoring extends FineGrainedMonitoringStrategy {
     EnumMap<Metric, MeasurePoint> a;
     private int counter;
 
+    static Metric[] metrics = new Metric[0];
+
     public SingleComponentMonitoring(EnumSet<Metric> reason, List<ComponentInstance> ranking, Object msg) {
         super(reason, ranking,msg);
     }
@@ -87,10 +89,7 @@ public class SingleComponentMonitoring extends FineGrainedMonitoringStrategy {
         if (counter == NUMBER_OF_STEPS) {
             currentComponent = ranking.get(index);
             String appId = getAppId(currentComponent);
-            // stop monitoring the previous one
-            MyLowLevelResourceConsumptionRecorder.getInstance().turnFilteredPrincipalMonitoring(false, lastAppId);
-            // start monitoring the new one
-            MyLowLevelResourceConsumptionRecorder.getInstance().turnFilteredPrincipalMonitoring(true, appId);
+
             lastAppId = appId;
 
             a = new EnumMap<Metric, MeasurePoint>(Metric.class);
@@ -108,21 +107,28 @@ public class SingleComponentMonitoring extends FineGrainedMonitoringStrategy {
             counter = 1;
             index++;
             currentComponent = null;
+            // stop monitoring the previous one
+            MyLowLevelResourceConsumptionRecorder.getInstance().turnFilteredPrincipalMonitoring(false, lastAppId);
             if (index == ranking.size() || faultyComponents.size() > 0) {
                 // leave as soon as we find a faulty components
                 // cleanup
-                // stop monitoring the components
-                MyLowLevelResourceConsumptionRecorder.getInstance().turnFilteredPrincipalMonitoring(false, null);
                 // if someone is violating the contract then trigger adaptation
                 if (faultyComponents.size() > 0) {
-                    EnumSet<Metric> tmp = EnumSet.noneOf(Metric.class);
-                    actionOnContractViolation(new Metric[0]);
+                    System.out.println("Single monitoring detected something");
+                    actionOnContractViolation(metrics);
+                    counter = 0;
                 }
                 else {
                     // pass to Global Monitoring
                     passWithoutViolation();
                 }
             }
+        }
+        if (counter == 1) {
+            currentComponent = ranking.get(index);
+            String appId = getAppId(currentComponent);
+            // start monitoring the new one
+            MyLowLevelResourceConsumptionRecorder.getInstance().turnFilteredPrincipalMonitoring(true, appId);
         }
     }
 

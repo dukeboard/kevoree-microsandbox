@@ -80,8 +80,8 @@ public class MyLowLevelResourceConsumptionRecorder implements LowLevelResourceMo
     }
 
     @Override
-    public void turnMonitoring(boolean on) {
-        ResourceCounter.setMonitoring(on);
+    public void turnMonitoring(boolean on, boolean changeInstrumentingStatus) {
+        ResourceCounter.setMonitoring(on, changeInstrumentingStatus);
     }
 
     @Override

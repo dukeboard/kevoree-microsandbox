@@ -153,7 +153,8 @@ public class MonitoringTask extends AbstractMonitoringTask {
 
     private void switchToSimpleLocal(EnumSet<Metric> reason) {
         MonitoringReporterFactory.reporter().trigger(new MonitoringNotification(false, reason))/*.monitoring(false)*/;
-        MyLowLevelResourceConsumptionRecorder.getInstance().turnMonitoring(true);
+        MyLowLevelResourceConsumptionRecorder.getInstance().turnMonitoring(true,
+                !FineGrainedStrategyFactory.instance$.isSingleMonitoring());
         currentStatus = MonitoringStatus.LOCAL_MONITORING;
         currentStrategy = FineGrainedStrategyFactory.instance$.newMonitor(reason,
                 ComponentsRanker.instance$.rank(nodeName, service, bootstraper,
@@ -164,7 +165,8 @@ public class MonitoringTask extends AbstractMonitoringTask {
     private void switchToGlobal() {
         MonitoringReporterFactory.reporter().trigger(new MonitoringNotification(true,
                 System.currentTimeMillis() - timeAtTheBeginning))/*.monitoring(true)*/;
-        MyLowLevelResourceConsumptionRecorder.getInstance().turnMonitoring(false);
+        MyLowLevelResourceConsumptionRecorder.getInstance().turnMonitoring(false,
+                !FineGrainedStrategyFactory.instance$.isSingleMonitoring());
         currentStatus = MonitoringStatus.GLOBAL_MONITORING;
         currentStrategy = new GlobalMonitoring(msg, globalThreshold);
         currentStrategy.init(1000);

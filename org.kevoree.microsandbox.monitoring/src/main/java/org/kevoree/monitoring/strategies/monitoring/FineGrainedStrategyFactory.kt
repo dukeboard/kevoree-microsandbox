@@ -26,4 +26,6 @@ public object FineGrainedStrategyFactory {
             else -> AllComponentsMonitoring(reasons, ranking, msg)
         }
     }
+
+    fun isSingleMonitoring(): Boolean = kind.equals("single-monitoring")
 }
