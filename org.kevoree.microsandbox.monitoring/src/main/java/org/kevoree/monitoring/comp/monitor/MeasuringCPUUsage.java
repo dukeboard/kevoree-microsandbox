@@ -18,8 +18,8 @@ import java.util.TimerTask;
  * To change this template use File | Settings | File Templates.
  */
 @Requires({
-        @RequiredPort(name = "maximumCPU", optional = true, type = PortType.MESSAGE),
-        @RequiredPort(name = "maximumMem", optional = true, type = PortType.MESSAGE)
+        @RequiredPort(name = "maximumCPU", optional = true, type = PortType.MESSAGE, needCheckDependency = true),
+        @RequiredPort(name = "maximumMem", optional = true, type = PortType.MESSAGE, needCheckDependency = true)
 })
 @DictionaryType({
         @DictionaryAttribute(name = "accountGlobalConsumption", defaultValue = "0", dataType = Long.class)

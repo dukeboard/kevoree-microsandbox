@@ -18,7 +18,7 @@ import org.kevoree.monitoring.strategies.RecordingTaskAllComponents;
  *
  */
 @Requires( {
- @RequiredPort(name = "output" , type = PortType.MESSAGE, optional = true),
+ @RequiredPort(name = "output" , type = PortType.MESSAGE, optional = true, needCheckDependency = true)
 })
 @ComponentType
 public class ForContractInformationRetrieverComponent extends AbstractComponentType
