@@ -45,11 +45,11 @@ public class AllComponentsForEver extends FineGrainedMonitoringStrategy {
             a.put(Metric.CPU,  new MeasurePoint(data.lastCPU, contract.getCPU()));
         }
 
-        if (contract.getNetworkOut() < data.lastSent) {
+        if (contract.getNetworkOut() > 0 &&  contract.getNetworkOut() < data.lastSent) {
             a.put(Metric.NetworkS, new MeasurePoint(data.lastSent, contract.getNetworkOut()));
         }
 
-        if (contract.getNetworkIn() < data.lastReceived) {
+        if (contract.getNetworkIn() > 0 && contract.getNetworkIn() < data.lastReceived) {
             a.put(Metric.NetworkR, new MeasurePoint(data.lastReceived, contract.getNetworkIn()));
         }
 

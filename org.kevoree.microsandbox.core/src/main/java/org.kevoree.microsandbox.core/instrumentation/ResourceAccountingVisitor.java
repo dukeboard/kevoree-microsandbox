@@ -95,7 +95,7 @@ public class ResourceAccountingVisitor extends ClassVisitor {
             mv.visitEnd();
         }
         // add the field always
-        if (memory && shouldAddField) {
+        if (shouldAddField) {
             // add a field to store the owner resource principal, used in finalize
             FieldVisitor fv = cv.visitField(Opcodes.ACC_PUBLIC,
                     "__principalID__",

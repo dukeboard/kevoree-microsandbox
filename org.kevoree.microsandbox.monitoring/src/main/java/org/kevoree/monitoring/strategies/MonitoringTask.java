@@ -121,19 +121,19 @@ public class MonitoringTask extends AbstractMonitoringTask {
                                 MonitoringReporterFactory.reporter().trigger(new ContractViolationEvent(c.getComponentPath(), m, map.get(m).getObserved(), map.get(m).getMax()));
                         }
 
-                        // FIXME in Monitoring component, reconfiguration must be avoid.
-                        // Monitoring event must be sent to something else which is able to take decision
-                        tmpList = new SlowDownComponentInteraction(service).adapt(nodeName, tmpList);
-                        tmpList = new KillThemAll(service).adapt(nodeName, tmpList);
-
-                        if (tmpList.isEmpty()) {
+//                        // FIXME in Monitoring component, reconfiguration must be avoid.
+//                        // Monitoring event must be sent to something else which is able to take decision
+//                        tmpList = new SlowDownComponentInteraction(service).adapt(nodeName, tmpList);
+//                        tmpList = new KillThemAll(service).adapt(nodeName, tmpList);
+//
+//                        if (tmpList.isEmpty()) {
                             switchToGlobal();
-                        }
-                        else {
-                            // TODO: the system cannot perform an adaptation. Die
-                            System.err.println("Why I am here");
-                            System.exit(3);
-                        }
+//                        }
+//                        else {
+//                            // TODO: the system cannot perform an adaptation. Die
+//                            System.err.println("Why I am here");
+//                            System.exit(3);
+//                        }
                     }
                     else {
                         currentStrategy.pause();

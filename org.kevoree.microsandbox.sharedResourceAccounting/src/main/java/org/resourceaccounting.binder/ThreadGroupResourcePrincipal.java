@@ -216,7 +216,14 @@ public class ThreadGroupResourcePrincipal extends AbstractResourcePrincipal<Long
             lock.lock();
             if (map.containsKey(appId))
                 return map.get(appId);
-            return null;
+            else {
+                ThreadGroupResourcePrincipal principal = null;
+                principal = new ThreadGroupResourcePrincipal(null);
+                principal.text = appId;
+                map.put(appId, principal);
+                map2.put(principal.getId(), principal);
+                return principal;
+            }
         }
         finally {
             lock.unlock();

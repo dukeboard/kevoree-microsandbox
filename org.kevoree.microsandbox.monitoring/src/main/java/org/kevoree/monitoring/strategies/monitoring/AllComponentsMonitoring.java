@@ -47,11 +47,13 @@ public class AllComponentsMonitoring extends FineGrainedMonitoringStrategy {
                 a.put(Metric.CPU,  new MeasurePoint(data.lastCPU, contract.getCPU()));
             }
 
-            if (reason.contains(Metric.NetworkS) && contract.getNetworkOut() < data.lastSent) {
+            if (reason.contains(Metric.NetworkS) && contract.getNetworkOut() > 0
+                    && contract.getNetworkOut() < data.lastSent) {
                 a.put(Metric.NetworkS, new MeasurePoint(data.lastSent, contract.getNetworkOut()));
             }
 
-            if (reason.contains(Metric.NetworkR) && contract.getNetworkIn() < data.lastReceived) {
+            if (reason.contains(Metric.NetworkR) &&
+                    contract.getNetworkIn() > 0 && contract.getNetworkIn() < data.lastReceived) {
                 a.put(Metric.NetworkR, new MeasurePoint(data.lastReceived, contract.getNetworkIn()));
             }
 
@@ -77,7 +79,8 @@ public class AllComponentsMonitoring extends FineGrainedMonitoringStrategy {
     }
 
     @Override
-    public void onGCVerifyContract(long used, long max) { }
+    public void onGCVerifyContract(long used, long max) {
+    }
 
     @Override
     public void run() {

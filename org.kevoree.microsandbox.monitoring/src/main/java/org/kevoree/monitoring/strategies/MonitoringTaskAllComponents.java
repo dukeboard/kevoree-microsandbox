@@ -73,17 +73,17 @@ public class MonitoringTaskAllComponents extends AbstractMonitoringTask implemen
                 }
 
                 // FIXME in Monitoring component, reconfiguration must be avoid. Monitoring event must be sent to something else which is able to take decisions
-                tmpList = new SlowDownComponentInteraction(service).adapt(nodeName, tmpList);
-                tmpList = new KillThemAll(service).adapt(nodeName, tmpList);
+//                tmpList = new SlowDownComponentInteraction(service).adapt(nodeName, tmpList);
+//                tmpList = new KillThemAll(service).adapt(nodeName, tmpList);
 
-                if (tmpList.isEmpty()) {
+//                if (tmpList.isEmpty()) {
                     switchToSimpleLocal(EnumSet.allOf(Metric.class),false);
-                }
-                else {
-                    // TODO: the system cannot perform an adaptation. Die
-                    System.err.println("Why am I here?");
-                    System.exit(3);
-                }
+//                }
+//                else {
+//                    // TODO: the system cannot perform an adaptation. Die
+//                    System.err.println("Why am I here?");
+//                    System.exit(3);
+//                }
             }
         }
 

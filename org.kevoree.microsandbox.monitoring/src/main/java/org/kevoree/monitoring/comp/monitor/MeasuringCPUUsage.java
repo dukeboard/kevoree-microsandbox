@@ -21,6 +21,9 @@ import java.util.TimerTask;
         @RequiredPort(name = "maximumCPU", optional = true, type = PortType.MESSAGE),
         @RequiredPort(name = "maximumMem", optional = true, type = PortType.MESSAGE)
 })
+@DictionaryType({
+        @DictionaryAttribute(name = "accountGlobalConsumption", defaultValue = "0", dataType = Long.class)
+})
 @ComponentType
 public class MeasuringCPUUsage extends AbstractComponentType {
 
@@ -99,6 +102,21 @@ public class MeasuringCPUUsage extends AbstractComponentType {
 
     @Start
     public void start() {
+        long timetoWait = Long.parseLong(getDictionary().get("accountGlobalConsumption").toString());
+        if (timetoWait != 0) {
+            final Timer tt = new Timer();
+            tt.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    System.out.printf("Total CPU usage : %f\n", cpuUsageCumulative/(100*time)*100);
+                    tt.cancel();
+                    tt.purge();
+                    t.cancel();
+                    t.purge();
+                    System.exit(0);
+                }
+            }, timetoWait);
+        }
         gcWatcher.register();
         Measuring m = new Measuring();
         gcWatcher.addContractVerificationRequieredListener(m);

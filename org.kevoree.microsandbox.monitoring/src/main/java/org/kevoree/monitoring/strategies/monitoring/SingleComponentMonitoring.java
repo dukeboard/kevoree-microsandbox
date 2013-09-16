@@ -79,6 +79,8 @@ public class SingleComponentMonitoring extends FineGrainedMonitoringStrategy {
 
     }
 
+    String lastAppId = null;
+
     @Override
     public void run() {
         counter++;
@@ -86,14 +88,19 @@ public class SingleComponentMonitoring extends FineGrainedMonitoringStrategy {
             currentComponent = ranking.get(index);
             String appId = getAppId(currentComponent);
             // stop monitoring the previous one
-            MyLowLevelResourceConsumptionRecorder.getInstance().turnFilteredPrincipalMonitoring(false, null);
+            MyLowLevelResourceConsumptionRecorder.getInstance().turnFilteredPrincipalMonitoring(false, lastAppId);
             // start monitoring the new one
             MyLowLevelResourceConsumptionRecorder.getInstance().turnFilteredPrincipalMonitoring(true, appId);
+            lastAppId = appId;
 
             a = new EnumMap<Metric, MeasurePoint>(Metric.class);
             ResourcePrincipal principal = getPrincipal(currentComponent);
-            if (principal == null)
+            if (principal == null) {
+                counter = 1;
+                index++;
+                currentComponent = null;
                 return;
+            }
             makeContractAvailable(principal, currentComponent);
             DataForCheckingContract data = getInfo(principal);
             verifyContract(principal, data);
