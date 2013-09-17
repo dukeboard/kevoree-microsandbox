@@ -65,58 +65,32 @@ public class JavaFXWebBrowser extends AbstractComponentType implements MemoryCon
             initialized = false;
         }
         url = getDictionary().get("url").toString();
-
         getModelService().registerModelListener(new ModelListenerAdapter() {
             @Override
             public void modelUpdated() {
-            }
-
-            @Override
-            public void preRollback(ContainerRoot containerRoot, ContainerRoot containerRoot2) {
-            }
-
-            @Override
-            public void postRollback(ContainerRoot containerRoot, ContainerRoot containerRoot2) {
-            }
-        });
-
-        SingleWindowLayout.initJavaFX();
-        Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
-                // This method is invoked on JavaFX thread
-                Scene scene = createScene();
-                if (Boolean.valueOf((String) getDictionary().get("singleFrame"))) {
-                    tab = new Tab();
-                    tab.setText(getName());
-                    tab.setContent(scene.getRoot());
-                    SingleWindowLayout.getInstance().addTab(tab);
-                } else {
-                    localWindow = new Stage();
-                    localWindow.setTitle(getName() + "@@@" + getNodeName());
-                    localWindow.setScene(scene);
-
-                    localWindow.show();
-//                    TODO localFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-                }
-                synchronized (wait) {
-                    wait.notify();
-                }
-            }
-        });
-        synchronized (wait) {
-            wait.wait();
-        }
-        getModelService().registerModelListener(new ModelListenerAdapter() {
-            @Override
-            public void modelUpdated() {
-
+                SingleWindowLayout.initJavaFX();
                 Platform.runLater(new Runnable() {
                     @Override
                     public void run() {
+                        // This method is invoked on JavaFX thread
+                        Scene scene = createScene();
+                        if (Boolean.valueOf((String) getDictionary().get("singleFrame"))) {
+                            tab = new Tab();
+                            tab.setText(getName());
+                            tab.setContent(scene.getRoot());
+                            SingleWindowLayout.getInstance().addTab(tab);
+                        } else {
+                            localWindow = new Stage();
+                            localWindow.setTitle(getName() + "@@@" + getNodeName());
+                            localWindow.setScene(scene);
+
+                            localWindow.show();
+//                    TODO localFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+                        }
                         webEngine.load(url);
                     }
                 });
+                getModelService().unregisterModelListener(this);
             }
 
             @Override

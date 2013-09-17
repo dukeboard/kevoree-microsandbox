@@ -18,16 +18,14 @@ import javafx.scene.web.WebView;
 import javafx.stage.Stage;
 import org.kevoree.ContainerRoot;
 import org.kevoree.annotation.*;
-import org.kevoree.api.service.core.handler.ModelListener;
 import org.kevoree.framework.AbstractComponentType;
+import org.kevoree.framework.service.handler.ModelListenerAdapter;
 import org.kevoree.library.javase.javafx.layout.SingleWindowLayout;
 import org.kevoree.microsandbox.api.contract.CPUContracted;
-import org.kevoree.microsandbox.api.contract.FullContracted;
 import org.kevoree.microsandbox.api.contract.MemoryContracted;
 import org.kevoree.microsandbox.api.contract.ThroughputContracted;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -53,11 +51,13 @@ public class JavaFXWebBrowserFaultyCPU extends AbstractComponentType implements 
     private Tab tab;
     //    private BorderPane root;
     private WebView webView;
+    private WebEngine webEngine;
 
     private String url;
 
     private boolean initialized;
-    private List<String> messagesToHandle;
+    private final List<String> messagesToHandle = new ArrayList<String>();
+    private final Object wait = new Object();
 
     private CPUFault fault;
 
@@ -65,55 +65,67 @@ public class JavaFXWebBrowserFaultyCPU extends AbstractComponentType implements 
     public void start() {
         fault = new CPUFault(2, 23000);
         fault.create();
-        initialized = false;
-        messagesToHandle = new ArrayList<String>();
+        synchronized (messagesToHandle) {
+            initialized = false;
+        }
         url = getDictionary().get("url").toString();
-
-        getModelService().registerModelListener(new ModelListener() {
-            private boolean first = true;
-
-            @Override
-            public boolean preUpdate(ContainerRoot currentModel, ContainerRoot proposedModel) {
-                return true;
-            }
-
-            @Override
-            public boolean initUpdate(ContainerRoot currentModel, ContainerRoot proposedModel) {
-                return true;
-            }
-
-            @Override
-            public boolean afterLocalUpdate(ContainerRoot currentModel, ContainerRoot proposedModel) {
-                return true;
-            }
-
+        getModelService().registerModelListener(new ModelListenerAdapter() {
             @Override
             public void modelUpdated() {
-                if (first) {
-                    first = false;
-                    initializeWebBrowser();
-                    getModelService().unregisterModelListener(this);
-                }
+                SingleWindowLayout.initJavaFX();
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        // This method is invoked on JavaFX thread
+                        Scene scene = createScene();
+                        if (Boolean.valueOf((String) getDictionary().get("singleFrame"))) {
+                            tab = new Tab();
+                            tab.setText(getName());
+                            tab.setContent(scene.getRoot());
+                            SingleWindowLayout.getInstance().addTab(tab);
+                        } else {
+                            localWindow = new Stage();
+                            localWindow.setTitle(getName() + "@@@" + getNodeName());
+                            localWindow.setScene(scene);
+
+                            localWindow.show();
+//                    TODO localFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+                        }
+                        webEngine.load(url);
+                    }
+                });
+                getModelService().unregisterModelListener(this);
             }
 
             @Override
-            public void preRollback(ContainerRoot currentModel, ContainerRoot proposedModel) {
+            public void preRollback(ContainerRoot containerRoot, ContainerRoot containerRoot2) {
             }
 
             @Override
-            public void postRollback(ContainerRoot currentModel, ContainerRoot proposedModel) {
+            public void postRollback(ContainerRoot containerRoot, ContainerRoot containerRoot2) {
             }
         });
     }
 
     @Stop
-    public void stop() {
+    public void stop() throws InterruptedException {
         fault.destroy();
-        // TODO unload javafx stuff
-        if (Boolean.valueOf((String) getDictionary().get("singleFrame"))) {
-            SingleWindowLayout.getInstance().removeTab(tab);
-        } else {
-            localWindow.hide();
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                // TODO unload javafx stuff
+                if (Boolean.valueOf((String) getDictionary().get("singleFrame"))) {
+                    SingleWindowLayout.getInstance().removeTab(tab);
+                } else {
+                    localWindow.hide();
+                }
+                synchronized (wait) {
+                    wait.notify();
+                }
+            }
+        });
+        synchronized (wait) {
+            wait.wait();
         }
     }
 
@@ -122,40 +134,18 @@ public class JavaFXWebBrowserFaultyCPU extends AbstractComponentType implements 
 
     }
 
-    private void initializeWebBrowser() {
-        SingleWindowLayout.initJavaFX();
-        Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
-                // This method is invoked on JavaFX thread
-                Scene scene = createScene();
-                if (Boolean.valueOf((String) getDictionary().get("singleFrame"))) {
-                    tab = new Tab();
-                    tab.setText(getName());
-                    tab.setContent(scene.getRoot());
-                    SingleWindowLayout.getInstance().addTab(tab);
-                } else {
-                    localWindow = new Stage();
-                    localWindow.setTitle(getName() + "@@@" + getNodeName());
-                    localWindow.setScene(scene);
-
-                    localWindow.show();
-//                    TODO localFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-                }
-            }
-        });
-    }
-
     @Port(name = "handle")
     public void handle(final Object msg) {
         if (msg instanceof String) {
             Platform.runLater(new Runnable() {
                 @Override
                 public void run() {
-                    if (initialized) {
-                        webView.getEngine().executeScript((String) msg);
-                    } else {
-                        messagesToHandle.add((String) msg);
+                    synchronized (messagesToHandle) {
+                        if (initialized) {
+                            webView.getEngine().executeScript((String) msg);
+                        } else {
+                            messagesToHandle.add((String) msg);
+                        }
                     }
                 }
             });
@@ -166,8 +156,7 @@ public class JavaFXWebBrowserFaultyCPU extends AbstractComponentType implements 
 
         webView = new WebView();
 
-        final WebEngine webEngine = webView.getEngine();
-        webEngine.load(url);
+        webEngine = webView.getEngine();
 
         final TextField locationField = new TextField(url);
         webEngine.locationProperty().addListener(new ChangeListener<String>() {
@@ -201,16 +190,19 @@ public class JavaFXWebBrowserFaultyCPU extends AbstractComponentType implements 
 
         Scene scene = new Scene(vBox);
 
-        initialized = true;
         webEngine.getLoadWorker().stateProperty().addListener(
                 new ChangeListener<State>() {
                     @Override
                     public void changed(ObservableValue<? extends State> ov,
                                         State oldState, State newState) {
                         if (newState == State.SUCCEEDED) {
-                            initialized = true;
-                            for (String message : messagesToHandle) {
-                                webView.getEngine().executeScript(message);
+
+                            synchronized (messagesToHandle) {
+                                initialized = true;
+                                for (String message : messagesToHandle) {
+                                    webView.getEngine().executeScript(message);
+                                }
+                                messagesToHandle.clear();
                             }
                             webEngine.getLoadWorker().stateProperty().removeListener(this);
                         }
@@ -219,11 +211,5 @@ public class JavaFXWebBrowserFaultyCPU extends AbstractComponentType implements 
         );
 
         return scene;
-    }
-
-    private void startOutOfKevoree() {
-        messagesToHandle = new ArrayList<String>();
-        url = getDictionary().get("url").toString();
-        initializeWebBrowser();
     }
 }
