@@ -79,7 +79,7 @@ public class WebbitHTTPServerFaultyMemory extends AbstractHTTPServer implements 
     }
 
     // TODO replace Object with a specific type and rename the parameter
-    void request(/*HTTPOperationTuple*/Object param) {
+    public void request(/*HTTPOperationTuple*/Object param) {
         if (param != null && param instanceof HTTPOperationTuple && isPortBinded("request")) {
             getPortByName("request", MessagePort.class).process(param);
         }
