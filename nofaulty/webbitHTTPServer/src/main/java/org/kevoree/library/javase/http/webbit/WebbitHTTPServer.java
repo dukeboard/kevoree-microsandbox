@@ -1,12 +1,14 @@
 package org.kevoree.library.javase.http.webbit;
 
-import org.kevoree.annotation.*;
+import org.kevoree.annotation.ComponentType;
+import org.kevoree.annotation.PortType;
+import org.kevoree.annotation.RequiredPort;
+import org.kevoree.annotation.Requires;
 import org.kevoree.framework.MessagePort;
 import org.kevoree.library.javase.http.api.AbstractHTTPServer;
 import org.kevoree.library.javase.http.api.HTTPOperationTuple;
 import org.kevoree.log.Log;
 import org.kevoree.microsandbox.api.contract.CPUContracted;
-import org.kevoree.microsandbox.api.contract.FullContracted;
 import org.kevoree.microsandbox.api.contract.MemoryContracted;
 import org.kevoree.microsandbox.api.contract.ThroughputContracted;
 import org.webbitserver.WebServer;
@@ -77,7 +79,7 @@ public class WebbitHTTPServer extends AbstractHTTPServer implements MemoryContra
     }
 
     // TODO replace Object with a specific type and rename the parameter
-    void request(/*HTTPOperationTuple*/Object param) {
+    public void request(/*HTTPOperationTuple*/Object param) {
         if (param != null && param instanceof HTTPOperationTuple && isPortBinded("request")) {
             getPortByName("request", MessagePort.class).process(param);
         }
