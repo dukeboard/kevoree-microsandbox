@@ -7,6 +7,8 @@ import org.resourceaccounting.ResourcePrincipal;
 
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadMXBean;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -31,7 +33,6 @@ public class MeasuringCPUUsage extends AbstractComponentType {
     public static final double ELAPSED_TIME = 1000; // 1 second
 
     private final ThreadMXBean tmxb = ManagementFactory.getThreadMXBean();
-    double previousCPU = 0; // in milliseconds
     double cpuUsageCumulative = 0;
     int time = 0;
 
@@ -43,28 +44,36 @@ public class MeasuringCPUUsage extends AbstractComponentType {
     Timer t = new Timer();
     private double maximumMem;
 
+    private Map<Long, Long> cpuTimes = new HashMap<Long, Long>(50);
+
     class Measuring extends TimerTask implements ContractVerificationRequired {
 
         @Override
         public void run() {
             long[] threadIDs = tmxb.getAllThreadIds();
-            double sum = 0;
+            double diff = 0;
             for (int i = 0; i < threadIDs.length; i++) {
                 long threadId = threadIDs[i];
                 if (threadId != -1) {
-                    sum += tmxb.getThreadCpuTime(threadId) / 1000000F;
+                    long tmp = tmxb.getThreadCpuTime(threadId);
+                    long l = tmp;
+                    if (cpuTimes.containsKey(threadId)) {
+                        l = l - cpuTimes.get(threadId);
+                    }
+                    cpuTimes.put(threadId, tmp);
+                    diff += l / 1000000F;
                 }
             }
 
-            boolean firstTime = previousCPU == 0;
-            double diff = sum - previousCPU; // FIXME : this has a problem because the set of active threads may differs between
-                                             // calls. For now I can put the minimum to 0
+//            System.out.println(diff);
+            boolean firstTime = count == 0;
+//            double diff = sum - previousCPU; // FIXME : this has a problem because the set of active threads may differs between
+            // calls. For now I can put the minimum to 0
             if (diff < 0) diff = 0;
-            previousCPU = sum;
             double cpuUsage = Math.min(99, diff/(ELAPSED_TIME*nCPUs)*100);
 
             time ++;
-            cpuUsageCumulative += cpuUsage;
+            cpuUsageCumulative += diff;
 
             // avoid to check when the previous measurement doesn't exist because its use may imply erroneous estimation
             if (!firstTime) {
@@ -108,7 +117,9 @@ public class MeasuringCPUUsage extends AbstractComponentType {
             tt.schedule(new TimerTask() {
                 @Override
                 public void run() {
-                    System.out.printf("Total CPU usage : %f\n", cpuUsageCumulative/(100*time)*100);
+                    System.out.printf("Total CPU usage : %f %f %f %f\n",
+                            cpuUsageCumulative, ELAPSED_TIME*time, ELAPSED_TIME*time*nCPUs,
+                            cpuUsageCumulative/(ELAPSED_TIME*time*nCPUs)*100);
                     tt.cancel();
                     tt.purge();
                     t.cancel();

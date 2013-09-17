@@ -162,7 +162,7 @@ public class MonitoringStatusList {
                 return;
             if (status.cpuMonitored || status.memMonitored) {
                 Class<?>[] a = new Class[classes.get(appId).size()];
-                System.out.printf("Classes for %s are %d\n", appId, a.length);
+//                System.out.printf("Classes for %s are %d\n", appId, a.length);
                 int c = 0;
                 for (MyKey key : classes.get(appId)) {
                     String name = key.getClassName();
