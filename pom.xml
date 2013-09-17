@@ -198,6 +198,7 @@
         <module>faulty-memory</module>
         <!--<module>faulty-interaction</module>-->
         <module>experiment-scripts</module>
+        <module>weka-executer</module>
 
     </modules>
 
