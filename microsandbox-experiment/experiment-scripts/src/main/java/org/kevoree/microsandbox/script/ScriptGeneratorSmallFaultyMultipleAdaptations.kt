@@ -16,7 +16,7 @@ class ScriptGeneratorSmallFaultyMultipleAdaptations(val kevoreeVersion: String, 
 
     fun generate(folder: String, headerFile: String, approach: String, suffix: String) {
 
-        val faultyComponents = array("WsServer", "WebbitHTTPServer", "ResourcesPage", "FollowManager", "JavaFXWebBrowser", "WebSocketClientHandler", "JavaFXVideoDisplay")
+        val faultyComponents = array(/*"WsServer", "WebbitHTTPServer", "ResourcesPage", "FollowManager", "JavaFXWebBrowser", "WebSocketClientHandler", */"JavaFXVideoDisplay")
 
         val defaultScript = generateSmall(kevoreeVersion, kevoreeCoreLibraryVersion, microsandboxVersion, experiementVersion, null, headerFile, null)
 

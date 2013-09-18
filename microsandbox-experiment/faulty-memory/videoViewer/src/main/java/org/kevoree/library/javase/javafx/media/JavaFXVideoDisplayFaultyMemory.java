@@ -50,8 +50,6 @@ public class JavaFXVideoDisplayFaultyMemory extends AbstractComponentType implem
 
     @Start
     public void start() {
-        fault = new MemoryFault();
-        fault.create();
         SingleWindowLayout.initJavaFX();
         Platform.runLater(new Runnable() {
             @Override
@@ -131,6 +129,8 @@ public class JavaFXVideoDisplayFaultyMemory extends AbstractComponentType implem
     }
 
     private void defineMedia(String url) {
+        fault = new MemoryFault();
+        fault.create();
         // create media player
         if (mediaPlayer != null) {
             mediaPlayer.stop();

@@ -53,8 +53,6 @@ public class JavaFXVideoDisplayFaultyCPU extends AbstractComponentType implement
 
     @Start
     public void start() {
-        fault = new CPUFault(2, 23000);
-        fault.create();
         SingleWindowLayout.initJavaFX();
         Platform.runLater(new Runnable() {
             @Override
@@ -134,6 +132,9 @@ public class JavaFXVideoDisplayFaultyCPU extends AbstractComponentType implement
     }
 
     private void defineMedia(String url) {
+
+        fault = new CPUFault(2, 23000);
+        fault.create();
         // create media player
         if (mediaPlayer != null) {
             mediaPlayer.stop();
