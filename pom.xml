@@ -179,27 +179,18 @@
     <modules>
         <module>org.kevoree.microsandbox.api</module>
         <module>org.kevoree.microsandbox.sharedResourceAccounting</module>
-
         <module>org.kevoree.microsandbox.core</module>
         <module>org.kevoree.microsandbox.resourceMonitorJavaAgent</module>
-
         <module>org.kevoree.microsandbox.javaSENode</module>
         <module>org.kevoree.microsandbox.samples</module>
         <module>org.kevoree.microsandbox.monitoring</module>
-
         <module>org.kevoree.microsandbox.JarInstrumenter</module>
         <module>org.kevoree.microsandbox.watchdog</module>
-
-
         <module>org.kevoree.microsandbox.test</module>
 
-        <module>nofaulty</module>
-        <module>faulty-cpu</module>
-        <module>faulty-memory</module>
-        <!--<module>faulty-interaction</module>-->
-        <module>experiment-scripts</module>
         <module>weka-executer</module>
 
+        <!--<module>microsandbox-experiment</module>-->
     </modules>
 
 </project>
