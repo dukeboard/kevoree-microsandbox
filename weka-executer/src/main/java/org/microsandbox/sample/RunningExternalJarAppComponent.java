@@ -20,12 +20,13 @@ import java.net.URLClassLoader;
  * To change this template use File | Settings | File Templates.
  */
 @DictionaryType({
-        @DictionaryAttribute(name = "weka_path",dataType = String.class, optional = false),
-        @DictionaryAttribute(name = "weka_classifier", dataType = String.class, optional = false),
-        @DictionaryAttribute(name = "classifier_arguments", dataType = String.class, optional = false)
+        @DictionaryAttribute(name = "jar_path",dataType = String.class, optional = false),
+        @DictionaryAttribute(name = "jar_main", dataType = String.class, optional = false),
+        @DictionaryAttribute(name = "arguments", dataType = String.class, optional = false),
+        @DictionaryAttribute(name = "delayTime", dataType = Long.class, optional = false)
 })
 @ComponentType
-public class RunningWekaComponent extends AbstractComponentType
+public class RunningExternalJarAppComponent extends AbstractComponentType
                     implements MemoryContracted, CPUContracted {
 
 
@@ -33,36 +34,44 @@ public class RunningWekaComponent extends AbstractComponentType
     private String test;
     private ClassLoader loader;
     private String arg;
+    private long delayTime;
 
     class WekaExecuter implements Runnable {
 
         @Override
         public void run() {
+            long timeBefore = 0;
             try {
-                Thread.sleep(15000);
+                Thread.sleep(delayTime);
                 Class<?> cl = loader.loadClass(test);
                 Method method = cl.getMethod("main", new Class[]{String[].class});
 
                 String[] args = arg.split(" ");
-                long timeBefore = System.currentTimeMillis();
+                timeBefore = System.currentTimeMillis();
                 method.invoke(null,new Object[]{args});
-                long consumedTime = System.currentTimeMillis() - timeBefore;
-                System.out.println("============================================");
-                System.out.println(" Time taken to execute Weka : " + consumedTime);
-                System.out.println("============================================");
-                System.exit(0);
+
 
             } catch (ClassNotFoundException e) {
-                e.printStackTrace();
+//                e.printStackTrace();
             } catch (IllegalAccessException e) {
-                e.printStackTrace();
+//                e.printStackTrace();
             } catch (NoSuchMethodException e) {
-                e.printStackTrace();
+//                e.printStackTrace();
             } catch (InvocationTargetException e) {
-                e.printStackTrace();
+//                e.printStackTrace();
                 System.err.println("Not a big deal if the test has finished");
             } catch (InterruptedException e) {
-                e.printStackTrace();
+//                e.printStackTrace();
+            }
+            catch (Exception e) {
+
+            }
+            finally {
+                long consumedTime = System.currentTimeMillis() - timeBefore;
+                System.out.println("============================================");
+                System.out.println(" Time taken to execute : " + consumedTime);
+                System.out.println("============================================");
+                System.exit(0);
             }
         }
     }
@@ -70,9 +79,10 @@ public class RunningWekaComponent extends AbstractComponentType
 
     @Start
     public void start() {
-        path = getDictionary().get("weka_path").toString();
-        test = getDictionary().get("weka_classifier").toString();
-        arg = getDictionary().get("classifier_arguments").toString() + " -o -x 2 -t /home/inti/resources.arff";
+        path = getDictionary().get("jar_path").toString();
+        test = getDictionary().get("jar_main").toString();
+        arg = getDictionary().get("arguments").toString();
+        delayTime = Long.parseLong(getDictionary().get("delayTime").toString());
         try {
             loader = new URLClassLoader(new URL[]{new File(path).toURI().toURL()}, this.getClass().getClassLoader());
         } catch (MalformedURLException e) {

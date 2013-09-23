@@ -38,6 +38,7 @@ public class GlobalMonitoring extends AbstractMonitoringStrategy {
     @Override
     public void onGCVerifyContract(long used, long max) {
         double usage = (double)used/max*100F;
+//        System.out.printf("Ratio %f and threshold %f\n",usage, threshold.getMemory_threshold());
         if (usage > threshold.getMemory_threshold()) {
             // threshold has been surpassed, try to identify why
             actionOnContractViolation(Metric.Memory);

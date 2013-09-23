@@ -43,14 +43,11 @@ public class MemoryFault implements Runnable {
     public void run() {
         byte[] bytes;
         Random random = new Random();
+        cache = new byte[dataSize*50];
         while (true) {
             bytes = new byte[dataSize];
             random.nextBytes(bytes);
-            byte[] tmp = cache;
-            cache = new byte[cache.length + bytes.length];
-            System.arraycopy(tmp, 0, cache, 0, tmp.length);
-            System.arraycopy(bytes, 0, cache, tmp.length, bytes.length);
-            Log.warn("Minimum amount of memory used by {}: {}", getName(), cache.length);
+//            Log.warn("Minimum amount of memory used by {}: {}", getName(), cache.length);
             try {
                 Thread.sleep(sleepTime);
             } catch (InterruptedException ignored) {

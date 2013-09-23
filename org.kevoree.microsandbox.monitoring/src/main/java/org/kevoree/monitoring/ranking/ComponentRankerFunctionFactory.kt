@@ -36,6 +36,16 @@ public object ComponentRankerFunctionFactory {
                 else
                     1
             }
+            "inv_number_of_failures" -> {
+                (a,b) ->
+
+                val x = ComponentsInfoStorage.instance.getExecutionInfo(a.path() as String)
+                val y = ComponentsInfoStorage.instance.getExecutionInfo(b.path() as String)
+                if ((x?.getFailures() as Int) > y?.getFailures() as Int)
+                    1
+                else
+                    -1
+            }
             "model_history" -> {
                 (a, b) ->
                 if (modelRanker != null) {

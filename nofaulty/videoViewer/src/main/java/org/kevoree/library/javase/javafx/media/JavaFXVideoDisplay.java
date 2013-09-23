@@ -76,7 +76,7 @@ public class JavaFXVideoDisplay extends AbstractComponentType implements MemoryC
                             if (SingleWindowLayout.getInstance().getStage().isFocused() && tab.isSelected()) {
                                 playOrInit();
                             } else if (!SingleWindowLayout.getInstance().getStage().isFocused()) {
-                                pause();
+                                //pause();
                             }
                         }
                     });

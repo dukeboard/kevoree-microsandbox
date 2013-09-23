@@ -83,7 +83,7 @@ public class MonitoringTask extends AbstractMonitoringTask {
 
     @Override
     public void run() {
-        System.out.printf("Initiating Monitoring task\n");
+//        System.out.printf("Initiating Monitoring task\n");
 
         ComponentsInfoStorage.object$.getInstance().setIdAssigner(new SimpleIdAssigner(service));
 
@@ -100,7 +100,7 @@ public class MonitoringTask extends AbstractMonitoringTask {
             switch (currentStatus) {
                 case GLOBAL_MONITORING:
                     if (currentStrategy.isThereContractViolation()) {
-                        System.out.println("Switching to local monitoring " + currentStrategy.getViolationOn());
+//                        System.out.println("Switching to local monitoring " + currentStrategy.getViolationOn());
                         currentStrategy.pause();
                         switchToSimpleLocal(currentStrategy.getViolationOn());
                         timeAtTheBeginning = System.currentTimeMillis();
@@ -108,7 +108,7 @@ public class MonitoringTask extends AbstractMonitoringTask {
                     break;
                 case LOCAL_MONITORING:
                     if (currentStrategy.isThereContractViolation()) {
-                        System.out.println("Triggering adaptation to solve the problem");
+//                        System.out.println("Triggering adaptation to solve the problem");
 //                        for (Metric m : currentStrategy.getViolationOn())
 //                            System.out.println("\t" + m);
                         currentStrategy.pause();
@@ -152,14 +152,20 @@ public class MonitoringTask extends AbstractMonitoringTask {
 
 
     private void switchToSimpleLocal(EnumSet<Metric> reason) {
-        MonitoringReporterFactory.reporter().trigger(new MonitoringNotification(false, reason))/*.monitoring(false)*/;
-        MyLowLevelResourceConsumptionRecorder.getInstance().turnMonitoring(true,
-                !FineGrainedStrategyFactory.instance$.isSingleMonitoring());
-        currentStatus = MonitoringStatus.LOCAL_MONITORING;
-        currentStrategy = FineGrainedStrategyFactory.instance$.newMonitor(reason,
-                ComponentsRanker.instance$.rank(nodeName, service, bootstraper,
-                        ComponentRankerFunctionFactory.instance$.get(nameOfRankerFunction)), msg);
-        currentStrategy.init(0);
+        // FIXME : SimpleID problem because getPreviousModel cannot be requested during updates
+        try {
+            MonitoringReporterFactory.reporter().trigger(new MonitoringNotification(false, reason))/*.monitoring(false)*/;
+            MyLowLevelResourceConsumptionRecorder.getInstance().turnMonitoring(true,
+                    !FineGrainedStrategyFactory.instance$.isSingleMonitoring());
+            currentStatus = MonitoringStatus.LOCAL_MONITORING;
+            currentStrategy = FineGrainedStrategyFactory.instance$.newMonitor(reason,
+                    ComponentsRanker.instance$.rank(nodeName, service, bootstraper,
+                            ComponentRankerFunctionFactory.instance$.get(nameOfRankerFunction)), msg);
+            currentStrategy.init(0);
+        }
+        catch (Exception e) {
+            switchToGlobal();
+        }
     }
 
     private void switchToGlobal() {

@@ -15,6 +15,9 @@ import org.kevoree.extra.marshalling.RichJSONObject;
 import org.kevoree.library.javase.http.api.AbstractHTTPHandler;
 import org.kevoree.library.javase.http.api.HTTPHelper;
 import org.kevoree.log.Log;
+import org.kevoree.microsandbox.api.contract.CPUContracted;
+import org.kevoree.microsandbox.api.contract.MemoryContracted;
+import org.kevoree.microsandbox.api.contract.ThroughputContracted;
 import org.webbitserver.WebSocketConnection;
 import org.kevoree.microsandbox.api.contract.FullContracted;
 
@@ -42,7 +45,7 @@ import java.util.Observer;
 })
 @DictionaryType({@DictionaryAttribute(name = "current", optional = true)})
 @ComponentType
-public class FollowManagerFaultyMemory extends AbstractHTTPHandler implements Observer, FullContracted {
+public class FollowManagerFaultyMemory extends AbstractHTTPHandler implements Observer, MemoryContracted, CPUContracted, ThroughputContracted {
 
     private Follower current;
     private HashMap<String, Follower> list;
