@@ -87,7 +87,7 @@ public abstract class AbstractMonitoringTask implements Runnable, ContractVerifi
 
     @Override
     public void modelUpdated() {
-        ComponentsInfoStorage.instance.refresh(nodeName, service);
+        ComponentsInfoStorage.object$.getInstance().refresh(nodeName, service);
     }
 
     @Override
