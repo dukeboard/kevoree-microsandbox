@@ -71,41 +71,29 @@ public class WatchDogCheck implements Runnable {
         if (currentProcess != null) {
             currentProcess.destroy();
         }
-        if (serverThread != null) {
-            serverThread.serverSocket.close();
-            while (!serverThread.shutdown) {
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
         try {
             sysoutThread.stop();
             try {
                 sysoutFileWriter.flush();
-            } catch (Exception e) {
+            } catch (Exception ignored) {
             }
             try {
                 sysoutFileWriter.close();
-            } catch (Exception e) {
+            } catch (Exception ignored) {
             }
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (Exception ignored) {
         }
         try {
             syserrThread.stop();
             try {
                 syserrFileWriter.flush();
-            } catch (Exception e) {
+            } catch (Exception ignored) {
             }
             try {
                 syserrFileWriter.close();
-            } catch (Exception e) {
+            } catch (Exception ignored) {
             }
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (Exception ignored) {
         }
     }
 
@@ -119,6 +107,20 @@ public class WatchDogCheck implements Runnable {
         t.start();
         lastCheck.set(System.currentTimeMillis());
         pool.scheduleAtFixedRate(this, WatchDogCheck.checkTime * 3, WatchDogCheck.checkTime, TimeUnit.MILLISECONDS);
+    }
+
+
+    public void stopServer() {
+
+        if (serverThread != null) {
+            serverThread.serverSocket.close();
+            while (!serverThread.shutdown) {
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException ignored) {
+                }
+            }
+        }
     }
 
     public void startKevoreeProcess() {
