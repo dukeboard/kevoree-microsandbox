@@ -13,6 +13,7 @@ import org.kevoree.api.service.core.handler.ModelListener
  */
 // TODO should be a component with one service port. Each implementation of this component may have its specific ranking algorithm
 public object ComponentRankerFunctionFactory {
+    val RANDOM_ORDER : String = "random_order"
     var modelRanker : ModelRankingAlgorithm? = null
     fun get(name: String): (ComponentInstance, ComponentInstance) -> Int {
         return when (name) {

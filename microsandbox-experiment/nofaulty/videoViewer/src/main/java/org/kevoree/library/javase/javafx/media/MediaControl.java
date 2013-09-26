@@ -146,6 +146,7 @@ public class MediaControl extends BorderPane {
                         updateValues();
                     }
                     mp.play();
+                    mp.setMute(true);
                     playButton.setText("||");
                 } else {
                     mp.pause();

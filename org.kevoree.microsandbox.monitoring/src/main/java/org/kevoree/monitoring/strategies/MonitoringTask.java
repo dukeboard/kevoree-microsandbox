@@ -37,6 +37,8 @@ public class MonitoringTask extends AbstractMonitoringTask {
 
     private final GlobalThreshold globalThreshold;
     private long timeAtTheBeginning;
+    private int countOfLocalMonitoring = 0;
+    private long totalTimeInLocalMonitoring = 0;
 
     public MonitoringTask(String nodeName,
                           GlobalThreshold globalThreshold,
@@ -45,6 +47,13 @@ public class MonitoringTask extends AbstractMonitoringTask {
                           Bootstraper bootstraper) {
         super(bootstraper, service, nameOfRankerFunction, nodeName);
         this.globalThreshold = globalThreshold;
+
+        Runtime.getRuntime().addShutdownHook(new Thread(){
+            @Override
+            public void run() {
+                timeConsumedInLocalMonitoring();
+            }
+        });
     }
 
     @Override
@@ -118,7 +127,9 @@ public class MonitoringTask extends AbstractMonitoringTask {
                             ComponentsInfoStorage.object$.getInstance().getExecutionInfo(c.getComponentPath()).increaseFailures();
                             EnumMap<Metric, MeasurePoint> map = c.getMetrics();
                             for (Metric m : map.keySet())
-                                MonitoringReporterFactory.reporter().trigger(new ContractViolationEvent(c.getComponentPath(), m, map.get(m).getObserved(), map.get(m).getMax()));
+                                MonitoringReporterFactory.reporter().trigger(
+                                        new ContractViolationEvent(c.getComponentPath(),
+                                                m, map.get(m).getObserved(), map.get(m).getMax()));
                         }
 
 //                        // FIXME in Monitoring component, reconfiguration must be avoid.
@@ -159,8 +170,7 @@ public class MonitoringTask extends AbstractMonitoringTask {
                     !FineGrainedStrategyFactory.instance$.isSingleMonitoring());
             currentStatus = MonitoringStatus.LOCAL_MONITORING;
             currentStrategy = FineGrainedStrategyFactory.instance$.newMonitor(reason,
-                    ComponentsRanker.instance$.rank(nodeName, service, bootstraper,
-                            ComponentRankerFunctionFactory.instance$.get(nameOfRankerFunction)), msg);
+                    ComponentsRanker.instance$.rank(nodeName, service, bootstraper,nameOfRankerFunction), msg);
             currentStrategy.init(0);
         }
         catch (Exception e) {
@@ -169,12 +179,23 @@ public class MonitoringTask extends AbstractMonitoringTask {
     }
 
     private void switchToGlobal() {
-        MonitoringReporterFactory.reporter().trigger(new MonitoringNotification(true,
-                System.currentTimeMillis() - timeAtTheBeginning))/*.monitoring(true)*/;
+        long time = timeConsumedInLocalMonitoring();
+        MonitoringReporterFactory.reporter().trigger(new MonitoringNotification(true, time));
         MyLowLevelResourceConsumptionRecorder.getInstance().turnMonitoring(false,
                 !FineGrainedStrategyFactory.instance$.isSingleMonitoring());
         currentStatus = MonitoringStatus.GLOBAL_MONITORING;
         currentStrategy = new GlobalMonitoring(msg, globalThreshold);
         currentStrategy.init(1000);
+    }
+
+    private long timeConsumedInLocalMonitoring() {
+        if (timeAtTheBeginning == 0)
+            timeAtTheBeginning = System.currentTimeMillis();
+        long time = System.currentTimeMillis() - timeAtTheBeginning;
+        totalTimeInLocalMonitoring += time;
+        countOfLocalMonitoring++;
+        System.out.printf("Total Time in Local Monitoring %d with %d times inside it\n",
+                totalTimeInLocalMonitoring, countOfLocalMonitoring);
+        return time;
     }
 }

@@ -122,6 +122,7 @@ public class SingleComponentMonitoring extends FineGrainedMonitoringStrategy {
                     // pass to Global Monitoring
                     passWithoutViolation();
                 }
+                return;
             }
         }
         if (counter == 1) {

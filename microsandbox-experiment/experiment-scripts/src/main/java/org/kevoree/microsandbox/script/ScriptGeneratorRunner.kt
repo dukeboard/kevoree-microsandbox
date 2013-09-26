@@ -18,7 +18,7 @@ fun main(args: Array<String>) {
     val microsandboxVersion = "1.0-SNAPSHOT"
     val experimentVersion = "1.0.0-SNAPSHOT"
 
-    val folder = File("/home/edaubert/microsandbox")
+    val folder = File("/home/inti/microsandbox")
     if (!folder.exists() || (folder.isFile() && folder.delete())) {
         folder.mkdirs()
     }
@@ -35,6 +35,10 @@ fun main(args: Array<String>) {
     smallGenerator.generate(internalFolder.getAbsolutePath(), "defaultScript.kevs", "Our", "FaultyMemory")
     smallGenerator.generate(internalFolder.getAbsolutePath(), "defaultScriptAllForEver.kevs", "O1", "FaultyMemory")
     smallGenerator.generate(internalFolder.getAbsolutePath(), "defaultScriptAdaptiveWithAll.kevs", "O2", "FaultyMemory")
+
+    val templateFile = File(folder.getAbsolutePath() + File.separator + "extra" + File.separator + "FMO1FaultyCPU_dacapo1.kevs")
+    Experiment3ScriptGenerator.all_files(
+            folder.getAbsolutePath())
 
     /*internalFolder = File(folder.getAbsolutePath() + File.separator + "multipleViolations")
     if (!internalFolder.exists() || (internalFolder.isFile() && internalFolder.delete())) {

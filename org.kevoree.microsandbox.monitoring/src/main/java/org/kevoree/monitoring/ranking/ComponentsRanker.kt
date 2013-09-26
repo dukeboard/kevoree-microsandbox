@@ -15,6 +15,7 @@ import java.util.NoSuchElementException
 import org.kevoree.microsandbox.core.Entry
 import org.kevoree.library.defaultNodeTypes.context.KevoreeDeployManager
 import org.kevoree.monitoring.models.ComponentExecutionInfo
+import java.util.Collections
 
 /**
  * Created with IntelliJ IDEA.
@@ -28,23 +29,32 @@ public object ComponentsRanker {
     private val definitionAspect : TypeDefinitionAspect = TypeDefinitionAspect()
 
     fun rank(nodeName: String,
-                modelService: KevoreeModelHandlerService,
-                bootstrapService : Bootstraper,
-                componentRankerFunction: (ComponentInstance, ComponentInstance) -> Integer
-             ): List<ComponentInstance> {
+             modelService: KevoreeModelHandlerService,
+             bootstrapService : Bootstraper,
+             componentRankerFunction: String
+    ): List<ComponentInstance> {
         val components : MutableList<ComponentInstance> =
                 ArrayList<ComponentInstance>()
 
         ComponentsInfoStorage.instance.updateListOfComponents(nodeName, modelService, {
-                (node, instance, info) ->
-                    updateInfo(instance, info, node, bootstrapService)
-                    components.add(instance)
-            }
+            (node, instance, info) ->
+            updateInfo(instance, info, node, bootstrapService)
+            components.add(instance)
+        }
         )
 
         val currentTime = System.nanoTime()
-//        println("number of components before sorting is " + components.size)
-        return components.sort(comparator { (a,b) -> componentRankerFunction(a,b) as Int })
+        //        println("number of components before sorting is " + components.size)
+
+        if (componentRankerFunction.equals(ComponentRankerFunctionFactory.RANDOM_ORDER)) {
+            Collections.shuffle(components)
+            return components
+        }
+        else {
+            val ranker = ComponentRankerFunctionFactory.get(componentRankerFunction)
+            return components.sort(comparator { (a,b) -> ranker(a,b) as Int })
+        }
+
     }
 
     private fun updateInfo(instance: ComponentInstance,

@@ -190,7 +190,7 @@
 
         <module>weka-executer</module>
 
-        <!--<module>microsandbox-experiment</module>-->
+        <module>microsandbox-experiment</module>
     </modules>
 
 </project>

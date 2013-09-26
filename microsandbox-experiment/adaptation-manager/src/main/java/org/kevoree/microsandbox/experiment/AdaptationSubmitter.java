@@ -10,10 +10,7 @@ import org.kevoree.api.service.core.script.KevScriptEngineException;
 import org.kevoree.framework.AbstractComponentType;
 import org.kevoree.framework.service.handler.ModelListenerAdapter;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 
 /**
  * User: Erwan Daubert - erwan.daubert@gmail.com
@@ -29,33 +26,61 @@ import java.io.InputStreamReader;
 })
 public class AdaptationSubmitter extends AbstractComponentType {
 
+    int index;
+    String s;
     @Start
     public void start() {
+
+        if (getDictionary().containsKey("modelName")) {
+            s= getDictionary().get("modelName").toString();
+            index = Integer.parseInt(s.substring(s.lastIndexOf('/')+1, s.lastIndexOf('.')));
+        }
+        else
+            index = 7;
+
         getModelService().registerModelListener(new ModelListenerAdapter() {
+
             private boolean doing = false;
+
             private boolean done = false;
 
             @Override
             public synchronized void modelUpdated() {
-                if (!doing && !getDictionary().get("modelName").toString().equalsIgnoreCase("none")) {
+                if (index < 7 && !doing && !getDictionary().get("modelName").toString().equalsIgnoreCase("none")) {
                     doing = true;
 
                     getModelService().unregisterModelListener(this);
-                    while (!done) {
+                    while (!done && index < 2) {
+                        String tmp = s.replaceFirst("[0-9]+\\.kevs",index + ".kevs");
+                        index++;
                         try {
-                            Thread.sleep(5000);
+                            Thread.sleep(15000);
+                            System.out.println("Time over, now switching to " + tmp);
                         } catch (InterruptedException ignored) {
                         }
 
+                        InputStream newModel = null;
                         try {
                             // load the new model according to the template name and the currentAdaptationDone value
                             KevScriptEngine kengine = getKevScriptEngineFactory().createKevScriptEngine();
 
-                            kengine.append(loadFromStream(getClass().getClassLoader().getResourceAsStream(getDictionary().get("modelName").toString())));
+//                            InputStream newModel = getClass().getClassLoader().getResourceAsStream(getDictionary().get("modelName").toString());
+
+                            newModel = new FileInputStream(tmp);
+
+                            kengine.append(loadFromStream(newModel));
                             kengine.atomicInterpretDeploy();
                         } catch (IOException e) {
                             e.printStackTrace();
                         } catch (KevScriptEngineException ignored) {
+                        }
+                        finally {
+                            if (newModel != null)
+                                try {
+                                    newModel.close();
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
                         }
                     }
 
@@ -86,4 +111,5 @@ public class AdaptationSubmitter extends AbstractComponentType {
             }
         });
     }
+
 }

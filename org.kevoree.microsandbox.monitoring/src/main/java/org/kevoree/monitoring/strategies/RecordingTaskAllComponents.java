@@ -73,8 +73,7 @@ public class RecordingTaskAllComponents extends AbstractMonitoringTask implement
     public List<ComponentInstance> getRanking() {
         try {
 
-            return ComponentsRanker.instance$.rank(nodeName, service, bootstraper,
-                    ComponentRankerFunctionFactory.instance$.get(nameOfRankerFunction));
+            return ComponentsRanker.instance$.rank(nodeName, service, bootstraper,nameOfRankerFunction);
         }
         catch (Exception e) {
             return new ArrayList<ComponentInstance>();

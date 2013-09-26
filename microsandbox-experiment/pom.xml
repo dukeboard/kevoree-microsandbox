@@ -10,12 +10,14 @@
     <version>1.0.0-SNAPSHOT</version>
 
     <modules>
-        <!--<module>nofaulty</module>-->
-        <!--<module>faulty-cpu</module>-->
-        <!--<module>faulty-memory</module>-->
+        <module>nofaulty</module>
+        <module>faulty-cpu</module>
+        <module>faulty-memory</module>
         <!--<module>faulty-interaction</module>-->
         <module>experiment-scripts</module>
         <module>adaptation-manager</module>
+        <module>../contracted-fake-console</module>
+        <module>number-generator</module>
     </modules>
 
     <properties>
