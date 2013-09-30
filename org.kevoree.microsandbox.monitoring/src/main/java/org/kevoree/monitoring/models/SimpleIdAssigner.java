@@ -1,3 +1,4 @@
+/*
 package org.kevoree.monitoring.models;
 
 import org.kevoree.ContainerRoot;
@@ -5,13 +6,15 @@ import org.kevoree.api.service.core.handler.KevoreeModelHandlerService;
 
 import java.util.List;
 
+*/
 /**
  * Created with IntelliJ IDEA.
  * User: inti
  * Date: 7/7/13
  * Time: 11:10 PM
  * For testing
- */
+ *//*
+
 public class SimpleIdAssigner implements IdAssigner {
     public SimpleIdAssigner(KevoreeModelHandlerService service) {
         this.service = service;
@@ -52,3 +55,4 @@ public class SimpleIdAssigner implements IdAssigner {
 
 
 }
+*/

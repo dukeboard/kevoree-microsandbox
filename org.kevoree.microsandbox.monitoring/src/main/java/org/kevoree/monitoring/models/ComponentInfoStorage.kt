@@ -1,3 +1,4 @@
+/*
 package org.kevoree.monitoring.ranking
 
 import java.util.HashMap
@@ -18,13 +19,15 @@ import org.kevoree.TypeDefinition
 import org.kevoree.annotation.DictionaryType
 import org.kevoree.library.defaultNodeTypes.context.KevoreeDeployManager
 
+*/
 /**
  * Created with IntelliJ IDEA.
  * User: inti
  * Date: 7/7/13
  * Time: 9:19 PM
  *
- */
+ *//*
+
 public open class ComponentsInfoStorage {
 
     // Allow to override it - still have the same behavior but we use ComponentsInfoStorage.instance instead of ComponentsInfoStorage.instance$ in java and we need to use ComponentsInfoStorage.instance in kotlin
@@ -59,9 +62,11 @@ public open class ComponentsInfoStorage {
         if (id != null) {
             val node = root?.findNodesByID(nodeName) // more efficient than filter
             node?.getComponents()?.forEach {
-                /*root?.getNodes()?.filter { node -> nodeName.equals(node.getName()) }?.
+                */
+/*root?.getNodes()?.filter { node -> nodeName.equals(node.getName()) }?.
                     forEach {
-                        node -> node.getComponents().forEach {*/
+                        node -> node.getComponents().forEach {*//*
+
                 instance ->
                 // only component that define contract must be monitor ?
                 // TODO maybe define a "helper" if we plan to define new typeDefinition for new type of contract
@@ -87,11 +92,13 @@ public open class ComponentsInfoStorage {
     }
 
     fun isContractedComponent(instance: Instance): Boolean {
-        /*return (isTypeOf(instance.getTypeDefinition()!!, javaClass<FullContracted>().getSimpleName())
+        */
+/*return (isTypeOf(instance.getTypeDefinition()!!, javaClass<FullContracted>().getSimpleName())
         || isTypeOf(instance.getTypeDefinition()!!, javaClass<MemoryContracted>().getSimpleName())
         || isTypeOf(instance.getTypeDefinition()!!, javaClass<CPUContracted>().getSimpleName())
         || isTypeOf(instance.getTypeDefinition()!!, javaClass<NetworkContracted>().getSimpleName())
-        || isTypeOf(instance.getTypeDefinition()!!, javaClass<ThroughputContracted>().getSimpleName()))*/
+        || isTypeOf(instance.getTypeDefinition()!!, javaClass<ThroughputContracted>().getSimpleName()))*//*
+
         return isContractedComponent(instance.getTypeDefinition()!!)
     }
 
@@ -123,4 +130,4 @@ public open class ComponentsInfoStorage {
 
         return (isFullContracted != null && isFullContracted!!) || (isMemoryContracted != null && isMemoryContracted!!) || (isCPUContracted != null && isCPUContracted!!) || (isNetworkContracted != null && isNetworkContracted!!) || (isThroughputContracted != null && isThroughputContracted!!)
     }
-}
+}*/

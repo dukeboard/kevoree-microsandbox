@@ -1,16 +1,19 @@
+/*
 package org.kevoree.monitoring.ranking
 
 import org.kevoree.ComponentInstance
 import org.kevoree.api.service.core.handler.KevoreeModelHandlerService
 import org.kevoree.api.service.core.handler.ModelListener
 
+*/
 /**
  * Created with IntelliJ IDEA.
  * User: inti
  * Date: 7/9/13
  * Time: 3:14 PM
  * To change this template use File | Settings | File Templates.
- */
+ *//*
+
 // TODO should be a component with one service port. Each implementation of this component may have its specific ranking algorithm
 public object ComponentRankerFunctionFactory {
     val RANDOM_ORDER : String = "random_order"
@@ -66,4 +69,4 @@ public object ComponentRankerFunctionFactory {
             }
         }
     }
-}
+}*/

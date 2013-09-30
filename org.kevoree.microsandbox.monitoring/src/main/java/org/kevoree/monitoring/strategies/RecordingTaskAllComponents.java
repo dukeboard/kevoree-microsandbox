@@ -1,15 +1,12 @@
 package org.kevoree.monitoring.strategies;
 
+import edu.emory.mathcs.backport.java.util.Arrays;
 import org.kevoree.ComponentInstance;
 import org.kevoree.api.Bootstraper;
 import org.kevoree.api.service.core.handler.KevoreeModelHandlerService;
 import org.kevoree.monitoring.comp.MyLowLevelResourceConsumptionRecorder;
 import org.kevoree.monitoring.comp.monitor.GCWatcher;
 import org.kevoree.monitoring.comp.monitor.NewMetricReporter;
-import org.kevoree.monitoring.models.SimpleIdAssigner;
-import org.kevoree.monitoring.ranking.ComponentRankerFunctionFactory;
-import org.kevoree.monitoring.ranking.ComponentsInfoStorage;
-import org.kevoree.monitoring.ranking.ComponentsRanker;
 import org.kevoree.monitoring.strategies.monitoring.FineGrainedStrategyFactory;
 import org.kevoree.monitoring.strategies.monitoring.RankChecker;
 import org.kevoree.monitoring.strategies.monitoring.RecordingAllComponentsForEver;
@@ -31,7 +28,7 @@ public class RecordingTaskAllComponents extends AbstractMonitoringTask implement
     public RecordingTaskAllComponents(String nodeName,
                                       KevoreeModelHandlerService service,
                                       Bootstraper bootstraper, NewMetricReporter reporter) {
-        super(bootstraper,service,"",nodeName);
+        super(bootstraper,service,null,nodeName);
         this.reporter = reporter;
     }
 
@@ -40,7 +37,7 @@ public class RecordingTaskAllComponents extends AbstractMonitoringTask implement
     public void run() {
         System.out.printf("Initiating Monitoring task\n");
 
-        ComponentsInfoStorage.object$.getInstance().setIdAssigner(new SimpleIdAssigner(service));
+//        ComponentsInfoStorage.instance.setIdAssigner(new SimpleIdAssigner(service));
 
         gcWatcher = new GCWatcher();
         gcWatcher.addContractVerificationRequieredListener(this);
@@ -73,7 +70,8 @@ public class RecordingTaskAllComponents extends AbstractMonitoringTask implement
     public List<ComponentInstance> getRanking() {
         try {
 
-            return ComponentsRanker.instance$.rank(nodeName, service, bootstraper,nameOfRankerFunction);
+//            return ComponentsRanker.instance$.rank(nodeName, service, bootstraper,nameOfRankerFunction);
+            return Arrays.asList(getRankingOrder(monitoringComponent.getNodeName()));
         }
         catch (Exception e) {
             return new ArrayList<ComponentInstance>();

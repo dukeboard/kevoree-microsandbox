@@ -1,3 +1,4 @@
+/*
 package org.kevoree.monitoring.strategies.adaptation
 
 import org.kevoree.api.service.core.handler.KevoreeModelHandlerService
@@ -14,13 +15,15 @@ import org.kevoree.monitoring.strategies.monitoring.FineGrainedMonitoringStrateg
 import org.kevoree.microsandbox.api.event.AdaptationEvent
 import org.kevoree.microsandbox.api.event.ContractViolationEvent
 
+*/
 /**
  * Created with IntelliJ IDEA.
  * User: inti
  * Date: 7/7/13
  * Time: 12:12 PM
  *
- */
+ *//*
+
 public class SlowDownComponentInteraction(service : KevoreeModelHandlerService)
                         : BasicAdaptation(service) {
     public override fun adapt(nodeName: String?, faultyComponents: List<FaultyComponent>?): MutableList<FaultyComponent>? {
@@ -54,7 +57,9 @@ public class SlowDownComponentInteraction(service : KevoreeModelHandlerService)
                     {
                         var c : ComponentInstance? = (p?.eContainer() as ComponentInstance?)
                         var portName : String? = p?.getPortTypeRef()?.getName()
-                        MonitoringReporterFactory.reporter()?.trigger(AdaptationEvent("SlowDownInteraction", "${c?.getName()}${portName}"))/*.adaptation("SlowDownInteraction", "${c?.getName()}${portName}" )*/
+                        MonitoringReporterFactory.reporter()?.trigger(AdaptationEvent("SlowDownInteraction", "${c?.getName()}${portName}"))*/
+/*.adaptation("SlowDownInteraction", "${c?.getName()}${portName}" )*//*
+
                         MyLowLevelResourceConsumptionRecorder.getInstance()?.turnOnPortControllingOn(c?.getName(), portName, true,
                                 maxAllowed)
                     }
@@ -64,4 +69,4 @@ public class SlowDownComponentInteraction(service : KevoreeModelHandlerService)
         return result.wrongUsage
     }
 
-}
+}*/
