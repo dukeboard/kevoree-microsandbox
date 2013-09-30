@@ -4,7 +4,13 @@ addComponent monitoringComponent@monitoredNode : MonitoringComponent {
 	memory_threshold = '50.471203',
 //    net_in_threshold='80', // TODO specifiy good value
 //    net_out_threshold='80', // TODO specifiy good value
-    componentRankFunction = 'model_history',
     adaptiveMonitoring = 'true',
     fineGrainedStrategy = 'all-components'
 }
+
+addComponent rankingComponent@node0 :ModelBasedRankingHeuristicComponent
+
+addChannel channelMonitoring : defMSG
+
+bind MonitoringComponent0.ranking@node0 => channelMonitoring
+bind rankingComponent.ranking@node0 => channelMonitoring

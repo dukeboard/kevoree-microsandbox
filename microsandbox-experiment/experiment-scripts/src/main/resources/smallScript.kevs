@@ -48,16 +48,16 @@ addComponent measurer@node0 : MeasuringCPUUsage {
 addComponent WsServer650@node0 : WsServer {
     port='8092',
     cpu_wall_time = '258',
-    memory_max_size = '0'
-    //,throughput_msg_per_second='all=0;service=0',
+    memory_max_size = '0',
+    //throughput_msg_per_second='all=0;service=0',
     uselessParameter = '' // WsServer
 
 }
 addComponent SprayWebS142@node0 : WebbitHTTPServer {
     port='9500',
     cpu_wall_time = '3316',
-    memory_max_size = '1112'
-    ,throughput_msg_per_second='all=1;response=1',
+    memory_max_size = '1112',
+    throughput_msg_per_second='all=1;response=1',
     uselessParameter = '' // WebbitHTTPServer
 
 }
@@ -65,42 +65,42 @@ addComponent SprayWebS142@node0 : WebbitHTTPServer {
 addComponent Resources407@node0 : ResourcesPage {
     urlPattern='/media/',
     patternToRemove = '/media/',
-		cpu_wall_time = '4899398'
-		,memory_max_size = '0'
-    ,throughput_msg_per_second='all=1;request=1',
+	cpu_wall_time = '4899398',
+	memory_max_size = '0',
+    throughput_msg_per_second='all=1;request=1',
     uselessParameter = '' // ResourcesPage
 
 }
 addComponent FollowMan511@node0 : FollowManager {
     urlPattern='/',
-    current='jed'
-    ,cpu_wall_time = '56601'
-    ,memory_max_size = '4000'
-    ,throughput_msg_per_second='all=1;request=1;followmeuser=0',
+    current='jed',
+    cpu_wall_time = '56601',
+    memory_max_size = '4000',
+    throughput_msg_per_second='all=1;request=1;followmeuser=0',
     uselessParameter = '' // FollowManager
 
 }
 
 addComponent javaFXWebBrowser@node0 : JavaFXWebBrowser {
-    cpu_wall_time = '64'
-    ,memory_max_size = '24'
-    //,throughput_msg_per_second='all=0;service=0',
+    cpu_wall_time = '64',
+    memory_max_size = '24',
+    //throughput_msg_per_second='all=0;service=0',
     uselessParameter = '' // JavaFXWebBrowser
 
 }
 addComponent websockletJavaFXHandler@node0 : WebSocketClientHandler {
-    cpu_wall_time = '130'
-    ,memory_max_size = '72'
-    //,throughput_msg_per_second='all=0;service=0'
-    ,uselessParameter = '' // WebSocketClientHandler
+    cpu_wall_time = '130',
+    memory_max_size = '72',
+    //throughput_msg_per_second='all=0;service=0',
+    uselessParameter = '' // WebSocketClientHandler
 
 }
 
 addComponent  videoDisplay@node0 : JavaFXVideoDisplay {
-    cpu_wall_time = '130'
-    ,memory_max_size = '72'
-    //,throughput_msg_per_second='all=0;service=0'
-    ,uselessParameter = '' // JavaFXVideoDisplay
+    cpu_wall_time = '130',
+    memory_max_size = '72',
+    //throughput_msg_per_second='all=0;service=0',
+    uselessParameter = '' // JavaFXVideoDisplay
 
 }
 
@@ -131,78 +131,3 @@ bind websockletJavaFXHandler.handle@node0 => webSocketHandlerMessage
 
 addGroup group12081044961:BasicGroup
 addToGroup group12081044961 node0
-
-//addComponent mediaSender@node0 : FakeCopterMediaSender { url = 'http://download.oracle.com/otndocs/products/javafx/JavaRap/prog_index.m3u8'}
-
-//addComponent WsServer650@monitoredNode : WsServer {
-//    port='8092',
-//    cpu_wall_time = '0',
-//    memory_max_size = '0',
-//    throughput_msg_per_second='all=0;service=0'
-//}
-//addComponent SprayWebS142@monitoredNode : WebbitHTTPServer {
-//    port='9500',
-//    cpu_wall_time = '0',
-//    memory_max_size = '0',
-//    throughput_msg_per_second='all=0;service=0'
-//}
-
-//addComponent Resources407@monitoredNode : ResourcesPage {
-//    urlPattern='/media/',
-//    patternToRemove = '/media/',
-
-//}
-//addComponent FollowMan511@monitoredNode : FollowManager {
-//    urlPattern='/',
-//    current='jed'
-//    cpu_wall_time = '0',
-//    memory_max_size = '0',
-//    throughput_msg_per_second='all=0;service=0'
-//}
-
-//addComponent javaFXWebBrowser@monitoredNode : JavaFXWebBrowser {
-//    cpu_wall_time = '0',
-//    memory_max_size = '0',
-//    throughput_msg_per_second='all=0;service=0'
-//}
-//addComponent websockletJavaFXHandler@monitoredNode : WebSocketClientHandler {
-//    cpu_wall_time = '0',
-//    memory_max_size = '0',
-//    throughput_msg_per_second='all=0;service=0'
-//}
-
-//addComponent  videoDisplay@monitoredNode : JavaFXVideoDisplay {
-//    cpu_wall_time = '0',
-//    memory_max_size = '0',
-//    throughput_msg_per_second='all=0;service=0'
-//}
-
-//addChannel channelMediaSender : CamelNetty
-
-//addChannel defSERVIC618 : defSERVICE
-//addChannel defMSG472 : defMSG
-//addChannel defMSG222 : defMSG
-//addChannel webSocketHandlerMessage : defMSG
-
-//bind mediaSender.media@node0 => channelMediaSender
-//bind videoDisplay.media@monitoredNode => channelMediaSender
-
-//bind SprayWebS142.request@monitoredNode => defMSG472
-//bind SprayWebS142.response@monitoredNode => defMSG222
-
-//bind FollowMan511.request@monitoredNode => defMSG472
-//bind FollowMan511.content@monitoredNode => defMSG222
-
-//bind Resources407.request@monitoredNode => defMSG472
-//bind Resources407.content@monitoredNode => defMSG222
-
-//bind WsServer650.service@monitoredNode => defSERVIC618
-//bind FollowMan511.ws@monitoredNode => defSERVIC618
-
-//bind javaFXWebBrowser.handle@monitoredNode => webSocketHandlerMessage
-//bind websockletJavaFXHandler.handle@monitoredNode => webSocketHandlerMessage
-
-//updateDictionary channelMediaSender{port = "10000"}@node0,{port = "10001"}@monitoredNode
-
-//addGroup group1208104496:BasicGroup
-//addToGroup group1208104496 node0

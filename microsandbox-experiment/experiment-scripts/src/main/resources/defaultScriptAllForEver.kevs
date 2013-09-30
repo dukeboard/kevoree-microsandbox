@@ -28,6 +28,12 @@ addComponent monitoringComponent@node0 //monitoredNode
     cpu_threshold='46.025537', // TODO specifiy good value
     net_in_threshold='80000000', // TODO specifiy good value
     net_out_threshold='80000000', // TODO specifiy good value
-    //componentRankFunction = 'model_history',
     adaptiveMonitoring='false'
 }
+
+addComponent rankingComponent@node0 :ModelBasedRankingHeuristicComponent
+
+addChannel channelMonitoring : defMSG
+
+bind MonitoringComponent0.ranking@node0 => channelMonitoring
+bind rankingComponent.ranking@node0 => channelMonitoring
