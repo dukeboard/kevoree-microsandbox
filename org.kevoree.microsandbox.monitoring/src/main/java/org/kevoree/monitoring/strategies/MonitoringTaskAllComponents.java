@@ -55,6 +55,7 @@ public class MonitoringTaskAllComponents extends AbstractMonitoringTask implemen
         gcWatcher.register();
 
         switchToSimpleLocal(EnumSet.allOf(Metric.class), true);
+        int errors = 0;
 
         stopped = false;
         while (!isStopped()) {
@@ -72,6 +73,8 @@ public class MonitoringTaskAllComponents extends AbstractMonitoringTask implemen
                                 new ContractViolationEvent(c.getComponentPath(),
                                         m, map.get(m).getObserved(), map.get(m).getMax()));
                 }
+
+                System.out.println("Number of errors found " + ++errors);
 
                 // FIXME in Monitoring component, reconfiguration must be avoid. Monitoring event must be sent to something else which is able to take decisions
 //                tmpList = new SlowDownComponentInteraction(service).adapt(nodeName, tmpList);
