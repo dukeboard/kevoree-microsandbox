@@ -3,11 +3,9 @@ package org.resourceaccounting.binder;
 import java.lang.instrument.Instrumentation;
 import java.lang.instrument.UnmodifiableClassException;
 import java.lang.ref.WeakReference;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Created with IntelliJ IDEA.
@@ -156,8 +154,10 @@ public class MonitoringStatusList {
     }
 
     private void retransformClasses(String appId) {
+//        System.out.println(appId + " " + classes.containsKey(appId) + " ");
         if (classes.containsKey(appId) && globalInst != null) {
             Status status = map.get(appId);
+//            System.out.println(appId + " " + (status.memMonitored && !status.cpuMonitored) + " ");
             if (status.memMonitored && !status.cpuMonitored)
                 return;
             if (status.cpuMonitored || status.memMonitored) {
