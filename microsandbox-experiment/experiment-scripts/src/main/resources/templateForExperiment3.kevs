@@ -26,7 +26,7 @@ addNode node0:MonitoredNode
 
 addComponent monitoringComponent@node0 //monitoredNode
 : MonitoringComponent {
-    memory_threshold='41.499658', // TODO specifiy good value
+    memory_threshold='91.499658', // TODO specifiy good value
     cpu_threshold='46.025537', // TODO specifiy good value
     net_in_threshold='80000000', // TODO specifiy good value
     net_out_threshold='80000000', // TODO specifiy good value
@@ -65,15 +65,6 @@ merge "mvn:org.kevoree.microsandbox.experiment.fault.memory/wsServer/1.0.0-SNAPS
 merge "mvn:org.kevoree.microsandbox.experiment.fault.memory/webbitHTTPServer/1.0.0-SNAPSHOT"
 merge "mvn:org.kevoree.microsandbox.experiment.fault.memory/webSocketClientHandler/1.0.0-SNAPSHOT"
 
-// merge "mvn:org.kevoree.microsandbox.experiment.fault.interaction/followManager/1.0.0-SNAPSHOT"
-// merge "mvn:org.kevoree.microsandbox.experiment.fault.interaction/followResource/1.0.0-SNAPSHOT"
-// merge "mvn:org.kevoree.microsandbox.experiment.fault.interaction/videoViewer/1.0.0-SNAPSHOT"
-// merge "mvn:org.kevoree.microsandbox.experiment.fault.interaction/webBrowser/1.0.0-SNAPSHOT"
-// merge "mvn:org.kevoree.microsandbox.experiment.fault.interaction/wsServer/1.0.0-SNAPSHOT"
-// merge "mvn:org.kevoree.microsandbox.experiment.fault.interaction/webbitHTTPServer/1.0.0-SNAPSHOT"
-// merge "mvn:org.kevoree.microsandbox.experiment.fault.interaction/webSocketClientHandler/1.0.0-SNAPSHOT"
-
-// TODO this component must be located on another node + replace the url by a http one
 addComponent mediaSender@node0 : FakeCopterMediaSender { url = 'http://download.oracle.com/otndocs/products/javafx/JavaRap/prog_index.m3u8'}
 
 addComponent measurer@node0 : MeasuringCPUUsage {
@@ -81,13 +72,22 @@ addComponent measurer@node0 : MeasuringCPUUsage {
 }
 
 addComponent wekaExecuter@node0 : RunningExternalJarAppComponent {
-	jar_path = '/home/inti/Downloads/dacapo-2006-10-MR2.jar',
-	jar_main = 'Harness',
-	arguments = '-noValidation -n 4 chart',
-	delayTime = '56000',
-	memory_max_size = '40000000',
+	jar_path = '/home/inti/programs/weka-3-6-8/weka.jar',
+	jar_main = 'weka.classifiers.functions.MultilayerPerceptron',
+	arguments = '-L 0.3 -M 0.2 -N 500 -V 0 -S 0 -E 20 -H a -o -x 2 -t /home/inti/resources.arff',
+	delayTime = '15000',
+	memory_max_size = '30000000',
 	cpu_wall_time = '9000000000'
 }
+
+//addComponent wekaExecuter@node0 : RunningExternalJarAppComponent {
+//	jar_path = '/home/inti/Downloads/dacapo-2006-10-MR2.jar',
+//	jar_main = 'Harness',
+//	arguments = '-noValidation -n 4 chart',
+//	delayTime = '56000',
+//	memory_max_size = '40000000',
+//	cpu_wall_time = '9000000000'
+//}
 
 addComponent WsServer650@node0 : WsServer {
     port='8092',

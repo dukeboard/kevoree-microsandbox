@@ -41,12 +41,13 @@ public object Experiment3ScriptGenerator {
         val files = array(dstFilePatternName + "all-components" + ".kevs",
                             dstFilePatternName + "random" + ".kevs",
                             dstFilePatternName + "number_of_failures" + ".kevs",
-                            dstFilePatternName + "inv_number_of_failures" + ".kevs"
+                            dstFilePatternName + "inv_number_of_failures" + ".kevs",
+                            dstFilePatternName + "traditional.kevs"
                          )
-        val finedGrainedStrategies = array("all-components", "single-monitoring", "single-monitoring", "single-monitoring")
-        val rankingFunctions = array("number_of_failures", "random_order", "number_of_failures", "inv_number_of_failures")
+        val finedGrainedStrategies = array("all-components", "single-monitoring", "single-monitoring", "single-monitoring", "all_components")
+        val rankingFunctions = array("number_of_failures", "random_order", "number_of_failures", "inv_number_of_failures", "number_of_failures")
         val code = generateExtraCode(nbExtra)
-        for (i in 0 .. finedGrainedStrategies.size) {
+        for (i in 0 .. finedGrainedStrategies.size-1) {
             createFile(template, code, rankingFunctions[i], finedGrainedStrategies[i], files[i])
         }
     }
@@ -69,7 +70,7 @@ public object Experiment3ScriptGenerator {
         var r = "\n\nmerge 'mvn:org.kevoree.microsandbox.experiment/contracted-fake-console/1.0.0-SNAPSHOT'\n"
         r += "merge 'mvn:org.kevoree.microsandbox.experiment/number-generator/1.0.0-SNAPSHOT'\n"
         for (i in 1 .. nbExtra) {
-            r += "addComponent ContractedConsole$i@node0:ContractedFakeConsole { memory_max_size ='4000', cpu_wall_time ='5000' }\n"
+            r += "addComponent ContractedConsole$i@node0:ContractedFakeConsole { memory_max_size ='4000', cpu_wall_time ='470000' }\n"
         }
         r += "addComponent numberGenerator_fancy@node0 : NumberGenerator {}\n"
         r += "addChannel cInitial : defMSG\n"
