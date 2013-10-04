@@ -34,6 +34,8 @@ public object ComponentRankerFunctionFactory {
                 val y = ComponentsInfoStorage.instance.getExecutionInfo(b.path() as String)
                 if ((x?.getFailures() as Int) > y?.getFailures() as Int)
                     -1
+                else if ((x?.getFailures() as Int) == (y?.getFailures() as Int))
+                    0
                 else
                     1
             }
@@ -42,8 +44,10 @@ public object ComponentRankerFunctionFactory {
 
                 val x = ComponentsInfoStorage.instance.getExecutionInfo(a.path() as String)
                 val y = ComponentsInfoStorage.instance.getExecutionInfo(b.path() as String)
-                if ((x?.getFailures() as Int) > y?.getFailures() as Int)
+                if ((x?.getFailures() as Int) > (y?.getFailures() as Int))
                     1
+                else if ((x?.getFailures() as Int) == (y?.getFailures() as Int))
+                    0
                 else
                     -1
             }
