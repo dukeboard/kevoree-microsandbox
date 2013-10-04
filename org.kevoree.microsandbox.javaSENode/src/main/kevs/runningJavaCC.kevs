@@ -12,6 +12,8 @@ merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.defaultChan
 merge 'mvn:org.kevoree.microsandbox/org.kevoree.microsandbox.monitoring/{project.version}'
 merge 'mvn:org.kevoree.microsandbox/org.kevoree.microsandbox.samples/{project.version}'
 
+merge 'mvn:org.kevoree.microsandbox/weka-executer/1.0-SNAPSHOT'
+
 addNode node0:MonitoredNode {
     availability_memory='950000000',
     availability_instr='200000000',
@@ -37,12 +39,13 @@ bind MonitoringComponent0.reasoner@node0 => defMSGT_reasoning
 updateDictionary defMSGT_reasoning
 
 
-addComponent dacapoExecuter0@node0 : RunningDacapoComponent {
-    dacapo_path = '/home/inti/Downloads/dacapo-2006-10-MR2.jar',
-    dacapo_test = 'xalan',
-    dacapo_n ='4',
-    cpu_wall_time = '0',
-    memory_max_size = '1'
+addComponent wekaExecuter@node0 : RunningExternalJarAppComponent {
+	jar_path = '/home/inti/programs/javaCC/javacc-6.0/bin/lib/javacc.jar',
+	jar_main = 'javacc',
+	arguments = '/home/inti/programs/javaCC/javacc-6.0/examples/cpp/cpp.jj',
+	delayTime = '10',
+	memory_max_size = '0',
+	cpu_wall_time = '0'
 }
 
 addGroup sync:BasicGroup
