@@ -111,8 +111,8 @@ public class MonitoringTask extends AbstractMonitoringTask {
                     if (currentStrategy.isThereContractViolation()) {
 //                        System.out.println("Switching to local monitoring " + currentStrategy.getViolationOn());
                         currentStrategy.pause();
-                        switchToSimpleLocal(currentStrategy.getViolationOn());
                         timeAtTheBeginning = System.currentTimeMillis();
+                        switchToSimpleLocal(currentStrategy.getViolationOn());
                     }
                     break;
                 case LOCAL_MONITORING:
@@ -174,6 +174,8 @@ public class MonitoringTask extends AbstractMonitoringTask {
             currentStrategy.init(0);
         }
         catch (Exception e) {
+            System.err.println("==================\n nooooooooo \n ===================");
+            e.printStackTrace();
             switchToGlobal();
         }
     }
