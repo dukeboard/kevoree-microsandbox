@@ -18,6 +18,8 @@ public class MonitoringStatusList {
 
     private Instrumentation globalInst;
     private static MonitoringStatusList singleton = new MonitoringStatusList();
+    private String properId;
+
     private MonitoringStatusList() { }
 
     private class Status {
@@ -78,7 +80,8 @@ public class MonitoringStatusList {
     }
 
     public synchronized void includeApp(String appId, int idLoader, boolean mem, boolean instr) {
-        classLoaderIdToPrincipalId.put(idLoader, appId);
+        if (!classLoaderIdToPrincipalId.containsKey(idLoader))
+            classLoaderIdToPrincipalId.put(idLoader, appId);
         map.put(appId, new Status(false,mem,instr));
     }
 
@@ -150,21 +153,31 @@ public class MonitoringStatusList {
             }
             MyKey key = new MyKey(className, loader);
             set.add(key);
+            if (appId.contains("ContractedConsole"))
+                properId = appId;
         }
     }
 
     private void retransformClasses(String appId) {
 //        System.out.println(appId + " " + classes.containsKey(appId) + " ");
-        if (classes.containsKey(appId) && globalInst != null) {
-            Status status = map.get(appId);
+        Status status = map.get(appId);
+        if (status.memMonitored && !status.cpuMonitored)
+            return;
+        boolean b = classes.containsKey(appId);
+        Set<MyKey> myClasses = null;
+        if (b)
+            myClasses = classes.get(appId);
+        else if (appId.contains("ContractedConsole")) {
+            b = true;
+            myClasses = classes.get(properId);
+        }
+        if (b && globalInst != null) {
 //            System.out.println(appId + " " + (status.memMonitored && !status.cpuMonitored) + " ");
-            if (status.memMonitored && !status.cpuMonitored)
-                return;
             if (status.cpuMonitored || status.memMonitored) {
-                Class<?>[] a = new Class[classes.get(appId).size()];
-//                System.out.printf("Classes for %s are %d\n", appId, a.length);
+                Class<?>[] a = new Class[myClasses.size()];
+                System.out.printf("Classes for %s are %d\n", appId, a.length);
                 int c = 0;
-                for (MyKey key : classes.get(appId)) {
+                for (MyKey key : myClasses) {
                     String name = key.getClassName();
                     ClassLoader loader = key.getLoader();
                     if (loader != null) {

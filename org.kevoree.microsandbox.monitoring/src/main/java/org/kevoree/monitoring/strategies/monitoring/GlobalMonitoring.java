@@ -26,7 +26,7 @@ public class GlobalMonitoring extends AbstractMonitoringStrategy {
     public GlobalMonitoring(Object msg, GlobalThreshold threshold) {
         super(msg);
         this.threshold = threshold;
-
+//        System.out.println("Well, the global monitoring is created");
     }
 
     @Override
@@ -47,6 +47,8 @@ public class GlobalMonitoring extends AbstractMonitoringStrategy {
 
     @Override
     public void run() {
+//        System.out.println("Well, the global monitoring is running");
+//        System.exit(434);
         long[] threadIDs = tmxb.getAllThreadIds();
         double sum = 0;
         for (int i = 0; i < threadIDs.length; i++) {

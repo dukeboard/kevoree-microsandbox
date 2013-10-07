@@ -6,7 +6,7 @@ merge 'mvn:org.kevoree.microsandbox/org.kevoree.microsandbox.monitoring/{project
 merge 'mvn:org.kevoree.microsandbox/org.kevoree.microsandbox.samples/{project.version}'
 
 // Node definition
-addNode node0 : MonitoredNode {availability_memory='150000000', availability_instr='200000000'}
+addNode node0 : MonitoredNode {availability_memory='150000000', availability_instr='2000000000'}
 
 //
 addComponent MonitoringComponent0@node0 : MonitoringComponent {
@@ -14,7 +14,9 @@ addComponent MonitoringComponent0@node0 : MonitoringComponent {
     cpu_threshold='10',
     net_in_threshold='80',
     net_out_threshold='80',
-    componentRankFunction = 'model_history'
+    componentRankFunction = 'model_history',
+    adaptiveMonitoring = 'true',
+    fineGrainedStrategy = 'single-monitoring' // single-monitoring
 }
 
-addComponent cpuComponent@node0 : CPUConsumerWallTime {nbLoop = '2000000', cpu_wall_time = '30000'}
+addComponent cpuComponent@node0 : CPUConsumerWallTime {nbLoop = '2000000000', cpu_wall_time = '30000'}

@@ -46,6 +46,8 @@ public abstract class AbstractMonitoringStrategy extends TimerTask implements Mo
 
     @Override
     public void pause() {
+//        System.out.println("Who th hell is calling this");
+//        System.exit(0);
         // stop the monitoring
         timerForCPU.cancel();
         timerForCPU.purge();

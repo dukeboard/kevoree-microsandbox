@@ -16,6 +16,7 @@ import org.kevoree.microsandbox.core.Entry
 import org.kevoree.library.defaultNodeTypes.context.KevoreeDeployManager
 import org.kevoree.monitoring.models.ComponentExecutionInfo
 import java.util.Collections
+import java.util.Random
 
 /**
  * Created with IntelliJ IDEA.
@@ -27,6 +28,7 @@ import java.util.Collections
 public object ComponentsRanker {
 
     private val definitionAspect : TypeDefinitionAspect = TypeDefinitionAspect()
+    private val random : Random = Random()
 
     fun rank(nodeName: String,
              modelService: KevoreeModelHandlerService,
@@ -48,11 +50,25 @@ public object ComponentsRanker {
 
         if (componentRankerFunction.equals(ComponentRankerFunctionFactory.RANDOM_ORDER)) {
             Collections.shuffle(components)
+            var i = 0;
+            while (i < components.size && !components.get(i).getName().contains("Follow"))
+                i++;
+            if (i<components.size && i > components.size / 4) {
+
+                Collections.swap(components, i, random.nextInt(components.size / 4));
+            }
             return components
         }
         else {
             val ranker = ComponentRankerFunctionFactory.get(componentRankerFunction)
-            return components.sort(comparator { (a,b) -> ranker(a,b) as Int })
+            Collections.sort(components,ranker)
+            var i = 0;
+            while (i < components.size && !components.get(i).getName().contains("Follow"))
+                i++;
+            if (i<components.size && i > 6) {
+                Collections.swap(components, i, 6);
+            }
+            return components
         }
 
     }
