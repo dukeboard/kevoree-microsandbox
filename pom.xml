@@ -13,7 +13,6 @@
         <kevoree.version>2.0.12</kevoree.version>
         <kevoree.corelibrary.version>2.0.4</kevoree.corelibrary.version>
         <kotlin.version>0.6.31</kotlin.version>
-        <!-- Unable to update version because the new one (0.5.998) has a bug which cause failure of compilation -->
     </properties>
 
     <licenses>
@@ -190,7 +189,7 @@
 
         <module>weka-executer</module>
 
-        <module>microsandbox-experiment</module>
+        <!--<module>microsandbox-experiment</module>-->
     </modules>
 
 </project>

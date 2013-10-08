@@ -1,9 +1,12 @@
 package org.kevoree.monitoring.comp.monitor;
 
 import org.kevoree.ComponentInstance;
+import org.kevoree.ContainerRoot;
 import org.kevoree.annotation.*;
+import org.kevoree.api.service.core.handler.ModelListener;
 import org.kevoree.framework.AbstractComponentType;
 import org.kevoree.framework.MessagePort;
+import org.kevoree.framework.service.handler.ModelListenerAdapter;
 import org.kevoree.library.defaultNodeTypes.context.KevoreeDeployManager;
 import org.kevoree.microsandbox.api.communication.ComposeMonitoringReport;
 import org.kevoree.microsandbox.api.communication.MonitoringReporterFactory;
@@ -12,12 +15,16 @@ import org.kevoree.microsandbox.api.event.MicrosandboxEvent;
 import org.kevoree.microsandbox.api.heuristic.RankingHeuristicComponent;
 import org.kevoree.monitoring.communication.MicrosandboxEventListener;
 import org.kevoree.monitoring.communication.MicrosandboxReporter;
-//import org.kevoree.monitoring.ranking.ModelRankingAlgorithm;
 import org.kevoree.monitoring.sla.GlobalThreshold;
 import org.kevoree.monitoring.strategies.AbstractMonitoringTask;
 import org.kevoree.monitoring.strategies.MonitoringTask;
 import org.kevoree.monitoring.strategies.MonitoringTaskAllComponents;
 import org.kevoree.monitoring.strategies.monitoring.FineGrainedStrategyFactory;
+
+import java.util.LinkedHashMap;
+import java.util.Map;
+
+//import org.kevoree.monitoring.ranking.ModelRankingAlgorithm;
 
 /**
  * Created with IntelliJ IDEA.
@@ -53,6 +60,7 @@ public class MonitoringComponent extends AbstractComponentType implements Micros
     AbstractMonitoringTask monitoringTask;
 
 //    private ModelRankingAlgorithm modelRanker;
+    private ModelListener listener;
 
     @Start
     public void startComponent() {
@@ -62,12 +70,6 @@ public class MonitoringComponent extends AbstractComponentType implements Micros
         double net_sent = Double.valueOf(getDictionary().get("net_out_threshold").toString());
         double io_read = Long.valueOf(getDictionary().get("io_in_threshold").toString());
         double io_write = Long.valueOf(getDictionary().get("io_out_threshold").toString());
-
-        /*if (getDictionary().get("componentRankFunction") != null && getDictionary().get("componentRankFunction").equals("model_history")) {
-            modelRanker = new ModelRankingAlgorithm(getModelService(), getBootStrapperService(), ComponentsInfoStorage.instance);
-            ComponentRankerFunctionFactory.instance$.setModelRanker(modelRanker);
-            getModelService().registerModelListener(modelRanker);
-        }*/
 
         PlatformDescription description = null;
         for (String key : KevoreeDeployManager.instance$.getInternalMap().keySet())
@@ -81,7 +83,6 @@ public class MonitoringComponent extends AbstractComponentType implements Micros
         }
 
         boolean adaptiveMonitoring = Boolean.valueOf(getDictionary().get("adaptiveMonitoring").toString());
-//        String componentRankFunction = getDictionary().get("componentRankFunction").toString();
 
         if (MonitoringReporterFactory.reporter() instanceof ComposeMonitoringReport) {
             ((ComposeMonitoringReport) MonitoringReporterFactory.reporter()).addReporter(
@@ -100,20 +101,21 @@ public class MonitoringComponent extends AbstractComponentType implements Micros
                     getModelService(),
                     getBootStrapperService());
 
-//            getModelService().registerModelListener(monitoringTask);
         } else {
             monitoringTask = new MonitoringTaskAllComponents(getNodeName(),
                     this,
                     getModelService(),
                     getBootStrapperService());
-//            getModelService().registerModelListener(monitoringTask);
         }
+            listener = new DeployTimeSender();
+            getModelService().registerModelListener(listener);
         new Thread(monitoringTask).start();
     }
 
     @Stop
     public void stopComponent() {
         monitoringTask.stop();
+        getModelService().unregisterModelListener(listener);
 //        getModelService().unregisterModelListener(modelRanker);
     }
 
@@ -133,7 +135,12 @@ public class MonitoringComponent extends AbstractComponentType implements Micros
 
     public ComponentInstance[] getRankingOrder(String nodeName) {
         if (isPortBinded("ranking")) {
-            return getPortByName("ranking", RankingHeuristicComponent.class).getRankingOrder(nodeName);
+            // FIXME remove the loop
+            ComponentInstance[] instances = getPortByName("ranking", RankingHeuristicComponent.class).getRankingOrder(nodeName);
+            for (ComponentInstance instance : instances) {
+                System.out.println(instance.path());
+            }
+            return instances;
         } else {
             return new ComponentInstance[0];
         }
@@ -143,6 +150,57 @@ public class MonitoringComponent extends AbstractComponentType implements Micros
     public void triggerMonitoringEvent(String operation, String name, String instancePath, Long value) {
         if (isPortBinded("ranking")) {
             getPortByName("ranking", RankingHeuristicComponent.class).triggerMonitoringEvent(operation, name, instancePath, value);
+        }
+    }
+
+    private class DeployTimeSender extends ModelListenerAdapter {
+
+
+        private Map<String, Long> deployTimes;
+        private Map<String, Long> deployTimesToSend;
+
+        private DeployTimeSender() {
+            deployTimes = new LinkedHashMap<String, Long>();
+            deployTimesToSend = new LinkedHashMap<String, Long>();
+
+        }
+
+        @Override
+        public boolean preUpdate(ContainerRoot currentModel, ContainerRoot proposedModel) {
+            return true;
+        }
+
+        @Override
+        public boolean initUpdate(ContainerRoot currentModel, ContainerRoot proposedModel) {
+            return true;
+        }
+
+        @Override
+        public boolean afterLocalUpdate(ContainerRoot currentModel, ContainerRoot proposedModel) {
+            for (ComponentInstance instance : proposedModel.findNodesByID(getNodeName()).getComponents()) {
+                if (!deployTimes.containsKey(instance.path())) {
+                    deployTimesToSend.put(instance.path(), (Long) KevoreeDeployManager.instance$.getRef(instance.getClass().getName() + "_deployTime", instance.getName()));
+                }
+            }
+            return true;
+        }
+
+        @Override
+        public void modelUpdated() {
+            for (String instancePath : deployTimesToSend.keySet()) {
+                triggerMonitoringEvent("CREATE", "deployTime", instancePath, deployTimesToSend.get(instancePath));
+            }
+            deployTimes.putAll(deployTimesToSend);
+            deployTimesToSend.clear();
+        }
+
+        @Override
+        public void preRollback(ContainerRoot containerRoot, ContainerRoot containerRoot2) {
+            deployTimesToSend.clear();
+        }
+
+        @Override
+        public void postRollback(ContainerRoot containerRoot, ContainerRoot containerRoot2) {
         }
     }
 }

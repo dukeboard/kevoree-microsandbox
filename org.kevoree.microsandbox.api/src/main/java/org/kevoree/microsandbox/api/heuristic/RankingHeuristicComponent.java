@@ -12,7 +12,7 @@ import org.kevoree.ComponentInstance;
  */
 public interface RankingHeuristicComponent {
     /**
-     * calculate the order of the components that must be monitored
+     * Calculate the order of the components that must be monitored
      * First element in the list is the first component to monitor.
      * @return a @{List} of @{ComponentInstance}.
      */
@@ -20,7 +20,7 @@ public interface RankingHeuristicComponent {
     ComponentInstance[] getRankingOrder(String nodeName);
 
     /**
-     * allow to send some information from monitoring core to rankingHeuristic
+     * Allow to send some information from monitoring core to rankingHeuristic
      * @param name the name of the "event"
      * @param value the value of the "event"
      */
