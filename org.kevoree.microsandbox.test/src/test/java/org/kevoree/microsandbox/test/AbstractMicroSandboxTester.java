@@ -8,7 +8,6 @@ import org.kevoree.watchdog.child.jvm.JVMStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 import java.util.concurrent.ArrayBlockingQueue;
@@ -84,20 +83,20 @@ public class AbstractMicroSandboxTester extends TestCase implements JVMStream.Li
 
         System.out.println(line);
 
-        List<String> toRemove = new ArrayList<String>();
+        String toRemove = null;
         for (String regex : toRead) {
             Pattern pattern = Pattern.compile(regex);
             Matcher matcher = pattern.matcher(line);
             if (matcher.find()) {
-                toRemove.add(regex);
+                toRemove = regex;
                 builder.append(line).append("\n");
                 // If a regex match then we don't need to test the others
                 break;
             }
         }
 
-        for (String regex : toRemove) {
-            toRead.remove(regex);
+        if(toRemove != null) {
+            toRead.remove(toRemove);
         }
         /*if(line.equals(toRead.firstElement())){
             toRead.pop();
