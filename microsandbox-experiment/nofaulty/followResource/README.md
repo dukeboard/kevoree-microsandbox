@@ -1,11 +1,12 @@
-# Scapegoat use case
+# FollowResource
 
-Here are defined the set of component coming from the daum project to build a set of experiments around Adaptive monitoring
+## Contract
+addComponent componentResource@node0 : ResourcesPage {
+    urlPattern='/media/',
+    patternToRemove = '/media/',
+	cpu_wall_time = '4899398',
+	memory_max_size = '0',
+    throughput_msg_per_second='all=1;request=1',
+    uselessParameter = '' // ResourcesPage
 
-WebbitHTTPServer: 
-JavaFXVideoDisplay: 
-JavaFXWebBrowser: 
-FollowManager: 
-ResourcesPage: 
-WebSocketClientHandler: 
-WsServer: 
+}

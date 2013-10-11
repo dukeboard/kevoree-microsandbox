@@ -1,11 +1,12 @@
-# Scapegoat use case
+# FollowManager
 
-Here are defined the set of component coming from the daum project to build a set of experiments around Adaptive monitoring
+## Contract
+addComponent componentFollowManager@node0 : FollowManager {
+    urlPattern='/',
+    current='jed',
+    cpu_wall_time = '56601',
+    memory_max_size = '4000',
+    throughput_msg_per_second='all=1;request=1;followmeuser=0',
+    uselessParameter = '' // FollowManager
 
-WebbitHTTPServer: 
-JavaFXVideoDisplay: 
-JavaFXWebBrowser: 
-FollowManager: 
-ResourcesPage: 
-WebSocketClientHandler: 
-WsServer: 
+}
