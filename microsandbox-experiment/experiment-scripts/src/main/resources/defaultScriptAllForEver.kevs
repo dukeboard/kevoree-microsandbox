@@ -33,7 +33,7 @@ addComponent monitoringComponent@node0 //monitoredNode
 
 addComponent rankingComponent@node0 :ModelBasedRankingHeuristicComponent
 
-addChannel channelMonitoring : defMSG
+addChannel channelMonitoring : defSERVICE
 
 bind MonitoringComponent0.ranking@node0 => channelMonitoring
 bind rankingComponent.ranking@node0 => channelMonitoring
