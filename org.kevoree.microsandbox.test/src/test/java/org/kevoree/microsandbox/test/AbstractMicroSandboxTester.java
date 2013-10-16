@@ -8,7 +8,6 @@ import org.kevoree.watchdog.child.jvm.JVMStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 import java.util.concurrent.ArrayBlockingQueue;
@@ -32,14 +31,14 @@ public class AbstractMicroSandboxTester extends TestCase implements JVMStream.Li
 
     private StringBuilder builder;
 
-    public String runSandbox(String kevsClassLoaderPath, int timeout, List<String> linestoObserve)  {
+    public String runSandbox(String kevsClassLoaderPath, int timeout, List<String> linestoObserve) {
         builder = new StringBuilder();
-        for(String l : linestoObserve){
+        for (String l : linestoObserve) {
             toRead.add(l);
         }
         Object result = null;
         try {
-            File tempFile = File.createTempFile("kevsTempFile",".kevs");
+            File tempFile = File.createTempFile("kevsTempFile", ".kevs");
             FileOutputStream fos = new FileOutputStream(tempFile);
             InputStream is = this.getClass().getClassLoader().getResourceAsStream(kevsClassLoaderPath);
             byte data[] = new byte[1024];
@@ -52,12 +51,17 @@ public class AbstractMicroSandboxTester extends TestCase implements JVMStream.Li
 
             //put in param
             String[] params = new String[2];
-            params[0] = "LATEST";
+            if (System.getProperty("kevoree.version") == null) {
+                params[0] = "LATEST";
+            } else {
+                params[0] = System.getProperty("kevoree.version");
+            }
             params[1] = tempFile.getAbsolutePath();
 
             WatchDogCheck.lineHandler = this;
             Runner.main(params);
-            /*result = */block.poll(timeout, TimeUnit.MILLISECONDS);
+            /*result = */
+            block.poll(timeout, TimeUnit.MILLISECONDS);
 
             tempFile.delete();
         } catch (Exception e) {
@@ -79,25 +83,25 @@ public class AbstractMicroSandboxTester extends TestCase implements JVMStream.Li
 
         System.out.println(line);
 
-        List<String> toRemove = new ArrayList<String>();
+        String toRemove = null;
         for (String regex : toRead) {
             Pattern pattern = Pattern.compile(regex);
             Matcher matcher = pattern.matcher(line);
             if (matcher.find()) {
-                toRemove.add(regex);
+                toRemove = regex;
                 builder.append(line).append("\n");
                 // If a regex match then we don't need to test the others
                 break;
             }
         }
 
-        for (String regex : toRemove) {
-            toRead.remove(regex);
+        if(toRemove != null) {
+            toRead.remove(toRemove);
         }
         /*if(line.equals(toRead.firstElement())){
             toRead.pop();
         }*/
-        if(toRead.empty()){
+        if (toRead.empty()) {
             try {
                 block.put("success");
             } catch (InterruptedException e) {

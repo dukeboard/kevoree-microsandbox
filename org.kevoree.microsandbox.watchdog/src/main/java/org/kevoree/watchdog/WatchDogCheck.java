@@ -74,11 +74,15 @@ public class WatchDogCheck implements Runnable {
         try {
             sysoutThread.stop();
             try {
-                sysoutFileWriter.flush();
+                if (sysoutFileWriter != null) {
+                    sysoutFileWriter.flush();
+                }
             } catch (Exception ignored) {
             }
             try {
-                sysoutFileWriter.close();
+                if (sysoutFileWriter != null) {
+                    sysoutFileWriter.close();
+                }
             } catch (Exception ignored) {
             }
         } catch (Exception ignored) {
@@ -86,11 +90,15 @@ public class WatchDogCheck implements Runnable {
         try {
             syserrThread.stop();
             try {
-                syserrFileWriter.flush();
+                if (syserrFileWriter != null) {
+                    syserrFileWriter.flush();
+                }
             } catch (Exception ignored) {
             }
             try {
-                syserrFileWriter.close();
+                if (syserrFileWriter != null) {
+                    syserrFileWriter.close();
+                }
             } catch (Exception ignored) {
             }
         } catch (Exception ignored) {

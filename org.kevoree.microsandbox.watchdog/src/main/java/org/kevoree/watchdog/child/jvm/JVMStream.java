@@ -31,7 +31,7 @@ public class JVMStream extends Thread {
         try {
             InputStreamReader isr = new InputStreamReader(is);
             br = new BufferedReader(isr);
-            String line = null;
+            String line;
             while ((line = br.readLine()) != null) {
                 lineHandler.handle(line);
             }
@@ -39,7 +39,9 @@ public class JVMStream extends Thread {
             e.printStackTrace();
         } finally {
             try {
-                br.close();
+                if (br != null) {
+                    br.close();
+                }
             } catch (Exception e) {
                //ignore
             }

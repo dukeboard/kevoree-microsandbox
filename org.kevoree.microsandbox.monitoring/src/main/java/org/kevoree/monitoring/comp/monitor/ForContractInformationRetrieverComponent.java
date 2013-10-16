@@ -5,9 +5,7 @@ import org.kevoree.framework.AbstractComponentType;
 import org.kevoree.framework.MessagePort;
 import org.kevoree.library.defaultNodeTypes.context.KevoreeDeployManager;
 import org.kevoree.microsandbox.api.contract.PlatformDescription;
-import org.kevoree.monitoring.ranking.ModelRankingAlgorithm;
 import org.kevoree.monitoring.strategies.AbstractMonitoringTask;
-
 import org.kevoree.monitoring.strategies.RecordingTaskAllComponents;
 
 /**
@@ -25,7 +23,7 @@ public class ForContractInformationRetrieverComponent extends AbstractComponentT
             implements NewMetricReporter{
     AbstractMonitoringTask monitoringTask;
 
-    private ModelRankingAlgorithm modelRanker;
+//    private ModelRankingAlgorithm modelRanker;
 
     @Start
     public void startComponent() {
@@ -44,7 +42,7 @@ public class ForContractInformationRetrieverComponent extends AbstractComponentT
         monitoringTask = new RecordingTaskAllComponents(getNodeName(),
                             getModelService(),
                             getBootStrapperService(), this);
-        getModelService().registerModelListener(monitoringTask);
+//        getModelService().registerModelListener(monitoringTask);
 
         new Thread(monitoringTask).start();
     }
@@ -52,7 +50,7 @@ public class ForContractInformationRetrieverComponent extends AbstractComponentT
     @Stop
     public void stopComponent() {
         monitoringTask.stop();
-        getModelService().unregisterModelListener(modelRanker);
+//        getModelService().unregisterModelListener(modelRanker);
     }
 
     @Update

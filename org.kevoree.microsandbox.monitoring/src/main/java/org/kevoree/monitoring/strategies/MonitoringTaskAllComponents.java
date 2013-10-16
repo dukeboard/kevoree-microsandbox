@@ -9,23 +9,15 @@ import org.kevoree.microsandbox.api.event.MonitoringNotification;
 import org.kevoree.microsandbox.api.sla.Metric;
 import org.kevoree.monitoring.comp.MyLowLevelResourceConsumptionRecorder;
 import org.kevoree.monitoring.comp.monitor.GCWatcher;
-import org.kevoree.monitoring.models.SimpleIdAssigner;
-import org.kevoree.monitoring.ranking.ComponentRankerFunctionFactory;
-import org.kevoree.monitoring.ranking.ComponentsInfoStorage;
-import org.kevoree.monitoring.ranking.ComponentsRanker;
+import org.kevoree.monitoring.comp.monitor.MonitoringComponent;
 import org.kevoree.monitoring.sla.FaultyComponent;
 import org.kevoree.monitoring.sla.MeasurePoint;
-import org.kevoree.monitoring.strategies.adaptation.KillThemAll;
-import org.kevoree.monitoring.strategies.adaptation.SlowDownComponentInteraction;
 import org.kevoree.monitoring.strategies.monitoring.AllComponentsForEver;
 import org.kevoree.monitoring.strategies.monitoring.FineGrainedMonitoringStrategy;
 import org.kevoree.monitoring.strategies.monitoring.FineGrainedStrategyFactory;
 import org.kevoree.monitoring.strategies.monitoring.RankChecker;
 
-import java.util.ArrayList;
-import java.util.EnumMap;
-import java.util.EnumSet;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created with IntelliJ IDEA.
@@ -36,11 +28,11 @@ import java.util.List;
  */
 public class MonitoringTaskAllComponents extends AbstractMonitoringTask implements RankChecker {
 
-    public MonitoringTaskAllComponents(String nodeName,
-                          String nameOfRankerFunction,
+    public MonitoringTaskAllComponents(String nodeName,/*String nameOfRankerFunction*/
+                                       MonitoringComponent monitoringComponent,
                           KevoreeModelHandlerService service,
                           Bootstraper bootstraper) {
-        super(bootstraper,service,nameOfRankerFunction,nodeName);
+        super(bootstraper,service,monitoringComponent,nodeName);
     }
 
 
@@ -48,7 +40,7 @@ public class MonitoringTaskAllComponents extends AbstractMonitoringTask implemen
     public void run() {
         System.out.printf("Initiating Monitoring task\n");
 
-        ComponentsInfoStorage.object$.getInstance().setIdAssigner(new SimpleIdAssigner(service));
+//        ComponentsInfoStorage.instance.setIdAssigner(new SimpleIdAssigner(service));
 
         gcWatcher = new GCWatcher();
         gcWatcher.addContractVerificationRequieredListener(this);
@@ -66,7 +58,9 @@ public class MonitoringTaskAllComponents extends AbstractMonitoringTask implemen
                 FineGrainedMonitoringStrategy s =(FineGrainedMonitoringStrategy)currentStrategy;
                 List<FaultyComponent> tmpList = s.getFaultyComponents();
                 for (FaultyComponent c : tmpList) {
-                    ComponentsInfoStorage.object$.getInstance().getExecutionInfo(c.getComponentPath()).increaseFailures();
+                    // FIXME add some information on a specific port (or somthing to notify interesting component)
+                    // TODO add this information inside Context Model
+//                    ComponentsInfoStorage.instance.getExecutionInfo(c.getComponentPath()).increaseFailures();
                     EnumMap<Metric, MeasurePoint> map = c.getMetrics();
                     for (Metric m : map.keySet())
                         MonitoringReporterFactory.reporter().trigger(
@@ -110,8 +104,8 @@ public class MonitoringTaskAllComponents extends AbstractMonitoringTask implemen
     @Override
     public List<ComponentInstance> getRanking() {
         try {
-
-            return ComponentsRanker.instance$.rank(nodeName, service, bootstraper,nameOfRankerFunction);
+//            return ComponentsRanker.instance$.rank(nodeName, service, bootstraper,nameOfRankerFunction);
+            return Arrays.asList(getRankingOrder(monitoringComponent.getNodeName()));
         }
         catch (Exception e) {
             return new ArrayList<ComponentInstance>();

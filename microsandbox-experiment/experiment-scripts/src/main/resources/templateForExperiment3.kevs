@@ -30,10 +30,16 @@ addComponent monitoringComponent@node0 //monitoredNode
     cpu_threshold='46.025537', // TODO specifiy good value
     net_in_threshold='80000000', // TODO specifiy good value
     net_out_threshold='80000000', // TODO specifiy good value
-    componentRankFunction = '{ranking.function}',
     adaptiveMonitoring='true',
     fineGrainedStrategy='{fine.grained.strategy}'
 }
+
+addComponent rankingComponent@node0 :ModelBasedRankingHeuristicComponent
+
+addChannel channelMonitoring : defMSG
+
+bind MonitoringComponent0.ranking@node0 => channelMonitoring
+bind rankingComponent.ranking@node0 => channelMonitoring
 
 merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.defaultChannels/2.0.4'
 merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.jexxus/2.0.4'

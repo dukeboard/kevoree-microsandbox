@@ -1,3 +1,4 @@
+/*
 package org.kevoree.microsandbox.monitoring;
 
 import org.junit.Assert;
@@ -11,6 +12,7 @@ import org.kevoree.monitoring.models.SimpleModelID;
 import org.kevoree.monitoring.ranking.ModelRankingAlgorithm;
 import org.kevoree.tools.aether.framework.NodeTypeBootstrapHelper;
 
+*/
 /**
  * User: Erwan Daubert - erwan.daubert@gmail.com
  * Date: 09/09/13
@@ -18,7 +20,8 @@ import org.kevoree.tools.aether.framework.NodeTypeBootstrapHelper;
  *
  * @author Erwan Daubert
  * @version 1.0
- */
+ *//*
+
 public class ModelRankingAlgorithmTest {
 
     private ModelRankingAlgorithm modelRanker;
@@ -157,3 +160,4 @@ public class ModelRankingAlgorithmTest {
         Assert.assertEquals(1, modelRanker.rank(memory, cpu));
     }
 }
+*/

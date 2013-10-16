@@ -13,9 +13,15 @@ addComponent MonitoringComponent0@node0 : MonitoringComponent {
     memory_threshold='65',
     cpu_threshold='10',
     net_in_threshold='80',
-    net_out_threshold='80',
-    componentRankFunction = 'model_history'
+    net_out_threshold='80'
 }
+
+addComponent rankingComponent@node0 :ModelBasedRankingHeuristicComponent
+
+addChannel channelMonitoring : defSERVICE
+
+bind MonitoringComponent0.ranking@node0 => channelMonitoring
+bind rankingComponent.ranking@node0 => channelMonitoring
 
 //
 //addComponent reasoner0@node0 : ResourceAwareReasoner

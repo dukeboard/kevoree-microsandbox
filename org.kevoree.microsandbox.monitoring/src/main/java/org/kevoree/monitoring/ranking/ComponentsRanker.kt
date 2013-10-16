@@ -1,3 +1,4 @@
+/*
 package org.kevoree.monitoring.ranking
 
 import org.kevoree.ComponentInstance
@@ -18,13 +19,16 @@ import org.kevoree.monitoring.models.ComponentExecutionInfo
 import java.util.Collections
 import java.util.Random
 
+*/
 /**
  * Created with IntelliJ IDEA.
  * User: inti
  * Date: 6/28/13
  * Time: 12:53 PM
  *
- */
+ *//*
+
+// TODO must be a component to allow user to write their own ranking
 public object ComponentsRanker {
 
     private val definitionAspect : TypeDefinitionAspect = TypeDefinitionAspect()
@@ -40,7 +44,7 @@ public object ComponentsRanker {
 
         ComponentsInfoStorage.instance.updateListOfComponents(nodeName, modelService, {
             (node, instance, info) ->
-            updateInfo(instance, info, node, bootstrapService)
+//            updateInfo(instance, info, node, bootstrapService)
             components.add(instance)
         }
         )
@@ -73,7 +77,8 @@ public object ComponentsRanker {
 
     }
 
-    private fun updateInfo(instance: ComponentInstance,
+    */
+/*private fun updateInfo(instance: ComponentInstance,
                    i : ComponentExecutionInfo?,
                    node : ContainerNode,
                    bootstraper: Bootstraper) {
@@ -84,9 +89,6 @@ public object ComponentsRanker {
         var entry : Entry? = CoverageRuntime.calculateCoverage(loader as ClassLoader)
         i?.setBranchCoverage((entry?.branchCoverage!!))
         i?.setInstructionCoverage((entry?.instrCoverage!!))
-    }
+    }*//*
 
-
-
-
-}
+}*/

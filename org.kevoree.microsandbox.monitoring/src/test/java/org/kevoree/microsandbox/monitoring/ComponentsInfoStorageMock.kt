@@ -1,3 +1,4 @@
+/*
 package org.kevoree.microsandbox.monitoring;
 
 import org.kevoree.monitoring.models.ComponentExecutionInfo
@@ -5,6 +6,7 @@ import org.kevoree.monitoring.models.ModelID
 import org.kevoree.monitoring.ranking.ComponentsInfoStorage
 import org.kevoree.ComponentInstance
 
+*/
 /**
  * User: Erwan Daubert - erwan.daubert@gmail.com
  * Date: 09/09/13
@@ -12,7 +14,8 @@ import org.kevoree.ComponentInstance
  *
  * @author Erwan Daubert
  * @version 1.0
- */
+ *//*
+
 public class ComponentsInfoStorageMock() : ComponentsInfoStorage() {
 
     class object {
@@ -23,3 +26,4 @@ public class ComponentsInfoStorageMock() : ComponentsInfoStorage() {
         info.put(componentInstance.path()!!, componentInfo)
     }
 }
+*/

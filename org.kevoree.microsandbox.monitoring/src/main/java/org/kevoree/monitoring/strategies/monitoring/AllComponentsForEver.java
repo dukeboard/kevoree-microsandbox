@@ -2,8 +2,6 @@ package org.kevoree.monitoring.strategies.monitoring;
 
 import org.kevoree.ComponentInstance;
 import org.kevoree.microsandbox.api.sla.Metric;
-import org.kevoree.monitoring.ranking.ComponentRankerFunctionFactory;
-import org.kevoree.monitoring.ranking.ComponentsRanker;
 import org.kevoree.monitoring.sla.FaultyComponent;
 import org.kevoree.monitoring.sla.MeasurePoint;
 import org.resourceaccounting.ResourcePrincipal;

@@ -1,12 +1,12 @@
 package org.kevoree.monitoring.strategies;
 
-import org.kevoree.ContainerRoot;
+import org.kevoree.ComponentInstance;
 import org.kevoree.api.Bootstraper;
 import org.kevoree.api.service.core.handler.KevoreeModelHandlerService;
-import org.kevoree.api.service.core.handler.ModelListener;
+import org.kevoree.microsandbox.api.heuristic.RankingHeuristicComponent;
 import org.kevoree.monitoring.comp.monitor.ContractVerificationRequired;
 import org.kevoree.monitoring.comp.monitor.GCWatcher;
-import org.kevoree.monitoring.ranking.ComponentsInfoStorage;
+import org.kevoree.monitoring.comp.monitor.MonitoringComponent;
 import org.kevoree.monitoring.strategies.monitoring.MonitoringStrategy;
 import org.resourceaccounting.ResourcePrincipal;
 
@@ -15,26 +15,27 @@ import org.resourceaccounting.ResourcePrincipal;
  * User: inti
  * Date: 7/9/13
  * Time: 5:38 PM
- * To change this template use File | Settings | File Templates.
  */
-public abstract class AbstractMonitoringTask implements Runnable, ContractVerificationRequired, ModelListener {
+public abstract class AbstractMonitoringTask implements Runnable, ContractVerificationRequired, /*ModelListener,*/ RankingHeuristicComponent {
     protected final String nodeName;
     protected final Bootstraper bootstraper;
     protected final KevoreeModelHandlerService service;
     protected boolean stopped;
     protected GCWatcher gcWatcher;
-    protected Object msg;
-    protected String nameOfRankerFunction;
+    protected final Object msg;
+    //    protected String nameOfRankerFunction;
+    protected MonitoringComponent monitoringComponent;
     protected MonitoringStrategy currentStrategy;
 
     public AbstractMonitoringTask(Bootstraper bootstraper,
-                                  KevoreeModelHandlerService service,
-                                  String nameOfRankerFunction,
+                                  KevoreeModelHandlerService service,/*String nameOfRankerFunction*/
+                                  MonitoringComponent monitoringComponent,
                                   String nodeName) {
         this.bootstraper = bootstraper;
         this.service = service;
-        this.nameOfRankerFunction = nameOfRankerFunction;
-        this.nodeName= nodeName;
+//        this.nameOfRankerFunction = nameOfRankerFunction;
+        this.monitoringComponent = monitoringComponent;
+        this.nodeName = nodeName;
         msg = new Object();
     }
 
@@ -42,7 +43,7 @@ public abstract class AbstractMonitoringTask implements Runnable, ContractVerifi
         synchronized (msg) {
             try {
                 msg.wait();
-            } catch (InterruptedException e) {
+            } catch (InterruptedException ignored) {
 
             }
         }
@@ -70,7 +71,22 @@ public abstract class AbstractMonitoringTask implements Runnable, ContractVerifi
             currentStrategy.onGCVerifyContract(used, max);
     }
 
+    public ComponentInstance[] getRankingOrder(String nodeName) {
+        if (monitoringComponent != null) {
+            return monitoringComponent.getRankingOrder(nodeName);
+        } else {
+           return new ComponentInstance[0];
+        }
+    }
+
     @Override
+    public void triggerMonitoringEvent(String operation, String name, String instancePath, Long value) {
+        if (monitoringComponent != null) {
+            monitoringComponent.triggerMonitoringEvent(operation, name, instancePath, value);
+        }
+    }
+
+    /*@Override
     public boolean preUpdate(ContainerRoot containerRoot, ContainerRoot containerRoot2) {
         return true;
     }
@@ -87,12 +103,14 @@ public abstract class AbstractMonitoringTask implements Runnable, ContractVerifi
 
     @Override
     public void modelUpdated() {
-        ComponentsInfoStorage.object$.getInstance().refresh(nodeName, service);
+        ComponentsInfoStorage.instance.refresh(nodeName, service);
     }
 
     @Override
-    public void preRollback(ContainerRoot containerRoot, ContainerRoot containerRoot2) { }
+    public void preRollback(ContainerRoot containerRoot, ContainerRoot containerRoot2) {
+    }
 
     @Override
-    public void postRollback(ContainerRoot containerRoot, ContainerRoot containerRoot2) { }
+    public void postRollback(ContainerRoot containerRoot, ContainerRoot containerRoot2) {
+    }*/
 }

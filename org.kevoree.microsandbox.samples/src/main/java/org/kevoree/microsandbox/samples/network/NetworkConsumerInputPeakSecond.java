@@ -2,7 +2,7 @@ package org.kevoree.microsandbox.samples.network;
 
 import org.kevoree.annotation.*;
 import org.kevoree.framework.AbstractComponentType;
-import org.kevoree.microsandbox.api.contract.FullContracted;
+import org.kevoree.microsandbox.api.contract.NetworkContracted;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -22,7 +22,7 @@ import java.net.URL;
         @DictionaryAttribute(name = "violate", defaultValue = "false", vals = {"true", "false"})
 })
 @ComponentType
-public class NetworkConsumerInputPeakSecond extends AbstractComponentType implements FullContracted {
+public class NetworkConsumerInputPeakSecond extends AbstractComponentType implements NetworkContracted {
 
     private boolean running;
     @Start

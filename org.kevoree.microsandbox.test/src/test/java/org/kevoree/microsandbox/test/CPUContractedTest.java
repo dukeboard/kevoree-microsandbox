@@ -44,11 +44,13 @@ public class CPUContractedTest extends AbstractMicroSandboxTester {
         String violationRegex = violation.toRegex();
         System.out.println(violationRegex);
 
-        String result = runSandbox("cpu/cpu-sample-wall-time-fail.kevs", 20000, Arrays.asList(monitoringRegex, violationRegex));
+        String result = runSandbox("cpu/cpu-sample-wall-time-fail.kevs", 200000, Arrays.asList(monitoringRegex, violationRegex));
 
         Assert.assertEquals(true, result.contains(notification.toString()));
 
         String[] resultsArray = result.split("\n");
+        Assert.assertEquals(2, resultsArray.length);
+
         Pattern pattern = Pattern.compile(violationRegex);
         Matcher m = pattern.matcher(resultsArray[1]);
         if (m.find()) {

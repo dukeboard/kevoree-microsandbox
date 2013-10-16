@@ -1,3 +1,4 @@
+/*
 package org.kevoree.monitoring.ranking;
 
 import org.kevoree.ComponentInstance;
@@ -10,6 +11,7 @@ import org.kevoree.monitoring.models.ComponentExecutionInfo;
 
 import java.util.List;
 
+*/
 /**
  * User: Erwan Daubert - erwan.daubert@gmail.com
  * Date: 09/09/13
@@ -17,7 +19,8 @@ import java.util.List;
  *
  * @author Erwan Daubert
  * @version 1.0
- */
+ *//*
+
 public class ModelRankingAlgorithm extends ModelListenerAdapter {
     private KevoreeModelHandlerService modelService;
     private Bootstraper bootstraper;
@@ -94,3 +97,4 @@ public class ModelRankingAlgorithm extends ModelListenerAdapter {
         }
     }
 }
+*/

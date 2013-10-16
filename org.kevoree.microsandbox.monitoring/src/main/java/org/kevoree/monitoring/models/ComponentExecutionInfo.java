@@ -1,3 +1,4 @@
+/*
 package org.kevoree.monitoring.models;
 
 import org.kevoree.ComponentInstance;
@@ -5,13 +6,15 @@ import org.kevoree.ComponentInstance;
 import java.util.HashMap;
 import java.util.Map;
 
+*/
 /**
  * Created with IntelliJ IDEA.
  * User: inti
  * Date: 6/26/13
  * Time: 3:52 PM
  *
- */
+ *//*
+
 public class ComponentExecutionInfo {
     public String getName() {
         return componentName;
@@ -19,14 +22,16 @@ public class ComponentExecutionInfo {
 
     private class UsageInfo {
         int failures;
-        double branchCoverage;
-        double instructionCoverage;
+//        double branchCoverage;
+//        double instructionCoverage;
         long deployedTime;
 
-        private UsageInfo(int failures, double branchCoverage, double instructionCoverage, long deployedTime) {
+        private UsageInfo(int failures,*/
+/* double branchCoverage, double instructionCoverage,*//*
+ long deployedTime) {
             this.failures = failures;
-            this.branchCoverage = branchCoverage;
-            this.instructionCoverage = instructionCoverage;
+//            this.branchCoverage = branchCoverage;
+//            this.instructionCoverage = instructionCoverage;
             this.deployedTime = deployedTime;
         }
     }
@@ -36,11 +41,13 @@ public class ComponentExecutionInfo {
     private int failures;
 
     private int failuresInPreviousVersions;
-    private double branchCoverage;
-    private double instructionCoverage;
-    /**
+//    private double branchCoverage;
+//    private double instructionCoverage;
+    */
+/**
      *
-     */
+     *//*
+
     private long initialDeployment;
 
     private String componentName;
@@ -57,7 +64,8 @@ public class ComponentExecutionInfo {
         lastModel = id;
     }
 
-    public double getBranchCoverage() {
+    */
+/*public double getBranchCoverage() {
         return branchCoverage;
     }
 
@@ -71,7 +79,8 @@ public class ComponentExecutionInfo {
 
     public void setInstructionCoverage(double instructionCoverage) {
         this.instructionCoverage = instructionCoverage;
-    }
+    }*//*
+
 
     public void increaseFailures() {
         failures++;
@@ -85,11 +94,13 @@ public class ComponentExecutionInfo {
         if (!id.isTheSameAs(lastModel)) {
 //            System.out.printf("New version of %s has been installed. Previous %s, current %s\n", path, lastModel, id);
             long currentTime = System.currentTimeMillis();
-            infoMap.put(lastModel, new UsageInfo(failures, branchCoverage, instructionCoverage, timeAlive(currentTime)));
+            infoMap.put(lastModel, new UsageInfo(failures, */
+/*branchCoverage, instructionCoverage,*//*
+ timeAlive(currentTime)));
             lastModel = id;
             initialDeployment = currentTime;
-            branchCoverage = 0;
-            instructionCoverage = 0;
+//            branchCoverage = 0;
+//            instructionCoverage = 0;
             failuresInPreviousVersions += failures;
             failures = 0;
         }
@@ -99,3 +110,4 @@ public class ComponentExecutionInfo {
         return failures;
     }
 }
+*/

@@ -1,6 +1,6 @@
 package org.kevoree.monitoring.strategies;
 
-import org.kevoree.ContainerRoot;
+import edu.emory.mathcs.backport.java.util.Arrays;
 import org.kevoree.api.Bootstraper;
 import org.kevoree.api.service.core.handler.KevoreeModelHandlerService;
 import org.kevoree.microsandbox.api.communication.MonitoringReporterFactory;
@@ -9,15 +9,10 @@ import org.kevoree.microsandbox.api.event.MonitoringNotification;
 import org.kevoree.microsandbox.api.sla.Metric;
 import org.kevoree.monitoring.comp.MyLowLevelResourceConsumptionRecorder;
 import org.kevoree.monitoring.comp.monitor.GCWatcher;
-import org.kevoree.monitoring.models.SimpleIdAssigner;
-import org.kevoree.monitoring.ranking.ComponentRankerFunctionFactory;
-import org.kevoree.monitoring.ranking.ComponentsInfoStorage;
-import org.kevoree.monitoring.ranking.ComponentsRanker;
+import org.kevoree.monitoring.comp.monitor.MonitoringComponent;
 import org.kevoree.monitoring.sla.FaultyComponent;
 import org.kevoree.monitoring.sla.GlobalThreshold;
 import org.kevoree.monitoring.sla.MeasurePoint;
-import org.kevoree.monitoring.strategies.adaptation.KillThemAll;
-import org.kevoree.monitoring.strategies.adaptation.SlowDownComponentInteraction;
 import org.kevoree.monitoring.strategies.monitoring.FineGrainedMonitoringStrategy;
 import org.kevoree.monitoring.strategies.monitoring.FineGrainedStrategyFactory;
 import org.kevoree.monitoring.strategies.monitoring.GlobalMonitoring;
@@ -42,10 +37,11 @@ public class MonitoringTask extends AbstractMonitoringTask {
 
     public MonitoringTask(String nodeName,
                           GlobalThreshold globalThreshold,
-                          String nameOfRankerFunction,
+                          /*String nameOfRankerFunction*/
+                          MonitoringComponent monitoringComponent,
                           KevoreeModelHandlerService service,
                           Bootstraper bootstraper) {
-        super(bootstraper, service, nameOfRankerFunction, nodeName);
+        super(bootstraper, service, monitoringComponent, nodeName);
         this.globalThreshold = globalThreshold;
 
         Runtime.getRuntime().addShutdownHook(new Thread(){
@@ -56,7 +52,7 @@ public class MonitoringTask extends AbstractMonitoringTask {
         });
     }
 
-    @Override
+    /*@Override
     public boolean preUpdate(ContainerRoot containerRoot, ContainerRoot containerRoot2) {
         return true;
     }
@@ -73,14 +69,14 @@ public class MonitoringTask extends AbstractMonitoringTask {
 
     @Override
     public void modelUpdated() {
-        ComponentsInfoStorage.object$.getInstance().refresh(nodeName, service);
+        ComponentsInfoStorage.instance.refresh(nodeName, service);
     }
 
     @Override
     public void preRollback(ContainerRoot containerRoot, ContainerRoot containerRoot2) { }
 
     @Override
-    public void postRollback(ContainerRoot containerRoot, ContainerRoot containerRoot2) { }
+    public void postRollback(ContainerRoot containerRoot, ContainerRoot containerRoot2) { }*/
 
     private enum MonitoringStatus {
         GLOBAL_MONITORING,
@@ -94,7 +90,7 @@ public class MonitoringTask extends AbstractMonitoringTask {
     public void run() {
 //        System.out.printf("Initiating Monitoring task\n");
 
-        ComponentsInfoStorage.object$.getInstance().setIdAssigner(new SimpleIdAssigner(service));
+//        ComponentsInfoStorage.instance.setIdAssigner(new SimpleIdAssigner(service));
 
         gcWatcher = new GCWatcher();
         gcWatcher.addContractVerificationRequieredListener(this);
@@ -124,7 +120,14 @@ public class MonitoringTask extends AbstractMonitoringTask {
                         FineGrainedMonitoringStrategy s =(FineGrainedMonitoringStrategy)currentStrategy;
                         List<FaultyComponent> tmpList = s.getFaultyComponents();
                         for (FaultyComponent c : tmpList) {
-                            ComponentsInfoStorage.object$.getInstance().getExecutionInfo(c.getComponentPath()).increaseFailures();
+                            // FIXME add some information on a specific port (or somthing to notify interesting component)
+                            // TODO add this information inside Context Model
+                            /*org.kevoree.context.Metric nbFailureMetric = PutHelper.getMetric(monitoringComponent.getModelService().getContextModel(), "monitoring/deployTime/{nodes[" + nodeName + "]/components[" + c.getComponentPath() + "]}", PutHelper.getParam().setMetricTypeClazzName(CounterHistoryMetric.class.getName()).setNumber(1));
+
+                            nbFailureMetric.
+                            PutHelper.addValue(nbFailureMetric, "" + System.nanoTime());*/
+//                            ComponentsInfoStorage.object$.getInstance().getExecutionInfo(c.getComponentPath()).increaseFailures();
+                            monitoringComponent.triggerMonitoringEvent("CREATE", "nbFailure", c.getComponentPath(), 1l);
                             EnumMap<Metric, MeasurePoint> map = c.getMetrics();
                             for (Metric m : map.keySet())
                                 MonitoringReporterFactory.reporter().trigger(
@@ -169,8 +172,8 @@ public class MonitoringTask extends AbstractMonitoringTask {
             MyLowLevelResourceConsumptionRecorder.getInstance().turnMonitoring(true,
                     !FineGrainedStrategyFactory.instance$.isSingleMonitoring());
             currentStatus = MonitoringStatus.LOCAL_MONITORING;
-            currentStrategy = FineGrainedStrategyFactory.instance$.newMonitor(reason,
-                    ComponentsRanker.instance$.rank(nodeName, service, bootstraper,nameOfRankerFunction), msg);
+            currentStrategy = FineGrainedStrategyFactory.instance$.newMonitor(reason, Arrays.asList(getRankingOrder(monitoringComponent.getNodeName()))
+                    /*ComponentsRanker.instance$.rank(nodeName, service, bootstraper,nameOfRankerFunction))*/, msg);
             currentStrategy.init(0);
         }
         catch (Exception e) {

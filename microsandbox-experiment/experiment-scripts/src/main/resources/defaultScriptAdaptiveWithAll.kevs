@@ -32,3 +32,10 @@ addComponent monitoringComponent@node0 //monitoredNode
     adaptiveMonitoring='true',
     fineGrainedStrategy='all-components'
 }
+
+addComponent rankingComponent@node0 :ModelBasedRankingHeuristicComponent
+
+addChannel channelMonitoring : defSERVICE
+
+bind MonitoringComponent0.ranking@node0 => channelMonitoring
+bind rankingComponent.ranking@node0 => channelMonitoring

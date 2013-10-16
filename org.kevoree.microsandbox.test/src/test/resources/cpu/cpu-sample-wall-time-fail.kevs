@@ -14,9 +14,15 @@ addComponent MonitoringComponent0@node0 : MonitoringComponent {
     cpu_threshold='10',
     net_in_threshold='80',
     net_out_threshold='80',
-    componentRankFunction = 'model_history',
     adaptiveMonitoring = 'true',
     fineGrainedStrategy = 'single-monitoring' // single-monitoring
 }
+
+addComponent rankingComponent@node0 :ModelBasedRankingHeuristicComponent
+
+addChannel channelMonitoring : defSERVICE
+
+bind MonitoringComponent0.ranking@node0 => channelMonitoring
+bind rankingComponent.ranking@node0 => channelMonitoring
 
 addComponent cpuComponent@node0 : CPUConsumerWallTime {nbLoop = '2000000000', cpu_wall_time = '30000'}
