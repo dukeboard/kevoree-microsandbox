@@ -200,6 +200,15 @@ public class InstrumenterCommand {
                 mv.visitMaxs(4, 4);
                 mv.visitEnd();
 
+                // adding method to report thread creation
+                mv = super.visitMethod(Opcodes.ACC_PUBLIC | Opcodes.ACC_STATIC,
+                        "__reportNewThread__",
+                        "()V",null,null);
+                mv.visitCode();
+                mv.visitInsn(Opcodes.RETURN);
+                mv.visitMaxs(4, 4);
+                mv.visitEnd();
+
                 super.visitEnd();
             }
         };
@@ -235,6 +244,26 @@ public class InstrumenterCommand {
         ClassVisitor visitor = new InstrumentingProxyClass(writer);
         //visitor = new CheckClassAdapter(visitor,true);
         reader.accept(visitor, ClassReader.EXPAND_FRAMES);
+        return writer.toByteArray();
+    }
+
+    public byte[] instrumentThreadCreationDetection(byte[] code, String className,
+                                                    String targetClass, String targetMethod) {
+        ClassReader reader = new ClassReader(code);
+        ClassWriter writer = new ClassWriter(reader, ClassWriter.COMPUTE_MAXS);
+        ClassVisitor tmp = writer;
+//      tmp = new TraceClassVisitor(tmp, new PrintWriter(System.out));
+        //tmp = new CheckClassAdapter(tmp,true);
+        tmp = new ThreadCreationVisitor(tmp, targetClass, targetMethod);
+
+        try {
+//            tmp = new DetectingInvocationRequests(tmp);
+//            tmp = new DetectingInvocationReceptions(tmp);
+            reader.accept(tmp, ClassReader.EXPAND_FRAMES);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
         return writer.toByteArray();
     }
 }

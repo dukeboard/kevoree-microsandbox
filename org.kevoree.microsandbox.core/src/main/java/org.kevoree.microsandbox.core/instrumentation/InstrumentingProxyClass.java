@@ -183,6 +183,24 @@ public class InstrumentingProxyClass extends ClassVisitor {
                     };
             return adapter;
         }
+        else if (name.equals("__reportNewThread__") &&
+                desc.equals("()V")) {
+            InstructionAdapter adapter =
+                    new InstructionAdapter(super.visitMethod(i, name, desc, s3, strings)) {
+                        @Override
+                        public void visitInsn(int opcode) {
+                            if (opcode == Opcodes.RETURN) {
+                                load(0, OBJECT_TYPE);
+                                load(1, OBJECT_TYPE);
+                                invokestatic(ExtraInstrumentationRules.MONITOR_CLASS_NAME,
+                                        "reportNewThread",
+                                        "()V");
+                            }
+                            super.visitInsn(opcode);
+                        }
+                    };
+            return adapter;
+        }
 
 
 
