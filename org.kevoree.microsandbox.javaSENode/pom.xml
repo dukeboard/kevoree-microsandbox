@@ -19,34 +19,19 @@
     <dependencies>
         <dependency>
             <groupId>org.kevoree.microsandbox</groupId>
-            <artifactId>org.kevoree.microsandbox.api</artifactId>
+            <artifactId>org.kevoree.microsandbox.monitoredNode</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <dependency>
-            <groupId>org.kevoree.microsandbox</groupId>
-            <artifactId>org.kevoree.microsandbox.core</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.kevoree.tools</groupId>
-            <artifactId>org.kevoree.tools.annotation.api</artifactId>
-            <version>${kevoree.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.kevoree.tools</groupId>
-            <artifactId>org.kevoree.tools.javase.framework</artifactId>
-            <version>${kevoree.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.kevoree.tools</groupId>
-            <artifactId>org.kevoree.tools.aether.framework</artifactId>
-            <version>${kevoree.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.kevoree.corelibrary.javase</groupId>
-            <artifactId>org.kevoree.library.javase.javaseNode</artifactId>
-            <version>${kevoree.corelibrary.version}</version>
-        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>org.kevoree</groupId>-->
+            <!--<artifactId>org.kevoree.kevscript</artifactId>-->
+            <!--<version>2.1-SNAPSHOT</version>-->
+        <!--</dependency>-->
+        <!--<dependency>-->
+            <!--<groupId>org.kevoree.microsandbox</groupId>-->
+            <!--<artifactId>org.ipc.memory</artifactId>-->
+            <!--<version>${project.version}</version>-->
+        <!--</dependency>-->
     </dependencies>
 
     <build>
