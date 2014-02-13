@@ -10,6 +10,7 @@ import org.kevoree.microsandbox.api.communication.MonitoringReporterFactory
 import org.kevoree.microsandbox.api.event.ModelComponentAcceptedEvent
 import org.kevoree.microsandbox.api.event.ModelComponentRemovedEvent
 import org.kevoree.log.Log
+import org.kevoree.microsandbox.monitoredNode.KevoreeComponentResourceContract
 
 /**
  * Created with IntelliJ IDEA.
