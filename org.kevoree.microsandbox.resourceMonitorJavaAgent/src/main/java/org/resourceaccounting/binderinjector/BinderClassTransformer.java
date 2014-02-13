@@ -1,15 +1,14 @@
 package org.resourceaccounting.binderinjector;
 
+import org.kevoree.microsandbox.core.OnNewThreadNotifier;
 import org.kevoree.microsandbox.core.instrumentation.ExtraInstrumentationRules;
 import org.kevoree.microsandbox.core.instrumentation.InstrumenterCommand;
 import org.resourceaccounting.binder.MonitoringStatusList;
 
-import java.lang.System;
 import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.IllegalClassFormatException;
 import java.lang.instrument.Instrumentation;
 import java.security.ProtectionDomain;
-import java.util.HashMap;
 
 /**
  * Created with IntelliJ IDEA.
@@ -23,6 +22,12 @@ public class BinderClassTransformer implements ClassFileTransformer {
 
     boolean debug = false;
 
+    public void setScapegoat(boolean scapegoat) {
+        isScapegoat = scapegoat;
+    }
+
+    boolean isScapegoat = true;
+
     public BinderClassTransformer(Instrumentation inst, boolean debug) {
         this.debug = debug;
     }
@@ -34,6 +39,14 @@ public class BinderClassTransformer implements ClassFileTransformer {
 //            System.out.println("ASKING FOR Integer");
             return cmd.instrumentProxyClass(bytes);
         }
+
+        if (!isScapegoat) {
+//            System.out.println("Doing the job for class : " + className);
+            return cmd.instrumentThreadCreationDetection(bytes, className,
+                    "java/lang/Integer", "__reportNewThread__");
+        }
+
+
 
         if (!ExtraInstrumentationRules.isInstrumentable(className)) {
             return null;
@@ -77,4 +90,20 @@ public class BinderClassTransformer implements ClassFileTransformer {
             loader = loader.getParent();
         return loader;
     }
+
+    static Object handler;
+
+    public static synchronized void setHandler(Object h) {
+        handler = h;
+    }
+
+//    public static void onThreadStartRunMethod() {
+//        OnNewThreadNotifier.getInstance().getHandler().equals(null);
+////        System.out.printf("Thread created %d %s\n", Thread.currentThread().getId(),
+////                Thread.currentThread().getThreadGroup().getName());
+////        StackTraceElement[] ste = Thread.currentThread().getStackTrace();
+////        for (int i = 0 ; i < ste.length ; ++i) {
+////            System.out.println(ste[i].toString());
+////        }
+//    }
 }

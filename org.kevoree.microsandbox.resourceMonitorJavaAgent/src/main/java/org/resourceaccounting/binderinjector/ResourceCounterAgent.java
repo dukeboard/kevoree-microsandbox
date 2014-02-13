@@ -9,6 +9,7 @@
 package org.resourceaccounting.binderinjector;
 
 
+import org.kevoree.microsandbox.core.OnNewThreadNotifier;
 import org.kevoree.microsandbox.core.instrumentation.strategies.DefaultResourceContractProvider;
 import org.resourceaccounting.ObjectSizeProvider;
 import org.resourceaccounting.binder.MonitoringStatusList;
@@ -17,9 +18,13 @@ import org.resourceaccounting.binder.ResourceCounter;
 import java.lang.instrument.Instrumentation;
 import java.lang.instrument.UnmodifiableClassException;
 
-public class ResourceCounterAgent {
+public class ResourceCounterAgent implements OnNewThreadNotifier.HandlerSet{
+    private static final String SCAPEGOAT = "scapegoat";
     private static volatile Instrumentation globalInst;
+
     public static void premain(String agentArgs, Instrumentation inst) {
+
+        OnNewThreadNotifier.getInstance().setListener(new ResourceCounterAgent());
 
         if (!inst.isRetransformClassesSupported()) {
             System.out.println("Class re-transformation is not supported");
@@ -28,29 +33,46 @@ public class ResourceCounterAgent {
 
         globalInst = inst;
 
-        ResourceCounter.setResourceContractProvider(new DefaultResourceContractProvider("",""));
-        ResourceCounter.setObjectSizeProvider(new ObjectSizeProvider() {
+        final boolean isScapegoat = agentArgs != null && agentArgs.length() > 0 && agentArgs.equals(SCAPEGOAT);
+//        final boolean isScapegoat = true;
+
+        if (isScapegoat) {
+            ResourceCounter.setResourceContractProvider(new DefaultResourceContractProvider("",""));
+            ResourceCounter.setObjectSizeProvider(new ObjectSizeProvider() {
             public long sizeOf(Object obj) {
                 return globalInst.getObjectSize(obj);
             }
         });
-        MonitoringStatusList.instance().setGlobalInst(globalInst);
+            MonitoringStatusList.instance().setGlobalInst(globalInst);
 
-        boolean debug = agentArgs != null && agentArgs.length() > 0 &&  agentArgs.equals("debug");
-        inst.addTransformer(new BinderClassTransformer(inst, debug),true);
+            boolean debug = agentArgs != null && agentArgs.length() > 0 &&  agentArgs.equals("debug");
+            inst.addTransformer(new BinderClassTransformer(inst, debug),true);
+        }
+        else {
+            System.out.println("Agent started and it has been detected non-scapegoat model");
+            BinderClassTransformer bct = new BinderClassTransformer(inst, false);
+            bct.setScapegoat(false);
+            inst.addTransformer(bct,true);
+        }
 
-
+        // FIXME: Maybe I don't need this for non-scapecgoat solutions because the agent is called for Thread
         new Thread() {
             @Override
             public void run() {
                 try {
                     Thread.sleep(2000);
                     globalInst.retransformClasses(Integer.class);
+                    System.out.println("Retransforming the proxy class");
                 }
                 catch (UnmodifiableClassException e) { }
                 catch (InterruptedException e) { }
             }
         }.start();
 
+    }
+
+    @Override
+    public void onHandlerSet(Object obj) {
+        ResourceCounter.handlerNewThread = obj;
     }
 }
