@@ -11,6 +11,7 @@ merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.defaultChan
 
 merge 'mvn:org.kevoree.microsandbox/org.kevoree.microsandbox.monitoring/{project.version}'
 merge 'mvn:org.kevoree.microsandbox/org.kevoree.microsandbox.samples/{project.version}'
+merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.camel/{project.version}'
 
 addNode node0:MonitoredNode {
     availability_memory='150000000',
@@ -27,9 +28,18 @@ addComponent MonitoringComponent0@node0 : MonitoringComponent {
 addComponent reasoner0@node0 : ResourceAwareReasoner {
 }
 
+addComponent rankerBasedHeuristicComponent0@node0 : NumberFailureBasedHeuristicComponent {
+
+}
+
 addChannel defMSGT_reasoning : defMSG
 bind reasoner0.eventHandler@node0 => defMSGT_reasoning
 bind MonitoringComponent0.reasoner@node0 => defMSGT_reasoning
+
+addChannel CamelNett280 : CamelNettyService
+
+bind rankerBasedHeuristicComponent0.ranking@node0 => CamelNett280
+bind MonitoringComponent0.ranking@node0 => CamelNett280
 
 updateDictionary defMSGT_reasoning
 

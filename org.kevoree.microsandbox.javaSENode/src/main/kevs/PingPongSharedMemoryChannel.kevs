@@ -1,0 +1,64 @@
+{
+addRepo "http://maven.kevoree.org/daum/snapshots"
+
+
+merge 'mvn:org.kevoree.microsandbox/org.kevoree.microsandbox.javasenode/{project.version}'
+
+
+merge "mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.fakeDomo/{kevoree.corelibrary.version}"
+merge "mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.swingUI/{kevoree.corelibrary.version}"
+
+merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.jexxus/{kevoree.corelibrary.version}'
+merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.defaultChannels/{kevoree.corelibrary.version}'
+
+merge 'mvn:org.kevoree.microsandbox/org.kevoree.microsandbox.monitoring/{project.version}'
+merge 'mvn:org.kevoree.microsandbox/org.kevoree.microsandbox.samples/{project.version}'
+merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.camel/{kevoree.corelibrary.version}'
+
+//merge "mvn:org.kevoree.corelibrary.javase/org.kevoree.library.p2pSock/{kevoree.corelibrary.version}"
+
+
+addNode node0:JavaSENode { }
+
+addNode node1:JavaSENode { }
+
+addComponent pingpong01@node0 : PingPongComponent { }
+addComponent pingpong02@node0 : PingPongComponent { }
+addComponent pingpong03@node0 : PingPongComponent { }
+
+addComponent pingpong11@node1 : PingPongComponent { }
+addComponent pingpong12@node1 : PingPongComponent { }
+addComponent pingpong13@node1 : PingPongComponent { }
+
+addChannel channel1 : KevoreeSharedMemoryChannel {}
+addChannel channel2 : KevoreeSharedMemoryChannel {}
+addChannel channel3 : KevoreeSharedMemoryChannel {}
+//addChannel channel1 : NaiveSocketChannelByInti { }
+
+bind pingpong01.ping@node0 => channel1
+bind pingpong11.pong@node1 => channel1
+
+bind pingpong02.ping@node0 => channel2
+bind pingpong12.pong@node1 => channel2
+
+bind pingpong03.ping@node0 => channel3
+bind pingpong13.pong@node1 => channel3
+
+//bind pingpong1.ping@node1 => channel1
+//bind pingpong0.pong@node0 => channel1
+
+updateDictionary channel1@node0
+updateDictionary channel1@node1
+updateDictionary channel2@node0
+updateDictionary channel2@node1
+updateDictionary channel3@node0
+updateDictionary channel3@node1
+
+//updateDictionary channel1{ port = "9000"}@node0
+//updateDictionary channel1{ port = "9002"}@node1
+
+
+addGroup sync:BasicGroup
+addToGroup sync node0
+
+}
