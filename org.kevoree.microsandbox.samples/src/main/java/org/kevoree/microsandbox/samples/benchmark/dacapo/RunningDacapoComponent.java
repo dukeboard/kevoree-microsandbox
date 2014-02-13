@@ -1,8 +1,10 @@
 package org.kevoree.microsandbox.samples.benchmark.dacapo;
 
+import org.jetbrains.annotations.NotNull;
 import org.kevoree.annotation.*;
 import org.kevoree.framework.AbstractComponentType;
 import org.kevoree.framework.kaspects.TypeDefinitionAspect;
+import org.kevoree.kcl.KevoreeJarClassLoader;
 import org.kevoree.microsandbox.api.contract.CPUContracted;
 import org.kevoree.microsandbox.api.contract.MemoryContracted;
 
@@ -40,7 +42,23 @@ public class RunningDacapoComponent extends AbstractComponentType
     private Integer n;
     private ClassLoader loader;
 
-    class DacapoExecuter implements Runnable {
+    class MyLoader extends URLClassLoader {
+
+        int i = 0;
+
+        public MyLoader(URL[] urls, ClassLoader parent) {
+            super(urls, parent);
+        }
+
+        @NotNull
+        @Override
+        protected Class<?> findClass(String name) throws ClassNotFoundException {
+            System.out.println("CLASSSSSSSSS " + name + (i++));
+            return super.findClass(name);
+        }
+    }
+
+    class DacapoExecuter extends Thread {
 
         @Override
         public void run() {
@@ -74,11 +92,15 @@ public class RunningDacapoComponent extends AbstractComponentType
         test = getDictionary().get("dacapo_test").toString();
         n = Integer.parseInt(getDictionary().get("dacapo_n").toString());
         try {
-            loader = new URLClassLoader(new URL[]{new File(path).toURI().toURL()}, this.getClass().getClassLoader());
+            KevoreeJarClassLoader ll = (KevoreeJarClassLoader)this.getClass().getClassLoader();
+            ll.add(new File(path).toURI().toURL());
+
+            loader = ll;//new MyLoader(new URL[]{new File(path).toURI().toURL()}, this.getClass().getClassLoader());
         } catch (MalformedURLException e) {
             e.printStackTrace();
         }
         Thread th = new Thread(new DacapoExecuter());
+        System.out.println("Within RunningDacapoComponent => TG " + th.getThreadGroup().getName());
         th.setContextClassLoader(loader);
         th.start();
     }
