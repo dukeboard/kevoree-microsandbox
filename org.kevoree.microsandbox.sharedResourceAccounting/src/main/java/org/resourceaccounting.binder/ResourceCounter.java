@@ -302,6 +302,12 @@ public class ResourceCounter {
         else ourInstance.increaseTotalWritten(n);
     }
 
+    public static Object handlerNewThread = new Object();
+
+    public synchronized static void reportNewThread() {
+        handlerNewThread.equals(null);
+    }
+
     public static ResourcePrincipal getApplication(String appId) {
         return ourInstance.search(appId);
     }
