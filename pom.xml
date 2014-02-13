@@ -11,6 +11,7 @@
 
     <properties>
         <kevoree.version>2.0.12</kevoree.version>
+        <!--2.0.12-->
         <kevoree.corelibrary.version>2.0.4</kevoree.corelibrary.version>
         <kotlin.version>0.6.31</kotlin.version>
     </properties>
@@ -188,6 +189,10 @@
         <module>org.kevoree.microsandbox.test</module>
 
         <module>weka-executer</module>
+        <module>org.ipc.memory</module>
+        <module>org.kevoree.microsandbox.SharedMemoryChannel</module>
+        <module>org.kevoree.microsandbox.cgroupNode</module>
+        <module>org.kevoree.microsandbox.monitoredNode</module>
 
         <!--<module>microsandbox-experiment</module>-->
     </modules>
