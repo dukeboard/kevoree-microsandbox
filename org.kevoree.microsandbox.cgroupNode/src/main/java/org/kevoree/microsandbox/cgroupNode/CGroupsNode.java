@@ -45,30 +45,4 @@ public class CGroupsNode extends AbstractMonitoredNode<SharedKCLFactory>
     protected SharedKCLFactory getClassLoaderFactory() {
         return new SharedKCLFactory(getName(), true);
     }
-
-    @Override
-    public PrimitiveCommand getPrimitive(AdaptationPrimitive p) {
-        String pTypeName = p.getPrimitiveType().getName();
-        if (pTypeName.equals(JavaSePrimitive.instance$.getAddInstance())) {
-            Instance instance = (Instance) p.getRef();
-            if (instance instanceof ComponentInstance)
-                threadCreated.addComponent((ComponentInstance)instance);
-//            System.out.println("Something " + pTypeName + " " + (instance).getName());
-            return new CGroupAddInstance(instance,
-                    getNodeName(), this.getModelService(),
-                    this.getKevScriptEngineFactory(),
-                    this.getBootStrapperService(),
-                    this);
-        }
-        // FIXME, add a proper remove command
-        if (pTypeName.equals(JavaSePrimitive.instance$.getRemoveInstance())) {
-            return null;
-//            return new MonitoredRemoveInstance((Instance) p.getRef(),
-//                    getNodeName(), this.getModelService(),
-//                    this.getKevScriptEngineFactory(),
-//                    this.getBootStrapperService(),
-//                    this);
-        }
-        return super.getPrimitive(p);
-    }
 }
