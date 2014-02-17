@@ -1,16 +1,16 @@
 package org.kevoree.microsandbox.monitoredNode;
 
-import org.kevoree.ComponentInstance;
-import org.kevoree.ContainerNode;
-import org.kevoree.ContainerRoot;
-import org.kevoree.DictionaryValue;
+import org.kevoree.*;
 import org.kevoree.annotation.DictionaryAttribute;
 import org.kevoree.annotation.DictionaryType;
 import org.kevoree.annotation.NodeType;
+import org.kevoree.api.PrimitiveCommand;
+import org.kevoree.kompare.JavaSePrimitive;
 import org.kevoree.library.defaultNodeTypes.JavaSENode;
 import org.kevoree.microsandbox.api.contract.PlatformDescription;
 import org.kevoree.tools.aether.framework.JCLContextHandler;
 import org.kevoree.tools.aether.framework.KCLFactory;
+import org.kevoreeadaptation.AdaptationPrimitive;
 import org.resourceaccounting.contract.ResourceContract;
 import org.resourceaccounting.contract.ResourceContractProvider;
 
@@ -52,6 +52,8 @@ public abstract class AbstractMonitoredNode<ClassLoaderFactory extends KCLFactor
         description = new PlatformDescription(max_memory, max_sent,
                 max_received, max_instr,
                 max_write, max_read);
+
+        ControlAdmissionSystem.instance$.init(description);
     }
 
     protected abstract ClassLoaderFactory getClassLoaderFactory();
@@ -68,5 +70,25 @@ public abstract class AbstractMonitoredNode<ClassLoaderFactory extends KCLFactor
             return;
         }
         jclhandler.setKCLFactory(factory);
+    }
+
+    @Override
+    public PrimitiveCommand getPrimitive(AdaptationPrimitive p) {
+        String pTypeName = p.getPrimitiveType().getName();
+        if (pTypeName.equals(JavaSePrimitive.instance$.getAddInstance())) {
+            return new MonitoredAddInstance((Instance) p.getRef(),
+                    getNodeName(), this.getModelService(),
+                    this.getKevScriptEngineFactory(),
+                    this.getBootStrapperService(),
+                    this);
+        }
+        if (pTypeName.equals(JavaSePrimitive.instance$.getRemoveInstance())) {
+            return new MonitoredRemoveInstance((Instance) p.getRef(),
+                    getNodeName(), this.getModelService(),
+                    this.getKevScriptEngineFactory(),
+                    this.getBootStrapperService(),
+                    this);
+        }
+        return super.getPrimitive(p);
     }
 }
