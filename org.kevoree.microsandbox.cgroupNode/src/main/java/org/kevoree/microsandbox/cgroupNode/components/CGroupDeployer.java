@@ -151,7 +151,7 @@ public class CGroupDeployer extends AbstractComponentType implements ModelListen
 //                            createKevScriptEngine(another).append("addToGroup sync " + nodeName).interpret();
 
                     String path = jarPath.substring(0,jarPath.lastIndexOf("/") + 1);
-                    System.out.println("LALALAL: " + path);
+//                    System.out.println("LALALAL: " + path);
                     ProcessBuilder builder = new ProcessBuilder("java",
                             "-Dproject.version=" + System.getProperty("project.version"),
                             "-Dkevoree.corelibrary.version=" + System.getProperty("kevoree.corelibrary.version"),
@@ -171,7 +171,9 @@ public class CGroupDeployer extends AbstractComponentType implements ModelListen
                     catch (IOException ex) {
                     }
                     builder = builder.directory(new File(nodeName));
-                    Process process = builder.redirectOutput(ProcessBuilder.Redirect.INHERIT).start();
+                    Process process = builder.
+                            redirectOutput(ProcessBuilder.Redirect.INHERIT).
+                            redirectError(ProcessBuilder.Redirect.INHERIT).start();
                 }
 
 
