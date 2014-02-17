@@ -55,10 +55,10 @@ public class NewThreadCreated {
                         double tmp = (1000.0 * contract.getCPU()) / description.availability_instr;
                         System.out.printf("%d %d %f %d\n", contract.getCPU(), description.availability_instr, tmp,
                                 (int)Math.round(tmp));
-                        CPUThreadControl.assignLimit(path, (int)Math.round(tmp));
+                        CPUThreadControl.assignCPULimit(path, (int)Math.round(tmp));
 //                        CPUThreadControl.assignLimit(lastId, (int)Math.round(tmp));
                         id = lastId;
-                        CPUThreadControl.attach(path);
+                        CPUThreadControl.attachToCPUSubsystem(path);
 //                        System.out.printf("Attaching 2 thread to %s and assigning id=%d\n", name, id);
                     }
                     else
@@ -66,7 +66,7 @@ public class NewThreadCreated {
                 }
                 else {
                     id = components.get(name);
-                    CPUThreadControl.attach(path);
+                    CPUThreadControl.attachToCPUSubsystem(path);
 //                    System.out.printf("Attaching 1 thread to %s and assigning id=%d\n", name, id);
                 }
             }

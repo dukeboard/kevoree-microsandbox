@@ -7,21 +7,7 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-/*
- * Class:     org_kevoree_microsandbox_javase_CPUThreadControl
- * Method:    assignLimit
- * Signature: (II)Z
- */
-JNIEXPORT jboolean JNICALL Java_org_kevoree_microsandbox_cgroupNode_CPUThreadControl_assignLimit
-  (JNIEnv *, jclass, jint, jint);
 
-/*
- * Class:     org_kevoree_microsandbox_javase_CPUThreadControl
- * Method:    attach
- * Signature: (I)Z
- */
-JNIEXPORT jboolean JNICALL Java_org_kevoree_microsandbox_cgroupNode_CPUThreadControl_attach
-  (JNIEnv *, jclass, jint);
 
 /*
  * Class:     org_kevoree_microsandbox_javase_CPUThreadControl

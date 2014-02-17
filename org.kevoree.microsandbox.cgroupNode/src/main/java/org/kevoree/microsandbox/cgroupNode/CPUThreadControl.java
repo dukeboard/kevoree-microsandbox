@@ -11,12 +11,19 @@ public class CPUThreadControl {
         System.load(System.getProperty("thread.control.library"));
     }
 
-    public static final String SYS_FS_CGROUP = "/sys/fs/cgroup/";
-    public static final String CPU_SUBSYSTEM = "cpu";
-    public static final String KEVOREE_SUBPATH = "inti/p0";
+    private static final String SYS_FS_CGROUP = "/sys/fs/cgroup/";
+    private static final String KEVOREE_SUBPATH = "inti/p0";
 
-    public static native boolean assignLimit(int id, int msPerSecond);
-	public static native boolean attach(int id);
+    public enum CGROUP_SUBSYSTEMS {
+        CPU ("cpu"),
+        MEMORY ("memory");
+
+        String name;
+
+        CGROUP_SUBSYSTEMS(String s) {
+            name = s;
+        }
+    }
 
     public static native boolean setFrozen(int id, boolean b);
 
@@ -35,31 +42,51 @@ public class CPUThreadControl {
         pw.close();
     }
 
-    public static boolean assignLimit(String idComponent, int msPerSecond) {
-        String path = SYS_FS_CGROUP + CPU_SUBSYSTEM + "/"
-                + KEVOREE_SUBPATH + "/" + idComponent;
-        System.out.printf("Assigning limits %d to %s\n", msPerSecond, idComponent);
+    public static void assignCPULimit(String componentId, int milliSeconds) {
+        writeValue(componentId, CGROUP_SUBSYSTEMS.CPU,  "notify_on_release", 1);
+        writeValue(componentId, CGROUP_SUBSYSTEMS.CPU,  "cpu.cfs_period_us", 1000000);
+        writeValue(componentId, CGROUP_SUBSYSTEMS.CPU, "cpu.cfs_quota_us", milliSeconds * 1000);
+        writeValue(componentId, CGROUP_SUBSYSTEMS.CPU,  "a"+ File.separatorChar + "cpu.shares", 100);
+    }
+
+    private static void writeValue(String componentId,
+                                   CGROUP_SUBSYSTEMS subsystem,
+                                   String fileName,
+                                   int value)
+    {
+        String path = SYS_FS_CGROUP + subsystem.name + File.separatorChar
+                + KEVOREE_SUBPATH + File.separatorChar + componentId;
         createDir(path);
+        path += File.separatorChar;
+        while (fileName.contains(File.separatorChar + "")) {
+            int index = fileName.indexOf(File.separatorChar);
+            String dir = fileName.substring(0, index);
+            if (!dir.isEmpty()) {
+                createDir(path + dir);
+                path = path + dir + File.separatorChar;
+            }
+            fileName = fileName.substring(index + 1);
+        }
+
         try {
-            writeValue(path + "/" + "notify_on_release", 1);
-            writeValue(path + "/" + "cpu.cfs_period_us", 1000000);
-            writeValue(path + "/" + "cpu.cfs_quota_us", msPerSecond*1000);
-            createDir(path+"/a");
-            writeValue(path + "/a/" + "cpu.shares", 100);
-            return true;
+            writeValue(path + fileName, value);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
-            return false;
         }
     }
 
-    public static void attach(String idComponent) {
-        String path = SYS_FS_CGROUP + CPU_SUBSYSTEM + "/"
-                + KEVOREE_SUBPATH + "/" + idComponent + "/a/";
+    private static void attach(String idComponent, CGROUP_SUBSYSTEMS subsystem) {
+        String path = SYS_FS_CGROUP + subsystem.name + File.separatorChar
+                + KEVOREE_SUBPATH + File.separatorChar + idComponent +
+                File.separatorChar + "a" + File.separatorChar;
         try {
             writeValue(path + "tasks", getTTID());
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
+    }
+
+    public static void attachToCPUSubsystem(String componentId) {
+        attach(componentId, CGROUP_SUBSYSTEMS.CPU);
     }
 }

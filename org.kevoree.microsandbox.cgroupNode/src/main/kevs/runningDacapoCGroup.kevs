@@ -46,7 +46,7 @@ addComponent dacapoExecuter1@node0 : RunningDacapoComponent {
     dacapo_path = '/home/inti/Downloads/dacapo-2006-10-MR2.jar',
     dacapo_test = 'chart',
     dacapo_n ='10',
-    cpu_wall_time = '30000000',
+    cpu_wall_time = '60000000',
     memory_max_size = '1'
 }
 
@@ -54,7 +54,7 @@ addComponent dacapoExecuter2@node0 : RunningDacapoComponent {
     dacapo_path = '/home/inti/Downloads/dacapo-2006-10-MR2.jar',
     dacapo_test = 'chart',
     dacapo_n ='10',
-    cpu_wall_time = '30000000',
+    cpu_wall_time = '90000000',
     memory_max_size = '1'
 }
 
