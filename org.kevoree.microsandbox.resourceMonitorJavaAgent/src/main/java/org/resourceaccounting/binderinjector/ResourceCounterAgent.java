@@ -34,28 +34,26 @@ public class ResourceCounterAgent implements OnNewThreadNotifier.HandlerSet{
         globalInst = inst;
 
         final boolean isScapegoat = agentArgs != null && agentArgs.length() > 0 && agentArgs.equals(SCAPEGOAT);
-//        final boolean isScapegoat = true;
 
         if (isScapegoat) {
             ResourceCounter.setResourceContractProvider(new DefaultResourceContractProvider("",""));
             ResourceCounter.setObjectSizeProvider(new ObjectSizeProvider() {
-            public long sizeOf(Object obj) {
-                return globalInst.getObjectSize(obj);
-            }
-        });
+                public long sizeOf(Object obj) {
+                    return globalInst.getObjectSize(obj);
+                }
+            });
             MonitoringStatusList.instance().setGlobalInst(globalInst);
 
             boolean debug = agentArgs != null && agentArgs.length() > 0 &&  agentArgs.equals("debug");
             inst.addTransformer(new BinderClassTransformer(inst, debug),true);
         }
         else {
-            System.out.println("Agent started and it has been detected non-scapegoat model");
+            System.out.println("Agent started and it has been detected non-scapegoat mode");
             BinderClassTransformer bct = new BinderClassTransformer(inst, false);
             bct.setScapegoat(false);
             inst.addTransformer(bct,true);
         }
 
-        // FIXME: Maybe I don't need this for non-scapecgoat solutions because the agent is called for Thread
         new Thread() {
             @Override
             public void run() {

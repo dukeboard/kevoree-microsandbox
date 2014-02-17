@@ -80,6 +80,7 @@ public class MonitoringStatusList {
     }
 
     public synchronized void includeApp(String appId, int idLoader, boolean mem, boolean instr) {
+//        System.err.println("DOING MAGIC WITH " + appId);
         if (!classLoaderIdToPrincipalId.containsKey(idLoader))
             classLoaderIdToPrincipalId.put(idLoader, appId);
         map.put(appId, new Status(false,mem,instr));

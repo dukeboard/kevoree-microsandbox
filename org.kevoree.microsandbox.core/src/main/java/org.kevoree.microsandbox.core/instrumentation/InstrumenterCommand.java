@@ -20,7 +20,8 @@ import java.io.InputStream;
  *
  */
 public class InstrumenterCommand {
-    public byte[] instrument(byte[] code, String className, boolean instr_mem, boolean instr_instr) {
+    public byte[] instrument(byte[] code, String className, boolean instr_mem,
+                             boolean instr_instr, boolean thread_creation) {
 
         ClassReader reader = new ClassReader(code);
         ClassWriter writer = new ClassWriter(reader, ClassWriter.COMPUTE_MAXS);
@@ -28,6 +29,10 @@ public class InstrumenterCommand {
 //      tmp = new TraceClassVisitor(tmp, new PrintWriter(System.out));
         //tmp = new CheckClassAdapter(tmp,true);
         tmp = new ResourceAccountingVisitor(tmp, instr_mem, instr_instr);
+        if (thread_creation)
+            tmp = new ThreadCreationVisitor(tmp,
+                    "java/lang/Integer",
+                    "__reportNewThread__");
 
         //tmp = new InstForAccountingPerInvocation(tmp);
 

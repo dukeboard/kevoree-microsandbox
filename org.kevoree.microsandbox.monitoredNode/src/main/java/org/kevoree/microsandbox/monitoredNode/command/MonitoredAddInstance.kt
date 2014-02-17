@@ -72,8 +72,11 @@ open class MonitoredAddInstance(val c: Instance,
         if (c is ComponentInstance) {
             val loader : ClassLoader? = bs.getKevoreeClassLoaderHandler().getKevoreeClassLoader(deployUnit)
             if (loader != null) {
+//                Log.info("------^^^^^^^ {}", c.getName())
 
                 if (contract!=null && (contract?.getMemory() !=0 || contract?.getCPU() != 0)) {
+
+//                    Log.info("------^^^^^^^ {} ^^^^^^^-------", c.getName())
 //                    println("Classloader for " + c.getName() + " is " + loader.javaClass.getCanonicalName() + " " +
 //                    "and has " + (loader as KevoreeJarClassLoaderCoverageInjection).loadedClasses.size +
 //                    " loaded classes and hash " + loader.hashCode())

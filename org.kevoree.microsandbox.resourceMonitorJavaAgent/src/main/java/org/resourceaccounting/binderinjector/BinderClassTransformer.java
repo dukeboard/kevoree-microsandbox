@@ -40,13 +40,11 @@ public class BinderClassTransformer implements ClassFileTransformer {
             return cmd.instrumentProxyClass(bytes);
         }
 
-        if (!isScapegoat) {
+//        if (!isScapegoat) {
 //            System.out.println("Doing the job for class : " + className);
-            return cmd.instrumentThreadCreationDetection(bytes, className,
-                    "java/lang/Integer", "__reportNewThread__");
-        }
-
-
+//            return cmd.instrumentThreadCreationDetection(bytes, className,
+//                    "java/lang/Integer", "__reportNewThread__");
+//        }
 
         if (!ExtraInstrumentationRules.isInstrumentable(className)) {
             return null;
@@ -54,6 +52,7 @@ public class BinderClassTransformer implements ClassFileTransformer {
 
         boolean instr_mem = false;
         boolean instr_instr = false;
+        boolean instr_thread_creation = !isScapegoat;
         ClassLoader original = classLoader;
         classLoader = searchProperLoader(classLoader);
         if (classLoader != null) {
@@ -63,7 +62,7 @@ public class BinderClassTransformer implements ClassFileTransformer {
             // In fact, the solution is close to using a Pair<Name, ClassLoader> as key
             // I say "close" because of the hierarchy between classloaders
             MonitoringStatusList.instance().saveClassName(appId, className, original);
-            if (MonitoringStatusList.instance().isMonitored(appId)) {
+            if (isScapegoat && MonitoringStatusList.instance().isMonitored(appId)) {
                 instr_mem = MonitoringStatusList.instance().isMemoryMonitored(appId);
                 instr_instr = MonitoringStatusList.instance().isCPUMonitored(appId);
 //                System.out.printf("Classloader %d %s %s %s %s 000\n",hash, appId, className,instr_mem, instr_instr);
@@ -80,7 +79,7 @@ public class BinderClassTransformer implements ClassFileTransformer {
         // 2 - Add finalize (or modify) to the same set of classes
         // 3 - One problem remains, with the method above a class may have two or more __principalID__
         //     However, only one of them will have a value different from 0
-        byte[] result = cmd.instrument(bytes, className, instr_mem, instr_instr);
+        byte[] result = cmd.instrument(bytes, className, instr_mem, instr_instr, instr_thread_creation);
         return result;
     }
 
@@ -96,14 +95,4 @@ public class BinderClassTransformer implements ClassFileTransformer {
     public static synchronized void setHandler(Object h) {
         handler = h;
     }
-
-//    public static void onThreadStartRunMethod() {
-//        OnNewThreadNotifier.getInstance().getHandler().equals(null);
-////        System.out.printf("Thread created %d %s\n", Thread.currentThread().getId(),
-////                Thread.currentThread().getThreadGroup().getName());
-////        StackTraceElement[] ste = Thread.currentThread().getStackTrace();
-////        for (int i = 0 ; i < ste.length ; ++i) {
-////            System.out.println(ste[i].toString());
-////        }
-//    }
 }
