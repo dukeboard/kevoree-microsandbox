@@ -1,15 +1,8 @@
 package org.kevoree.microsandbox.cgroupNode;
 
-import org.kevoree.ComponentInstance;
-import org.kevoree.Instance;
 import org.kevoree.annotation.*;
-import org.kevoree.api.PrimitiveCommand;
-import org.kevoree.api.service.core.handler.ModelListener;
-import org.kevoree.kompare.JavaSePrimitive;
 import org.kevoree.microsandbox.core.OnNewThreadNotifier;
-import org.kevoree.microsandbox.cgroupNode.commands.CGroupAddInstance;
 import org.kevoree.microsandbox.monitoredNode.AbstractMonitoredNode;
-import org.kevoreeadaptation.AdaptationPrimitive;
 
 /**
  * Created with IntelliJ IDEA.
