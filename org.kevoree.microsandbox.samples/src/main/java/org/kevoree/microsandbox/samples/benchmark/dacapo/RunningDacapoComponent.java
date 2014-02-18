@@ -5,6 +5,7 @@ import org.kevoree.annotation.*;
 import org.kevoree.framework.AbstractComponentType;
 import org.kevoree.framework.kaspects.TypeDefinitionAspect;
 import org.kevoree.kcl.KevoreeJarClassLoader;
+import org.kevoree.log.Log;
 import org.kevoree.microsandbox.api.contract.CPUContracted;
 import org.kevoree.microsandbox.api.contract.MemoryContracted;
 
@@ -53,7 +54,7 @@ public class RunningDacapoComponent extends AbstractComponentType
         @NotNull
         @Override
         protected Class<?> findClass(String name) throws ClassNotFoundException {
-            System.out.println("CLASSSSSSSSS " + name + (i++));
+            Log.debug("Finding class {} {}", name, i++);
             return super.findClass(name);
         }
     }
@@ -79,8 +80,8 @@ public class RunningDacapoComponent extends AbstractComponentType
             } catch (NoSuchMethodException e) {
                 e.printStackTrace();
             } catch (InvocationTargetException e) {
-                e.printStackTrace();
-                System.err.println("Not a big deal if the test has finished");
+//                e.printStackTrace();
+                Log.error("Not a big deal if the test has finished");
             }
         }
     }
@@ -100,7 +101,7 @@ public class RunningDacapoComponent extends AbstractComponentType
             e.printStackTrace();
         }
         Thread th = new Thread(new DacapoExecuter());
-        System.out.println("Within RunningDacapoComponent => TG " + th.getThreadGroup().getName());
+        Log.debug("Within RunningDacapoComponent => TG {}",  th.getThreadGroup().getName());
         th.setContextClassLoader(loader);
         th.start();
     }
