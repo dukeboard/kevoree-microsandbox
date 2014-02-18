@@ -36,6 +36,6 @@ public class CGroupsNode extends AbstractMonitoredNode<SharedKCLFactory>
 
     @Override
     protected SharedKCLFactory getClassLoaderFactory() {
-        return new SharedKCLFactory(getName(), true);
+        return new SharedKCLFactory(getName(), false);
     }
 }

@@ -17,7 +17,21 @@ merge 'mvn:org.kevoree.microsandbox/org.kevoree.microsandbox.samples/{project.ve
 merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.camel/{kevoree.corelibrary.version}'
 
 addNode node0:CGroupsNode {
+    coreLogLevel='DEBUG'
 }
+
+addComponent MonitoringComponent0@node0 : MonitoringComponent {
+    adaptiveMonitoring='false'
+}
+
+addComponent rankerBasedHeuristicComponent0@node0 : NumberFailureBasedHeuristicComponent
+
+addChannel channelRanker : CamelNettyService
+
+bind rankerBasedHeuristicComponent0.ranking@node0 => channelRanker
+bind MonitoringComponent0.ranking@node0 => channelRanker
+
+updateDictionary channelRanker
 
 //addComponent console0@node0 : FakeConsole { }
 
@@ -46,17 +60,17 @@ addComponent dacapoExecuter1@node0 : RunningDacapoComponent {
     dacapo_path = '/home/inti/Downloads/dacapo-2006-10-MR2.jar',
     dacapo_test = 'chart',
     dacapo_n ='10',
-    cpu_wall_time = '60000000',
-    memory_max_size = '1'
-}
-
-addComponent dacapoExecuter2@node0 : RunningDacapoComponent {
-    dacapo_path = '/home/inti/Downloads/dacapo-2006-10-MR2.jar',
-    dacapo_test = 'chart',
-    dacapo_n ='10',
     cpu_wall_time = '90000000',
     memory_max_size = '1'
 }
+
+//addComponent dacapoExecuter2@node0 : RunningDacapoComponent {
+//    dacapo_path = '/home/inti/Downloads/dacapo-2006-10-MR2.jar',
+//    dacapo_test = 'chart',
+//    dacapo_n ='10',
+//    cpu_wall_time = '90000000',
+//    memory_max_size = '1'
+//}
 
 //addComponent dacapoExecuter3@node0 : RunningDacapoComponent {
 //    dacapo_path = '/home/inti/Downloads/dacapo-2006-10-MR2.jar',

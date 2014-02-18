@@ -54,7 +54,6 @@ public class CGroupDeployer extends AbstractComponentType implements ModelListen
                 getDictionary().get("KevScriptToDeploy").toString():"";
         if (scriptFile.isEmpty())
             return;
-//        Log.info("HERE HERE HERE {}", scriptFile);
         String s = "";
         try {
             BufferedReader br = new BufferedReader(
@@ -175,16 +174,10 @@ public class CGroupDeployer extends AbstractComponentType implements ModelListen
                             redirectOutput(ProcessBuilder.Redirect.INHERIT).
                             redirectError(ProcessBuilder.Redirect.INHERIT).start();
                 }
-
-
-
-//                process.waitFor();
             } catch (IOException e) {
                 e.printStackTrace();
             } catch (URISyntaxException e) {
                 e.printStackTrace();
-//            } catch (InterruptedException e) {
-//                e.printStackTrace();
             } catch (KevScriptEngineException e) {
                 e.printStackTrace();
             }
@@ -244,6 +237,7 @@ public class CGroupDeployer extends AbstractComponentType implements ModelListen
                             instance.getName(), nodeName, newName);
                     nodesToCreate.put(instance.getName(), newName);
                 }
+
             }
         }
         Log.info("Script:\n" + script);
@@ -258,6 +252,21 @@ public class CGroupDeployer extends AbstractComponentType implements ModelListen
         return null;
     }
 
+    private String addMonitoringComponents(String script, String nodeName) {
+        String reasonerName = "r_" + nodeName;
+        String monitoringName= "mc_" + nodeName;
+        String channelName = nodeName + "defMSGT_reasoning";
+        script += String.format("addComponent %s@%s : %s{ adaptiveMonitoring='false' }\n",
+                reasonerName, nodeName, "MonitoringComponent");
+        script += String.format("addComponent %s@%s : NumberFailureBasedHeuristicComponent\n",
+                monitoringName, nodeName);
+        script += String.format("addChannel %s : CamelNettyService\n", channelName);
+        script += String.format("bind %s.ranking@%s => %s\n", reasonerName, nodeName, channelName);
+        script += String.format("bind %s.ranking@%s => %s\n", monitoringName, nodeName , channelName);
+        script += String.format("updateDictionary %s\n", channelName);
+        return script;
+    }
+
     private boolean isAcceptable(ContainerRoot model) {
         /*
          * So far, a model is acceptable iff for each Node n, n.components.count == 1
@@ -266,7 +275,22 @@ public class CGroupDeployer extends AbstractComponentType implements ModelListen
             if (getNodeName().equals(node.getName()) &&
                     !node.getTypeDefinition().getName().equals(CGroupsNode.class.getSimpleName()))
                 return false;
+
             if (node.getComponents().size() > 2) {
+
+                int flags = 0;
+                for (ComponentInstance instance : node.getComponents()) {
+                    if (instance.getTypeDefinition().getName().equals(CGroupDeployer.class.getSimpleName()))
+                        flags|=1;
+                    else if (instance.getTypeDefinition().getName().equals("MonitoringComponent"))
+                        flags|=2;
+                    else if (instance.getTypeDefinition().getName().equals("NumberFailureBasedHeuristicComponent"))
+                        flags|=4;
+                }
+
+                if (flags == 7)
+                    return true;
+
                 Log.info("Model is wrong because there" +
                         " are more than two components per Node");
                 return false;
@@ -450,6 +474,11 @@ public class CGroupDeployer extends AbstractComponentType implements ModelListen
             }
             buffer.append(String.format("updateDictionary %s0\n", channel.getName()));
         }
+
+//        for (ContainerNode node : model.getNodes()) {
+//            String nodeName = node.getName();
+//            buffer.append(addMonitoringComponents("", nodeName));
+//        }
         return buffer.toString();
     }
 }
