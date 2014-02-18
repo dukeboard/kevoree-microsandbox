@@ -62,7 +62,7 @@ class ResourceCounterImpl {
 
 //    private int countOfPrincipals = 0;
 //    private ResourcePrincipal[] principals = new ResourcePrincipal[1000];
-    private ResourcePrincipal[] cachePrincipals = new ResourcePrincipal[0];
+//    private ResourcePrincipal[] cachePrincipals = new ResourcePrincipal[0];
 
     private ResourceContractProvider resourceContractProvider;
 
@@ -94,6 +94,7 @@ class ResourceCounterImpl {
 
     public void innerIncreaseObjects(Object object, ResourcePrincipal principal) {
         int n = (int) objectSizeProvider.sizeOf(object);
+//        System.out.println("Object created 000000");
         principal.increaseOwnedObjects(n);
     }
 

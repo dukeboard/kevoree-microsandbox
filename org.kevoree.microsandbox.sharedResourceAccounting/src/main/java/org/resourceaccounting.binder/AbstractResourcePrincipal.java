@@ -63,10 +63,8 @@ public abstract class AbstractResourcePrincipal<T> implements ResourcePrincipal 
     }
 
     public void increaseOwnedObjects(int n) {
+//        System.out.println("Object created 11111 "  + n);
         nbObjects.addAndGet(n);
-//        lockMemory.lock();
-//            nbObjects += n;
-//        lockMemory.unlock();
     }
 
     public void increaseBytesSent(int n) {
