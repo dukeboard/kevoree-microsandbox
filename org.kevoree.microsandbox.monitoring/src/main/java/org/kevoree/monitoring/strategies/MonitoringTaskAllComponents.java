@@ -1,5 +1,6 @@
 package org.kevoree.monitoring.strategies;
 
+import org.jfree.util.Log;
 import org.kevoree.ComponentInstance;
 import org.kevoree.api.Bootstraper;
 import org.kevoree.api.service.core.handler.KevoreeModelHandlerService;
@@ -38,7 +39,7 @@ public class MonitoringTaskAllComponents extends AbstractMonitoringTask implemen
 
     @Override
     public void run() {
-        System.out.printf("Initiating Monitoring task\n");
+        org.kevoree.log.Log.debug("Initiating Monitoring task");
 
 //        ComponentsInfoStorage.instance.setIdAssigner(new SimpleIdAssigner(service));
 

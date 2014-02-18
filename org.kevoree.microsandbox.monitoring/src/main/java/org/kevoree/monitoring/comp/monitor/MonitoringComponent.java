@@ -1,5 +1,6 @@
 package org.kevoree.monitoring.comp.monitor;
 
+import org.jfree.util.Log;
 import org.kevoree.ComponentInstance;
 import org.kevoree.ContainerRoot;
 import org.kevoree.annotation.*;
@@ -149,6 +150,7 @@ public class MonitoringComponent extends AbstractComponentType implements Micros
     @Override
     public void triggerMonitoringEvent(String operation, String name, String instancePath, Long value) {
         if (isPortBinded("ranking")) {
+            org.kevoree.log.Log.info("TRIGGERING MONITORING EVENT {}:{}:{}", operation, name, instancePath);
             getPortByName("ranking", RankingHeuristicComponent.class).triggerMonitoringEvent(operation, name, instancePath, value);
         }
     }

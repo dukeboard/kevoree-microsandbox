@@ -1,6 +1,7 @@
 package org.kevoree.monitoring.strategies.monitoring;
 
 import org.kevoree.ComponentInstance;
+import org.kevoree.log.Log;
 import org.kevoree.microsandbox.api.sla.Metric;
 import org.kevoree.monitoring.sla.FaultyComponent;
 import org.kevoree.monitoring.sla.MeasurePoint;
@@ -67,6 +68,7 @@ public class AllComponentsForEver extends FineGrainedMonitoringStrategy {
 
     @Override
     public void onGCVerifyContract(long used, long max) {
+        Log.debug("Executing memory consumption verification after GC Used:{}, Max:{}", used, max);
         ArrayList<FaultyComponent> faultyComponents = new ArrayList<FaultyComponent>();
         for (ComponentInstance component : ranking) {
             EnumMap<Metric, MeasurePoint> b = new EnumMap<Metric, MeasurePoint>(Metric.class);
@@ -75,6 +77,9 @@ public class AllComponentsForEver extends FineGrainedMonitoringStrategy {
                 continue;
             DataForCheckingContract data = getInfo(principal);
             ResourceContract contract = principal.getContract();
+            Log.debug("Comparing memory consumption for {}. Contract = {}, Used = {}",
+                    component.getName(), contract.getMemory(), data.lastMem);
+
             if (contract.getMemory() > 0 && contract.getMemory() < data.lastMem) {
                 b.put(Metric.Memory, new MeasurePoint(data.lastMem, contract.getMemory()));
                 faultyComponents.add(new FaultyComponent(component.path(),b,

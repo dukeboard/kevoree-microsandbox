@@ -19,11 +19,11 @@ import java.util.Comparator;
 @ComponentType
 public class NumberFailureBasedHeuristicComponent extends ComparatorBasedHeuristicComponent {
 
-    protected Map<String, Long> nbFailures;
+    protected Map<String, Long> nbFailures = new HashMap<String, Long>();
 
     @Start
     public void start() {
-        nbFailures = new HashMap<String, Long>();
+        nbFailures.clear();
     }
 
     @Override
@@ -31,12 +31,15 @@ public class NumberFailureBasedHeuristicComponent extends ComparatorBasedHeurist
         return new Comparator<ComponentInstance>() {
             @Override
             public int compare(ComponentInstance o1, ComponentInstance o2) {
-                long nbFailure01 = nbFailures.get(o1.path());
-                long nbFailure02 = nbFailures.get(o2.path());
+//                System.err.println("O1 => " + o1);
+//                System.err.println("O2 => " + o2);
+//                System.err.println("nbFailures => " + nbFailures);
+                Long nbFailure01 = nbFailures.get(o1.path());
+                Long nbFailure02 = nbFailures.get(o2.path());
 
-                if (nbFailure01 == 0 || nbFailure02 == 0) {
+                if ((nbFailure01 == null || nbFailure02 == null)) {
                     // that must not appear
-                    return 1;
+                    return 0;
                 }
 
                 return (int) (nbFailure01 - nbFailure02);

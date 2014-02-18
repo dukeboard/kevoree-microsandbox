@@ -2,6 +2,7 @@ package org.kevoree.monitoring.strategies.monitoring;
 
 import org.kevoree.ComponentInstance;
 import org.kevoree.library.defaultNodeTypes.context.KevoreeDeployManager;
+import org.kevoree.log.Log;
 import org.kevoree.microsandbox.api.sla.Metric;
 import org.kevoree.monitoring.comp.MyLowLevelResourceConsumptionRecorder;
 import org.kevoree.monitoring.sla.FaultyComponent;
@@ -51,14 +52,17 @@ public abstract class FineGrainedMonitoringStrategy extends AbstractMonitoringSt
 
     protected ResourcePrincipal getPrincipal(ComponentInstance instance) {
         LowLevelResourceMonitorProxy recorder = MyLowLevelResourceConsumptionRecorder.getInstance();
-        Object obj =KevoreeDeployManager.instance$.getRef(instance.getClass().getName() + "_tg", instance.getName());
+        Object obj = KevoreeDeployManager.
+                instance$.getRef(instance.getClass().getName() + "_tg", instance.getName());
         ThreadGroup tg = (ThreadGroup) obj;
         ResourcePrincipal p = recorder.getApplication(tg.getName());
         if (p == null) {
-            System.err.println("No resource principal was found : " + tg.getName());
+            Log.error("No resource principal was found with such a name: {}", tg.getName());
+//            System.err.println("No resource principal was found : " + tg.getName());
 //            System.exit(2);
             //throw new RuntimeException("No resource principal was found : " + tg.getName());
         }
+
         return p;
     }
 
