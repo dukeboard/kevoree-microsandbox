@@ -85,7 +85,8 @@ public class BinderClassTransformer implements ClassFileTransformer {
 
     private ClassLoader searchProperLoader(ClassLoader loader) {
         while (loader != null &&
-                !loader.getClass().getCanonicalName().endsWith("KevoreeJarClassLoaderCoverageInjection"))
+                !loader.getClass().getCanonicalName().endsWith("KevoreeJarClassLoaderCoverageInjection") &&
+                !loader.getClass().getCanonicalName().endsWith("SharedClassLoader"))
             loader = loader.getParent();
         return loader;
     }
