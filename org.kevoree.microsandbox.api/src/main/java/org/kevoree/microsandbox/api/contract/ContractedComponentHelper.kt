@@ -34,6 +34,10 @@ object ContractedComponentHelper {
             typeDefinition.getDictionaryType()?.getAttributes()?.filter{ attribute -> attribute.getName().equals(dictionaryAttribute.name()) }?.size() == 1
         }
 
-        return (isFullContracted != null && isFullContracted!!) || (isMemoryContracted != null && isMemoryContracted!!) || (isCPUContracted != null && isCPUContracted!!) || (isNetworkContracted != null && isNetworkContracted!!) || (isThroughputContracted != null && isThroughputContracted!!)
+        return (isFullContracted != null && isFullContracted!!) ||
+            (isMemoryContracted != null && isMemoryContracted!!) ||
+            (isCPUContracted != null && isCPUContracted!!) ||
+            (isNetworkContracted != null && isNetworkContracted!!) ||
+            (isThroughputContracted != null && isThroughputContracted!!)
     }
 }
