@@ -7,7 +7,7 @@ import org.kevoree.annotation.Update;
 import org.kevoree.framework.AbstractComponentType;
 import org.kevoree.log.Log;
 
-import java.io.*;
+import java.io.IOException;
 import java.nio.file.*;
 
 /**
