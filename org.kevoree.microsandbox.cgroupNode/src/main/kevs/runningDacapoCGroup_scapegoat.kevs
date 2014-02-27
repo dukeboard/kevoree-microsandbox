@@ -20,6 +20,19 @@ addNode node0:CGroupsNode {
     coreLogLevel='DEBUG'
 }
 
+addComponent MonitoringComponent0@node0 : MonitoringComponent {
+    adaptiveMonitoring='false'
+}
+
+addComponent rankerBasedHeuristicComponent0@node0 : NumberFailureBasedHeuristicComponent
+
+addChannel channelRanker : CamelNettyService
+
+bind rankerBasedHeuristicComponent0.ranking@node0 => channelRanker
+bind MonitoringComponent0.ranking@node0 => channelRanker
+
+updateDictionary channelRanker
+
 //addComponent console0@node0 : FakeConsole { }
 
 //addComponent console1@node0 : FakeConsole { }
