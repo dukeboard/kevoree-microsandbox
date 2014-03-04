@@ -1,0 +1,89 @@
+{
+addRepo "http://maven.kevoree.org/daum/snapshots"
+
+
+merge 'mvn:org.kevoree.microsandbox/org.kevoree.microsandbox.cgroupNode/{project.version}'
+merge 'mvn:org.kevoree.microsandbox/org.kevoree.microsandbox.SharedMemoryChannel/{project.version}'
+
+
+merge "mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.fakeDomo/{kevoree.corelibrary.version}"
+merge "mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.swingUI/{kevoree.corelibrary.version}"
+
+merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.jexxus/{kevoree.corelibrary.version}'
+merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.defaultChannels/{kevoree.corelibrary.version}'
+
+merge 'mvn:org.kevoree.microsandbox/org.kevoree.microsandbox.monitoring/{project.version}'
+merge 'mvn:org.kevoree.microsandbox/org.kevoree.microsandbox.samples/{project.version}'
+merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.camel/{kevoree.corelibrary.version}'
+
+addNode node0:CGroupsNode {
+    coreLogLevel='DEBUG'
+}
+
+//addComponent console0@node0 : FakeConsole { }
+
+//addComponent console1@node0 : FakeConsole { }
+//addComponent console2@node0 : FakeConsole { }
+//addComponent console3@node0 : FakeConsole { }
+//addComponent console4@node0 : FakeConsole { }
+//addComponent console5@node0 : FakeConsole { }
+
+//addChannel channel0 : CamelNettyService
+
+//bind console0.showText@node0 => channel0
+//bind console1.textEntered@node0 => channel0
+
+addComponent cgroupDeployer@node0 : CGroupDeployer
+
+addComponent dacapoExecuter0@node0 : RunningDacapoComponent {
+    dacapo_path = '/home/inti/Downloads/dacapo-2006-10-MR2.jar',
+    dacapo_test = 'chart',
+    dacapo_n ='10',
+    cpu_wall_time = '30000000',
+    memory_max_size = '1'
+}
+
+addComponent dacapoExecuter1@node0 : RunningDacapoComponent {
+    dacapo_path = '/home/inti/Downloads/dacapo-2006-10-MR2.jar',
+    dacapo_test = 'chart',
+    dacapo_n ='10',
+    cpu_wall_time = '90000000',
+    memory_max_size = '1'
+}
+
+//addComponent dacapoExecuter2@node0 : RunningDacapoComponent {
+//    dacapo_path = '/home/inti/Downloads/dacapo-2006-10-MR2.jar',
+//    dacapo_test = 'chart',
+//    dacapo_n ='10',
+//    cpu_wall_time = '90000000',
+//    memory_max_size = '1'
+//}
+
+//addComponent dacapoExecuter3@node0 : RunningDacapoComponent {
+//    dacapo_path = '/home/inti/Downloads/dacapo-2006-10-MR2.jar',
+//    dacapo_test = 'chart',
+//    dacapo_n ='10',
+//    cpu_wall_time = '0',
+//    memory_max_size = '1'
+//}
+
+//addComponent dacapoExecuter4@node0 : RunningDacapoComponent {
+//    dacapo_path = '/home/inti/Downloads/dacapo-2006-10-MR2.jar',
+//    dacapo_test = 'chart',
+//    dacapo_n ='10',
+//    cpu_wall_time = '0',
+//    memory_max_size = '1'
+//}
+
+//addComponent dacapoExecuter5@node0 : RunningDacapoComponent {
+//    dacapo_path = '/home/inti/Downloads/dacapo-2006-10-MR2.jar',
+//    dacapo_test = 'chart',
+//    dacapo_n ='10',
+//    cpu_wall_time = '0',
+//    memory_max_size = '1'
+//}
+
+addGroup sync:BasicGroup
+addToGroup sync node0
+
+}
