@@ -19,7 +19,9 @@ addNode node0:CGroupsNode {
 }
 
 addComponent cgroupDeployer@node0 : CGroupDeployer {
-    KevScriptToDeploy='/home/inti/programs/kevoree-microsandbox/org.kevoree.microsandbox.cgroupNode/src/main/kevs/runningDacapoCGroup.kevs'
+    CRIU_Based_Deployment = 'true',
+    KevScriptToDeploy='/home/inti/programs/kevoree-microsandbox/org.kevoree.microsandbox.cgroupNode/src/main/kevs/runningNaiveCPUConsumerCGroup.kevs'
+
 }
 
 addGroup sync:BasicGroup

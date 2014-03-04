@@ -12,18 +12,10 @@ merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.defaultChan
 
 merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.camel/{kevoree.corelibrary.version}'
 
-addNode node0:JavaSENode {
-}
+addNode {node.name}:CGroupsNode
 
 addChannel ch0:defMSG
 
-addComponent NodeNameRestarter@node0 : NodeNameRestarter
-
-//addComponent console0@node0: FakeConsole
-
-//addComponent random0@node0 : Random
-
-addGroup sync:BasicGroup
-addToGroup sync node0
+addComponent NodeNameRestarter@{node.name} : NodeNameRestarter
 
 }

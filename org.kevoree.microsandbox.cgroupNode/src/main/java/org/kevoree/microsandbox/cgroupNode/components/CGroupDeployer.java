@@ -12,14 +12,16 @@ import org.kevoree.api.service.core.script.KevScriptEngine;
 import org.kevoree.api.service.core.script.KevScriptEngineException;
 import org.kevoree.framework.AbstractComponentType;
 import org.kevoree.framework.ModelHandlerServiceProxy;
+import org.kevoree.library.defaultNodeTypes.JavaSENode;
 import org.kevoree.log.Log;
 import org.kevoree.microsandbox.cgroupNode.CGroupsNode;
 
 import java.io.*;
-import java.net.URISyntaxException;
+import java.net.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.concurrent.TimeoutException;
 
 //import org.kevoree.kevscript.KevScriptExporter;
 
@@ -31,57 +33,30 @@ import java.util.*;
  *
  */
 @org.kevoree.annotation.DictionaryType({
-        @DictionaryAttribute(name = "KevScriptToDeploy", optional = true, defaultValue = "")
+        @DictionaryAttribute(name = "KevScriptToDeploy", optional = true, defaultValue = ""),
+        @DictionaryAttribute(name = "CRIU_Based_Deployment", optional = true,
+                defaultValue = "false", dataType = Boolean.class)
 })
 @ComponentType
-public class CGroupDeployer extends AbstractComponentType implements ModelListener {
+public class CGroupDeployer extends FromFileDeployer implements ModelListener {
 
-
+    SlaveRuntimeDeployer deployerStrategy;
 
     @Start
     public void start() {
-        // FIXME, Ugly hack.
-//        Log.info("I will change component name from {}/{} to {}", getNodeName(),
-//                ((KevoreeCoreBean)((ModelHandlerServiceProxy)getModelService()).getProxy()).getNodeName(),
-//                "hahahaha");
-//        ((KevoreeCoreBean)((ModelHandlerServiceProxy)getModelService()).getProxy()).setNodeName("hahahaha");
-//        setNodeName("hahahaha");
-//        Log.info("I changed component name: {}/{}", getNodeName(),
-//                ((KevoreeCoreBean)((ModelHandlerServiceProxy)getModelService()).getProxy()).getNodeName());
-
         getModelService().registerModelListener(this);
         final String scriptFile = getDictionary().containsKey("KevScriptToDeploy")?
                 getDictionary().get("KevScriptToDeploy").toString():"";
         if (scriptFile.isEmpty())
             return;
-        String s = "";
-        try {
-            BufferedReader br = new BufferedReader(
-                    new InputStreamReader(
-                            new FileInputStream(scriptFile)
-                    )
-            );
-            String tmp = br.readLine();
-            while (tmp != null) {
-                s += tmp + "\n";
-                tmp = br.readLine();
-            }
-            KevScriptEngine scriptEngine = getKevScriptEngineFactory().createKevScriptEngine();
-            ContainerRoot model = scriptEngine.addVariable("project.version",
-                    System.getProperty("project.version")).
-                    addVariable("kevoree.corelibrary.version",System.getProperty("kevoree.corelibrary.version")).
-                    append(s).interpret();
+        boolean b = Boolean.parseBoolean(getDictionary().get("CRIU_Based_Deployment").toString());
+        deployerStrategy = SlaveRuntimeDeployerFactory.get(b?
+                SlaveRuntimeDeployerFactory.CRIU:
+                SlaveRuntimeDeployerFactory.PROCESSBasedStrategy);
+        ContainerRoot model = getContainerRoot(scriptFile);
 
-            Timer timer = new Timer();
-            timer.schedule(new MyTimerTask(model), 100);
-
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (KevScriptEngineException e) {
-            e.printStackTrace();
-        }
+        Timer timer = new Timer();
+        timer.schedule(new MyTimerTask(model), 100);
     }
 
     @Stop
@@ -142,41 +117,12 @@ public class CGroupDeployer extends AbstractComponentType implements ModelListen
                 writer.close();
                 Log.info("FILE => " + file.getAbsolutePath());
 
-                String jarPath = Log.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath();
                 for (String nodeName : nodesToCreate.values()) {
-
-
 //                    ContainerRoot anotherT0 = getKevScriptEngineFactory().
 //                            createKevScriptEngine(another).append("addToGroup sync " + nodeName).interpret();
-
-                    String path = jarPath.substring(0,jarPath.lastIndexOf("/") + 1);
-//                    System.out.println("LALALAL: " + path);
-                    ProcessBuilder builder = new ProcessBuilder("java",
-                            "-Dproject.version=" + System.getProperty("project.version"),
-                            "-Dkevoree.corelibrary.version=" + System.getProperty("kevoree.corelibrary.version"),
-                            "-Dinterproccess.lock.library="+System.getProperty("interproccess.lock.library"),
-                            "-Dthread.control.library="+System.getProperty("thread.control.library"),
-                            "-Dnode.bootstrap="+file.getAbsolutePath(),
-                            "-Xbootclasspath/p:"+ path +"ext-rt.jar:"
-                                    + path + "shared-res-1.0-SNAPSHOT.jar",
-                            "-javaagent:" + path + "ext-agent1.0-SNAPSHOT.jar",
-                            String.format("-Dnode.name=%s", nodeName),
-                            "-jar",
-                            jarPath);
-                    try {
-
-                        Files.createDirectory(Paths.get(nodeName));
-                    }
-                    catch (IOException ex) {
-                    }
-                    builder = builder.directory(new File(nodeName));
-                    Process process = builder.
-                            redirectOutput(ProcessBuilder.Redirect.INHERIT).
-                            redirectError(ProcessBuilder.Redirect.INHERIT).start();
+                    deployerStrategy.deploy(nodeName, file.getAbsolutePath());
                 }
             } catch (IOException e) {
-                e.printStackTrace();
-            } catch (URISyntaxException e) {
                 e.printStackTrace();
             } catch (KevScriptEngineException e) {
                 e.printStackTrace();
@@ -224,15 +170,16 @@ public class CGroupDeployer extends AbstractComponentType implements ModelListen
                 // continue only if there are more than two components
                 if (node.getComponents().size() <= 2) break;
 
-                int count = 0;
+                int count = -1;
                 for (int i = 0 ; i < node.getComponents().size() ; ++i) {
                     ComponentInstance instance = node.getComponents().get(i);
+//                    Log.info("\t{}:{}", instance.getName(), count);
                     if (instance.getName().equals(this.getName())) continue;
                     count++;
-                    if (count == 1) continue;
-
-                    String newName = nodeName + i;
-                    script += String.format("addNode %s : %s\n", newName, CGroupsNode.class.getSimpleName());
+                    if (count == 0) continue;
+                    String newName = "virtualNode" + count;
+//                    Log.info("\t\tHERE {} and then it goes to {}", count, newName);
+                    script += String.format("addNode %s : %s\n", newName, CGroupsNode.class.getSimpleName()/*CGroupsNode.class.getSimpleName()*/);
                     script += String.format("moveComponent %s@%s => %s\n",
                             instance.getName(), nodeName, newName);
                     nodesToCreate.put(instance.getName(), newName);
@@ -480,5 +427,108 @@ public class CGroupDeployer extends AbstractComponentType implements ModelListen
 //            buffer.append(addMonitoringComponents("", nodeName));
 //        }
         return buffer.toString();
+    }
+}
+
+interface SlaveRuntimeDeployer {
+    public boolean deploy(String nodeName, String fileName);
+}
+
+class CRIUStrategy implements SlaveRuntimeDeployer {
+
+    @Override
+    public boolean deploy(String nodeName, String fileName) {
+        DatagramSocket socket = null;
+        try {
+            // restore virtual machine
+            ProcessBuilder builder = new ProcessBuilder("/home/inti/tests/executingInCRIU/restore.sh",
+                    nodeName);
+
+//            if (!Files.exists(Paths.get(nodeName))) {
+//                Files.createDirectory(Paths.get(nodeName));
+//            }
+            builder = builder.directory(new File("/home/inti/tests/executingInCRIU"));
+
+            Process process = builder.
+                    redirectOutput(ProcessBuilder.Redirect.INHERIT).
+                    redirectError(ProcessBuilder.Redirect.INHERIT).start();
+
+            socket = new DatagramSocket();
+            socket.setSoTimeout(100);
+            byte[] buf = String.format("%s\n%s", nodeName, fileName).getBytes();
+            DatagramPacket packet = new DatagramPacket(buf, buf.length,
+                    InetAddress.getByName("localhost"), 9876);
+            byte[] buf2 = new byte[10];
+            DatagramPacket packet2 = new DatagramPacket(buf2, buf2.length);
+            while (true) {
+                socket.send(packet);
+                try {
+                    socket.receive(packet2);
+                    Log.info("Slave {} wake up", nodeName);
+                    break; // hehe: ugly but I saved one line of code
+                }
+                catch (SocketTimeoutException exception) { }
+            }
+            socket.close();
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+}
+
+class PROCESSBasedStrategy implements SlaveRuntimeDeployer {
+
+    @Override
+    public boolean deploy(String nodeName, String fileName) {
+        try {
+            String jarPath = Log.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath();
+            String path = jarPath.substring(0,jarPath.lastIndexOf("/") + 1);
+            ProcessBuilder builder = new ProcessBuilder("java",
+                    "-Dproject.version=" + System.getProperty("project.version"),
+                    "-Dkevoree.corelibrary.version=" + System.getProperty("kevoree.corelibrary.version"),
+                    "-Dinterproccess.lock.library="+System.getProperty("interproccess.lock.library"),
+                    "-Dthread.control.library="+System.getProperty("thread.control.library"),
+                    "-Dnode.bootstrap="+fileName,
+                    "-Xbootclasspath/p:"+ path +"ext-rt.jar:"
+                            + path + "shared-res-1.0-SNAPSHOT.jar",
+                    "-javaagent:" + path + "ext-agent1.0-SNAPSHOT.jar",
+                    String.format("-Dnode.name=%s", nodeName),
+                    "-jar",
+                    jarPath);
+
+            if (!Files.exists(Paths.get(nodeName))) {
+                Files.createDirectory(Paths.get(nodeName));
+            }
+            builder = builder.directory(new File(nodeName));
+            Process process = builder.
+                    redirectOutput(ProcessBuilder.Redirect.INHERIT).
+                    redirectError(ProcessBuilder.Redirect.INHERIT).start();
+
+            return true;
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+}
+
+class SlaveRuntimeDeployerFactory {
+
+    public static final String CRIU = "CRIU";
+    public static final String PROCESSBasedStrategy = "Process";
+
+    private SlaveRuntimeDeployerFactory() {}
+
+    public static SlaveRuntimeDeployer get(String name) {
+        if (name.equals(CRIU))
+            return new CRIUStrategy();
+        else if (name.equals(PROCESSBasedStrategy)) {
+            return new PROCESSBasedStrategy();
+        }
+        else throw new RuntimeException();
     }
 }

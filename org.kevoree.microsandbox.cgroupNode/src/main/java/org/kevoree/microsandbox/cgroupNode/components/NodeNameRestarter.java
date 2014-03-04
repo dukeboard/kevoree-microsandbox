@@ -7,7 +7,9 @@ import org.kevoree.annotation.Stop;
 import org.kevoree.annotation.Update;
 import org.kevoree.api.service.core.script.KevScriptEngine;
 import org.kevoree.api.service.core.script.KevScriptEngineException;
+import org.kevoree.core.impl.KevoreeCoreBean;
 import org.kevoree.framework.AbstractComponentType;
+import org.kevoree.framework.ModelHandlerServiceProxy;
 import org.kevoree.log.Log;
 
 import java.io.*;
@@ -22,53 +24,64 @@ import java.util.Timer;
  * Created by inti on 2/20/14.
  */
 @ComponentType
-public class NodeNameRestarter extends AbstractComponentType {
-
+public class NodeNameRestarter extends FromFileDeployer {
 
     private class Mythread extends Thread {
         @Override
         public void run() {
-            System.out.println("LALALLAL SERVER");
+            Log.info("Starting restarter component");
             DatagramSocket serverSocket = null;
             try {
                 serverSocket = new DatagramSocket(9876);
                 byte[] receiveData = new byte[1024];
-                byte[] sendData = new byte[1024];
-                while(true)
-                {
-                    DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
-                    serverSocket.receive(receivePacket);
-                    String sentence = new String( receivePacket.getData());
-                    System.out.println("RECEIVED: " + sentence);
-                    InetAddress IPAddress = receivePacket.getAddress();
-                    int port = receivePacket.getPort();
-                    String capitalizedSentence = sentence.toUpperCase();
-                    sendData = capitalizedSentence.getBytes();
-                    DatagramPacket sendPacket =
-                            new DatagramPacket(sendData, sendData.length, IPAddress, port);
-                    serverSocket.send(sendPacket);
-                }
+                DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
+                serverSocket.receive(receivePacket);
+                String sentence = new String(
+                        receivePacket.getData(), receivePacket.getOffset(), receivePacket.getLength());
+                String[] lines = sentence.split("\n");
+
+//                changeNameOfNode(lines[0]);
+
+                Log.debug("File {}", lines[1]);
+
+                serverSocket.send(new DatagramPacket("OK".getBytes(),
+                        "OK".getBytes().length,
+                        receivePacket.getAddress(),
+                        receivePacket.getPort()));
+
+                serverSocket.close();
+
+                getModelService().updateModel(getContainerRoot(lines[1]));
+
             } catch (SocketException e) {
                 e.printStackTrace();
             } catch (IOException e) {
                 e.printStackTrace();
             }
+            finally {
+                if (serverSocket != null && !serverSocket.isClosed()) {
+                    serverSocket.close();
+                }
+            }
         }
+    }
+
+    private void changeNameOfNode(String sentence) {
+        // FIXME, Ugly hack.
+        Log.info("Changing component name from {}/{} to {}", getNodeName(),
+                ((ModelHandlerServiceProxy)getModelService()).getProxy().getNodeName(),
+                sentence);
+        // doing the job
+        ((KevoreeCoreBean)((ModelHandlerServiceProxy)getModelService()).getProxy()).setNodeName(sentence);
+        setNodeName(sentence);
+        // done
+        Log.info("Changed component name to: {}/{}", getNodeName(),
+                ((ModelHandlerServiceProxy)getModelService()).getProxy().getNodeName());
     }
 
     @Start
     public void start() {
-        // FIXME, Ugly hack.
-//        Log.info("I will change component name from {}/{} to {}", getNodeName(),
-//                ((KevoreeCoreBean)((ModelHandlerServiceProxy)getModelService()).getProxy()).getNodeName(),
-//                "hahahaha");
-//        ((KevoreeCoreBean)((ModelHandlerServiceProxy)getModelService()).getProxy()).setNodeName("hahahaha");
-//        setNodeName("hahahaha");
-//        Log.info("I changed component name: {}/{}", getNodeName(),
-//                ((KevoreeCoreBean)((ModelHandlerServiceProxy)getModelService()).getProxy()).getNodeName());
-//        Log.info("This is all");
-        System.out.println("ASDFFSDAFSDAFSDFSF PEPE JUAN MARIA");
-//        new Mythread().start();
+        new Mythread().start();
     }
 
     @Stop
