@@ -2,20 +2,11 @@
 addRepo "http://maven.kevoree.org/daum/snapshots"
 
 merge 'mvn:org.kevoree.microsandbox/org.kevoree.microsandbox.cgroupNode/1.0-SNAPSHOT'
-merge 'mvn:org.kevoree.microsandbox/org.kevoree.microsandbox.samples/1.0-SNAPSHOT'
-
-merge "mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.fakeDomo/{kevoree.corelibrary.version}"
-merge "mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.swingUI/{kevoree.corelibrary.version}"
-merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.jexxus/{kevoree.corelibrary.version}'
-
-merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.defaultChannels/{kevoree.corelibrary.version}'
-
-merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.camel/{kevoree.corelibrary.version}'
+//merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.defaultChannels/{kevoree.corelibrary.version}'
 
 addNode {node.name}:CGroupsNode
 
-addChannel ch0:defMSG
+//addChannel ch0:defMSG
 
 addComponent NodeNameRestarter@{node.name} : NodeNameRestarter
-
 }

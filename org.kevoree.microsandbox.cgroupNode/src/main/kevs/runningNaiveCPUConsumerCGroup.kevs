@@ -37,6 +37,12 @@ addComponent naiveExecuter2@node0 : NaiveCPUConsumer {
     memory_max_size = '1'
 }
 
+addComponent naiveExecuter3@node0 : NaiveCPUConsumer {
+    cpu_wall_time = '10000000',
+    memory_max_size = '1'
+}
+
+
 addGroup sync:BasicGroup
 addToGroup sync node0
 
