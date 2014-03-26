@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketTimeoutException;
 import java.util.concurrent.locks.ReentrantLock;
 
 
@@ -59,12 +60,20 @@ public class NaiveSocketChannelByInti extends AbstractChannelFragment {
 
     @Update
     public void updatep() {
+        int p = 0;
         try {
-                stopp();
-                Thread.sleep(2500);
-                startp();
-        } catch (Exception e) {
+            p = parsePortNumber(getNodeName());
+        } catch (IOException e) {
             e.printStackTrace();
+        }
+        if (p != portServer) {
+            try {
+                stopp();
+                Thread.sleep(800);
+                startp();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -161,9 +170,16 @@ class TCPServer implements Runnable {
         ServerSocket welcomeSocket = null;
         try {
             welcomeSocket = new ServerSocket(portServer);
+            welcomeSocket.setSoTimeout(500);
             while(!isStopped())
             {
-                Socket connectionSocket = welcomeSocket.accept();
+                Socket connectionSocket = null;
+                try {
+                    connectionSocket = welcomeSocket.accept();
+                }
+                catch (SocketTimeoutException ex) {
+                    continue;
+                }
                 InputStream inputStream = connectionSocket.getInputStream();
 
                 ObjectInputStream objectInputStream = new ObjectInputStream(inputStream);
@@ -189,6 +205,14 @@ class TCPServer implements Runnable {
             e.printStackTrace();
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
+        }
+        finally {
+            if (welcomeSocket != null)
+                try {
+                    welcomeSocket.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
         }
     }
 }
