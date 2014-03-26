@@ -1,18 +1,14 @@
 package org.kevoree.microsandbox.cgroupNode.components;
 
 import org.kevoree.*;
-import org.kevoree.core.impl.KevoreeCoreBean;
-import org.kevoree.Dictionary;
 import org.kevoree.Port;
-import org.kevoree.annotation.ComponentType;
-import org.kevoree.annotation.DictionaryAttribute;
+import org.kevoree.PortType;
 import org.kevoree.annotation.*;
+import org.kevoree.annotation.DictionaryAttribute;
 import org.kevoree.api.service.core.handler.ModelListener;
-import org.kevoree.api.service.core.script.KevScriptEngine;
 import org.kevoree.api.service.core.script.KevScriptEngineException;
-import org.kevoree.framework.AbstractComponentType;
-import org.kevoree.framework.ModelHandlerServiceProxy;
-import org.kevoree.library.defaultNodeTypes.JavaSENode;
+import org.kevoree.framework.MessagePort;
+import org.kevoree.kcl.KevoreeJarClassLoader;
 import org.kevoree.log.Log;
 import org.kevoree.microsandbox.cgroupNode.CGroupsNode;
 
@@ -21,9 +17,9 @@ import java.net.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeoutException;
-
-//import org.kevoree.kevscript.KevScriptExporter;
 
 /**
  * Created with IntelliJ IDEA.
@@ -32,24 +28,49 @@ import java.util.concurrent.TimeoutException;
  * Time: 6:14 PM
  *
  */
-@org.kevoree.annotation.DictionaryType({
-        @DictionaryAttribute(name = "KevScriptToDeploy", optional = true, defaultValue = ""),
-        @DictionaryAttribute(name = "CRIU_Based_Deployment", optional = true,
-                defaultValue = "false", dataType = Boolean.class)
+@Provides({
+        @ProvidedPort(name = "startNotification", type = org.kevoree.annotation.PortType.MESSAGE)
 })
-@ComponentType
+@org.kevoree.annotation.DictionaryType({
+        @org.kevoree.annotation.DictionaryAttribute(name = "KevScriptToDeploy", optional = true, defaultValue = ""),
+        @org.kevoree.annotation.DictionaryAttribute(name = "CRIU_Based_Deployment", optional = true,
+                defaultValue = "false", dataType = Boolean.class),
+        @org.kevoree.annotation.DictionaryAttribute(name = "distributed_deployment", optional = true,
+                defaultValue = "true", dataType = Boolean.class),
+        @org.kevoree.annotation.DictionaryAttribute(name = "log_file_for_experiments", optional = true, defaultValue = "")
+})
+@org.kevoree.annotation.ComponentType
 public class CGroupDeployer extends FromFileDeployer implements ModelListener {
 
     SlaveRuntimeDeployer deployerStrategy;
+    private long initialTime;
+    private OutputStream logOutputStream;
 
-    @Start
+    private boolean distributed_deployment = true;
+
+    @org.kevoree.annotation.Start
     public void start() {
         getModelService().registerModelListener(this);
+
+        String s = getDictionary().containsKey("log_file_for_experiments")?
+                getDictionary().get("log_file_for_experiments").toString():"";
+
+        if (s.isEmpty()) {
+            if (logOutputStream == null)
+                logOutputStream = System.err;
+        }
+        else try {
+            logOutputStream = new FileOutputStream(s);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+
         final String scriptFile = getDictionary().containsKey("KevScriptToDeploy")?
                 getDictionary().get("KevScriptToDeploy").toString():"";
         if (scriptFile.isEmpty())
             return;
         boolean b = Boolean.parseBoolean(getDictionary().get("CRIU_Based_Deployment").toString());
+        distributed_deployment = Boolean.parseBoolean(getDictionary().get("distributed_deployment").toString());
         deployerStrategy = SlaveRuntimeDeployerFactory.get(b?
                 SlaveRuntimeDeployerFactory.CRIU:
                 SlaveRuntimeDeployerFactory.PROCESSBasedStrategy);
@@ -59,12 +80,12 @@ public class CGroupDeployer extends FromFileDeployer implements ModelListener {
         timer.schedule(new MyTimerTask(model), 100);
     }
 
-    @Stop
+    @org.kevoree.annotation.Stop
     public void stop() {
         getModelService().unregisterModelListener(this);
     }
 
-    @Update
+    @org.kevoree.annotation.Update
     public void update() {
         stop();
         start();
@@ -100,47 +121,62 @@ public class CGroupDeployer extends FromFileDeployer implements ModelListener {
 
         if (!isAcceptable(proposedModel)) {
             Log.info("Removing model as it is");
-            Map<String, String> nodesToCreate = new HashMap<String, String>();
+            final Map<String, String> nodesToCreate = new HashMap<String, String>();
             ContainerRoot another = calculateAcceptableArchitecture(proposedModel, nodesToCreate);
             String locura = calculateDiffScript(another, nodesToCreate);
 
             Log.info("Another Script:\n" + locura);
 
+            initialTime = System.nanoTime();
             try {
                 another = getKevScriptEngineFactory().
                         createKevScriptEngine(another).append(locura).interpret();
 
-                File file = File.createTempFile("kevModel",".kevs");
+                final File file = File.createTempFile("kevModel",".kevs");
                 file.deleteOnExit();
                 PrintWriter writer = new PrintWriter(file);
                 writer.write(export(another));
                 writer.close();
+
                 Log.info("FILE => " + file.getAbsolutePath());
 
-                for (String nodeName : nodesToCreate.values()) {
+                printModel("New model to deploy", another);
+
+                ThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(2);
+                executor.execute(new MyTimerTask(another));
+                executor.execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        long forkTime = System.nanoTime();
+
+                        for (String nodeName : nodesToCreate.values()) {
 //                    ContainerRoot anotherT0 = getKevScriptEngineFactory().
 //                            createKevScriptEngine(another).append("addToGroup sync " + nodeName).interpret();
-                    deployerStrategy.deploy(nodeName, file.getAbsolutePath());
-                }
+                            deployerStrategy.deploy(nodeName, file.getAbsolutePath());
+                        }
+                        forkTime = System.nanoTime() - forkTime;
+                        Log.info("Time for FORKING was {} milliseconds", forkTime/1000000);
+                    }
+                });
+
+
             } catch (IOException e) {
                 e.printStackTrace();
             } catch (KevScriptEngineException e) {
                 e.printStackTrace();
             }
-
-            printModel("New model to deploy", another);
-
-
-            Timer timer = new Timer();
-            timer.schedule(new MyTimerTask(another), 100);
+//            Timer timer = new Timer();
+//            timer.schedule(new MyTimerTask(another), 50);
 
             return false;
         }
         Log.info("Accepting model as it is");
+        if (initialTime == 0)
+            initialTime = System.nanoTime();
         return true;
     }
 
-    class MyTimerTask extends TimerTask {
+    private class MyTimerTask extends TimerTask {
         ContainerRoot model;
 
         MyTimerTask(ContainerRoot model) {
@@ -149,6 +185,14 @@ public class CGroupDeployer extends FromFileDeployer implements ModelListener {
 
         @Override
         public void run() {
+//            Channel ch = model.getHubs().get(0);
+//            org.kevoree.Dictionary dico = ch.getDictionary();
+//            if (dico != null) {
+//                for (DictionaryValue value : dico.getValues()) {
+//                    Log.info("La madre {} {}:{}", value.getAttribute().getName(),
+//                            value.getValue(), value.getTargetNode().getName());
+//                }
+//            }
             getModelService().updateModel(model);
         }
     }
@@ -215,6 +259,8 @@ public class CGroupDeployer extends FromFileDeployer implements ModelListener {
     }
 
     private boolean isAcceptable(ContainerRoot model) {
+        if (!distributed_deployment)
+            return true;
         /*
          * So far, a model is acceptable iff for each Node n, n.components.count == 1
          */
@@ -264,23 +310,23 @@ public class CGroupDeployer extends FromFileDeployer implements ModelListener {
         }
     }
 
-    private static String export(ContainerRoot model) {
+    private String export(ContainerRoot model) {
         final StringBuilder buffer = new StringBuilder();
-        for (Repository repo : model.getRepositories()) {
-            buffer.append("addRepo \"" + repo.getUrl() + "\"\n");
-        }
+        for (Repository repo : model.getRepositories())
+            if (isListedRepo(repo.getUrl()))
+                buffer.append("addRepo \"" + repo.getUrl() + "\"\n");
 
         for (DeployUnit deployUnit : model.getDeployUnits()) {
-            buffer.append("merge \"mvn:" +
-                    deployUnit.getGroupName() + "/" +
-                    deployUnit.getUnitName() + "/" +
-                    deployUnit.getVersion() + "\"\n");
+            String s = String.format("merge 'mvn:%s/%s/%s'\n",
+                    deployUnit.getGroupName(),deployUnit.getUnitName(), deployUnit.getVersion());
+            if (isListedPackage(s))
+                buffer.append(s);
         }
 
         for (ContainerNode node : model.getNodes()) {
             String nodeName = node.getName();
             buffer.append("addNode " + nodeName + " : " + node.getTypeDefinition().getName() + "{\n");
-            Dictionary dico = node.getDictionary();
+            org.kevoree.Dictionary dico = node.getDictionary();
             if (dico != null) {
                 for (DictionaryValue value : dico.getValues()) {
                     buffer.append(value.getAttribute().getName() + " = \"" + value.getValue() + "\"\n");
@@ -312,14 +358,17 @@ public class CGroupDeployer extends FromFileDeployer implements ModelListener {
         for (Channel channel : model.getHubs()) {
             buffer.append("addChannel " + channel.getName()
                     + " : " + channel.getTypeDefinition().getName() + "{\n");
-            Dictionary dico = channel.getDictionary();
+            org.kevoree.Dictionary dico = channel.getDictionary();
             if (dico != null) {
                 for (DictionaryValue value : dico.getValues()) {
-                    buffer.append(value.getAttribute().getName() + " = \"" + value.getValue() + "\"\n");
+                    if (!value.getAttribute().getFragmentDependant())
+                        buffer.append(value.getAttribute().getName() + " = \"" + value.getValue() + "\"\n");
                 }
             }
             buffer.append("}\n");
         }
+
+
 
         //process instance creation
 //            model.visit(new ModelVisitor() {
@@ -361,6 +410,21 @@ public class CGroupDeployer extends FromFileDeployer implements ModelListener {
             buffer.append("bind " + comp.getName() + "." + p.getPortTypeRef().getName() +
                     "@" + node.getName() + " => " + mb.getHub().getName() + "\n");
         }
+
+        // update per channel dictionaries
+        for (Channel channel : model.getHubs()) {
+            org.kevoree.Dictionary dico = channel.getDictionary();
+            if (dico != null) {
+                for (DictionaryValue value : dico.getValues()) {
+                    if (value.getAttribute().getFragmentDependant()) {
+                        buffer.append("updateDictionary " + channel.getName()+"{");
+                        buffer.append(value.getAttribute().getName() + " = '" + value.getValue() + "'");
+                        buffer.append("}@"+value.getTargetNode().getName() + "\n");
+                    }
+                }
+            }
+        }
+
         //process group subscription
         for (Group group : model.getGroups()) {
             buffer.append("addGroup " + group.getName() + ":" +
@@ -426,109 +490,51 @@ public class CGroupDeployer extends FromFileDeployer implements ModelListener {
 //            String nodeName = node.getName();
 //            buffer.append(addMonitoringComponents("", nodeName));
 //        }
+
+        // update per channel dictionaries
+        int port = 18000;
+        for (Channel channel : model.getHubs()) {
+            org.kevoree.Dictionary dico = channel.getDictionary();
+            if (dico != null) {
+                for (DictionaryValue value : dico.getValues()) {
+                    if (value.getAttribute().getFragmentDependant()) {
+                        buffer.append("updateDictionary " + channel.getName()+"{");
+                        if (value.getAttribute().getName().equalsIgnoreCase("port")) {
+                            // FIXME Ugly hack
+                            if (value.getTargetNode().getName().equals("node0")) {
+                                buffer.append("port = \""+10000+"\"");
+                            }
+                            else
+                                buffer.append("port = \""+port+"\"");
+                            port++;
+                        }
+                        else
+                            buffer.append(value.getAttribute().getName() + " = \"" + value.getValue() + "\"\n");
+
+                        buffer.append("}@"+value.getTargetNode().getName() + "\n");
+                    }
+                }
+            }
+        }
+
         return buffer.toString();
     }
-}
 
-interface SlaveRuntimeDeployer {
-    public boolean deploy(String nodeName, String fileName);
-}
+    long totalTime = 0;
+    int count = 0;
 
-class CRIUStrategy implements SlaveRuntimeDeployer {
+    @org.kevoree.annotation.Port(name = "startNotification")
+    public void onStartNotification(Object obj) {
+        String[] s = obj.toString().split(",");
+        long tmp = Long.parseLong(s[1]) - initialTime;
+        totalTime += tmp;
+        count++;
+        PrintWriter ps = new PrintWriter(logOutputStream);
+        Log.info("Node {} started in {} milliseconds. (Average = {}, Total = {})",
+                s[0], tmp/1000000, totalTime/1000000.0/count, totalTime/1000000);
 
-    @Override
-    public boolean deploy(String nodeName, String fileName) {
-        DatagramSocket socket = null;
-        try {
-            // restore virtual machine
-            ProcessBuilder builder = new ProcessBuilder("/home/inti/tests/executingInCRIU/restore.sh",
-                    nodeName);
-
-//            if (!Files.exists(Paths.get(nodeName))) {
-//                Files.createDirectory(Paths.get(nodeName));
-//            }
-            builder = builder.directory(new File("/home/inti/tests/executingInCRIU"));
-
-            Process process = builder.
-                    redirectOutput(ProcessBuilder.Redirect.INHERIT).
-                    redirectError(ProcessBuilder.Redirect.INHERIT).start();
-
-            socket = new DatagramSocket();
-            socket.setSoTimeout(100);
-            byte[] buf = String.format("%s\n%s", nodeName, fileName).getBytes();
-            DatagramPacket packet = new DatagramPacket(buf, buf.length,
-                    InetAddress.getByName("localhost"), 9876);
-            byte[] buf2 = new byte[10];
-            DatagramPacket packet2 = new DatagramPacket(buf2, buf2.length);
-            while (true) {
-                socket.send(packet);
-                try {
-                    socket.receive(packet2);
-                    Log.info("Slave {} wake up", nodeName);
-                    break; // hehe: ugly but I saved one line of code
-                }
-                catch (SocketTimeoutException exception) { }
-            }
-            socket.close();
-        }
-        catch (IOException e) {
-            e.printStackTrace();
-        }
-        return false;
-    }
-}
-
-class PROCESSBasedStrategy implements SlaveRuntimeDeployer {
-
-    @Override
-    public boolean deploy(String nodeName, String fileName) {
-        try {
-            String jarPath = Log.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath();
-            String path = jarPath.substring(0,jarPath.lastIndexOf("/") + 1);
-            ProcessBuilder builder = new ProcessBuilder("java",
-                    "-Dproject.version=" + System.getProperty("project.version"),
-                    "-Dkevoree.corelibrary.version=" + System.getProperty("kevoree.corelibrary.version"),
-                    "-Dinterproccess.lock.library="+System.getProperty("interproccess.lock.library"),
-                    "-Dthread.control.library="+System.getProperty("thread.control.library"),
-                    "-Dnode.bootstrap="+fileName,
-                    "-Xbootclasspath/p:"+ path +"ext-rt.jar:"
-                            + path + "shared-res-1.0-SNAPSHOT.jar",
-                    "-javaagent:" + path + "ext-agent1.0-SNAPSHOT.jar",
-                    String.format("-Dnode.name=%s", nodeName),
-                    "-jar",
-                    jarPath);
-
-            if (!Files.exists(Paths.get(nodeName))) {
-                Files.createDirectory(Paths.get(nodeName));
-            }
-            builder = builder.directory(new File(nodeName));
-            Process process = builder.
-                    redirectOutput(ProcessBuilder.Redirect.INHERIT).
-                    redirectError(ProcessBuilder.Redirect.INHERIT).start();
-
-            return true;
-        } catch (URISyntaxException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return false;
-    }
-}
-
-class SlaveRuntimeDeployerFactory {
-
-    public static final String CRIU = "CRIU";
-    public static final String PROCESSBasedStrategy = "Process";
-
-    private SlaveRuntimeDeployerFactory() {}
-
-    public static SlaveRuntimeDeployer get(String name) {
-        if (name.equals(CRIU))
-            return new CRIUStrategy();
-        else if (name.equals(PROCESSBasedStrategy)) {
-            return new PROCESSBasedStrategy();
-        }
-        else throw new RuntimeException();
+        ps.printf("Node %s started in %d milliseconds. (Average = %f, Total = %d)\n",
+                s[0], tmp / 1000000, totalTime / 1000000.0 / count, totalTime / 1000000);
+        ps.flush();
     }
 }

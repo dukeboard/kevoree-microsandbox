@@ -7,11 +7,27 @@ import org.kevoree.framework.AbstractComponentType;
 import org.kevoree.log.Log;
 
 import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by inti on 3/3/14.
  */
 public class FromFileDeployer extends AbstractComponentType {
+
+    protected List<String> packages = new ArrayList<String>();
+    protected List<String> repositories = new ArrayList<String>();
+
+    protected boolean isListedPackage(String s) {
+        for (String ss : packages)
+            if (s.contains(ss))
+                return true;
+        return false;
+    }
+
+    protected boolean isListedRepo (String s) {
+        return repositories.contains(s);
+    }
 
     protected ContainerRoot getContainerRoot(String scriptFile) {
         String s = "";
@@ -25,6 +41,20 @@ public class FromFileDeployer extends AbstractComponentType {
             );
             String tmp = br.readLine();
             while (tmp != null) {
+                if (tmp.startsWith("merge ")) {
+                    String ss = tmp.replace("merge ","");
+                    ss = ss.replaceAll("'","");
+                    ss = ss.replace("mvn:", "");
+                    ss = ss.substring(0, ss.lastIndexOf("/"));
+//                    Log.info(" MIERDA {}", ss);
+                    packages.add(ss);
+                }
+                else if (tmp.startsWith("addRepo ")) {
+                    String ss = tmp.replace("addRepo ","");
+                    ss = ss.replaceAll("\"","");
+//                    Log.info(" MIERDA {}", ss);
+                    repositories.add(ss);
+                }
                 s += tmp + "\n";
                 tmp = br.readLine();
             }
