@@ -38,11 +38,13 @@ class CRIUStrategy implements SlaveRuntimeDeployer {
             ll = System.nanoTime() - ll;
             System.out.println("Time " + ll/1000000);
 
+            int port = Integer.parseInt(nodeName.replace("virtualNode","")) + 9875;
+
             socket = new DatagramSocket();
 //            socket.setSoTimeout(100);
             byte[] buf = String.format("%s\n%s", nodeName, fileName).getBytes();
             DatagramPacket packet = new DatagramPacket(buf, buf.length,
-                    InetAddress.getByName("localhost"), 9876);
+                    InetAddress.getByName("localhost"), port);
             byte[] buf2 = new byte[10];
             DatagramPacket packet2 = new DatagramPacket(buf2, buf2.length);
 //            while (true) {

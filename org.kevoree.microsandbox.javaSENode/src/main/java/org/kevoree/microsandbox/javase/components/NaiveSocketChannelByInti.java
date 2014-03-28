@@ -37,10 +37,12 @@ public class NaiveSocketChannelByInti extends AbstractChannelFragment {
     @Start
     public void startp() {
         try {
-            portServer = parsePortNumber(getNodeName());
-            server = new TCPServer(portServer, this);
-            t_server = new Thread(server);
-            t_server.start();
+            if (getNodeName().equals("node0")) {
+                portServer = parsePortNumber(getNodeName());
+                server = new TCPServer(portServer, this);
+                t_server = new Thread(server);
+                t_server.start();
+            }
 
         } catch (Exception e) {
             logger.error("Starting ", e);
@@ -185,7 +187,7 @@ class TCPServer implements Runnable {
                 ObjectInputStream objectInputStream = new ObjectInputStream(inputStream);
                 Message m = (Message)objectInputStream.readObject();
 
-                clientSentence = m.get_content().toString();
+//                clientSentence = m.get_content().toString();
 //                logger.info("Received : " + clientSentence);
 //                System.err.printf("Received %s\n", clientSentence);
 //

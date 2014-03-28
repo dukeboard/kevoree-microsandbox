@@ -1,10 +1,7 @@
 package org.kevoree.microsandbox.cgroupNode.components;
 
 import org.kevoree.ContainerRoot;
-import org.kevoree.annotation.ComponentType;
-import org.kevoree.annotation.Start;
-import org.kevoree.annotation.Stop;
-import org.kevoree.annotation.Update;
+import org.kevoree.annotation.*;
 import org.kevoree.api.service.core.script.KevScriptEngine;
 import org.kevoree.api.service.core.script.KevScriptEngineException;
 import org.kevoree.core.impl.KevoreeCoreBean;
@@ -23,8 +20,13 @@ import java.util.Timer;
 /**
  * Created by inti on 2/20/14.
  */
+@DictionaryType(
+        @DictionaryAttribute(name="udp_port", optional = false)
+)
 @ComponentType
 public class NodeNameRestarter extends FromFileDeployer {
+
+    private int port;
 
     private class Mythread extends Thread {
         @Override
@@ -32,9 +34,9 @@ public class NodeNameRestarter extends FromFileDeployer {
             Log.info("Starting restarter component");
             DatagramSocket serverSocket = null;
             try {
-                serverSocket = new DatagramSocket(9876);
                 byte[] receiveData = new byte[1024];
                 DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
+                serverSocket = new DatagramSocket(port/*9876*/);
                 serverSocket.receive(receivePacket);
                 String sentence = new String(
                         receivePacket.getData(), receivePacket.getOffset(), receivePacket.getLength());
@@ -50,6 +52,8 @@ public class NodeNameRestarter extends FromFileDeployer {
                         receivePacket.getPort()));
 
                 serverSocket.close();
+
+                Log.info("BEFORE UPDATE MODEL NANOTIME {}", System.nanoTime());
 
                 getModelService().updateModel(getContainerRoot(lines[1]));
 
@@ -81,6 +85,12 @@ public class NodeNameRestarter extends FromFileDeployer {
 
     @Start
     public void start() {
+
+        if (getDictionary().containsKey("udp_port")) {
+            port = Integer.parseInt(getDictionary().get("udp_port").toString()) + 9875;
+        }
+        else throw new RuntimeException();
+
         new Mythread().start();
     }
 

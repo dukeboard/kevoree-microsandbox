@@ -47,6 +47,8 @@ public class CGroupDeployer extends FromFileDeployer implements ModelListener {
     private OutputStream logOutputStream;
 
     private boolean distributed_deployment = true;
+    private long totalForkTime;
+    private int countForks;
 
     @org.kevoree.annotation.Start
     public void start() {
@@ -113,21 +115,23 @@ public class CGroupDeployer extends FromFileDeployer implements ModelListener {
     @Override
     public boolean preUpdate(ContainerRoot currentModel, ContainerRoot proposedModel) {
 
+        Log.info("TRYING TO UPDATE {}", System.nanoTime());
         // print current model
         printModel("Current Model", currentModel);
         // print proposed model
         printModel("Proposed Model", proposedModel);
 
+        Log.info("TRYING TO UPDATE (AFTER PRINTING) {}", System.nanoTime());
+
 
         if (!isAcceptable(proposedModel)) {
-            Log.info("Removing model as it is");
-            final Map<String, String> nodesToCreate = new HashMap<String, String>();
+            Log.info("Removing model");
+            Map<String, String> nodesToCreate = new HashMap<String, String>();
             ContainerRoot another = calculateAcceptableArchitecture(proposedModel, nodesToCreate);
             String locura = calculateDiffScript(another, nodesToCreate);
 
             Log.info("Another Script:\n" + locura);
 
-            initialTime = System.nanoTime();
             try {
                 another = getKevScriptEngineFactory().
                         createKevScriptEngine(another).append(locura).interpret();
@@ -141,23 +145,33 @@ public class CGroupDeployer extends FromFileDeployer implements ModelListener {
                 Log.info("FILE => " + file.getAbsolutePath());
 
                 printModel("New model to deploy", another);
+                initialTime = System.nanoTime();
+                Log.info("INITIAL NANOTIME (REMEMBER TO REMOVE THIS) {}", initialTime);
 
-                ThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(2);
+                totalForkTime = 0;
+                countForks = 0;
+
+                ThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(
+                        Runtime.getRuntime().availableProcessors()/2);
                 executor.execute(new MyTimerTask(another));
-                executor.execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        long forkTime = System.nanoTime();
-
-                        for (String nodeName : nodesToCreate.values()) {
+                for (final String nodeName : nodesToCreate.values()) {
+                    executor.execute(new Runnable() {
+                        @Override
+                        public void run() {
+                            long forkTime = System.nanoTime();
 //                    ContainerRoot anotherT0 = getKevScriptEngineFactory().
 //                            createKevScriptEngine(another).append("addToGroup sync " + nodeName).interpret();
                             deployerStrategy.deploy(nodeName, file.getAbsolutePath());
+
+                            forkTime = System.nanoTime() - forkTime;
+                            totalForkTime += forkTime;
+                            countForks++;
+
+                            Log.info("Time for FORKING was {} milliseconds (Average = {})",
+                                    forkTime / 1000000, totalForkTime/countForks/1000000.0);
                         }
-                        forkTime = System.nanoTime() - forkTime;
-                        Log.info("Time for FORKING was {} milliseconds", forkTime/1000000);
-                    }
-                });
+                    });
+                }
 
 
             } catch (IOException e) {

@@ -2,11 +2,16 @@
 addRepo "http://maven.kevoree.org/daum/snapshots"
 
 merge 'mvn:org.kevoree.microsandbox/org.kevoree.microsandbox.cgroupNode/1.0-SNAPSHOT'
+merge 'mvn:org.kevoree.microsandbox/org.kevoree.microsandbox.javasenode/{project.version}'
+merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.jexxus/{kevoree.corelibrary.version}'
+merge 'mvn:org.kevoree.microsandbox/org.kevoree.microsandbox.samples/{project.version}'
 //merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.defaultChannels/{kevoree.corelibrary.version}'
 
 addNode {node.name}:CGroupsNode
 
 //addChannel ch0:defMSG
 
-addComponent NodeNameRestarter@{node.name} : NodeNameRestarter
+addComponent NodeNameRestarter@{node.name} : NodeNameRestarter {
+    udp_port='{wakeup.port}'
+}
 }
