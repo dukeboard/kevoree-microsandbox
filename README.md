@@ -12,4 +12,4 @@ kevoree-microsandbox
 	
 ##[Documentation](https://docs.google.com/document/d/1XofC_g57ZS8WYwFgBW2RBI8EZvxW_kmaPU8AsCftwkw/edit?usp=sharing)
 ##[Overall Architecture]()
-![alt tag](https://github.com/dukeboard/kevoree-microsandbox/blob/master/documentation/overall-architecture.png)
+![alt tag](https://raw.githubusercontent.com/dukeboard/kevoree-microsandbox/master/documentation/overall-architecture.png)
