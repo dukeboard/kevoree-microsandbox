@@ -13,9 +13,10 @@ kevoree-microsandbox
 ##[Documentation](https://docs.google.com/document/d/1XofC_g57ZS8WYwFgBW2RBI8EZvxW_kmaPU8AsCftwkw/edit?usp=sharing)
 
 There are three sources of documentation:
-1. The link in this section. It includes some discussion.
-2. The accepted publication, "Scapegoat: and adaptive monitoring framework for component-based systems", WICSA 2014, Sydney, Australia
-3. The presentation (It will be under the folder document after the Conference)
+
+ 1. The link in this section. It includes some discussion.
+ 2. The accepted publication, "Scapegoat: and adaptive monitoring framework for component-based systems", WICSA 2014, Sydney, Australia
+ 3. The presentation (It will be under the folder document after the Conference)
 
 ###[Approach description]()
 ![alt tag](https://raw.githubusercontent.com/dukeboard/kevoree-microsandbox/master/documentation/main-loop.png)
