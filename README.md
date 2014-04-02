@@ -11,4 +11,5 @@ kevoree-microsandbox
 	JarInstrumenter - Allows the offline instrumentation of any jar file. Used to instrument Java RT
 	
 ##[Documentation](https://docs.google.com/document/d/1XofC_g57ZS8WYwFgBW2RBI8EZvxW_kmaPU8AsCftwkw/edit?usp=sharing)
-
+##[Overall Architecture]
+![alt tag](http://url/to/img.png)
