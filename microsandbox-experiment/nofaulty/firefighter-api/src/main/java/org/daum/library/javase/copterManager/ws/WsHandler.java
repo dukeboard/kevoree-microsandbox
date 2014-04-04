@@ -1,7 +1,5 @@
 package org.daum.library.javase.copterManager.ws;
 
-import org.webbitserver.BaseWebSocketHandler;
-
 /**
  * Created with IntelliJ IDEA.
  * User: jed
@@ -10,6 +8,6 @@ import org.webbitserver.BaseWebSocketHandler;
  * To change this template use File | Settings | File Templates.
  */
 public interface WsHandler {
-    public void addHandler(String name, BaseWebSocketHandler webSocketChannel);
+    public void addHandler(AddHandlerRequest request);
     public void removeHandler(String name);
 }

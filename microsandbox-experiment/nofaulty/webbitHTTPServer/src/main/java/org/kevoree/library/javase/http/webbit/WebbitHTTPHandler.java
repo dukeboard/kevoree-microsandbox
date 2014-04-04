@@ -1,9 +1,9 @@
 package org.kevoree.library.javase.http.webbit;
 
-import org.kevoree.library.javase.http.api.HTTPOperationTuple;
-import org.kevoree.library.javase.http.api.KevoreeHTTPServletRequest;
-import org.kevoree.library.javase.http.api.KevoreeHTTPServletResponse;
-import org.kevoree.library.javase.http.api.Monitor;
+import org.kevoree.library.javase.http.api.commons.HTTPOperationTuple;
+import org.kevoree.library.javase.http.api.commons.Monitor;
+import org.kevoree.library.javase.http.api.page.KevoreeHTTPServletRequest;
+import org.kevoree.library.javase.http.api.page.KevoreeHTTPServletResponse;
 import org.kevoree.log.Log;
 import org.webbitserver.HttpControl;
 import org.webbitserver.HttpHandler;
@@ -24,7 +24,7 @@ public class WebbitHTTPHandler implements HttpHandler {
 
     public WebbitHTTPHandler(WebbitHTTPServer server) {
         this.server = server;
-        monitor = new Monitor(Long.parseLong(server.getDictionary().get("timeout").toString()), server);
+        monitor = new Monitor(server.getTimeout(), server);
     }
 
     @Override

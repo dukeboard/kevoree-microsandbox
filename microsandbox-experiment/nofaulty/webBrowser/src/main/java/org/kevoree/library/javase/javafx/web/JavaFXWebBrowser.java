@@ -18,12 +18,11 @@ import javafx.scene.web.WebView;
 import javafx.stage.Stage;
 import org.kevoree.ContainerRoot;
 import org.kevoree.annotation.*;
-import org.kevoree.framework.AbstractComponentType;
-import org.kevoree.framework.service.handler.ModelListenerAdapter;
+import org.kevoree.api.Context;
+import org.kevoree.api.ModelService;
+import org.kevoree.api.handler.ModelListenerAdapter;
 import org.kevoree.library.javase.javafx.layout.SingleWindowLayout;
-import org.kevoree.microsandbox.api.contract.CPUContracted;
-import org.kevoree.microsandbox.api.contract.MemoryContracted;
-import org.kevoree.microsandbox.api.contract.ThroughputContracted;
+import org.kevoree.microsandbox.api.contract.impl.CPUMemoryThroughputContractedImpl;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,24 +36,27 @@ import java.util.List;
  * @version 1.0
  */
 @Library(name = "javafx")
-@DictionaryType({
-        @DictionaryAttribute(name = "singleFrame", defaultValue = "true", optional = true),
-        @DictionaryAttribute(name = "url", defaultValue = "http://localhost:9500/", optional = true),
-        @DictionaryAttribute(name = "uselessParameter", optional = true)
-})
-@Provides({
-        @ProvidedPort(name = "handle", type = PortType.MESSAGE)
-})
 @ComponentType
-public class JavaFXWebBrowser extends AbstractComponentType implements MemoryContracted, CPUContracted, ThroughputContracted {
+public class JavaFXWebBrowser extends CPUMemoryThroughputContractedImpl {
+
+
+    @Param(optional = true, defaultValue = "true")
+    boolean singleFrame;
+    @Param(optional = true, defaultValue = "http://localhost:9500/")
+    String url;
+    @Param(optional = true)
+    String uselessParameter;
+
+    @KevoreeInject
+    Context context;
+    @KevoreeInject
+    ModelService modelService;
 
     private Stage localWindow;
     private Tab tab;
     //    private BorderPane root;
     private WebView webView;
     private WebEngine webEngine;
-
-    private String url;
 
     private boolean initialized;
     private final List<String> messagesToHandle = new ArrayList<String>();
@@ -65,8 +67,7 @@ public class JavaFXWebBrowser extends AbstractComponentType implements MemoryCon
         synchronized (messagesToHandle) {
             initialized = false;
         }
-        url = getDictionary().get("url").toString();
-        getModelService().registerModelListener(new ModelListenerAdapter() {
+        modelService.registerModelListener(new ModelListenerAdapter() {
             @Override
             public void modelUpdated() {
                 SingleWindowLayout.initJavaFX();
@@ -75,14 +76,14 @@ public class JavaFXWebBrowser extends AbstractComponentType implements MemoryCon
                     public void run() {
                         // This method is invoked on JavaFX thread
                         Scene scene = createScene();
-                        if (Boolean.valueOf((String) getDictionary().get("singleFrame"))) {
+                        if (singleFrame) {
                             tab = new Tab();
-                            tab.setText(getName());
+                            tab.setText(context.getInstanceName());
                             tab.setContent(scene.getRoot());
                             SingleWindowLayout.getInstance().addTab(tab);
                         } else {
                             localWindow = new Stage();
-                            localWindow.setTitle(getName() + "@@@" + getNodeName());
+                            localWindow.setTitle(context.getInstanceName() + "@@@" + context.getNodeName());
                             localWindow.setScene(scene);
 
                             localWindow.show();
@@ -91,7 +92,7 @@ public class JavaFXWebBrowser extends AbstractComponentType implements MemoryCon
                         webEngine.load(url);
                     }
                 });
-                getModelService().unregisterModelListener(this);
+                modelService.unregisterModelListener(this);
             }
 
             @Override
@@ -110,7 +111,7 @@ public class JavaFXWebBrowser extends AbstractComponentType implements MemoryCon
             @Override
             public void run() {
                 // TODO unload javafx stuff
-                if (Boolean.valueOf((String) getDictionary().get("singleFrame"))) {
+                if (singleFrame) {
                     SingleWindowLayout.getInstance().removeTab(tab);
                 } else {
                     localWindow.hide();
@@ -130,7 +131,7 @@ public class JavaFXWebBrowser extends AbstractComponentType implements MemoryCon
 
     }
 
-    @Port(name = "handle")
+    @Input
     public void handle(final Object msg) {
         if (msg instanceof String) {
             Platform.runLater(new Runnable() {

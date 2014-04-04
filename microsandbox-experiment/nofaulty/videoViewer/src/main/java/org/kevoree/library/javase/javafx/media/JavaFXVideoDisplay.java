@@ -9,12 +9,10 @@ import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.stage.Stage;
 import org.kevoree.annotation.*;
-import org.kevoree.framework.AbstractComponentType;
+import org.kevoree.api.Context;
 import org.kevoree.library.javase.javafx.layout.SingleWindowLayout;
 import org.kevoree.log.Log;
-import org.kevoree.microsandbox.api.contract.CPUContracted;
-import org.kevoree.microsandbox.api.contract.MemoryContracted;
-import org.kevoree.microsandbox.api.contract.ThroughputContracted;
+import org.kevoree.microsandbox.api.contract.impl.CPUMemoryThroughputContractedImpl;
 
 /**
  * User: Erwan Daubert - erwan.daubert@gmail.com
@@ -25,16 +23,16 @@ import org.kevoree.microsandbox.api.contract.ThroughputContracted;
  * @version 1.0
  */
 @Library(name = "javafx")
-@DictionaryType({
-        @DictionaryAttribute(name = "singleFrame", defaultValue = "true", optional = true),
-        @DictionaryAttribute(name = "uselessParameter", optional = true)
-//        @DictionaryAttribute(name = "url", defaultValue = "http://localhost:9500/", optional = true)
-})
-@Provides({
-        @ProvidedPort(name = "media", type = PortType.MESSAGE)
-})
 @ComponentType
-public class JavaFXVideoDisplay extends AbstractComponentType implements MemoryContracted, CPUContracted, ThroughputContracted {
+public class JavaFXVideoDisplay extends CPUMemoryThroughputContractedImpl {
+
+    @Param(optional = true, defaultValue = "true")
+    boolean singleFrame;
+    @Param(optional = true)
+    String uselessParameter;
+
+    @KevoreeInject
+    Context context;
 
     private Stage localWindow;
     private Tab tab;
@@ -57,9 +55,9 @@ public class JavaFXVideoDisplay extends AbstractComponentType implements MemoryC
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
-                if (Boolean.valueOf((String) getDictionary().get("singleFrame"))) {
+                if (singleFrame) {
                     tab = new Tab();
-                    tab.setText(getName());
+                    tab.setText(context.getInstanceName());
                     tab.selectedProperty().addListener(new ChangeListener<Boolean>() {
                         @Override
                         public void changed(ObservableValue<? extends Boolean> observableValue, Boolean aBoolean, Boolean aBoolean2) {
@@ -83,7 +81,7 @@ public class JavaFXVideoDisplay extends AbstractComponentType implements MemoryC
                     });
                 } else {
                     localWindow = new Stage();
-                    localWindow.setTitle(getName() + "@@@" + getNodeName());
+                    localWindow.setTitle(context.getInstanceName() + "@@@" + context.getNodeName());
 
                     localWindow.show();
 //                    TODO localFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
@@ -127,7 +125,7 @@ public class JavaFXVideoDisplay extends AbstractComponentType implements MemoryC
             @Override
             public void run() {
                 // TODO unload javafx stuff
-                if (Boolean.valueOf((String) getDictionary().get("singleFrame"))) {
+                if (singleFrame) {
                     SingleWindowLayout.getInstance().removeTab(tab);
                 } else {
                     localWindow.hide();
@@ -147,7 +145,7 @@ public class JavaFXVideoDisplay extends AbstractComponentType implements MemoryC
 
     }
 
-    @Port(name = "media")
+    @Input
     public void media(final Object o) {
         Log.warn("media url receive: {}", o.toString());
         if (o instanceof String) {
@@ -175,7 +173,7 @@ public class JavaFXVideoDisplay extends AbstractComponentType implements MemoryC
         mediaControl = new MediaControl(mediaPlayer);
         scene = new Scene(mediaControl);
 
-        if (Boolean.valueOf((String) getDictionary().get("singleFrame"))) {
+        if (singleFrame) {
             tab.setContent(mediaControl);
         } else {
             localWindow.setScene(scene);

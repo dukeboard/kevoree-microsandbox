@@ -5,28 +5,23 @@ import org.daum.common.followermodel.Event;
 import org.daum.common.followermodel.Follower;
 import org.kevoree.annotation.*;
 import org.kevoree.extra.marshalling.RichJSONObject;
-import org.kevoree.framework.AbstractComponentType;
-import org.kevoree.framework.MessagePort;
 
 /**
  * Created with IntelliJ IDEA.
  * User: jed
  * Date: 14/02/13
  * Time: 13:56
- * To change this template use File | Settings | File Templates.
  */
-@Library(name = "JavaSE")
-@Requires({
-        @RequiredPort(name = "location", type = PortType.MESSAGE,optional = true)
-})
-@org.kevoree.annotation.DictionaryType
-        ({
-                @org.kevoree.annotation.DictionaryAttribute(name = "id", defaultValue = "jed",optional = true),
-                @org.kevoree.annotation.DictionaryAttribute(name = "distance", defaultValue = "5",optional = true)
-        })
 @ComponentType
-public class FakeFollower extends AbstractComponentType implements  Runnable {
+public class FakeFollower implements  Runnable {
 
+    @Param(optional = true, defaultValue = "jed")
+    String id;
+    @Param(optional = true, defaultValue = "5")
+    int distance;
+
+    @Output
+    org.kevoree.api.Port location;
 
     private Follower firefighter = new Follower();
     private Thread cthread = null;
@@ -39,7 +34,7 @@ public class FakeFollower extends AbstractComponentType implements  Runnable {
         double lon =         -1.664286+ (Math.random() * 0.1);
         firefighter.lat=(int)(lat* 1E6);
         firefighter.lon =  (int)(lon* 1E6);
-        firefighter.id = getDictionary().get("id").toString();
+        firefighter.id = id;
         firefighter.accuracy = 3;
         firefighter.altitude= 10;
         firefighter.safety_distance = 5;
@@ -119,7 +114,9 @@ public class FakeFollower extends AbstractComponentType implements  Runnable {
         }
         firefighter.event = Event.DELETE;
         RichJSONObject t = new RichJSONObject(firefighter);
-        getPortByName("location", MessagePort.class).process(t.toJSON());
+        if (location.getConnectedBindingsSize() > 0) {
+            location.send(t.toJSON());
+        }
 
     }
 
@@ -130,14 +127,15 @@ public class FakeFollower extends AbstractComponentType implements  Runnable {
 
             try
             {
-                randomPoint(Integer.parseInt(getDictionary().get("distance").toString()));
+                randomPoint(distance);
                 firefighter.accuracy  = Random(0,3);
                 firefighter.event = Event.UPDATE;
                 firefighter.temperature  = Random(30,26);
                 firefighter.heartmonitor  = Random(60,120);
                 RichJSONObject t = new RichJSONObject(firefighter);
-                getPortByName("location", MessagePort.class).process(t.toJSON());
-
+                if (location.getConnectedBindingsSize() > 0) {
+                    location.send(t.toJSON());
+                }
                 Thread.sleep(2000);
             } catch (InterruptedException e) {
                 if(alive){
