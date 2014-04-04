@@ -181,7 +181,7 @@
 
     <modules>
         <module>org.kevoree.microsandbox.api</module>
-        <!--<module>org.kevoree.microsandbox.sharedResourceAccounting</module>
+        <module>org.kevoree.microsandbox.sharedResourceAccounting</module>
         <module>org.kevoree.microsandbox.core</module>
         <module>org.kevoree.microsandbox.resourceMonitorJavaAgent</module>
         <module>org.kevoree.microsandbox.javaSENode</module>
@@ -195,9 +195,9 @@
         <module>org.ipc.memory</module>
         <module>org.kevoree.microsandbox.SharedMemoryChannel</module>
         <module>org.kevoree.microsandbox.cgroupNode</module>
-        <module>org.kevoree.microsandbox.monitoredNode</module>-->
+        <module>org.kevoree.microsandbox.monitoredNode</module>
 
-        <module>microsandbox-experiment</module>
+        <!--<module>microsandbox-experiment</module>-->
     </modules>
 
 </project>
