@@ -1,7 +1,13 @@
 package org.kevoree.microsandbox.cgroupNode;
 
-import org.kevoree.kcl.KevoreeJarClassLoader;
-import org.kevoree.tools.aether.framework.KCLFactory;
+import org.kevoree.DeployUnit;
+import org.kevoree.bootstrap.kernel.KevoreeCLFactory;
+import org.kevoree.kcl.api.FlexyClassLoader;
+import org.kevoree.log.Log;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 
 /**
  * Created with IntelliJ IDEA.
@@ -10,7 +16,7 @@ import org.kevoree.tools.aether.framework.KCLFactory;
  * Time: 2:17 PM
  *
  */
-public class SharedKCLFactory implements KCLFactory {
+public class SharedKCLFactory implements KevoreeCLFactory {
     private final boolean useShared;
     private final String nodeName;
 
@@ -20,9 +26,17 @@ public class SharedKCLFactory implements KCLFactory {
     }
 
     @Override
-    public KevoreeJarClassLoader createClassLoader() {
+    public FlexyClassLoader createClassLoader(DeployUnit deployUnit, File file) {
 //        InterprocessLock lll = new InterprocessLock("llllllllll".getBytes(), false);
 //        System.err.println("New classloader created");
-        return new SharedClassLoader(nodeName, useShared);
+        FlexyClassLoader classLoader = new SharedClassLoader(nodeName, useShared);
+        classLoader.setKey(deployUnit.path());
+        try {
+            classLoader.load(new FileInputStream(file));
+        } catch (FileNotFoundException e) {
+            Log.error("Error while opening JAR {} : ", file.getAbsolutePath());
+        } finally {
+            return classLoader;
+        }
     }
 }

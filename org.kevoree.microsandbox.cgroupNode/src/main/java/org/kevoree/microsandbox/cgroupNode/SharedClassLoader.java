@@ -5,7 +5,7 @@ import org.ipc.memory.GlobalResource;
 import org.ipc.memory.InterprocessLock;
 import org.ipc.memory.MemoryBasedQueueConsumer;
 import org.ipc.memory.MemoryBasedQueueProducer;
-import org.kevoree.kcl.KevoreeJarClassLoader;
+import org.kevoree.kcl.impl.FlexyClassLoaderImpl;
 
 import java.io.*;
 import java.nio.ByteBuffer;
@@ -26,7 +26,7 @@ import java.util.concurrent.locks.ReentrantLock;
  * Time: 6:37 PM
  *
  */
-public class SharedClassLoader extends KevoreeJarClassLoader {
+public class SharedClassLoader extends FlexyClassLoaderImpl {
 
     private final String nodeName;
     MemoryBasedQueueProducer prod;
@@ -159,38 +159,40 @@ public class SharedClassLoader extends KevoreeJarClassLoader {
 
     int counter = 0;
 
+    // FIXME Why did you need to override it ?
     @Override
-    protected Class<? extends Object> loadClass(
+    public Class<? extends Object> loadClass(
             @JetValueParameter(name = "className", type = "?Ljava/lang/String;") String className,
-            @JetValueParameter(name = "resolveIt", type = "Z") boolean resolveIt) {
+            @JetValueParameter(name = "resolveIt", type = "Z") boolean resolveIt) throws ClassNotFoundException {
 
         long before = System.nanoTime();
-
         Class<? extends Object> r = findLoadedClass(className);
-        if (r == null) {
-            if (!useShared)
-                r = super.loadClass(className, resolveIt);
-            else {
-                Pair pair = classNameToPosInBuffer.get(className);;
-                if (pair == null) {
+        try {
+            if (r == null) {
+                if (!useShared)
+                    r = super.loadClass(className, resolveIt);
+                else {
+                    Pair pair = classNameToPosInBuffer.get(className);
+                    ;
+                    if (pair == null) {
 //            System.out.printf("NOOOOOOOOOO, the class %s has been loaded in local classloader\n",
 //                   className);
-                    r = super.loadClass(className, resolveIt);
-                }
-                else {
+                        r = super.loadClass(className, resolveIt);
+                    } else {
 //                    System.out.printf("GOOOOOOOOOOD, the class %s has" +
 //                            " been loaded from a remote classloader\n", className);
-                    r = defineClass(className, getBuffer(pair.pos, pair.len), null);
+                        r = defineClass(className, getBuffer(pair.pos, pair.len), null);
+                    }
                 }
             }
-        }
-
-        long after = System.nanoTime();
-        long p = totalTime.get();
-        totalTime.addAndGet(after - before);
-        long c = totalTime.get();
+        } finally {
+            long after = System.nanoTime();
+            long p = totalTime.get();
+            totalTime.addAndGet(after - before);
+            long c = totalTime.get();
 //        if (c/1000000 != p/1000000)
 //            System.out.println("Loading Time " + c/1000000 + " in " + nodeName + ":" + id);
+        }
         return r;
 
     }
@@ -219,7 +221,6 @@ public class SharedClassLoader extends KevoreeJarClassLoader {
 //            }
 //            finally {
 //            }
-        } else {
         }
         return r;
     }

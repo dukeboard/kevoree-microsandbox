@@ -5,7 +5,7 @@
     <parent>
         <artifactId>org.kevoree.microsandbox.root</artifactId>
         <groupId>org.kevoree.microsandbox</groupId>
-        <version>1.0-SNAPSHOT</version>
+        <version>1.2.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -15,7 +15,7 @@
         <dependency>
             <groupId>org.kevoree</groupId>
             <artifactId>org.kevoree.core</artifactId>
-            <version>2.0.0-SNAPSHOT</version>
+            <version>${kevoree.version}</version>
         </dependency>
         <dependency>
             <groupId>org.kevoree.microsandbox</groupId>
@@ -38,29 +38,9 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.kevoree.tools</groupId>
-            <artifactId>org.kevoree.tools.annotation.api</artifactId>
-            <version>${kevoree.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.kevoree.tools</groupId>
-            <artifactId>org.kevoree.tools.annotation.api</artifactId>
-            <version>${kevoree.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.kevoree.tools</groupId>
-            <artifactId>org.kevoree.tools.javase.framework</artifactId>
-            <version>${kevoree.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.kevoree.tools</groupId>
-            <artifactId>org.kevoree.tools.aether.framework</artifactId>
-            <version>${kevoree.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.kevoree.corelibrary.javase</groupId>
-            <artifactId>org.kevoree.library.javase.javaseNode</artifactId>
-            <version>${kevoree.corelibrary.version}</version>
+            <groupId>org.kevoree.library.java</groupId>
+            <artifactId>org.kevoree.library.java.javaNode</artifactId>
+            <version>${kevoree.library.version}</version>
         </dependency>
         <dependency>
             <groupId>org.kevoree</groupId>
@@ -69,7 +49,7 @@
         </dependency>
         <dependency>
             <groupId>org.kevoree</groupId>
-            <artifactId>org.kevoree.framework</artifactId>
+            <artifactId>org.kevoree.api</artifactId>
             <version>${kevoree.version}</version>
         </dependency>
         <dependency>
@@ -100,25 +80,16 @@
             </plugin>
             <plugin>
                 <groupId>org.kevoree.tools</groupId>
-                <artifactId>org.kevoree.tools.annotation.mavenplugin</artifactId>
+                <artifactId>org.kevoree.tools.mavenplugin</artifactId>
                 <version>${kevoree.version}</version>
                 <extensions>true</extensions>
-                <configuration>
-                    <nodeTypeNames>JavaSENode</nodeTypeNames>
-                </configuration>
                 <executions>
                     <execution>
                         <goals>
                             <goal>generate</goal>
-                            <goal>compile</goal>
                         </goals>
                     </execution>
                 </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.kevoree.platform</groupId>
-                <artifactId>org.kevoree.platform.mavenrunner</artifactId>
-                <version>${kevoree.version}</version>
             </plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>

@@ -9,17 +9,15 @@ import org.kevoree.microsandbox.monitoredNode.AbstractMonitoredNode;
  * User: inti
  * Date: 1/7/14
  * Time: 3:57 PM
- * To change this template use File | Settings | File Templates.
  */
-@DictionaryType({// FIXME How did you choose the default value ?
-        @DictionaryAttribute(name = "cgroup_fs_path", defaultValue = "")
-})
 @NodeType
 @Library(name = "JavaSE")
 public class CGroupsNode extends AbstractMonitoredNode<SharedKCLFactory>
 {
 
-    private String cgroup_path = "/cgroup"; // Fedora style
+    @Param(defaultValue = "/cgroup")// Fedora style
+    String cgroup_fs_path;
+
     private NewThreadCreated threadCreated;
 
     @Start
@@ -27,15 +25,12 @@ public class CGroupsNode extends AbstractMonitoredNode<SharedKCLFactory>
     public void startNode() {
         super.startNode();
 
-        if (getDictionary().containsKey("cgroup_fs_path"))
-            cgroup_path = getDictionary().get("cgroup_fs_path").toString();
-
-        threadCreated = new NewThreadCreated("kev/", description, getNodeName());
+        threadCreated = new NewThreadCreated("kev/", description, context.getNodeName());
         OnNewThreadNotifier.getInstance().setHandler(threadCreated);
     }
 
     @Override
     protected SharedKCLFactory getClassLoaderFactory() {
-        return new SharedKCLFactory(getName(), false);
+        return new SharedKCLFactory(context.getInstanceName(), false);
     }
 }
