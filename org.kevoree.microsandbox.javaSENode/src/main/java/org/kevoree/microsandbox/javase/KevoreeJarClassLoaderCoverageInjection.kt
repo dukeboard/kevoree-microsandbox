@@ -2,16 +2,11 @@ package org.kevoree.microsandbox.javase
 
 
 
-import java.io.InputStream
-import java.lang.reflect.Field
 import java.util.Vector
-import java.io.IOException
-import org.kevoree.kcl.KevoreeJarClassLoader
 import org.kevoree.microsandbox.core.CoverageRuntime
-import org.kevoree.microsandbox.core.instrumentation.ExtraInstrumentationRules
+import org.kevoree.kcl.impl.FlexyClassLoaderImpl
 import org.kevoree.microsandbox.core.instrumentation.InstrumenterCommand
-import java.util.concurrent.atomic.AtomicInteger
-import org.resourceaccounting.binder.MonitoringStatusList
+import org.kevoree.microsandbox.core.instrumentation.ExtraInstrumentationRules
 
 /**
  * Created with IntelliJ IDEA.
@@ -21,7 +16,7 @@ import org.resourceaccounting.binder.MonitoringStatusList
  * To change this template use File | Settings | File Templates.
  */
 
-open class KevoreeJarClassLoaderCoverageInjection() : KevoreeJarClassLoader() {
+open class KevoreeJarClassLoaderCoverageInjection() : FlexyClassLoaderImpl() {
 
     public val loadedClasses : Vector<String> = Vector<String>()
 
@@ -35,7 +30,7 @@ open class KevoreeJarClassLoaderCoverageInjection() : KevoreeJarClassLoader() {
         id = IdGenerator.instance()?.next()!!
     }
 
-    override fun internal_defineClass(className: String, bytes: ByteArray): Class<out Any?>? {
+    /*override*/ fun internal_defineClass(className: String, bytes: ByteArray): Class<out Any?>? {
 //        println(className + " MIERDA PRIETA " + Thread.currentThread().getThreadGroup()?.getName())\
 //        MonitoringStatusList.instance()?.saveClassName(Thread.currentThread().getThreadGroup()?.getName(), className, this)
         val x: ByteArray =  if (!ExtraInstrumentationRules.isInstrumentable(className.replace('.','/'))) {

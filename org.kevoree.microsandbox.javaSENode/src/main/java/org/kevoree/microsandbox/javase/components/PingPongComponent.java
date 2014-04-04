@@ -1,8 +1,7 @@
 package org.kevoree.microsandbox.javase.components;
 
 import org.kevoree.annotation.*;
-import org.kevoree.framework.AbstractComponentType;
-import org.kevoree.framework.MessagePort;
+import org.kevoree.api.Context;
 
 /**
  * Created with IntelliJ IDEA.
@@ -11,24 +10,23 @@ import org.kevoree.framework.MessagePort;
  * Time: 5:23 PM
  *
  */
-@Provides({
-        @ProvidedPort(name = "pong", type = PortType.MESSAGE)
-})
-@Requires({
-        @RequiredPort(name = "ping", type = PortType.MESSAGE, optional = true)
-})
-@DictionaryType({
-        @DictionaryAttribute(name = "count", defaultValue = "1000000")
-})
 @ComponentType
-public class PingPongComponent extends AbstractComponentType {
+public class PingPongComponent {
     int count = 0;
-    int max;
+
+    @Param(defaultValue = "1000000")
+    int maxCount;
+
+
+    @Output
+    org.kevoree.api.Port ping;
+
+    @KevoreeInject
+    protected Context context;
 
     @Start
     public void start() {
-        max = Integer.parseInt(getDictionary().get("count").toString());
-        if (getNodeName().equals("node0") && getName().startsWith("pingpong0"))
+        if (context.getNodeName().equals("node0") && context.getInstanceName().startsWith("pingpong0"))
             new Thread(new Runnable() {
                 @Override
                 public void run() {
@@ -39,13 +37,12 @@ public class PingPongComponent extends AbstractComponentType {
                     }
                     System.out.println("Start pings");
                     int [] a = new int[100];
-                    if (isPortBinded("ping")) {
-                        MessagePort p = getPortByName("ping", MessagePort.class);
-                        for (int i = 0 ; i < max ; ++i) {
-        //                    System.out.println("Sending " + i);
-                            for (int j = 0 ; j < a.length ; j++)
+                    if (ping.getConnectedBindingsSize() > 0) {
+                        for (int i = 0; i < maxCount; ++i) {
+                            //                    System.out.println("Sending " + i);
+                            for (int j = 0; j < a.length; j++)
                                 a[j] = i;
-                            p.process(a);
+                            ping.send(a);
                         }
                     }
 
@@ -66,19 +63,19 @@ public class PingPongComponent extends AbstractComponentType {
 
     long time0;
 
-    @Port(name = "pong")
+    @Input
     public void pong(Object obj) {
 //        if (count % 200000 == 0)
 //            System.out.println(getName() + " " + count);
         if (count == 0)
             time0 = System.nanoTime();
-        if (count < max) {
+        if (count < maxCount) {
 //            MessagePort p = getPortByName("ping", MessagePort.class);
 //            p.process(obj);
 //            System.out.println(obj.toString());
             count++;
         }
-        if (count == max) {
+        if (count == maxCount) {
             System.out.println("Used time " + (System.nanoTime() - time0)/1000000000);
         }
     }
