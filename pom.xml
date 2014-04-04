@@ -4,16 +4,18 @@
     <groupId>org.kevoree.microsandbox</groupId>
     <artifactId>org.kevoree.microsandbox.root</artifactId>
     <packaging>pom</packaging>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.2.0-SNAPSHOT</version>
     <name>Kevoree :: MicroSandbox :: Root</name>
     <url>https://github.com/dukeboard/kevoree-microsandbox</url>
     <description>Kevoree MicroSandbox</description>
 
     <properties>
-        <kevoree.version>2.0.12</kevoree.version>
-        <!--2.0.12-->
-        <kevoree.corelibrary.version>2.0.4</kevoree.corelibrary.version>
-        <kotlin.version>0.6.31</kotlin.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <kotlin.version>0.6.1673</kotlin.version>
+        <!--<kotlin.version>0.7.271</kotlin.version>-->
+        <kevoree.version>3.5.4</kevoree.version>
+        <kevoree.library.version>3.5.2</kevoree.library.version>
+        <kevoree.komponents.version>1.1.0-SNAPSHOT</kevoree.komponents.version>
     </properties>
 
     <licenses>
@@ -55,7 +57,7 @@
             <roles>
                 <role>developer</role>
             </roles>
-            <timezone>+2</timezone>
+            <timezone>+1</timezone>
         </developer>
         <developer>
             <name>Inti Gonzalez Herrera</name>
@@ -64,7 +66,7 @@
             <roles>
                 <role>developer</role>
             </roles>
-            <timezone>+2</timezone>
+            <timezone>+1</timezone>
         </developer>
     </developers>
 
@@ -109,6 +111,7 @@
                 <configuration>
                     <source>1.6</source>
                     <target>1.6</target>
+                    <encoding>${project.build.sourceEncoding}</encoding>
                 </configuration>
             </plugin>
             <plugin>
@@ -160,8 +163,12 @@
             <url>https://oss.sonatype.org/content/groups/public/</url>
         </repository>
         <repository>
-            <id>jetbrains-release</id>
-            <url>http://repository.jetbrains.com/all</url>
+            <id>reacloud-release</id>
+            <url>http://maven.reacloud.com/repository/reacloud/release</url>
+        </repository>
+        <repository>
+            <id>reacloud-snapshot</id>
+            <url>http://maven.reacloud.com/repository/reacloud/snapshots/</url>
         </repository>
     </repositories>
 
@@ -170,15 +177,11 @@
             <id>kevoree-oss.plugin</id>
             <url>https://oss.sonatype.org/content/groups/public/</url>
         </pluginRepository>
-        <pluginRepository>
-            <id>jetbrains-all</id>
-            <url>http://repository.jetbrains.com/all</url>
-        </pluginRepository>
     </pluginRepositories>
 
     <modules>
         <module>org.kevoree.microsandbox.api</module>
-        <module>org.kevoree.microsandbox.sharedResourceAccounting</module>
+        <!--<module>org.kevoree.microsandbox.sharedResourceAccounting</module>
         <module>org.kevoree.microsandbox.core</module>
         <module>org.kevoree.microsandbox.resourceMonitorJavaAgent</module>
         <module>org.kevoree.microsandbox.javaSENode</module>
@@ -192,9 +195,9 @@
         <module>org.ipc.memory</module>
         <module>org.kevoree.microsandbox.SharedMemoryChannel</module>
         <module>org.kevoree.microsandbox.cgroupNode</module>
-        <module>org.kevoree.microsandbox.monitoredNode</module>
+        <module>org.kevoree.microsandbox.monitoredNode</module>-->
 
-        <!--<module>microsandbox-experiment</module>-->
+        <module>microsandbox-experiment</module>
     </modules>
 
 </project>
