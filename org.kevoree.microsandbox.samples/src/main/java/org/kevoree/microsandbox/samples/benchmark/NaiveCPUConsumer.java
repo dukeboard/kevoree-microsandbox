@@ -4,16 +4,13 @@ import org.kevoree.annotation.ComponentType;
 import org.kevoree.annotation.Start;
 import org.kevoree.annotation.Stop;
 import org.kevoree.annotation.Update;
-import org.kevoree.framework.AbstractComponentType;
-import org.kevoree.microsandbox.api.contract.CPUContracted;
-import org.kevoree.microsandbox.api.contract.MemoryContracted;
+import org.kevoree.microsandbox.api.contract.impl.CPUMemoryContractedImpl;
 
 /**
  * Created by inti on 3/4/14.
  */
 @ComponentType
-public class NaiveCPUConsumer extends AbstractComponentType
-        implements MemoryContracted, CPUContracted {
+public class NaiveCPUConsumer extends CPUMemoryContractedImpl {
 
     @Start
     public void start() {

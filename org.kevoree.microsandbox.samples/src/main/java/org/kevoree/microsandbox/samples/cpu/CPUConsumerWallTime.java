@@ -1,8 +1,10 @@
 package org.kevoree.microsandbox.samples.cpu;
 
-import org.kevoree.annotation.*;
-import org.kevoree.framework.AbstractComponentType;
-import org.kevoree.microsandbox.api.contract.CPUContracted;
+import org.kevoree.annotation.ComponentType;
+import org.kevoree.annotation.Param;
+import org.kevoree.annotation.Start;
+import org.kevoree.annotation.Stop;
+import org.kevoree.microsandbox.api.contract.impl.CPUContractedImpl;
 
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
@@ -15,12 +17,11 @@ import java.util.concurrent.Executors;
  * Date: 7/1/13
  * Time: 1:27 AM
  */
-
-@DictionaryType({
-        @DictionaryAttribute(name = "nbLoop", dataType = Integer.class, optional = false)
-})
 @ComponentType
-public class CPUConsumerWallTime extends AbstractComponentType implements CPUContracted, Runnable {
+public class CPUConsumerWallTime extends CPUContractedImpl implements Runnable {
+
+    @Param(optional = false)
+    int nbLoop;
 
     public int sum(int n) {
         int r = 0 ;
@@ -37,7 +38,6 @@ public class CPUConsumerWallTime extends AbstractComponentType implements CPUCon
         } catch (FileNotFoundException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
-        int nbLoop = Integer.parseInt(getDictionary().get("nbLoop").toString());
         System.out.println("nbLoop = " + nbLoop);
         int c = 0;
         for (int i = 0; i < nbLoop; i++) {
@@ -57,7 +57,7 @@ public class CPUConsumerWallTime extends AbstractComponentType implements CPUCon
         System.out.println("nbProcessors = " + Runtime.getRuntime().availableProcessors());
         for (int i = 0; i < Runtime.getRuntime().availableProcessors(); i++) {
             CPUConsumerWallTime c = new CPUConsumerWallTime();
-            c.getDictionary().putAll(getDictionary());
+            c.nbLoop = this.nbLoop;
             pool.submit(c);
         }
     }

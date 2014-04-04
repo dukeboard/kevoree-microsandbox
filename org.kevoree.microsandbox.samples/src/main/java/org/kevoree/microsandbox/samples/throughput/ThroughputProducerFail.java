@@ -1,8 +1,10 @@
 package org.kevoree.microsandbox.samples.throughput;
 
-import org.kevoree.annotation.*;
-import org.kevoree.framework.MessagePort;
-import org.kevoree.microsandbox.api.contract.ThroughputContracted;
+import org.kevoree.annotation.ComponentType;
+import org.kevoree.annotation.Output;
+import org.kevoree.annotation.Start;
+import org.kevoree.api.Port;
+import org.kevoree.microsandbox.api.contract.impl.ThroughputContractedImpl;
 
 /**
  * Created with IntelliJ IDEA.
@@ -12,11 +14,10 @@ import org.kevoree.microsandbox.api.contract.ThroughputContracted;
  */
 
 @ComponentType
-@Requires({
-    @RequiredPort(name = "output", type = PortType.MESSAGE)
-})
+public class ThroughputProducerFail extends ThroughputContractedImpl {
 
-public class ThroughputProducerFail extends org.kevoree.framework.AbstractComponentType implements ThroughputContracted {
+    @Output
+    Port output;
 
     java.util.List<Object> cache = new java.util.ArrayList<Object>();
 
@@ -25,10 +26,9 @@ public class ThroughputProducerFail extends org.kevoree.framework.AbstractCompon
         new Thread(new Runnable() {
             public void run() {
                 while (true) {
-                    getPortByName("output", MessagePort.class).process("payLoadMessage");
+                    output.send("payLoadMessage");
                 }
             }
         }).start();
     }
-
 }

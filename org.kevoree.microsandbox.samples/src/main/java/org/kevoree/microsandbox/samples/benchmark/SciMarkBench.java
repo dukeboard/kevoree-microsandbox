@@ -1,13 +1,15 @@
 package org.kevoree.microsandbox.samples.benchmark;
 
 import org.kevoree.annotation.*;
-import org.kevoree.framework.AbstractComponentType;
-import org.kevoree.framework.MessagePort;
+import org.kevoree.api.Context;
+import org.kevoree.api.Port;
+import org.kevoree.microsandbox.samples.benchmark.scimark2.Constants;
+import org.kevoree.microsandbox.samples.benchmark.scimark2.Random;
+import org.kevoree.microsandbox.samples.benchmark.scimark2.kernel;
+
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
-import org.kevoree.microsandbox.samples.benchmark.scimark2.*;
-import org.kevoree.microsandbox.samples.benchmark.scimark2.Constants;
 
 
 /**
@@ -16,21 +18,20 @@ import org.kevoree.microsandbox.samples.benchmark.scimark2.Constants;
  * Date: 26/08/12
  * Time: 21:32
  */
-
-@Requires({
-        @RequiredPort(name = "result", type = PortType.MESSAGE, optional = true)
-})
-@Provides({
-        @ProvidedPort(name = "trigger", type = PortType.MESSAGE)
-})
-@DictionaryType({
-        @DictionaryAttribute(name = "large", defaultValue = "false", optional = true, vals = {"false", "true"})
-})
 @ComponentType
 @Library(name = "JavaSE")
-public class SciMarkBench extends AbstractComponentType implements Runnable {
+public class SciMarkBench implements Runnable {
 
-    @Port(name = "trigger")
+    @Param(defaultValue = "false", optional = true)
+    boolean large;
+
+    @KevoreeInject
+    Context context;
+
+    @Output(optional = true)
+    Port result;
+
+    @Input
     public void trigger(Object msg) {
         pool.submit(this);
     }
@@ -44,8 +45,7 @@ public class SciMarkBench extends AbstractComponentType implements Runnable {
     int LU_size = Constants.LU_SIZE;
 
     public void updateParams() {
-        String ltest = getDictionary().get("large").toString();
-        if (ltest.equals("large")) {
+        if (large) {
             FFT_size = Constants.LG_FFT_SIZE;
             SOR_size = Constants.LG_SOR_SIZE;
             Sparse_size_M = Constants.LG_SPARSE_SIZE_M;
@@ -66,7 +66,7 @@ public class SciMarkBench extends AbstractComponentType implements Runnable {
         pool = Executors.newSingleThreadExecutor(new ThreadFactory() {
             @Override
             public Thread newThread(Runnable runnable) {
-                Thread t = new Thread(runnable,"SciMark" + getName());
+                Thread t = new Thread(runnable,"SciMark" + context.getInstanceName());
                 t.setPriority(Thread.MAX_PRIORITY);
                 return t;
             }
@@ -91,11 +91,11 @@ public class SciMarkBench extends AbstractComponentType implements Runnable {
     @Override
     public void run() {
 
-        if(isPortBinded("result")){
-            getPortByName("result", MessagePort.class).process("Bench started");
+        if (result.getConnectedBindingsSize() > 0) {
+            result.send("Bench started");
         }
 
-        StringBuffer result = new StringBuffer();
+        StringBuffer resultBuffer = new StringBuffer();
 
         // default to the (small) cache-contained version
         double min_time = Constants.RESOLUTION_DEFAULT;
@@ -116,54 +116,54 @@ public class SciMarkBench extends AbstractComponentType implements Runnable {
 
         // print out results
 
-        result.append("SciMark 2.0a");
-        result.append("\n");
+        resultBuffer.append("SciMark 2.0a");
+        resultBuffer.append("\n");
 
-        result.append("Composite Score: " + res[0]);
-        result.append("\n");
-        result.append("FFT (" + FFT_size + "): ");
+        resultBuffer.append("Composite Score: " + res[0]);
+        resultBuffer.append("\n");
+        resultBuffer.append("FFT (" + FFT_size + "): ");
         if (res[1] == 0.0) {
-            result.append(" ERROR, INVALID NUMERICAL RESULT!");
-            result.append("\n");
+            resultBuffer.append(" ERROR, INVALID NUMERICAL RESULT!");
+            resultBuffer.append("\n");
         } else {
-            result.append(res[1]);
-            result.append("\n");
+            resultBuffer.append(res[1]);
+            resultBuffer.append("\n");
         }
-        result.append("SOR (" + SOR_size + "x" + SOR_size + "): "
+        resultBuffer.append("SOR (" + SOR_size + "x" + SOR_size + "): "
                 + "  " + res[2]);
-        result.append("\n");
-        result.append("Monte Carlo : " + res[3]);
-        result.append("\n");
-        result.append("Sparse matmult (N=" + Sparse_size_M +
+        resultBuffer.append("\n");
+        resultBuffer.append("Monte Carlo : " + res[3]);
+        resultBuffer.append("\n");
+        resultBuffer.append("Sparse matmult (N=" + Sparse_size_M +
                 ", nz=" + Sparse_size_nz + "): " + res[4]);
-        result.append("\n");
-        result.append("LU (" + LU_size + "x" + LU_size + "): ");
+        resultBuffer.append("\n");
+        resultBuffer.append("LU (" + LU_size + "x" + LU_size + "): ");
         if (res[5] == 0.0) {
-            result.append(" ERROR, INVALID NUMERICAL RESULT!");
-            result.append("\n");
+            resultBuffer.append(" ERROR, INVALID NUMERICAL RESULT!");
+            resultBuffer.append("\n");
         } else {
-            result.append(res[5]);
-            result.append("\n");
+            resultBuffer.append(res[5]);
+            resultBuffer.append("\n");
         }
         // print out System info
-        result.append("\n");
-        result.append("java.vendor: " +
+        resultBuffer.append("\n");
+        resultBuffer.append("java.vendor: " +
                 System.getProperty("java.vendor"));
-        result.append("\n");
-        result.append("java.version: " +
+        resultBuffer.append("\n");
+        resultBuffer.append("java.version: " +
                 System.getProperty("java.version"));
-        result.append("\n");
-        result.append("os.arch: " +
+        resultBuffer.append("\n");
+        resultBuffer.append("os.arch: " +
                 System.getProperty("os.arch"));
-        result.append("\n");
-        result.append("os.name: " +
+        resultBuffer.append("\n");
+        resultBuffer.append("os.name: " +
                 System.getProperty("os.name"));
-        result.append("\n");
-        result.append("os.version: " +
+        resultBuffer.append("\n");
+        resultBuffer.append("os.version: " +
                 System.getProperty("os.version"));
-        result.append("\n");
+        resultBuffer.append("\n");
 
-        getPortByName("result", MessagePort.class).process(result.toString());
+        result.send(result.toString());
 
     }
 }

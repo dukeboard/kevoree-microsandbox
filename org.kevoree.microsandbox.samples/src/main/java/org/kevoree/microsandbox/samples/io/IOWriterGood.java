@@ -4,23 +4,20 @@ import org.kevoree.annotation.ComponentType;
 import org.kevoree.annotation.Start;
 import org.kevoree.annotation.Stop;
 import org.kevoree.annotation.Update;
-import org.kevoree.framework.AbstractComponentType;
 
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.concurrent.Executors;
 
 /**
  * Created with IntelliJ IDEA.
  * User: inti
  * Date: 7/4/13
  * Time: 7:18 AM
- * To change this template use File | Settings | File Templates.
  */
 @ComponentType
-public class IOWriterGood extends AbstractComponentType {
+public class IOWriterGood {
 
     @Start
     public void startComponent() {

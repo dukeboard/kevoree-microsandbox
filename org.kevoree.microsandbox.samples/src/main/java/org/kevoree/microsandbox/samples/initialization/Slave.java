@@ -1,8 +1,8 @@
 package org.kevoree.microsandbox.samples.initialization;
 
 import org.kevoree.annotation.*;
-import org.kevoree.framework.AbstractComponentType;
-import org.kevoree.framework.MessagePort;
+import org.kevoree.api.Context;
+import org.kevoree.api.Port;
 import org.kevoree.log.Log;
 
 import java.util.Timer;
@@ -11,11 +11,14 @@ import java.util.TimerTask;
 /**
  * Created by inti on 3/11/14.
  */
-@Requires({
-        @RequiredPort(name = "notifyStarted", optional = false, type = PortType.MESSAGE)
-})
 @ComponentType
-public class Slave extends AbstractComponentType {
+public class Slave {
+
+    @Output(optional = false)
+    Port notifyStarted;
+
+    @KevoreeInject
+    protected Context context;
 
     @Start
     public void start() {
@@ -25,8 +28,8 @@ public class Slave extends AbstractComponentType {
             @Override
             public void run() {
                 Log.info("Sending notification ******************** {}", l);
-                getPortByName("notifyStarted", MessagePort.class).process(
-                        String.format("%s,%d", getNodeName(),l));
+                notifyStarted.send(String.format("%s,%d", context.getNodeName(),l));
+
             }
         }, 100);
     }

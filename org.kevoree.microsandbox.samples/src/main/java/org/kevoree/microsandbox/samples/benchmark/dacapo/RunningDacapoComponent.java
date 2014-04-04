@@ -2,45 +2,33 @@ package org.kevoree.microsandbox.samples.benchmark.dacapo;
 
 import org.jetbrains.annotations.NotNull;
 import org.kevoree.annotation.*;
-import org.kevoree.framework.AbstractComponentType;
-import org.kevoree.framework.kaspects.TypeDefinitionAspect;
-import org.kevoree.kcl.KevoreeJarClassLoader;
+import org.kevoree.kcl.api.FlexyClassLoader;
 import org.kevoree.log.Log;
-import org.kevoree.microsandbox.api.contract.CPUContracted;
-import org.kevoree.microsandbox.api.contract.MemoryContracted;
+import org.kevoree.microsandbox.api.contract.impl.CPUMemoryContractedImpl;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.InputStream;
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.Hashtable;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
 
 /**
  * Created with IntelliJ IDEA.
  * User: inti
  * Date: 9/5/13
  * Time: 2:22 PM
- * To change this template use File | Settings | File Templates.
  */
-@DictionaryType({
-        @DictionaryAttribute(name = "dacapo_path",dataType = String.class),
-        @DictionaryAttribute(name = "dacapo_test", dataType = String.class),
-        @DictionaryAttribute(name = "dacapo_n", dataType = Integer.class, defaultValue = "1")
-})
 @ComponentType
-public class RunningDacapoComponent extends AbstractComponentType
-                    implements MemoryContracted, CPUContracted {
+public class RunningDacapoComponent extends CPUMemoryContractedImpl {
 
-
-    private String path;
-    private String test;
-    private Integer n;
+    @Param
+    private String dacapo_path;
+    @Param
+    private String dacapo_test;
+    @Param(defaultValue = "1")
+    private Integer dacapo_n;
     private ClassLoader loader;
 
     class MyLoader extends URLClassLoader {
@@ -70,8 +58,8 @@ public class RunningDacapoComponent extends AbstractComponentType
                 method.invoke(null,new Object[]{new String[]{
                         "-noValidation",
                         "-n",
-                        n.toString(),
-                        test}});
+                        dacapo_n.toString(),
+                        dacapo_test}});
 
             } catch (ClassNotFoundException e) {
                 e.printStackTrace();
@@ -89,15 +77,14 @@ public class RunningDacapoComponent extends AbstractComponentType
 
     @Start
     public void start() {
-        path = getDictionary().get("dacapo_path").toString();
-        test = getDictionary().get("dacapo_test").toString();
-        n = Integer.parseInt(getDictionary().get("dacapo_n").toString());
         try {
-            KevoreeJarClassLoader ll = (KevoreeJarClassLoader)this.getClass().getClassLoader();
-            ll.add(new File(path).toURI().toURL());
+            FlexyClassLoader ll = (FlexyClassLoader)this.getClass().getClassLoader();
+            ll.load(new File(dacapo_path).toURI().toURL());
 
             loader = ll;//new MyLoader(new URL[]{new File(path).toURI().toURL()}, this.getClass().getClassLoader());
         } catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
             e.printStackTrace();
         }
         Thread th = new Thread(new DacapoExecuter());

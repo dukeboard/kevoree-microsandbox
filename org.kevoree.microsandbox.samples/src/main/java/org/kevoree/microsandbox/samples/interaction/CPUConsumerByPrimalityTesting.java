@@ -1,9 +1,9 @@
 package org.kevoree.microsandbox.samples.interaction;
 
-import org.kevoree.annotation.*;
-import org.kevoree.framework.AbstractComponentType;
-import org.kevoree.microsandbox.api.contract.CPUContracted;
-import org.kevoree.microsandbox.api.contract.ThroughputContracted;
+import org.kevoree.annotation.ComponentType;
+import org.kevoree.annotation.Input;
+import org.kevoree.annotation.Start;
+import org.kevoree.microsandbox.api.contract.impl.CPUThroughputContractedImpl;
 
 /**
  * Created with IntelliJ IDEA.
@@ -12,20 +12,16 @@ import org.kevoree.microsandbox.api.contract.ThroughputContracted;
  * Time: 3:29 PM
  *
  */
-
-@Provides({
-        @ProvidedPort(name = "primalityTester", type = PortType.MESSAGE)
-})
 @ComponentType
-public class CPUConsumerByPrimalityTesting extends AbstractComponentType implements CPUContracted, ThroughputContracted {
+public class CPUConsumerByPrimalityTesting extends CPUThroughputContractedImpl {
 
     @Start
     public void startComponent() {
 
     }
 
-    @Port(name = "primalityTester")
-    public void tester(Object obj) {
+    @Input
+    public void primalityTester(Object obj) {
         Integer n = Integer.valueOf(obj.toString());
         int c = 0;
         for (int i = 2 ; i < n ; i++)

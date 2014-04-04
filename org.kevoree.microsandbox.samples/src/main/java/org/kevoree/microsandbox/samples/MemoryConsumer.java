@@ -1,30 +1,19 @@
 package org.kevoree.microsandbox.samples;
 
 import org.kevoree.annotation.*;
-import org.kevoree.framework.AbstractComponentType;
-import org.kevoree.microsandbox.api.contract.CPUContracted;
-import org.kevoree.microsandbox.api.contract.FullContracted;
-import org.kevoree.microsandbox.api.contract.MemoryContracted;
+import org.kevoree.microsandbox.api.contract.impl.CPUMemoryContractedImpl;
 
 /**
  * Created with IntelliJ IDEA.
  * User: inti
  * Date: 6/18/13
  * Time: 5:47 PM
- * To change this template use File | Settings | File Templates.
  */
-
-@Provides({
-        @ProvidedPort(name = "input", type = PortType.MESSAGE)
-})
-@DictionaryType({
-        @DictionaryAttribute(name = "amount", defaultValue = "102400")
-})
 @ComponentType
-public class MemoryConsumer extends AbstractComponentType
-        implements MemoryContracted, CPUContracted {
+public class MemoryConsumer extends CPUMemoryContractedImpl {
 
-    private int size;
+    @Param(defaultValue = "102400")
+    int amount;
 
     private class Th extends Thread {
 
@@ -55,7 +44,7 @@ public class MemoryConsumer extends AbstractComponentType
             while (!isB()) {
                 try {
                     Thread.sleep(200);
-                    head = new Node(new int[size],head);
+                    head = new Node(new int[amount],head);
 //                    int[] ar = new  int[1024024];
 
                 } catch (InterruptedException e) {
@@ -69,7 +58,6 @@ public class MemoryConsumer extends AbstractComponentType
 
     @Start
     public void startComponent() {
-        size = Integer.valueOf(getDictionary().get("amount").toString());
         th = new Th();
         th.start();
     }
@@ -85,10 +73,9 @@ public class MemoryConsumer extends AbstractComponentType
         startComponent();
     }
 
-    @Port(name = "input")
-    public void handlerInputPort(Object obj) {
+    @Input
+    public void input(Object obj) {
         System.out.println("It should not run because this " +
                 "component violates the contract regarding memory consumption");
     }
-
 }

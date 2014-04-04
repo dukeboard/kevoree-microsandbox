@@ -1,7 +1,6 @@
 package org.kevoree.microsandbox.samples.initialization;
 
 import org.kevoree.annotation.*;
-import org.kevoree.framework.AbstractComponentType;
 import org.kevoree.log.Log;
 
 /**
@@ -9,12 +8,12 @@ import org.kevoree.log.Log;
  */
 
 
-@Provides({
+/*@Provides({
         @ProvidedPort(name = "startNotification", type = PortType.MESSAGE),
         @ProvidedPort(name = "beforeModelDeployment", type = PortType.MESSAGE)
-})
+})*/
 @ComponentType
-public class Master extends AbstractComponentType {
+public class Master {
     private long time;
     private long totalTime = 0;
     private int count = 0;
@@ -35,7 +34,7 @@ public class Master extends AbstractComponentType {
         start();
     }
 
-    @Port(name = "startNotification")
+    @Input
     public void onStartNotification(Object obj) {
         Log.info("New message 0");
         if (obj instanceof DataAboutInitialization) {
@@ -48,7 +47,7 @@ public class Master extends AbstractComponentType {
         }
     }
 
-    @Port(name = "beforeModelDeployment")
+    @Input
     public void beforeModelDeployment(Object obj) {
         Log.info("New message 1");
         if (obj instanceof Long) {

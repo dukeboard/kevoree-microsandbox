@@ -1,13 +1,7 @@
 package org.kevoree.microsandbox.samples.update;
 
-import org.kevoree.ContainerRoot;
-import org.kevoree.annotation.ComponentType;
-import org.kevoree.annotation.Start;
-import org.kevoree.annotation.Stop;
-import org.kevoree.annotation.Update;
-import org.kevoree.api.service.core.handler.ModelListener;
-import org.kevoree.api.service.core.handler.UUIDModel;
-import org.kevoree.framework.AbstractComponentType;
+import org.kevoree.annotation.*;
+import org.kevoree.api.ModelService;
 import org.kevoree.microsandbox.api.contract.FullContracted;
 
 /**
@@ -18,13 +12,17 @@ import org.kevoree.microsandbox.api.contract.FullContracted;
  *
  */
 @ComponentType
-public class SimpleComponent extends AbstractComponentType implements FullContracted {
+public class SimpleComponent extends FullContracted {
+
+    @KevoreeInject
+    ModelService modelService;
+
     @Start
     public void startComponent() {
         System.out.println("Starting : " + SimpleComponent.class.getName());
 
-        System.out.println("\t" + getModelService().getLastUUIDModel().getUUID());
-        System.out.println("\t" + getModelService().getLastUUIDModel().getUUID());
+        System.out.println("\t" + modelService.getCurrentModel().getUUID());
+        System.out.println("\t" + modelService.getCurrentModel().getUUID());
 
 
 
