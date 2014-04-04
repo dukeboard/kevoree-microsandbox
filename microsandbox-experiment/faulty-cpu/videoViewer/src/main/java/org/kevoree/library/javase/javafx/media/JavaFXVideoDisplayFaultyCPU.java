@@ -9,11 +9,9 @@ import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.stage.Stage;
 import org.kevoree.annotation.*;
-import org.kevoree.framework.AbstractComponentType;
+import org.kevoree.api.Context;
 import org.kevoree.library.javase.javafx.layout.SingleWindowLayout;
-import org.kevoree.microsandbox.api.contract.CPUContracted;
-import org.kevoree.microsandbox.api.contract.MemoryContracted;
-import org.kevoree.microsandbox.api.contract.ThroughputContracted;
+import org.kevoree.microsandbox.api.contract.impl.CPUMemoryThroughputContractedImpl;
 
 /**
  * User: Erwan Daubert - erwan.daubert@gmail.com
@@ -24,17 +22,18 @@ import org.kevoree.microsandbox.api.contract.ThroughputContracted;
  * @version 1.0
  */
 @Library(name = "javafx")
-@DictionaryType({
-        @DictionaryAttribute(name = "singleFrame", defaultValue = "true", optional = true),
-        @DictionaryAttribute(name = "nbViolations", defaultValue = "1", optional = true),
-        @DictionaryAttribute(name = "uselessParameter", optional = true)
-//        @DictionaryAttribute(name = "url", defaultValue = "http://localhost:9500/", optional = true)
-})
-@Provides({
-        @ProvidedPort(name = "media", type = PortType.MESSAGE)
-})
 @ComponentType
-public class JavaFXVideoDisplayFaultyCPU extends AbstractComponentType implements MemoryContracted, CPUContracted, ThroughputContracted {
+public class JavaFXVideoDisplayFaultyCPU extends CPUMemoryThroughputContractedImpl {
+
+    @Param(defaultValue = "true")
+    boolean singleFrame;
+    @Param
+    String uselessParameter;
+    @Param(defaultValue = "1")
+    int nbViolations;
+
+    @KevoreeInject
+    Context context;
 
     private Stage localWindow;
     private Tab tab;
@@ -58,9 +57,9 @@ public class JavaFXVideoDisplayFaultyCPU extends AbstractComponentType implement
             @Override
             public void run() {
                 // This method is invoked on JavaFX thread
-                if (Boolean.valueOf((String) getDictionary().get("singleFrame"))) {
+                if (singleFrame) {
                     tab = new Tab();
-                    tab.setText(getName());
+                    tab.setText(context.getInstanceName());
                     tab.setOnSelectionChanged(new EventHandler<Event>() {
                         @Override
                         public void handle(Event event) {
@@ -85,7 +84,7 @@ public class JavaFXVideoDisplayFaultyCPU extends AbstractComponentType implement
                     SingleWindowLayout.getInstance().addTab(tab);
                 } else {
                     localWindow = new Stage();
-                    localWindow.setTitle(getName() + "@@@" + getNodeName());
+                    localWindow.setTitle(context.getInstanceName() + "@@@" + context.getNodeName());
 
                     localWindow.show();
 //                    TODO localFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
@@ -102,7 +101,7 @@ public class JavaFXVideoDisplayFaultyCPU extends AbstractComponentType implement
     public void stop() {
         fault.destroy();
         // TODO unload javafx stuff
-        if (Boolean.valueOf((String) getDictionary().get("singleFrame"))) {
+        if (singleFrame) {
             SingleWindowLayout.getInstance().removeTab(tab);
         } else {
             localWindow.hide();
@@ -115,7 +114,7 @@ public class JavaFXVideoDisplayFaultyCPU extends AbstractComponentType implement
 
     }
 
-    @Port(name = "media")
+    @Input
     public void media(final Object o) {
         if (o instanceof String) {
             mediaUrl = (String) o;
@@ -145,7 +144,7 @@ public class JavaFXVideoDisplayFaultyCPU extends AbstractComponentType implement
         mediaControl = new MediaControl(mediaPlayer);
         scene = new Scene(mediaControl);
 
-        if (Boolean.valueOf((String) getDictionary().get("singleFrame"))) {
+        if (singleFrame) {
             tab.setContent(mediaControl);
         } else {
             localWindow.setScene(scene);
