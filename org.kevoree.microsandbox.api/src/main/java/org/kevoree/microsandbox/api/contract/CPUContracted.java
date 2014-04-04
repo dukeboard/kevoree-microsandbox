@@ -1,8 +1,5 @@
 package org.kevoree.microsandbox.api.contract;
 
-import org.kevoree.annotation.DictionaryAttribute;
-import org.kevoree.annotation.DictionaryType;
-
 /**
  * Created with IntelliJ IDEA.
  * User: duke
@@ -10,15 +7,32 @@ import org.kevoree.annotation.DictionaryType;
  * Time: 16:26
  */
 
-@DictionaryType({
-        @DictionaryAttribute(name = "cpu_wall_time", dataType = Double.class, optional = true),
-        @DictionaryAttribute(name = "cpu_peak_percent_per_second", dataType = Long.class, optional = true),
-        @DictionaryAttribute(name = "cpu_mean_percent_per_minute", dataType = Long.class, optional = true),
-        @DictionaryAttribute(name = "cpu_mean_percent_per_hour", dataType = Long.class, optional = true)
-        /* Thread affinity Core dispatch */
-})
-//@ComponentType
-//@ChannelType
 public interface CPUContracted {
+
+    /*@Param(optional = true)
+    Double cpu_wall_time;
+    @Param(optional = true)
+    Long cpu_peak_percent_per_second;
+    @Param(optional = true)
+    Long cpu_mean_percent_per_minute;
+    @Param(optional = true)
+    Long cpu_mean_percent_per_hour;*/
+
+    //    @Param(optional = true)
+    public double getCpu_wall_time();
+
+    public void setCpu_wall_time(double p0);
+    //    @Param(optional = true)
+    public long getCpu_peak_percent_per_second();
+
+    public void setCpu_peak_percent_per_second(long p0) ;
+    //    @Param(optional = true)
+    public long getCpu_mean_percent_per_minute();
+
+    public void setCpu_mean_percent_per_minute(long p0);
+    //    @Param(optional = true)
+    public long getCpu_mean_percent_per_hour();
+
+    public void setCpu_mean_percent_per_hour(long p0);
 
 }

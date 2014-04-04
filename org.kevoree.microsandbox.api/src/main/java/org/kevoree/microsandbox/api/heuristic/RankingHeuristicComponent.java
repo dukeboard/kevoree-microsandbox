@@ -21,9 +21,7 @@ public interface RankingHeuristicComponent {
 
     /**
      * Allow to send some information from monitoring core to rankingHeuristic
-     * @param name the name of the "event"
-     * @param value the value of the "event"
      */
-    // FIXME this method must be remove and a better solution must be fine but we don't have time currently
-    void triggerMonitoringEvent(String operation, String name, String instancePath, Long value);
+    // FIXME this method must be remove and a better solution must be find but we don't have time currently
+    void triggerMonitoringEvent(MonitoringEvent event);
 }

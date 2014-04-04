@@ -1,7 +1,8 @@
 package org.kevoree.microsandbox.api.contract
 
-import org.kevoree.annotation.DictionaryType
 import org.kevoree.TypeDefinition
+import org.kevoree.DictionaryType
+import org.kevoree.annotation.Param
 
 /**
  * User: Erwan Daubert - erwan.daubert@gmail.com
@@ -13,31 +14,37 @@ import org.kevoree.TypeDefinition
  */
 object ContractedComponentHelper {
     fun isContractedComponent(typeDefinition: TypeDefinition): Boolean {
-        val isFullContracted = javaClass<FullContracted>().getAnnotation(javaClass<DictionaryType>())?.value()?.toList()?.all {
-            dictionaryAttribute ->
-            typeDefinition.getDictionaryType()?.getAttributes()?.filter{ attribute -> attribute.getName().equals(dictionaryAttribute.name()) }?.size() == 1
+        val isFullContracted = javaClass<FullContracted>().getDeclaredFields().all {
+            attribute ->
+            attribute.getAnnotation(javaClass<Param>()) == null
+            ||
+            (attribute.getAnnotation(javaClass<Param>()) != null && typeDefinition.dictionaryType?.attributes?.filter { dictionaryAttribute -> dictionaryAttribute.name.equals(attribute.getName()) }?.size() == 1)
         }
-        val isMemoryContracted = javaClass<MemoryContracted>().getAnnotation(javaClass<DictionaryType>())?.value()?.toList()?.all {
-            dictionaryAttribute ->
-            typeDefinition.getDictionaryType()?.getAttributes()?.filter{ attribute -> attribute.getName().equals(dictionaryAttribute.name()) }?.size() == 1
+        val isMemoryContracted = javaClass<MemoryContracted>().getDeclaredFields().all {
+            attribute ->
+            attribute.getAnnotation(javaClass<Param>()) == null
+            ||
+            (attribute.getAnnotation(javaClass<Param>()) != null && typeDefinition.dictionaryType?.attributes?.filter { dictionaryAttribute -> dictionaryAttribute.name.equals(attribute.getName()) }?.size() == 1)
         }
-        val isCPUContracted = javaClass<CPUContracted>().getAnnotation(javaClass<DictionaryType>())?.value()?.toList()?.all {
-            dictionaryAttribute ->
-            typeDefinition.getDictionaryType()?.getAttributes()?.filter{ attribute -> attribute.getName().equals(dictionaryAttribute.name()) }?.size() == 1
+        val isCPUContracted = javaClass<CPUContracted>().getDeclaredFields().all {
+            attribute ->
+            attribute.getAnnotation(javaClass<Param>()) == null
+            ||
+            (attribute.getAnnotation(javaClass<Param>()) != null && typeDefinition.dictionaryType?.attributes?.filter { dictionaryAttribute -> dictionaryAttribute.name.equals(attribute.getName()) }?.size() == 1)
         }
-        val isNetworkContracted = javaClass<NetworkContracted>().getAnnotation(javaClass<DictionaryType>())?.value()?.toList()?.all {
-            dictionaryAttribute ->
-            typeDefinition.getDictionaryType()?.getAttributes()?.filter{ attribute -> attribute.getName().equals(dictionaryAttribute.name()) }?.size() == 1
+        val isNetworkContracted = javaClass<NetworkContracted>().getDeclaredFields().all {
+            attribute ->
+            attribute.getAnnotation(javaClass<Param>()) == null
+            ||
+            (attribute.getAnnotation(javaClass<Param>()) != null && typeDefinition.dictionaryType?.attributes?.filter { dictionaryAttribute -> dictionaryAttribute.name.equals(attribute.getName()) }?.size() == 1)
         }
-        val isThroughputContracted = javaClass<ThroughputContracted>().getAnnotation(javaClass<DictionaryType>())?.value()?.toList()?.all {
-            dictionaryAttribute ->
-            typeDefinition.getDictionaryType()?.getAttributes()?.filter{ attribute -> attribute.getName().equals(dictionaryAttribute.name()) }?.size() == 1
+        val isThroughputContracted = javaClass<ThroughputContracted>().getDeclaredFields().all {
+            attribute ->
+            attribute.getAnnotation(javaClass<Param>()) == null
+            ||
+            (attribute.getAnnotation(javaClass<Param>()) != null && typeDefinition.dictionaryType?.attributes?.filter { dictionaryAttribute -> dictionaryAttribute.name.equals(attribute.getName()) }?.size() == 1)
         }
 
-        return (isFullContracted != null && isFullContracted!!) ||
-            (isMemoryContracted != null && isMemoryContracted!!) ||
-            (isCPUContracted != null && isCPUContracted!!) ||
-            (isNetworkContracted != null && isNetworkContracted!!) ||
-            (isThroughputContracted != null && isThroughputContracted!!)
+        return isFullContracted || isMemoryContracted || isCPUContracted || isNetworkContracted || isThroughputContracted
     }
 }
