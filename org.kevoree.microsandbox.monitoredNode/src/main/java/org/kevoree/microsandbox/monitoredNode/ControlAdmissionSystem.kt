@@ -1,6 +1,5 @@
 package org.kevoree.microsandbox.monitoredNode
 
-import org.kevoree.ComponentInstance
 import org.kevoree.Dictionary
 import java.util.ArrayList
 import org.resourceaccounting.contract.ResourceContract
@@ -10,7 +9,7 @@ import org.kevoree.microsandbox.api.communication.MonitoringReporterFactory
 import org.kevoree.microsandbox.api.event.ModelComponentAcceptedEvent
 import org.kevoree.microsandbox.api.event.ModelComponentRemovedEvent
 import org.kevoree.log.Log
-import org.kevoree.microsandbox.monitoredNode.KevoreeComponentResourceContract
+import org.kevoree.Instance
 
 /**
  * Created with IntelliJ IDEA.
@@ -56,35 +55,36 @@ public object ControlAdmissionSystem {
 
     public data class ComponentRegistration(val valid: Boolean, val contract: ResourceContract?)
 
-    fun registerComponent(component: ComponentInstance): ComponentRegistration {
-        val v : Dictionary? = component.getDictionary()
-        if (v !=null){
-            val tmp = v as Dictionary
+    fun registerComponent(component: Instance): ComponentRegistration {
+        val dictionary : Dictionary? = component.dictionary
+        if (dictionary !=null){
             var mem : Long = 0
             var netIn : Long = 0
             var netOut : Long = 0
             var instr  : Long = 0;
-            var i = 0
-            val d = tmp.getValues()
-            val n : Int = d.size()
-            while (i < n) {
-                val dv = d.get(i)
-                when (dv.getAttribute()?.getName()) {
+//            var i = 0
+            val values = dictionary.values
+//            val n : Int = values.size()
+            values.forEach {
+                dv ->
+            /*}
+            while (i < n) {*/
+//                val dv = d.get(i)
+                when (dv/*.attribute?*/.name) {
                     "memory_max_size" -> {
-                        mem = java.lang.Long.parseLong(dv.getValue())
+                        mem = java.lang.Long.parseLong(dv.value!!)
                     }
                     "cpu_wall_time" -> {
-                        instr = java.lang.Long.parseLong(dv.getValue())
+                        instr = java.lang.Long.parseLong(dv.value!!)
                     }
                     "network_input_peak_seconds" -> {
-                        netIn = java.lang.Long.parseLong(dv.getValue())
+                        netIn = java.lang.Long.parseLong(dv.value!!)
                     }
                     "network_output_peak_seconds" -> {
-                        netOut = java.lang.Long.parseLong(dv.getValue())
+                        netOut = java.lang.Long.parseLong(dv.value!!)
                     }
                     else -> { }
                 }
-                i++
             }
             // FIXME why instr doesn't appear on the condition ?
             if (mem < freeMemory
@@ -125,7 +125,7 @@ public object ControlAdmissionSystem {
         }
     }
 
-    fun unregisterComponent(c : ComponentInstance) : Boolean {
+    fun unregisterComponent(c : Instance) : Boolean {
         lock.lock()
         val l = components.filter { info -> info.c.equals(c.path()) }
         lock.unlock()

@@ -10,7 +10,7 @@
     <parent>
         <groupId>org.kevoree.microsandbox</groupId>
         <artifactId>org.kevoree.microsandbox.root</artifactId>
-        <version>1.0-SNAPSHOT</version>
+        <version>1.2.0-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -31,7 +31,7 @@
             <artifactId>org.kevoree.microsandbox.core</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <dependency>
+        <!--<dependency>
             <groupId>org.kevoree.tools</groupId>
             <artifactId>org.kevoree.tools.annotation.api</artifactId>
             <version>${kevoree.version}</version>
@@ -50,11 +50,16 @@
             <groupId>org.kevoree.tools</groupId>
             <artifactId>org.kevoree.tools.aether.framework</artifactId>
             <version>${kevoree.version}</version>
+        </dependency>-->
+        <dependency>
+            <groupId>org.kevoree.library.java</groupId>
+            <artifactId>org.kevoree.library.java.javaNode</artifactId>
+            <version>${kevoree.library.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.kevoree.corelibrary.javase</groupId>
-            <artifactId>org.kevoree.library.javase.javaseNode</artifactId>
-            <version>${kevoree.corelibrary.version}</version>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-stdlib</artifactId>
+            <version>${kotlin.version}</version>
         </dependency>
         <dependency>
             <groupId>org.kevoree</groupId>
@@ -63,10 +68,15 @@
         </dependency>
         <dependency>
             <groupId>org.kevoree</groupId>
-            <artifactId>org.kevoree.framework</artifactId>
+            <artifactId>org.kevoree.annotation.api</artifactId>
             <version>${kevoree.version}</version>
         </dependency>
         <dependency>
+            <groupId>org.kevoree</groupId>
+            <artifactId>org.kevoree.bootstrap</artifactId>
+            <version>${kevoree.version}</version>
+        </dependency>
+       <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-simple</artifactId>
             <version>1.7.5</version>
@@ -89,25 +99,16 @@
             </plugin>
             <plugin>
                 <groupId>org.kevoree.tools</groupId>
-                <artifactId>org.kevoree.tools.annotation.mavenplugin</artifactId>
+                <artifactId>org.kevoree.tools.mavenplugin</artifactId>
                 <version>${kevoree.version}</version>
                 <extensions>true</extensions>
-                <configuration>
-                    <nodeTypeNames>JavaSENode</nodeTypeNames>
-                </configuration>
                 <executions>
                     <execution>
                         <goals>
                             <goal>generate</goal>
-                            <goal>compile</goal>
                         </goals>
                     </execution>
                 </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.kevoree.platform</groupId>
-                <artifactId>org.kevoree.platform.mavenrunner</artifactId>
-                <version>${kevoree.version}</version>
             </plugin>
         </plugins>
     </build>
