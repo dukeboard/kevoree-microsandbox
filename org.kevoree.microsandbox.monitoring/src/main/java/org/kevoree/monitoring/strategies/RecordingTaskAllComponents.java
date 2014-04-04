@@ -2,8 +2,8 @@ package org.kevoree.monitoring.strategies;
 
 import edu.emory.mathcs.backport.java.util.Arrays;
 import org.kevoree.ComponentInstance;
-import org.kevoree.api.Bootstraper;
-import org.kevoree.api.service.core.handler.KevoreeModelHandlerService;
+import org.kevoree.api.BootstrapService;
+import org.kevoree.api.ModelService;
 import org.kevoree.monitoring.comp.MyLowLevelResourceConsumptionRecorder;
 import org.kevoree.monitoring.comp.monitor.GCWatcher;
 import org.kevoree.monitoring.comp.monitor.NewMetricReporter;
@@ -26,8 +26,8 @@ public class RecordingTaskAllComponents extends AbstractMonitoringTask implement
     private final NewMetricReporter reporter;
 
     public RecordingTaskAllComponents(String nodeName,
-                                      KevoreeModelHandlerService service,
-                                      Bootstraper bootstraper, NewMetricReporter reporter) {
+                                      ModelService service,
+                                      BootstrapService bootstraper, NewMetricReporter reporter) {
         super(bootstraper,service,null,nodeName);
         this.reporter = reporter;
     }

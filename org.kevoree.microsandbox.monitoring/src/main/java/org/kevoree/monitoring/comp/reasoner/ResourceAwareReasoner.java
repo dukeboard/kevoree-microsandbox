@@ -1,7 +1,6 @@
 package org.kevoree.monitoring.comp.reasoner;
 
 import org.kevoree.annotation.*;
-import org.kevoree.framework.AbstractComponentType;
 import org.kevoree.microsandbox.api.event.MicrosandboxEvent;
 
 /**
@@ -11,12 +10,8 @@ import org.kevoree.microsandbox.api.event.MicrosandboxEvent;
  * Time: 10:45 AM
  *
  */
-@Provides({
-        @ProvidedPort(name = "eventHandler", className = MicrosandboxEvent.class, type = PortType.MESSAGE)
-})
-
 @ComponentType
-public class ResourceAwareReasoner extends AbstractComponentType {
+public class ResourceAwareReasoner {
 
     @Start
     public void startComponent() {
@@ -33,8 +28,8 @@ public class ResourceAwareReasoner extends AbstractComponentType {
 
     }
 
-    @Port(name = "eventHandler")
-    public void handlingEvent(Object event) {
+    @Input
+    public void eventHandler(Object event) {
         if (event instanceof MicrosandboxEvent) {
             MicrosandboxEvent e = (MicrosandboxEvent)event;
             System.out.println(e);

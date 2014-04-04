@@ -1,8 +1,9 @@
 package org.kevoree.monitoring.strategies;
 
 import org.kevoree.ComponentInstance;
-import org.kevoree.api.Bootstraper;
-import org.kevoree.api.service.core.handler.KevoreeModelHandlerService;
+import org.kevoree.api.BootstrapService;
+import org.kevoree.api.ModelService;
+import org.kevoree.microsandbox.api.heuristic.MonitoringEvent;
 import org.kevoree.microsandbox.api.heuristic.RankingHeuristicComponent;
 import org.kevoree.monitoring.comp.monitor.ContractVerificationRequired;
 import org.kevoree.monitoring.comp.monitor.GCWatcher;
@@ -18,8 +19,8 @@ import org.resourceaccounting.ResourcePrincipal;
  */
 public abstract class AbstractMonitoringTask implements Runnable, ContractVerificationRequired, /*ModelListener,*/ RankingHeuristicComponent {
     protected final String nodeName;
-    protected final Bootstraper bootstraper;
-    protected final KevoreeModelHandlerService service;
+    protected final BootstrapService bootstraper;
+    protected final ModelService service;
     protected boolean stopped;
     protected GCWatcher gcWatcher;
     protected final Object msg;
@@ -27,8 +28,8 @@ public abstract class AbstractMonitoringTask implements Runnable, ContractVerifi
     protected MonitoringComponent monitoringComponent;
     protected MonitoringStrategy currentStrategy;
 
-    public AbstractMonitoringTask(Bootstraper bootstraper,
-                                  KevoreeModelHandlerService service,/*String nameOfRankerFunction*/
+    public AbstractMonitoringTask(BootstrapService bootstraper,
+                                  ModelService service,/*String nameOfRankerFunction*/
                                   MonitoringComponent monitoringComponent,
                                   String nodeName) {
         this.bootstraper = bootstraper;
@@ -80,9 +81,9 @@ public abstract class AbstractMonitoringTask implements Runnable, ContractVerifi
     }
 
     @Override
-    public void triggerMonitoringEvent(String operation, String name, String instancePath, Long value) {
+    public void triggerMonitoringEvent(MonitoringEvent event) {
         if (monitoringComponent != null) {
-            monitoringComponent.triggerMonitoringEvent(operation, name, instancePath, value);
+            monitoringComponent.triggerMonitoringEvent(event);
         }
     }
 

@@ -1,7 +1,6 @@
 package org.kevoree.monitoring.comp.viewer;
 
 import org.kevoree.annotation.*;
-import org.kevoree.framework.AbstractComponentType;
 import org.kevoree.monitoring.comp.MyLowLevelResourceConsumptionRecorder;
 import org.resourceaccounting.LowLevelResourceMonitorProxy;
 
@@ -13,25 +12,21 @@ import org.resourceaccounting.LowLevelResourceMonitorProxy;
  * Time: 7:52 PM
  *
  */
-@DictionaryType({
-        @DictionaryAttribute(name = "frequency", defaultValue = "1000"),
-        @DictionaryAttribute(name = "remote", defaultValue = "false", optional = true),
-        @DictionaryAttribute(name = "remote_address", defaultValue = "", optional = true)
-})
 @ComponentType
-public class GraphicalViewer extends AbstractComponentType {
+public class GraphicalViewer {
+
+    @Param(defaultValue = "1000")
+    int frequency;
+    @Param(defaultValue = "false", optional = true)
+    boolean remote;
+    @Param(defaultValue = "", optional = true)
+    String remote_address;
 
     private PollingConsumption th;
 
     @Start
     public void startComponent(){
-        int frequency = Integer.valueOf(getDictionary().get("frequency").toString());
-        Boolean b = Boolean.valueOf((String)getDictionary().get("remote"));
         LowLevelResourceMonitorProxy recorder = MyLowLevelResourceConsumptionRecorder.getInstance();
-
-        if (b) {
-            String address = (String)getDictionary().get("remote_address");
-        }
 
         th = new PollingConsumption(frequency, recorder);
         AppViewer appViewer = new AppViewer();

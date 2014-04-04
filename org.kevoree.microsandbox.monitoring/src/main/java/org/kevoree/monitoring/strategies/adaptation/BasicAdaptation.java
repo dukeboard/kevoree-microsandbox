@@ -1,6 +1,6 @@
 package org.kevoree.monitoring.strategies.adaptation;
 
-import org.kevoree.api.service.core.handler.KevoreeModelHandlerService;
+import org.kevoree.api.ModelService;
 
 /**
  * Created with IntelliJ IDEA.
@@ -10,9 +10,9 @@ import org.kevoree.api.service.core.handler.KevoreeModelHandlerService;
  * To change this template use File | Settings | File Templates.
  */
 public abstract class BasicAdaptation implements AdaptationStrategy {
-    protected BasicAdaptation(KevoreeModelHandlerService service) {
+    protected BasicAdaptation(ModelService service) {
         this.modelService = service;
     }
 
-    protected final KevoreeModelHandlerService modelService;
+    protected final ModelService modelService;
 }

@@ -1,10 +1,12 @@
 package org.kevoree.monitoring.comp.monitor;
 
 import org.kevoree.annotation.*;
-import org.kevoree.framework.AbstractComponentType;
-import org.kevoree.framework.MessagePort;
-import org.kevoree.library.defaultNodeTypes.context.KevoreeDeployManager;
+import org.kevoree.api.BootstrapService;
+import org.kevoree.api.Context;
+import org.kevoree.api.ModelService;
+import org.kevoree.api.Port;
 import org.kevoree.microsandbox.api.contract.PlatformDescription;
+import org.kevoree.microsandbox.monitoredNode.MonitoringRegistry;
 import org.kevoree.monitoring.strategies.AbstractMonitoringTask;
 import org.kevoree.monitoring.strategies.RecordingTaskAllComponents;
 
@@ -13,25 +15,31 @@ import org.kevoree.monitoring.strategies.RecordingTaskAllComponents;
  * User: inti
  * Date: 6/11/13
  * Time: 2:57 PM
- *
  */
-@Requires( {
- @RequiredPort(name = "output" , type = PortType.MESSAGE, optional = true, needCheckDependency = true)
-})
 @ComponentType
-public class ForContractInformationRetrieverComponent extends AbstractComponentType
-            implements NewMetricReporter{
+public class ForContractInformationRetrieverComponent implements NewMetricReporter {
     AbstractMonitoringTask monitoringTask;
 
+    @Output(optional = false)
+    Port output;
+
+    @KevoreeInject
+    Context context;
+    @KevoreeInject
+    ModelService modelService;
+    @KevoreeInject
+    BootstrapService bootstrapService;
+
+    MonitoringRegistry monitoringRegistry;
 //    private ModelRankingAlgorithm modelRanker;
 
     @Start
     public void startComponent() {
 
         PlatformDescription description = null;
-        for (String key : KevoreeDeployManager.instance$.getInternalMap().keySet())
+        for (String key : monitoringRegistry.getRegistry().keySet())
             if (key.contains("_platformDescription")) {
-                description = (PlatformDescription) KevoreeDeployManager.instance$.getInternalMap().get(key);
+                description = (PlatformDescription) monitoringRegistry.getRegistry().get(key);
                 break;
             }
         if (description == null) {
@@ -39,9 +47,9 @@ public class ForContractInformationRetrieverComponent extends AbstractComponentT
             System.exit(0);
         }
 
-        monitoringTask = new RecordingTaskAllComponents(getNodeName(),
-                            getModelService(),
-                            getBootStrapperService(), this);
+        monitoringTask = new RecordingTaskAllComponents(context.getNodeName(),
+                modelService,
+                bootstrapService, this);
 //        getModelService().registerModelListener(monitoringTask);
 
         new Thread(monitoringTask).start();
@@ -61,7 +69,8 @@ public class ForContractInformationRetrieverComponent extends AbstractComponentT
 
     @Override
     public void report(String component, InfoForContractCreation info) {
-        MessagePort p = getPortByName("output", MessagePort.class);
-        p.process(info);
+        if (output.getConnectedBindingsSize() > 0) {
+            output.send(info);
+        }
     }
 }

@@ -1,8 +1,7 @@
 package org.kevoree.monitoring.comp.monitor;
 
 import org.kevoree.annotation.*;
-import org.kevoree.framework.AbstractComponentType;
-import org.kevoree.framework.MessagePort;
+import org.kevoree.api.Port;
 import org.resourceaccounting.ResourcePrincipal;
 
 import java.lang.management.ManagementFactory;
@@ -17,17 +16,17 @@ import java.util.TimerTask;
  * User: inti
  * Date: 9/5/13
  * Time: 2:22 PM
- * To change this template use File | Settings | File Templates.
  */
-@Requires({
-        @RequiredPort(name = "maximumCPU", optional = true, type = PortType.MESSAGE, needCheckDependency = true),
-        @RequiredPort(name = "maximumMem", optional = true, type = PortType.MESSAGE, needCheckDependency = true)
-})
-@DictionaryType({
-        @DictionaryAttribute(name = "accountGlobalConsumption", defaultValue = "0", dataType = Long.class)
-})
 @ComponentType
-public class MeasuringCPUUsage extends AbstractComponentType {
+public class MeasuringCPUUsage {
+
+    @Param(defaultValue = "0")
+    long accountGlobalConsumption;
+
+    @Output(optional = true)
+    Port maximumCPU;
+    @Output(optional = true)
+    Port maximumMem;
 
     private final static int nCPUs = Runtime.getRuntime().availableProcessors();
     public static final double ELAPSED_TIME = 1000; // 1 second
@@ -42,7 +41,7 @@ public class MeasuringCPUUsage extends AbstractComponentType {
 
     GCWatcher gcWatcher = new GCWatcher();
     Timer t = new Timer();
-    private double maximumMem;
+    private double maximumMemory;
 
     private Map<Long, Long> cpuTimes = new HashMap<Long, Long>(50);
 
@@ -84,8 +83,9 @@ public class MeasuringCPUUsage extends AbstractComponentType {
             if (count > 5) {
                 if (cpuUsage > maximumCPUUsage)  {
                     maximumCPUUsage = cpuUsage;
-                    MessagePort p = getPortByName("maximumCPU",MessagePort.class);
-                    p.process(maximumCPUUsage);
+                    if (maximumCPU.getConnectedBindingsSize() > 0) {
+                        maximumCPU.send(maximumCPUUsage);
+                    }
                 }
             }
             count++;
@@ -100,10 +100,11 @@ public class MeasuringCPUUsage extends AbstractComponentType {
             double u = used;
             u /= max;
             u *= 100;
-            if (u > maximumMem) {
-                maximumMem = u;
-                MessagePort p = getPortByName("maximumMem",MessagePort.class);
-                p.process(maximumMem);
+            if (u > maximumMemory) {
+                maximumMemory = u;
+                if(maximumMem.getConnectedBindingsSize() > 0) {
+                    maximumMem.send(maximumMemory);
+                }
             }
         }
     }
@@ -111,8 +112,7 @@ public class MeasuringCPUUsage extends AbstractComponentType {
 
     @Start
     public void start() {
-        long timetoWait = Long.parseLong(getDictionary().get("accountGlobalConsumption").toString());
-        if (timetoWait != 0) {
+        if (accountGlobalConsumption != 0) {
             final Timer tt = new Timer();
             tt.schedule(new TimerTask() {
                 @Override
@@ -126,7 +126,7 @@ public class MeasuringCPUUsage extends AbstractComponentType {
                     t.purge();
                     System.exit(0);
                 }
-            }, timetoWait);
+            }, accountGlobalConsumption);
         }
         gcWatcher.register();
         Measuring m = new Measuring();

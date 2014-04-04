@@ -1,7 +1,6 @@
 package org.kevoree.monitoring.comp.monitor;
 
 import org.kevoree.annotation.*;
-import org.kevoree.framework.AbstractComponentType;
 
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -13,30 +12,22 @@ import java.util.HashMap;
  * User: inti
  * Date: 9/5/13
  * Time: 2:22 PM
- * To change this template use File | Settings | File Templates.
  */
-@Provides({
-        @ProvidedPort(name = "CPUThreshold", type = PortType.MESSAGE),
-        @ProvidedPort(name = "MemThreshold", type = PortType.MESSAGE),
-        @ProvidedPort(name = "componentProcessor", type = PortType.MESSAGE)
-})
-@DictionaryType({
-        @DictionaryAttribute(name = "kevs_file", dataType = String.class, optional = false)
-})
 @ComponentType
-public class ContractCreatorComponent extends AbstractComponentType {
+public class ContractCreatorComponent {
 
+    @Param(optional = false)
+    String kevs_file;
 
     private double cpu;
     private double memory;
 
     HashMap<String,InfoForContractCreation> set = new HashMap<String,InfoForContractCreation>();
-    String file ;
 
 
     @Start
     public void start() {
-        file = getDictionary().get("kevs_file").toString();
+
     }
 
     @Stop
@@ -50,20 +41,20 @@ public class ContractCreatorComponent extends AbstractComponentType {
         start();
     }
 
-    @Port(name = "CPUThreshold")
-    public void newCPU(Object obj) {
+    @Input
+    public void CPUThreshold(Object obj) {
         cpu = (Double)obj;
         saveInfo();
     }
 
-    @Port(name = "MemThreshold")
-    public void newMem(Object obj) {
+    @Input
+    public void MemThreshold(Object obj) {
         memory = (Double)obj;
         saveInfo();
     }
 
-    @Port(name = "componentProcessor")
-    public void newComponentInfo(Object obj) {
+    @Input
+    public void componentProcessor(Object obj) {
         InfoForContractCreation s = (InfoForContractCreation)obj;
 
         set.put(s.path, s);
@@ -74,7 +65,7 @@ public class ContractCreatorComponent extends AbstractComponentType {
     private synchronized void saveInfo() {
         PrintStream ps = null;
         try {
-            ps = new PrintStream(new FileOutputStream(file));
+            ps = new PrintStream(new FileOutputStream(kevs_file));
             ps.printf("addComponent monitoringComponent0@NODE_NAME: MonitoringComponent {\n" +
                     "\tcpu_threshold = '%f',\n" +
                     "\tmemory_threshold = '%f' \n" +

@@ -2,9 +2,12 @@ package org.kevoree.monitoring.ranking;
 
 import org.kevoree.ComponentInstance;
 import org.kevoree.ContainerNode;
-import org.kevoree.annotation.*;
-import org.kevoree.framework.AbstractComponentType;
+import org.kevoree.annotation.ComponentType;
+import org.kevoree.annotation.Input;
+import org.kevoree.annotation.KevoreeInject;
+import org.kevoree.api.ModelService;
 import org.kevoree.microsandbox.api.contract.ContractedComponentHelper;
+import org.kevoree.microsandbox.api.heuristic.MonitoringEvent;
 import org.kevoree.microsandbox.api.heuristic.RankingHeuristicComponent;
 
 import java.util.ArrayList;
@@ -21,15 +24,16 @@ import java.util.List;
  * @version 1.0
  */
 @ComponentType
-@Provides({
-        @ProvidedPort(name = "ranking", type = PortType.SERVICE, className = RankingHeuristicComponent.class)
-})
-public abstract class ComparatorBasedHeuristicComponent extends AbstractComponentType implements RankingHeuristicComponent {
+public abstract class ComparatorBasedHeuristicComponent implements RankingHeuristicComponent {
+
+    @KevoreeInject
+    ModelService modelService;
+
     @Override
-    @Port(name = "ranking", method = "getRankingOrder")
+    @Input
     public ComponentInstance[] getRankingOrder(String nodeName) {
 
-        ContainerNode node = getModelService().getLastModel().findNodesByID(nodeName);
+        ContainerNode node = modelService.getCurrentModel().getModel().findNodesByID(nodeName);
         if (node != null) {
             List<ComponentInstance> instances = new ArrayList<ComponentInstance>();
 
@@ -51,7 +55,7 @@ public abstract class ComparatorBasedHeuristicComponent extends AbstractComponen
     abstract Comparator<ComponentInstance> defineComparator();
 
     @Override
-    @Port(name = "ranking", method = "triggerMonitoringEvent")
-    public abstract void triggerMonitoringEvent(String operation, String name, String instancePath, Long value);
+    @Input
+    public abstract void triggerMonitoringEvent(MonitoringEvent event);
 
 }

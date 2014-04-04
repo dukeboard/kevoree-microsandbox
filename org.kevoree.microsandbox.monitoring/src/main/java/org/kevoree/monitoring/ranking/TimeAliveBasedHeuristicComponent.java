@@ -3,6 +3,7 @@ package org.kevoree.monitoring.ranking;
 import org.kevoree.ComponentInstance;
 import org.kevoree.annotation.ComponentType;
 import org.kevoree.annotation.Start;
+import org.kevoree.microsandbox.api.heuristic.MonitoringEvent;
 import org.resourceaccounting.utils.HashMap;
 import org.resourceaccounting.utils.Map;
 
@@ -45,12 +46,12 @@ public class TimeAliveBasedHeuristicComponent extends ComparatorBasedHeuristicCo
     }
 
     @Override
-    public void triggerMonitoringEvent(String operation, String name, String instancePath, Long value) {
-        if (name.equalsIgnoreCase("deployTime") && value != null) {
-            if (operation.equalsIgnoreCase("CREATE")) {
-                deployTimes.put(instancePath, value);
+    public void triggerMonitoringEvent(MonitoringEvent event) {
+        if (event.getName().equalsIgnoreCase("deployTime") && event.getValue() != null) {
+            if (event.getOperation().equalsIgnoreCase("CREATE")) {
+                deployTimes.put(event.getInstancePath(), event.getValue());
             } else {
-                deployTimes.remove(instancePath);
+                deployTimes.remove(event.getInstancePath());
             }
         }
     }

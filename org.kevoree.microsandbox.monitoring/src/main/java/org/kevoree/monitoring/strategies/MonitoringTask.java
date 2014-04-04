@@ -1,11 +1,12 @@
 package org.kevoree.monitoring.strategies;
 
 import edu.emory.mathcs.backport.java.util.Arrays;
-import org.kevoree.api.Bootstraper;
-import org.kevoree.api.service.core.handler.KevoreeModelHandlerService;
+import org.kevoree.api.BootstrapService;
+import org.kevoree.api.ModelService;
 import org.kevoree.microsandbox.api.communication.MonitoringReporterFactory;
 import org.kevoree.microsandbox.api.event.ContractViolationEvent;
 import org.kevoree.microsandbox.api.event.MonitoringNotification;
+import org.kevoree.microsandbox.api.heuristic.MonitoringEvent;
 import org.kevoree.microsandbox.api.sla.Metric;
 import org.kevoree.monitoring.comp.MyLowLevelResourceConsumptionRecorder;
 import org.kevoree.monitoring.comp.monitor.GCWatcher;
@@ -39,8 +40,8 @@ public class MonitoringTask extends AbstractMonitoringTask {
                           GlobalThreshold globalThreshold,
                           /*String nameOfRankerFunction*/
                           MonitoringComponent monitoringComponent,
-                          KevoreeModelHandlerService service,
-                          Bootstraper bootstraper) {
+                          ModelService service,
+                          BootstrapService bootstraper) {
         super(bootstraper, service, monitoringComponent, nodeName);
         this.globalThreshold = globalThreshold;
 
@@ -120,14 +121,14 @@ public class MonitoringTask extends AbstractMonitoringTask {
                         FineGrainedMonitoringStrategy s =(FineGrainedMonitoringStrategy)currentStrategy;
                         List<FaultyComponent> tmpList = s.getFaultyComponents();
                         for (FaultyComponent c : tmpList) {
-                            // FIXME add some information on a specific port (or somthing to notify interesting component)
+                            // FIXME add some information on a specific port (or something to notify interesting component)
                             // TODO add this information inside Context Model
                             /*org.kevoree.context.Metric nbFailureMetric = PutHelper.getMetric(monitoringComponent.getModelService().getContextModel(), "monitoring/deployTime/{nodes[" + nodeName + "]/components[" + c.getComponentPath() + "]}", PutHelper.getParam().setMetricTypeClazzName(CounterHistoryMetric.class.getName()).setNumber(1));
 
                             nbFailureMetric.
                             PutHelper.addValue(nbFailureMetric, "" + System.nanoTime());*/
 //                            ComponentsInfoStorage.object$.getInstance().getExecutionInfo(c.getComponentPath()).increaseFailures();
-                            monitoringComponent.triggerMonitoringEvent("CREATE", "nbFailure", c.getComponentPath(), 1l);
+                            monitoringComponent.triggerMonitoringEvent(new MonitoringEvent("CREATE", "nbFailure", c.getComponentPath(), 1l));
                             EnumMap<Metric, MeasurePoint> map = c.getMetrics();
                             for (Metric m : map.keySet())
                                 MonitoringReporterFactory.reporter().trigger(

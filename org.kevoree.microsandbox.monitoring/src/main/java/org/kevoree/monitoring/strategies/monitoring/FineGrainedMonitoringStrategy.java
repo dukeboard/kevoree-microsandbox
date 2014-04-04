@@ -1,9 +1,9 @@
 package org.kevoree.monitoring.strategies.monitoring;
 
 import org.kevoree.ComponentInstance;
-import org.kevoree.library.defaultNodeTypes.context.KevoreeDeployManager;
 import org.kevoree.log.Log;
 import org.kevoree.microsandbox.api.sla.Metric;
+import org.kevoree.microsandbox.monitoredNode.MonitoringRegistry;
 import org.kevoree.monitoring.comp.MyLowLevelResourceConsumptionRecorder;
 import org.kevoree.monitoring.sla.FaultyComponent;
 import org.resourceaccounting.LowLevelResourceMonitorProxy;
@@ -29,6 +29,8 @@ public abstract class FineGrainedMonitoringStrategy extends AbstractMonitoringSt
     protected ComponentInstance currentComponent;
     protected EnumSet<Metric> reason;
 
+    protected MonitoringRegistry monitoringRegistry;
+
 
     protected ArrayList<FaultyComponent> faultyComponents = new ArrayList<FaultyComponent>();
 
@@ -52,8 +54,7 @@ public abstract class FineGrainedMonitoringStrategy extends AbstractMonitoringSt
 
     protected ResourcePrincipal getPrincipal(ComponentInstance instance) {
         LowLevelResourceMonitorProxy recorder = MyLowLevelResourceConsumptionRecorder.getInstance();
-        Object obj = KevoreeDeployManager.
-                instance$.getRef(instance.getClass().getName() + "_tg", instance.getName());
+        Object obj = monitoringRegistry.lookup(instance.path() + "_tg");
         ThreadGroup tg = (ThreadGroup) obj;
         ResourcePrincipal p = recorder.getApplication(tg.getName());
         if (p == null) {
@@ -68,14 +69,14 @@ public abstract class FineGrainedMonitoringStrategy extends AbstractMonitoringSt
 
     protected String getAppId(ComponentInstance instance) {
         LowLevelResourceMonitorProxy recorder = MyLowLevelResourceConsumptionRecorder.getInstance();
-        Object obj =KevoreeDeployManager.instance$.getRef(instance.getClass().getName() + "_tg", instance.getName());
+        Object obj =monitoringRegistry.lookup(instance.path()+ "_tg");
         ThreadGroup tg = (ThreadGroup) obj;
         return tg.getName();
     }
 
     protected void makeContractAvailable(ResourcePrincipal principal, ComponentInstance instance) {
         if (principal.getContract() == null) {
-            Object obj =KevoreeDeployManager.instance$.getRef(instance.getClass().getName() + "_contract", instance.getName());
+            Object obj =monitoringRegistry.lookup(instance.path() + "_contract");
             if (obj != null && obj instanceof ResourceContract) {
                 ResourceContract contract = (ResourceContract)obj;
                 principal.setContract(contract);

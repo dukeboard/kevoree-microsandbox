@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.kevoree.microsandbox</groupId>
         <artifactId>org.kevoree.microsandbox.root</artifactId>
-        <version>1.0-SNAPSHOT</version>
+        <version>1.2.0-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -14,19 +14,14 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.kevoree.corelibrary.javase</groupId>
-            <artifactId>org.kevoree.library.javase.javaseNode</artifactId>
-            <version>${kevoree.corelibrary.version}</version>
+            <groupId>org.kevoree.microsandbox</groupId>
+            <artifactId>org.kevoree.microsandbox.monitoredNode</artifactId>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.kevoree.microsandbox</groupId>
             <artifactId>org.kevoree.microsandbox.sharedResourceAccounting</artifactId>
             <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <artifactId>jfreechart</artifactId>
-            <groupId>jfreechart</groupId>
-            <version>1.0.0</version>
         </dependency>
         <dependency>
             <groupId>org.kevoree.microsandbox</groupId>
@@ -39,15 +34,24 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
+            <artifactId>jfreechart</artifactId>
+            <groupId>jfreechart</groupId>
+            <version>1.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-stdlib</artifactId>
+            <version>${kotlin.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.kevoree.komponents</groupId>
+            <artifactId>helpers</artifactId>
+            <version>${kevoree.komponents.version}</version>
+        </dependency>
+        <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>4.11</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.kevoree.tools</groupId>
-            <artifactId>org.kevoree.tools.aether.framework</artifactId>
-            <version>${kevoree.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -73,17 +77,13 @@
             </plugin>
             <plugin>
                 <groupId>org.kevoree.tools</groupId>
-                <artifactId>org.kevoree.tools.annotation.mavenplugin</artifactId>
+                <artifactId>org.kevoree.tools.mavenplugin</artifactId>
                 <version>${kevoree.version}</version>
                 <extensions>true</extensions>
-                <configuration>
-                    <nodeTypeNames>JavaSENode</nodeTypeNames>
-                </configuration>
                 <executions>
                     <execution>
                         <goals>
                             <goal>generate</goal>
-                            <goal>compile</goal>
                         </goals>
                     </execution>
                 </executions>
@@ -98,11 +98,6 @@
                     <target>1.6</target>
                     <encoding>${project.build.sourceEncoding}</encoding>
                 </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.kevoree.platform</groupId>
-                <artifactId>org.kevoree.platform.mavenrunner</artifactId>
-                <version>${kevoree.version}</version>
             </plugin>
         </plugins>
     </build>

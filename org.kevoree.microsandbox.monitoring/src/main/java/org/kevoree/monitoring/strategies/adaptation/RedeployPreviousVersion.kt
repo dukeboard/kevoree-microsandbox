@@ -1,7 +1,7 @@
 package org.kevoree.monitoring.strategies.adaptation
 
-import org.kevoree.api.service.core.handler.KevoreeModelHandlerService
 import org.kevoree.monitoring.sla.FaultyComponent
+import org.kevoree.api.ModelService
 
 /**
  * Created with IntelliJ IDEA.
@@ -10,7 +10,7 @@ import org.kevoree.monitoring.sla.FaultyComponent
  * Time: 8:38 AM
  * To change this template use File | Settings | File Templates.
  */
-public class RedeployPreviousVersion(modelService: KevoreeModelHandlerService)
+public class RedeployPreviousVersion(modelService: ModelService)
                                         : BasicAdaptation(modelService) {
 
 

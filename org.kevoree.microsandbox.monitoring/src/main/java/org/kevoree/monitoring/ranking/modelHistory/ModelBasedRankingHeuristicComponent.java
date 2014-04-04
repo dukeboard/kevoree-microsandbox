@@ -1,14 +1,16 @@
 package org.kevoree.monitoring.ranking.modelHistory;
 
-import org.kevoree.*;
+import org.kevoree.ComponentInstance;
+import org.kevoree.ContainerNode;
+import org.kevoree.ContainerRoot;
+import org.kevoree.MBinding;
 import org.kevoree.annotation.*;
-import org.kevoree.annotation.ComponentType;
-import org.kevoree.annotation.Port;
-import org.kevoree.annotation.PortType;
-import org.kevoree.api.service.core.handler.ModelListener;
-import org.kevoree.framework.AbstractComponentType;
-import org.kevoree.framework.service.handler.ModelListenerAdapter;
+import org.kevoree.api.Context;
+import org.kevoree.api.ModelService;
+import org.kevoree.api.handler.ModelListener;
+import org.kevoree.api.handler.ModelListenerAdapter;
 import org.kevoree.microsandbox.api.contract.ContractedComponentHelper;
+import org.kevoree.microsandbox.api.heuristic.MonitoringEvent;
 import org.kevoree.microsandbox.api.heuristic.RankingHeuristicComponent;
 import org.kevoree.monitoring.ranking.modelHistory.internal.Step;
 
@@ -24,10 +26,7 @@ import java.util.*;
  */
 
 @ComponentType
-@Provides({
-        @ProvidedPort(name = "ranking", type = PortType.SERVICE, className = RankingHeuristicComponent.class)
-})
-public class ModelBasedRankingHeuristicComponent extends AbstractComponentType implements RankingHeuristicComponent {
+public class ModelBasedRankingHeuristicComponent implements RankingHeuristicComponent {
 
     private ContainerRoot currentModel;
     private List<ContainerRoot> modelHistory;
@@ -35,8 +34,13 @@ public class ModelBasedRankingHeuristicComponent extends AbstractComponentType i
     private ModelListener listener;
     private Map<String, Long> deployTimes;
 
+    @KevoreeInject
+    ModelService modelService;
+    @KevoreeInject
+    Context context;
+
     @Override
-    @Port(name = "ranking", method = "getRankingOrder")
+    @Input
     public ComponentInstance[] getRankingOrder(String nodeName) {
         try {
         System.out.println("Sorting components according to ModelBasedHeuristic");
@@ -60,7 +64,7 @@ public class ModelBasedRankingHeuristicComponent extends AbstractComponentType i
             @Override
             public int compare(ComponentInstance o1, ComponentInstance o2) {
                 if (modelHistory != null) {
-                    ContainerNode currentNodeModel = currentModel.findNodesByID(getModelService().getNodeName());
+                    ContainerNode currentNodeModel = currentModel.findNodesByID(context.getNodeName());
                     // check if components currently exist on the current model
                     if (currentNodeModel.findComponentsByID(o1.getName()) != null && currentNodeModel.findComponentsByID(o2.getName()) != null) {
                         return rankAccordingToModel(o1, o2, 1);
@@ -122,7 +126,7 @@ public class ModelBasedRankingHeuristicComponent extends AbstractComponentType i
     private int rankAccordingToModel(ComponentInstance component1, ComponentInstance component2, int historyIndex) {
         if (modelHistory.size() > historyIndex) {
             ContainerRoot previousModel = modelHistory.get(modelHistory.size() - historyIndex);
-            ContainerNode previousNodeModel = previousModel.findNodesByID(getModelService().getNodeName());
+            ContainerNode previousNodeModel = previousModel.findNodesByID(context.getNodeName());
             // check if components exist on the previous model
             if (previousNodeModel.findComponentsByID(component1.getName()) != null && previousNodeModel.findComponentsByID(component2.getName()) != null) {
                 return rankAccordingToModel(component1, component2, historyIndex + 1);
@@ -172,28 +176,29 @@ public class ModelBasedRankingHeuristicComponent extends AbstractComponentType i
     }
 
     @Override
-    @Port(name = "ranking", method = "triggerMonitoringEvent")
-    public void triggerMonitoringEvent(String operation, String name, String instancePath, Long value) {
-        if (name.equalsIgnoreCase("deployTime") && value != null) {
-            if (operation.equalsIgnoreCase("CREATE")) {
-                deployTimes.put(instancePath, value);
+    @Input
+    public void triggerMonitoringEvent(MonitoringEvent event) {
+        if (event.getName().equalsIgnoreCase("deployTime") && event.getValue() != null) {
+            if (event.getOperation().equalsIgnoreCase("CREATE")) {
+                deployTimes.put(event.getInstancePath(), event.getValue());
             } else {
-                deployTimes.remove(instancePath);
+                deployTimes.remove(event.getInstancePath());
             }
         }
     }
 
     @Start
     public void start() {
+        modelHistory = new ArrayList<ContainerRoot>();
         listener = new ModelListenerHistory();
-        getModelService().registerModelListener(listener);
+        modelService.registerModelListener(listener);
         deployTimes = new HashMap<String, Long>();
     }
 
     @Stop
     public void stop() {
         if (listener != null) {
-            getModelService().unregisterModelListener(listener);
+            modelService.unregisterModelListener(listener);
             listener = null;
         }
     }
@@ -207,8 +212,12 @@ public class ModelBasedRankingHeuristicComponent extends AbstractComponentType i
 
         @Override
         public void modelUpdated() {
-            currentModel = getModelService().getLastModel();
-            modelHistory = getModelService().getPreviousModel();
+            modelHistory.add(currentModel);
+            // as a feature of Kevoree2 has been removed in Kevoree3, we need to manage ourselves the storage of the modelHistory
+            if (modelHistory.size() > 10) {
+                modelHistory.remove(0);
+            }
+            currentModel = modelService.getCurrentModel().getModel();
         }
 
         @Override

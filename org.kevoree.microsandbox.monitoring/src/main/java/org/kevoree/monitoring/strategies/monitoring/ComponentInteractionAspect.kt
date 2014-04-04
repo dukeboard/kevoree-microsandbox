@@ -1,17 +1,13 @@
 package org.kevoree.monitoring.strategies.adaptation
 
-import org.kevoree.api.service.core.handler.KevoreeModelHandlerService
-import org.kevoree.framework.kaspects.PortAspect
 import org.kevoree.ComponentInstance
 import org.kevoree.ContainerRoot
 import org.kevoree.Port
 import org.kevoree.monitoring.comp.MyLowLevelResourceConsumptionRecorder
-import org.kevoree.MBinding
-import java.util.ArrayList
 import java.util.HashSet
 import java.util.HashMap
-import org.kevoree.monitoring.strategies.monitoring.AllComponentsMonitoring
 import org.kevoree.monitoring.strategies.monitoring.FineGrainedMonitoringStrategy
+import org.kevoree.api.ModelService
 
 /**
  * Created with IntelliJ IDEA.
@@ -21,7 +17,6 @@ import org.kevoree.monitoring.strategies.monitoring.FineGrainedMonitoringStrateg
  *
  */
 public object ComponentInteractionAspect {
-    val portAspect : PortAspect = PortAspect()
 
     /**
      * This method tries to identified if a component is being used in the wrong way.
@@ -40,22 +35,22 @@ public object ComponentInteractionAspect {
      *
      *  Return Value: the set of ports that are using <i>componentPath</i> in the wrong way
      */
-    fun findMisbehavedComponents(modelService : KevoreeModelHandlerService,
+    fun findMisbehavedComponents(modelService : ModelService,
                        componentPath : String) : PortUsageStatus {
 
         val result = PortUsageStatus(false, HashMap<String, HashSet<Port>>())
-        val root = modelService.getLastModel() as ContainerRoot
+        val root = modelService.getCurrentModel()!!.getModel() as ContainerRoot
         val c = root.findByPath(componentPath, javaClass<ComponentInstance>())
         val totalExpected = getMaxNumberOfRequest(componentPath, modelService)
         var totalObserved = 0
         var errorOnSinglePortUsage = false;
 
-        for (port in c?.getProvided()!!)
+        for (port in c?.provided!!)
         {
-            val name = port?.getPortTypeRef()?.getName() as String
+            val name = port.portTypeRef?.name!!
             val portObserved : Int = MyLowLevelResourceConsumptionRecorder.
                     getInstance()?.
-                    getUsesOfProvidedPort(c?.getName(), name)!! / FineGrainedMonitoringStrategy.ELAPSED_SECONDS
+                    getUsesOfProvidedPort(c?.name!!, name)!! / FineGrainedMonitoringStrategy.ELAPSED_SECONDS
 
             val portExpected = getMaxNumberOfRequest(componentPath, name, modelService)
 
@@ -66,18 +61,18 @@ public object ComponentInteractionAspect {
                 errorOnSinglePortUsage = true
                 if (!result.misUsedProvidedPorts.containsKey(name))
                     result.misUsedProvidedPorts.put(name, HashSet<Port>())
-                for (binding in port?.getBindings()!!)
+                for (binding in port.bindings)
                 {
-                    for (b2 in binding?.getHub()?.getBindings()!!)
-                        if (!b2.equals(binding) && (portAspect.isRequiredPort(b2.getPort() as Port)))
+                    for (b2 in binding.hub?.bindings!!)
+
+                        if (!b2.equals(binding) && (b2.port!!.eContainer() as ComponentInstance).required.contains(b2.port!!))
                         {
-                            val other = ((b2.getPort()?.eContainer() as ComponentInstance))
-                            val nameC = other.getName()
-                            val nameP = b2.getPort()?.getPortTypeRef()?.getName()
+                            val nameC = (b2.port?.eContainer() as ComponentInstance).name!!
+                            val nameP = b2.port?.portTypeRef?.name!!
                             val d = MyLowLevelResourceConsumptionRecorder.
                                     getInstance()?.getUsesOfRequiredPort(nameC, nameP) as Int / FineGrainedMonitoringStrategy.ELAPSED_SECONDS
                             if (d > portExpected) {
-                                result.misUsedProvidedPorts.get(name)?.add(b2?.getPort()!!)
+                                result.misUsedProvidedPorts.get(name)?.add(b2?.port!!)
                             }
                         }
                 }
@@ -102,12 +97,12 @@ public object ComponentInteractionAspect {
         }
     }
 
-    private fun getMaxNumberOfRequest(componentPath : String, modelS : KevoreeModelHandlerService): Int {
-        val c = modelS.getLastModel()?.findByPath(componentPath, javaClass<ComponentInstance>())
+    private fun getMaxNumberOfRequest(componentPath : String, modelS : ModelService): Int {
+        val c = modelS.getCurrentModel()!!.getModel()?.findByPath(componentPath, javaClass<ComponentInstance>())
         var result = Integer.MAX_VALUE
-        for (dv in c?.getDictionary()?.getValues()!!) {
-            if (dv.getAttribute()?.getName() == "throughput_msg_per_second") {
-               val value = dv.getValue()
+        for (dv in c?.dictionary?.values!!) {
+            if (dv.name.equals("throughput_msg_per_second")) {
+               val value = dv.value!!
                val l : Array<String> = value.split(";")
                val tmp = l.filter { s -> s.startsWith("all=") }.
                             map { s -> Integer.valueOf(s.substring(s.indexOf('=') + 1)) }
@@ -120,12 +115,12 @@ public object ComponentInteractionAspect {
         return result;
     }
 
-    public fun getMaxNumberOfRequest(componentPath : String, port : String, modelS : KevoreeModelHandlerService): Int {
-        val c = modelS.getLastModel()?.findByPath(componentPath, javaClass<ComponentInstance>())
+    public fun getMaxNumberOfRequest(componentPath : String, port : String, modelS : ModelService): Int {
+        val c = modelS.getCurrentModel()!!.getModel()?.findByPath(componentPath, javaClass<ComponentInstance>())
         var result = Integer.MAX_VALUE
-        for (dv in c?.getDictionary()?.getValues()!!) {
-            if (dv.getAttribute()?.getName() == "throughput_msg_per_second") {
-                val value = dv.getValue()
+        for (dv in c?.dictionary?.values!!) {
+            if (dv.name.equals("throughput_msg_per_second")) {
+                val value = dv.value!!
                 val l : Array<String> = value.split(";")
                 val tmp = l.filter { s -> s.startsWith(port + "=") }.
                 map { s -> Integer.valueOf(s.substring(s.indexOf('=') + 1)) }

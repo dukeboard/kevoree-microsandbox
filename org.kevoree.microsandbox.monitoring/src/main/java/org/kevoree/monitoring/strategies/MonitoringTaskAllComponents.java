@@ -1,9 +1,8 @@
 package org.kevoree.monitoring.strategies;
 
-import org.jfree.util.Log;
 import org.kevoree.ComponentInstance;
-import org.kevoree.api.Bootstraper;
-import org.kevoree.api.service.core.handler.KevoreeModelHandlerService;
+import org.kevoree.api.BootstrapService;
+import org.kevoree.api.ModelService;
 import org.kevoree.microsandbox.api.communication.MonitoringReporterFactory;
 import org.kevoree.microsandbox.api.event.ContractViolationEvent;
 import org.kevoree.microsandbox.api.event.MonitoringNotification;
@@ -31,8 +30,8 @@ public class MonitoringTaskAllComponents extends AbstractMonitoringTask implemen
 
     public MonitoringTaskAllComponents(String nodeName,/*String nameOfRankerFunction*/
                                        MonitoringComponent monitoringComponent,
-                          KevoreeModelHandlerService service,
-                          Bootstraper bootstraper) {
+                          ModelService service,
+                          BootstrapService bootstraper) {
         super(bootstraper,service,monitoringComponent,nodeName);
     }
 

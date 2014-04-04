@@ -1,3 +1,4 @@
+/*
 package org.kevoree.microsandbox.monitoring;
 
 import org.kevoree.ContainerRoot;
@@ -9,6 +10,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
+*/
 /**
  * User: Erwan Daubert - erwan.daubert@gmail.com
  * Date: 09/09/13
@@ -16,8 +18,9 @@ import java.util.UUID;
  *
  * @author Erwan Daubert
  * @version 1.0
- */
-public class KevoreeModelHandlerServiceMock implements KevoreeModelHandlerService {
+ *//*
+
+public class KevoreeModelHandlerServiceMock implements ModelService {
 
     private ContainerRoot lastModel;
     private List<ContainerRoot> historyModel;
@@ -116,3 +119,4 @@ public class KevoreeModelHandlerServiceMock implements KevoreeModelHandlerServic
         return false;
     }
 }
+*/

@@ -3,6 +3,7 @@ package org.kevoree.monitoring.ranking;
 import org.kevoree.ComponentInstance;
 import org.kevoree.annotation.ComponentType;
 import org.kevoree.annotation.Start;
+import org.kevoree.microsandbox.api.heuristic.MonitoringEvent;
 import org.resourceaccounting.utils.HashMap;
 import org.resourceaccounting.utils.Map;
 
@@ -48,16 +49,16 @@ public class NumberFailureBasedHeuristicComponent extends ComparatorBasedHeurist
     }
 
     @Override
-    public void triggerMonitoringEvent(String operation, String name, String instancePath, Long value) {
-        if (name.equalsIgnoreCase("nbFailure")) {
-            if (operation.equalsIgnoreCase("CREATE")) {
-                if (nbFailures.get(instancePath) != null) {
-                    nbFailures.put(instancePath, nbFailures.remove(instancePath) + 1);
+    public void triggerMonitoringEvent(MonitoringEvent event) {
+        if (event.getName().equalsIgnoreCase("nbFailure")) {
+            if (event.getOperation().equalsIgnoreCase("CREATE")) {
+                if (nbFailures.get(event.getInstancePath()) != null) {
+                    nbFailures.put(event.getInstancePath(), nbFailures.remove(event.getInstancePath()) + 1);
                 } else {
-                    nbFailures.put(instancePath, 1l);
+                    nbFailures.put(event.getInstancePath(), 1l);
                 }
             } else {
-                nbFailures.remove(instancePath);
+                nbFailures.remove(event.getInstancePath());
             }
         }
     }
