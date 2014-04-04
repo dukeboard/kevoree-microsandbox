@@ -14,6 +14,7 @@ import org.kevoree.extra.marshalling.JacksonSerializer;
 import org.kevoree.extra.marshalling.RichJSONObject;
 import org.kevoree.library.javase.http.api.AbstractHTTPHandler;
 import org.kevoree.library.javase.http.api.HTTPHelper;
+import org.kevoree.library.javase.http.api.page.AbstractHTTPHandler;
 import org.kevoree.log.Log;
 import org.kevoree.microsandbox.api.contract.CPUContracted;
 import org.kevoree.microsandbox.api.contract.MemoryContracted;
