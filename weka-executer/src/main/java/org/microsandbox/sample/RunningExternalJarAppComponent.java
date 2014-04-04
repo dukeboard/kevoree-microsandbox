@@ -4,6 +4,7 @@ import org.kevoree.annotation.*;
 import org.kevoree.framework.AbstractComponentType;
 import org.kevoree.microsandbox.api.contract.CPUContracted;
 import org.kevoree.microsandbox.api.contract.MemoryContracted;
+import org.kevoree.microsandbox.api.contract.impl.CPUMemoryContractedImpl;
 
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
@@ -26,8 +27,7 @@ import java.net.URLClassLoader;
         @DictionaryAttribute(name = "delayTime", dataType = Long.class, optional = false)
 })
 @ComponentType
-public class RunningExternalJarAppComponent extends AbstractComponentType
-                    implements MemoryContracted, CPUContracted {
+public class RunningExternalJarAppComponent extends CPUMemoryContractedImpl {
 
 
     private String path;
