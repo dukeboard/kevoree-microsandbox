@@ -1,7 +1,5 @@
 package org.kevoree.microsandbox.javase
 
-
-
 import java.util.Vector
 import org.kevoree.microsandbox.core.CoverageRuntime
 import org.kevoree.kcl.impl.FlexyClassLoaderImpl
@@ -13,7 +11,6 @@ import org.kevoree.microsandbox.core.instrumentation.ExtraInstrumentationRules
  * User: inti
  * Date: 6/24/13
  * Time: 11:38 AM
- * To change this template use File | Settings | File Templates.
  */
 
 open class KevoreeJarClassLoaderCoverageInjection() : FlexyClassLoaderImpl() {
@@ -22,12 +19,10 @@ open class KevoreeJarClassLoaderCoverageInjection() : FlexyClassLoaderImpl() {
 
     private var cmd : InstrumenterCommand = InstrumenterCommand()
 
-    private val id : Int;
+    private val id : Int = IdGenerator.instance()?.next()!!
 
-
-    KevoreeJarClassLoaderCoverageInjection() {
+    {
         CoverageRuntime.init()
-        id = IdGenerator.instance()?.next()!!
     }
 
     /*override*/ fun internal_defineClass(className: String, bytes: ByteArray): Class<out Any?>? {

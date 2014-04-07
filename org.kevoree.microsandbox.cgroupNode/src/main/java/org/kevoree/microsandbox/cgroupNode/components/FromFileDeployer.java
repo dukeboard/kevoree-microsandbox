@@ -1,9 +1,11 @@
 package org.kevoree.microsandbox.cgroupNode.components;
 
 import org.kevoree.ContainerRoot;
-import org.kevoree.api.service.core.script.KevScriptEngine;
-import org.kevoree.api.service.core.script.KevScriptEngineException;
-import org.kevoree.framework.AbstractComponentType;
+import org.kevoree.annotation.ComponentType;
+import org.kevoree.annotation.KevoreeInject;
+import org.kevoree.api.ModelService;
+import org.kevoree.cloner.DefaultModelCloner;
+import org.kevoree.kevscript.KevScriptEngine;
 import org.kevoree.log.Log;
 
 import java.io.*;
@@ -13,7 +15,12 @@ import java.util.List;
 /**
  * Created by inti on 3/3/14.
  */
-public class FromFileDeployer extends AbstractComponentType {
+@ComponentType
+// see further to know if the class must be a component type or not
+public class FromFileDeployer {
+
+    @KevoreeInject
+    ModelService modelService;
 
     protected List<String> packages = new ArrayList<String>();
     protected List<String> repositories = new ArrayList<String>();
@@ -41,17 +48,18 @@ public class FromFileDeployer extends AbstractComponentType {
             );
             String tmp = br.readLine();
             while (tmp != null) {
-                if (tmp.startsWith("merge ")) {
-                    String ss = tmp.replace("merge ","");
+                if (tmp.startsWith("include ")) {
+                    String ss = tmp.replace("include ","");
                     ss = ss.replaceAll("'","");
                     ss = ss.replace("mvn:", "");
-                    ss = ss.substring(0, ss.lastIndexOf("/"));
+                    ss = ss.substring(0, ss.lastIndexOf(":"));
 //                    Log.info(" MIERDA {}", ss);
                     packages.add(ss);
                 }
-                else if (tmp.startsWith("addRepo ")) {
-                    String ss = tmp.replace("addRepo ","");
-                    ss = ss.replaceAll("\"","");
+                else if (tmp.startsWith("repo ")) {
+                    String ss = tmp.replace("repo ","");
+                    ss = ss.replace("\"", "");
+                    ss = ss.replace("'","");
 //                    Log.info(" MIERDA {}", ss);
                     repositories.add(ss);
                 }
@@ -59,19 +67,22 @@ public class FromFileDeployer extends AbstractComponentType {
                 tmp = br.readLine();
             }
             Log.debug("Reading file with new script to apply");
-            KevScriptEngine scriptEngine = getKevScriptEngineFactory().createKevScriptEngine();
-            return scriptEngine.addVariable("project.version",
+            KevScriptEngine scriptEngine = new KevScriptEngine();
+            /*return scriptEngine.addVariable("project.version",
                     System.getProperty("project.version")).
                     addVariable("kevoree.corelibrary.version", System.getProperty("kevoree.corelibrary.version")).
-                    append(s).interpret();
+                    append(s).interpret();*/
+            s= s.replace("{project.version}", System.getProperty("project.version"));
+            s= s.replace("{kevoree.corelibrary.version}", System.getProperty("kevoree.corelibrary.version"));
+            // FIXME modelService mustbeinitialized and so this class must be a component type or we need to provide an empty model instead of using ModelService
+            scriptEngine.execute(s, (ContainerRoot)new DefaultModelCloner().clone(modelService.getCurrentModel().getModel()));
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (KevScriptEngineException e) {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
-        }
-        finally {
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
             if (br!=null) {
                 try {
                     br.close();

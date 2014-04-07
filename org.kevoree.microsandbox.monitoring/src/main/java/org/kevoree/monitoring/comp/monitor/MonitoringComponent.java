@@ -125,7 +125,9 @@ public class MonitoringComponent implements MicrosandboxEventListener, RankingHe
 
     @Stop
     public void stopComponent() {
-        monitoringTask.stop();
+        if (monitoringTask != null) {
+            monitoringTask.stop();
+        }
         modelService.unregisterModelListener(listener);
 //        getModelService().unregisterModelListener(modelRanker);
     }
@@ -194,7 +196,7 @@ public class MonitoringComponent implements MicrosandboxEventListener, RankingHe
         public boolean afterLocalUpdate(ContainerRoot currentModel, ContainerRoot proposedModel) {
             for (ComponentInstance instance : proposedModel.findNodesByID(getNodeName()).getComponents()) {
                 if (!deployTimes.containsKey(instance.path())) {
-                    deployTimesToSend.put(instance.path(), (Long) monitoringRegistry.lookup(instance.getClass().getName() + "_deployTime"));
+                    deployTimesToSend.put(instance.path(), (Long) monitoringRegistry.lookup(instance.path() + "_deployTime"));
                 }
             }
             return true;

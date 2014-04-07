@@ -26,6 +26,6 @@ public class AndroidNode extends AbstractMonitoredNode<SharedKCLFactory>
 
     @Override
     protected SharedKCLFactory getClassLoaderFactory() {
-        return new SharedKCLFactory(getName(), false);
+        return new SharedKCLFactory(context.getInstanceName(), false);
     }
 }

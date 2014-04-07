@@ -1,22 +1,16 @@
 package org.kevoree.microsandbox.cgroupNode.fakes;
 
 import org.kevoree.annotation.*;
-import org.kevoree.framework.AbstractComponentType;
-import org.kevoree.log.Log;
-import org.kevoree.microsandbox.api.event.MicrosandboxEvent;
-import org.kevoree.microsandbox.api.heuristic.RankingHeuristicComponent;
-
-import java.io.IOException;
-import java.nio.file.*;
+import org.kevoree.api.Port;
 
 /**
  * Created by inti on 2/20/14.
  */
-@Requires({
-        @RequiredPort(name = "temperature", type = PortType.MESSAGE, optional = true)
-})
 @ComponentType
-public class TemperatureSensor extends AbstractComponentType {
+public class TemperatureSensor {
+
+    @Output
+    Port temperature;
 
     @Start
     public void start() {

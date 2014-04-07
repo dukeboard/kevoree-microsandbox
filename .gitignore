@@ -11,3 +11,6 @@ org.kevoree.microsandbox.watchdog/src/main/resources/jarInstrumenter.jar
 org.kevoree.microsandbox.watchdog/src/main/resources/resourceMonitorJavaAgent.jar
 org.kevoree.microsandbox.watchdog/src/main/resources/sharedResourceAccounting.jar
 **dependency-reduced-pom.xml
+**.o
+**.so
+**.so*

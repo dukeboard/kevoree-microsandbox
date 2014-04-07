@@ -1,19 +1,16 @@
 package org.kevoree.microsandbox.cgroupNode.fakes;
 
 import org.kevoree.annotation.*;
-import org.kevoree.framework.AbstractComponentType;
+import org.kevoree.api.Port;
 
 /**
  * Created by inti on 2/20/14.
  */
-@Provides({
-        @ProvidedPort(name = "snapshotIn", type = PortType.MESSAGE)
-})
-@Requires({
-        @RequiredPort(name = "snapshotOut", type = PortType.MESSAGE, optional = true)
-})
 @ComponentType
-public class HistoryProxy extends AbstractComponentType {
+public class HistoryProxy {
+
+    @Output
+    Port snapshotOut;
 
     @Start
     public void start() {
@@ -29,8 +26,8 @@ public class HistoryProxy extends AbstractComponentType {
         start();
     }
 
-    @Port(name = "snapshotIn")
-    public void onSnapshot(Object obj) {
+    @Input
+    public void snapshotIn(Object obj) {
 
     }
 }

@@ -1,16 +1,16 @@
 package org.kevoree.microsandbox.cgroupNode.fakes;
 
 import org.kevoree.annotation.*;
-import org.kevoree.framework.AbstractComponentType;
+import org.kevoree.api.Port;
 
 /**
  * Created by inti on 2/20/14.
  */
-@Requires({
-        @RequiredPort(name = "videoStream", type = PortType.MESSAGE, optional = true)
-})
 @ComponentType
-public class CameraRecorder extends AbstractComponentType {
+public class CameraRecorder {
+
+    @Output
+    Port videoStream;
 
     @Start
     public void start() {

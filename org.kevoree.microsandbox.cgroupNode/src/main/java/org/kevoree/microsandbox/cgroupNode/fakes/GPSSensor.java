@@ -1,16 +1,16 @@
 package org.kevoree.microsandbox.cgroupNode.fakes;
 
 import org.kevoree.annotation.*;
-import org.kevoree.framework.AbstractComponentType;
+import org.kevoree.api.Port;
 
 /**
  * Created by inti on 2/20/14.
  */
-@Requires({
-        @RequiredPort(name = "position", type = PortType.MESSAGE, optional = true)
-})
 @ComponentType
-public class GPSSensor extends AbstractComponentType {
+public class GPSSensor {
+
+    @Output(optional = true)
+    Port position;
 
     @Start
     public void start() {

@@ -1,26 +1,36 @@
-addRepo 'http://maven.kevoree.org/daum/snapshots'
+repo "https://repo1.maven.org/maven2"
+repo "https://oss.sonatype.org/content/groups/public/"
+repo 'http://maven.kevoree.org/daum/snapshots'
 
-merge 'mvn:org.kevoree.microsandbox/org.kevoree.microsandbox.javasenode/{project.version}'
-merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.defaultChannels/{kevoree.corelibrary.version}'
-merge 'mvn:org.kevoree.microsandbox/org.kevoree.microsandbox.monitoring/{project.version}'
-merge 'mvn:org.kevoree.microsandbox/org.kevoree.microsandbox.samples/{project.version}'
+include mvn:org.kevoree.microsandbox:org.kevoree.microsandbox.javasenode:latest
+include mvn:org.kevoree.library.java:org.kevoree.library.java.channels:release
+include mvn:org.kevoree.microsandbox:org.kevoree.microsandbox.monitoring:latest
+include mvn:org.kevoree.microsandbox:org.kevoree.microsandbox.samples:latest
 
 // Node definition
-addNode node0 : MonitoredNode {availability_memory='1500000'}
+add node0 : MonitoredNode
+set node0.availability_memory='150000000'
 
 //
-addComponent MonitoringComponent0@node0 : MonitoringComponent {
-    memory_threshold='10',
-    cpu_threshold='10',
-    net_in_threshold='80',
-    net_out_threshold='80'
-}
+add node0.MonitoringComponent0 : MonitoringComponent
+set node0.MonitoringComponent0.memory_threshold='65'
+set node0.MonitoringComponent0.cpu_threshold='10'
+set node0.MonitoringComponent0.net_in_threshold='80'
+set node0.MonitoringComponent0.net_out_threshold='80'
 
-addComponent rankingComponent@node0 :ModelBasedRankingHeuristicComponent
+add node0.rankingComponent :ModelBasedRankingHeuristicComponent
 
-addChannel channelMonitoring : defSERVICE
+add channelMonitoring1 : AsyncBroadcast
+add channelMonitoring2 : AsyncBroadcast
 
-bind MonitoringComponent0.ranking@node0 => channelMonitoring
-bind rankingComponent.ranking@node0 => channelMonitoring
+bind node0.MonitoringComponent0.getRankingOrder channelMonitoring1
+bind node0.rankingComponent.getRankingOrder channelMonitoring1
 
-addComponent memoryComponent@node0 : MemoryConsumerMaxSize {dataSize = '2000000', memory_max_size = '600000', sleepTime = "2000", violate="true"}
+bind node0.MonitoringComponent0.triggerMonitoringEvent channelMonitoring2
+bind node0.rankingComponent.triggerMonitoringEvent channelMonitoring2
+
+add node0.memoryComponent : MemoryConsumerMaxSize
+set node0.memoryComponent.dataSize = '2000000'
+set node0.memoryComponent.memory_max_size = '600000'
+set node0.memoryComponent.sleepTime = "2000"
+set node0.memoryComponent.violate="true"

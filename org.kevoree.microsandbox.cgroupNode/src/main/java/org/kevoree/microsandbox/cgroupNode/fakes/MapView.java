@@ -1,19 +1,16 @@
 package org.kevoree.microsandbox.cgroupNode.fakes;
 
 import org.kevoree.annotation.*;
-import org.kevoree.framework.AbstractComponentType;
+import org.kevoree.api.Port;
 
 /**
  * Created by inti on 2/20/14.
  */
-@Provides({
-        @ProvidedPort(name = "sensedData", type = PortType.MESSAGE)
-})
-@Requires({
-        @RequiredPort(name = "snapshot", type = PortType.MESSAGE, optional = true)
-})
 @ComponentType
-public class MapView extends AbstractComponentType {
+public class MapView {
+
+    @Output
+    Port snapshot;
 
     @Start
     public void start() {
@@ -29,8 +26,8 @@ public class MapView extends AbstractComponentType {
         start();
     }
 
-    @Port(name = "sensedData")
-    public void onSnapshot(Object obj) {
+    @Input
+    public void sensedData(Object obj) {
 
     }
 }

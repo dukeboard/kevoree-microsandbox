@@ -1,16 +1,12 @@
 package org.kevoree.microsandbox.cgroupNode.fakes;
 
 import org.kevoree.annotation.*;
-import org.kevoree.framework.AbstractComponentType;
 
 /**
  * Created by inti on 2/20/14.
  */
-@Provides({
-        @ProvidedPort(name = "videoStream", type = PortType.MESSAGE)
-})
 @ComponentType
-public class ImageRecognition extends AbstractComponentType {
+public class ImageRecognition {
 
     @Start
     public void start() {
@@ -26,8 +22,8 @@ public class ImageRecognition extends AbstractComponentType {
         start();
     }
 
-    @Port(name = "videoStream")
-    public void onSnapshot(Object obj) {
+    @Input
+    public void videoStream(Object obj) {
 
     }
 }

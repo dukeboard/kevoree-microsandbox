@@ -1,9 +1,6 @@
 package org.microsandbox.sample;
 
 import org.kevoree.annotation.*;
-import org.kevoree.framework.AbstractComponentType;
-import org.kevoree.microsandbox.api.contract.CPUContracted;
-import org.kevoree.microsandbox.api.contract.MemoryContracted;
 import org.kevoree.microsandbox.api.contract.impl.CPUMemoryContractedImpl;
 
 import java.io.File;
@@ -18,23 +15,21 @@ import java.net.URLClassLoader;
  * User: inti
  * Date: 9/5/13
  * Time: 2:22 PM
- * To change this template use File | Settings | File Templates.
  */
-@DictionaryType({
-        @DictionaryAttribute(name = "jar_path",dataType = String.class, optional = false),
-        @DictionaryAttribute(name = "jar_main", dataType = String.class, optional = false),
-        @DictionaryAttribute(name = "arguments", dataType = String.class, optional = false),
-        @DictionaryAttribute(name = "delayTime", dataType = Long.class, optional = false)
-})
 @ComponentType
 public class RunningExternalJarAppComponent extends CPUMemoryContractedImpl {
 
 
-    private String path;
-    private String test;
-    private ClassLoader loader;
-    private String arg;
+    @Param(optional = false)
+    private String jar_path;
+    @Param(optional = false)
+    private String jar_main;
+    @Param(optional = false)
+    private String argument;
+    @Param(optional = false)
     private long delayTime;
+
+    private ClassLoader loader;
 
     class WekaExecuter implements Runnable {
 
@@ -43,10 +38,10 @@ public class RunningExternalJarAppComponent extends CPUMemoryContractedImpl {
             long timeBefore = 0;
             try {
                 Thread.sleep(delayTime);
-                Class<?> cl = loader.loadClass(test);
+                Class<?> cl = loader.loadClass(jar_main);
                 Method method = cl.getMethod("main", new Class[]{String[].class});
 
-                String[] args = arg.split(" ");
+                String[] args = argument.split(" ");
                 timeBefore = System.currentTimeMillis();
                 method.invoke(null,new Object[]{args});
 
@@ -79,12 +74,8 @@ public class RunningExternalJarAppComponent extends CPUMemoryContractedImpl {
 
     @Start
     public void start() {
-        path = getDictionary().get("jar_path").toString();
-        test = getDictionary().get("jar_main").toString();
-        arg = getDictionary().get("arguments").toString();
-        delayTime = Long.parseLong(getDictionary().get("delayTime").toString());
         try {
-            loader = new URLClassLoader(new URL[]{new File(path).toURI().toURL()}, this.getClass().getClassLoader());
+            loader = new URLClassLoader(new URL[]{new File(jar_path).toURI().toURL()}, this.getClass().getClassLoader());
         } catch (MalformedURLException e) {
             e.printStackTrace();
         }

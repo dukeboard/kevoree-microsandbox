@@ -1,51 +1,49 @@
-addRepo "http://maven.kevoree.org/daum/snapshots"
+repo "https://repo1.maven.org/maven2"
+repo "https://oss.sonatype.org/content/groups/public/"
+repo 'http://maven.kevoree.org/daum/snapshots'
 
+include mvn:org.kevoree.microsandbox:org.kevoree.microsandbox.javasenode:latest
+include mvn:org.kevoree.library.java:org.kevoree.library.java.channels:release
+include mvn:org.kevoree.microsandbox:org.kevoree.microsandbox.monitoring:latest
+include mvn:org.kevoree.microsandbox:org.kevoree.microsandbox.samples:latest
 
-merge 'mvn:org.kevoree.microsandbox/org.kevoree.microsandbox.javasenode/{project.version}'
+add node0 : MonitoredNode
+set node0.availability_memory='150000000'
+set node0.availability_instr='200000000'
 
-merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.jexxus/{kevoree.corelibrary.version}'
-merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.defaultChannels/{kevoree.corelibrary.version}'
+//
+add node0.MonitoringComponent0 : MonitoringComponent
+set node0.MonitoringComponent0.memory_threshold='65'
+set node0.MonitoringComponent0.cpu_threshold='10'
+set node0.MonitoringComponent0.net_in_threshold='80'
+set node0.MonitoringComponent0.net_out_threshold='80'
 
-merge 'mvn:org.kevoree.microsandbox/org.kevoree.microsandbox.monitoring/{project.version}'
-merge 'mvn:org.kevoree.microsandbox/org.kevoree.microsandbox.samples/{project.version}'
+add node0.rankingComponent :ModelBasedRankingHeuristicComponent
 
-addNode node0:MonitoredNode {
-    availability_memory='150000000',
-    availability_instr='200000000'
-}
+add channelMonitoring1 : AsyncBroadcast
+add channelMonitoring2 : AsyncBroadcast
 
-addComponent MonitoringComponent0@node0 : MonitoringComponent {
-    memory_threshold='65',
-    cpu_threshold='10',
-    net_in_threshold='80',
-    net_out_threshold='80'
-}
+bind node0.MonitoringComponent0.getRankingOrder channelMonitoring1
+bind node0.rankingComponent.getRankingOrder channelMonitoring1
 
-addComponent rankingComponent@node0 :ModelBasedRankingHeuristicComponent
+bind node0.MonitoringComponent0.triggerMonitoringEvent channelMonitoring2
+bind node0.rankingComponent.triggerMonitoringEvent channelMonitoring2
 
-addChannel channelMonitoring : defSERVICE
+add node0.tester0 : CPUConsumerByPrimalityTesting
+set node.0.tester0.cpu_wall_time='4000000'
+set node.0.tester0.throughput_msg_per_second='all=8;primalityTester=8'
 
-bind MonitoringComponent0.ranking@node0 => channelMonitoring
-bind rankingComponent.ranking@node0 => channelMonitoring
+add node0.generator0 : NumberGenerator
+set node0.generator0.frequency = '200'
 
-addComponent tester0@node0 : CPUConsumerByPrimalityTesting {
-    cpu_wall_time='4000000',
-    throughput_msg_per_second='all=8;primalityTester=8'
-}
+add node0.generator1 : NumberGenerator
+set node0.generator1.frequency = '200'
 
-addComponent generator0@node0 : NumberGenerator {
-    frequency = '200'
-}
+add channelForNumbers : AsyncBroadcast
 
-addComponent generator1@node0 : NumberGenerator {
-    frequency = '200'
-}
+bind node0.tester0.primalityTester channelForNumbers
+bind node0.generator0.numbers channelForNumbers
+bind node0.generator1.numbers channelForNumbers
 
-addChannel channelForNumbers : defMSG
-
-bind tester0.primalityTester@node0 => channelForNumbers
-bind generator0.numbers@node0 => channelForNumbers
-bind generator1.numbers@node0 => channelForNumbers
-
-addGroup sync:BasicGroup
-addToGroup sync node0
+add sync:BasicGroup
+attach node0 sync

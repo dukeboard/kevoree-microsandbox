@@ -43,17 +43,17 @@ public class ModelBasedRankingHeuristicComponent implements RankingHeuristicComp
     @Input
     public ComponentInstance[] getRankingOrder(String nodeName) {
         try {
-        System.out.println("Sorting components according to ModelBasedHeuristic");
-        List<ComponentInstance> instances = new ArrayList<ComponentInstance>(currentModel.findNodesByID(nodeName).getComponents());
-        Collections.sort(instances, defineComparator());
+            System.out.println("Sorting components according to ModelBasedHeuristic");
+            List<ComponentInstance> instances = new ArrayList<ComponentInstance>(currentModel.findNodesByID(nodeName).getComponents());
+            Collections.sort(instances, defineComparator());
 
-        Step firstStep = buildStep(instances);
-        instances = firstStep.sort();
+            Step firstStep = buildStep(instances);
+            instances = firstStep.sort();
 
-        ComponentInstance[] instancesArray = new ComponentInstance[instances.size()];
-        instances.toArray(instancesArray);
-        return instancesArray;
-        }catch (Throwable t) {
+            ComponentInstance[] instancesArray = new ComponentInstance[instances.size()];
+            instances.toArray(instancesArray);
+            return instancesArray;
+        } catch (Throwable t) {
             t.printStackTrace(System.out);
             return null;
         }
@@ -171,7 +171,6 @@ public class ModelBasedRankingHeuristicComponent implements RankingHeuristicComp
             // that must not appear
             return 1;
         }
-
         return (int) (deployTimeO2 - deployTimeO1);
     }
 

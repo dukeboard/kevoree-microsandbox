@@ -1,7 +1,5 @@
 package org.kevoree.microsandbox.javase;
 
-import java.util.Iterator;
-
 /**
  * Created with IntelliJ IDEA.
  * User: inti

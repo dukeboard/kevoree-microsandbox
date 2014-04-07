@@ -1,16 +1,12 @@
 package org.kevoree.microsandbox.cgroupNode.fakes;
 
 import org.kevoree.annotation.*;
-import org.kevoree.framework.AbstractComponentType;
 
 /**
  * Created by inti on 2/20/14.
  */
-@Provides({
-        @ProvidedPort(name = "snapshot", type = PortType.MESSAGE)
-})
 @ComponentType
-public class CriticalSituationRecorder extends AbstractComponentType {
+public class CriticalSituationRecorder {
 
     @Start
     public void start() {
@@ -26,8 +22,8 @@ public class CriticalSituationRecorder extends AbstractComponentType {
         start();
     }
 
-    @Port(name = "snapshot")
-    public void onSnapshot(Object obj) {
+    @Input
+    public void snapshot(Object obj) {
 
     }
 }

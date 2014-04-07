@@ -1,32 +1,26 @@
 package org.kevoree.microsandbox.cgroupNode.components;
 
-import org.kevoree.ContainerRoot;
 import org.kevoree.annotation.*;
-import org.kevoree.api.service.core.script.KevScriptEngine;
-import org.kevoree.api.service.core.script.KevScriptEngineException;
+import org.kevoree.api.Context;
 import org.kevoree.core.impl.KevoreeCoreBean;
-import org.kevoree.framework.AbstractComponentType;
-import org.kevoree.framework.ModelHandlerServiceProxy;
+import org.kevoree.komponents.helpers.SynchronizedUpdateCallback;
 import org.kevoree.log.Log;
 
-import java.io.*;
+import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
-import java.net.InetAddress;
 import java.net.SocketException;
-import java.nio.file.*;
-import java.util.Timer;
 
 /**
  * Created by inti on 2/20/14.
  */
-@DictionaryType(
-        @DictionaryAttribute(name="udp_port", optional = false)
-)
 @ComponentType
 public class NodeNameRestarter extends FromFileDeployer {
 
-    private int port;
+    @KevoreeInject
+    Context context;
+    @Param(optional = false)
+    int udp_port;
 
     private class Mythread extends Thread {
         @Override
@@ -36,7 +30,7 @@ public class NodeNameRestarter extends FromFileDeployer {
             try {
                 byte[] receiveData = new byte[1024];
                 DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
-                serverSocket = new DatagramSocket(port/*9876*/);
+                serverSocket = new DatagramSocket(udp_port/*9876*/);
                 serverSocket.receive(receivePacket);
                 String sentence = new String(
                         receivePacket.getData(), receivePacket.getOffset(), receivePacket.getLength());
@@ -55,8 +49,10 @@ public class NodeNameRestarter extends FromFileDeployer {
 
                 Log.info("BEFORE UPDATE MODEL NANOTIME {}", System.nanoTime());
 
-                getModelService().updateModel(getContainerRoot(lines[1]));
-
+                SynchronizedUpdateCallback callback = new SynchronizedUpdateCallback();
+                callback.initialize();
+                modelService.update(getContainerRoot(lines[1]), callback);
+                callback.waitForResult(5000);
             } catch (SocketException e) {
                 e.printStackTrace();
             } catch (IOException e) {
@@ -72,25 +68,19 @@ public class NodeNameRestarter extends FromFileDeployer {
 
     private void changeNameOfNode(String sentence) {
         // FIXME, Ugly hack.
-        Log.info("Changing component name from {}/{} to {}", getNodeName(),
-                ((ModelHandlerServiceProxy)getModelService()).getProxy().getNodeName(),
+        Log.info("Changing component name from {}/{} to {}", context.getNodeName(),
+                ((KevoreeCoreBean) modelService).getNodeName(),
                 sentence);
         // doing the job
-        ((KevoreeCoreBean)((ModelHandlerServiceProxy)getModelService()).getProxy()).setNodeName(sentence);
-        setNodeName(sentence);
+        // FIXME is it ok like this ????
+        ((KevoreeCoreBean)modelService).setNodeName(sentence);
         // done
-        Log.info("Changed component name to: {}/{}", getNodeName(),
-                ((ModelHandlerServiceProxy)getModelService()).getProxy().getNodeName());
+        Log.info("Changed component name to: {}/{}", context.getNodeName(),
+                ((KevoreeCoreBean)modelService).getNodeName());
     }
 
     @Start
     public void start() {
-
-        if (getDictionary().containsKey("udp_port")) {
-            port = Integer.parseInt(getDictionary().get("udp_port").toString()) + 9875;
-        }
-        else throw new RuntimeException();
-
         new Mythread().start();
     }
 

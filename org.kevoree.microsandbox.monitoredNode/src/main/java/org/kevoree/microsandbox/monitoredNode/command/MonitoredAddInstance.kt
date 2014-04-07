@@ -70,6 +70,8 @@ open class MonitoredAddInstance(val wrapperFactory: WrapperFactory, val c: Insta
                 registry.register(c, newBeanKInstanceWrapper!!)
                 bs.injectDictionary(c, newBeanInstance, true)
 
+                resultSub = true
+
                 var contract: ResourceContract? = null
                 val r = ControlAdmissionSystem.registerComponent(c)
                 if (!r.valid) {

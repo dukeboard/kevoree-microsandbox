@@ -1,19 +1,16 @@
 package org.kevoree.microsandbox.cgroupNode.fakes;
 
 import org.kevoree.annotation.*;
-import org.kevoree.framework.AbstractComponentType;
+import org.kevoree.api.Port;
 
 /**
  * Created by inti on 2/20/14.
  */
-@Provides({
-        @ProvidedPort(name = "image", type = PortType.MESSAGE)
-})
-@Requires({
-        @RequiredPort(name = "imageAnalysisRequest", type = PortType.MESSAGE, optional = true)
-})
 @ComponentType
-public class ImageViewer extends AbstractComponentType {
+public class ImageViewer {
+
+    @Output
+    Port imageAnalysisRequest;
 
     @Start
     public void start() {
@@ -29,8 +26,8 @@ public class ImageViewer extends AbstractComponentType {
         start();
     }
 
-    @Port(name = "image")
-    public void onSnapshot(Object obj) {
+    @Input
+    public void image(Object obj) {
 
     }
 }

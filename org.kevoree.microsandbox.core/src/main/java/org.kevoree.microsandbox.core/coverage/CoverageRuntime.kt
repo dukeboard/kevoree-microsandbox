@@ -26,9 +26,9 @@ object CoverageRuntime {
     private val instr : Instrumenter? = Instrumenter(runtime)
     private val data : RuntimeData? = RuntimeData()
 
-    private var b : Boolean = false;
+    private var b : Boolean = false
 
-    fun init(): Unit {
+    fun init() {
         if (!b) {
             b = true
             runtime?.startup(data)

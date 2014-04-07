@@ -58,6 +58,8 @@ public abstract class AbstractMonitoredNode<ClassLoaderFactory extends KevoreeCL
                 availability_received, availability_instr,
                 availability_write_disc, availability_read_disc);
 
+        monitoringRegistry.register(modelService.getPendingModel().findNodesByID(context.getNodeName()).path() + "_platformDescription", description);
+
         ControlAdmissionSystem.instance$.init(description);
     }
 

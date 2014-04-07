@@ -3,12 +3,9 @@ package org.kevoree.microsandbox.SharedMemoryChannel;
 import org.ipc.memory.MemoryBasedQueueConsumer;
 import org.ipc.memory.MemoryBasedQueueProducer;
 import org.kevoree.*;
-import org.kevoree.annotation.*;
 import org.kevoree.annotation.ChannelType;
-import org.kevoree.annotation.DictionaryType;
-import org.kevoree.framework.AbstractChannelFragment;
-import org.kevoree.framework.ChannelFragmentSender;
-import org.kevoree.framework.message.Message;
+import org.kevoree.annotation.*;
+import org.kevoree.api.*;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
@@ -24,10 +21,16 @@ import java.util.List;
  * Time: 1:12 PM
  *
  */
-@DictionaryType({
-})
-@ChannelType(theadStrategy = ThreadStrategy.SHARED_THREAD)
-public class KevoreeSharedMemoryChannel extends AbstractChannelFragment {
+@ChannelType//(theadStrategy = ThreadStrategy.SHARED_THREAD)
+public class KevoreeSharedMemoryChannel implements ChannelDispatch {
+
+    @KevoreeInject
+    ModelService modelService;
+    @KevoreeInject
+    Context context;
+    @KevoreeInject
+    ChannelContext channelContext;
+
 
     private org.slf4j.Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -39,7 +42,7 @@ public class KevoreeSharedMemoryChannel extends AbstractChannelFragment {
 
     @Start
     public void startp() {
-        List<Channel> channelList = getModelService().getLastModel().getHubs();
+        List<Channel> channelList = modelService.getPendingModel().getHubs();
         channels = new ArrayList<Channel>(channelList);
         Collections.sort(channels, new Comparator<Channel>() {
             @Override
@@ -49,7 +52,7 @@ public class KevoreeSharedMemoryChannel extends AbstractChannelFragment {
         });
 
         for (channelIndex = 0 ; channelIndex <  channels.size()
-                && !channels.get(channelIndex).getName().equals(getName()) ; ++channelIndex);
+                && !channels.get(channelIndex).getName().equals(context.getInstanceName()) ; ++channelIndex);
 
         if (channelIndex ==  channels.size())
             channelIndex = -1;
@@ -60,7 +63,7 @@ public class KevoreeSharedMemoryChannel extends AbstractChannelFragment {
         // exist a component connected to this channel such that the
         // bind port is a provided port
         Channel mySelf = channels.get(channelIndex);
-        ContainerRoot model = getModelService().getLastModel();
+        ContainerRoot model = modelService.getPendingModel();
         consumers = 0;
         boolean needLocalConsumer = false;
         for (ContainerNode node : model.getNodes()) {
@@ -74,7 +77,7 @@ public class KevoreeSharedMemoryChannel extends AbstractChannelFragment {
             }
             if (needConsumer) {
                 consumers ++;
-                if (node.getName().equals(getNodeName()))
+                if (node.getName().equals(context.getNodeName()))
                     needLocalConsumer = true;
             }
         }
@@ -112,7 +115,78 @@ public class KevoreeSharedMemoryChannel extends AbstractChannelFragment {
         }
     }
 
+    public void dispatch(Message message) throws IOException {
+        message.getPassedNodes().add(context.getNodeName());
+        OutputStream stream = producer.getStreamToSendMessage();
+        ObjectOutputStream oos = new ObjectOutputStream(stream);
+//                oos.writeUTF(getNodeName()); // write the source
+//                oos.writeObject(message.get_content());
+        oos.writeObject(message);
+        producer.notifySend(stream);
+    }
+
     @Override
+    public void dispatch(final Object payload, final Callback callback) {
+        if (!channelContext.getRemotePortPaths().isEmpty()) {
+            List<String> alreadySentToNodes = new ArrayList<String>();
+            for (String remotePortPath : channelContext.getRemotePortPaths()) {
+                org.kevoree.Port port = modelService.getCurrentModel().getModel().findByPath(remotePortPath, org.kevoree.Port.class);
+                // only send data for provided ports
+                if (port != null && ((ComponentInstance) port.eContainer()).getProvided().contains(port)) {
+                    ContainerNode remoteNode = (ContainerNode) port.eContainer().eContainer();
+                    if (!alreadySentToNodes.contains(remoteNode.path())) {
+                        try {
+                            if (producer == null) {
+                                int count = consumers;//getOtherFragments().size() + 1;
+                                producer = new MemoryBasedQueueProducer(context.getInstanceName(), count);
+                            }
+                            Message message = new Message();
+                            message.setPayload(payload);
+                            dispatch(message);
+//                        logger.info("Sending info 7");
+                        } catch (Exception e) {
+                            logger.debug("Error while sending message ");
+                        }
+                        alreadySentToNodes.add(remoteNode.path());
+                    }
+                }
+            }
+        }
+        dispatchLocal(payload);
+    }
+
+    public Object dispatchLocal(Object payload) {
+        for (org.kevoree.api.Port p : channelContext.getLocalPorts()) {
+            org.kevoree.Port port = modelService.getCurrentModel().getModel().findByPath(p.getPath(), org.kevoree.Port.class);
+            if (port != null && ((ComponentInstance) port.eContainer()).getProvided().contains(port)) {
+                p.send(payload);
+            }
+        }
+        return null;
+    }
+
+    class Message implements Serializable {
+        private Object payload;
+        private List<String> passedNodes;
+
+        public Object getPayload() {
+            return payload;
+        }
+
+        public void setPayload(Object payload) {
+            this.payload = payload;
+        }
+
+        public List<String> getPassedNodes() {
+            return passedNodes;
+        }
+
+        public void setPassedNodes(List<String> passedNodes) {
+            this.passedNodes = passedNodes;
+        }
+    }
+
+    /*@Override
     public Object dispatch(Message message) {
         for (org.kevoree.framework.KevoreePort p : getBindedPorts()) {
             forward(p, message);
@@ -145,14 +219,14 @@ public class KevoreeSharedMemoryChannel extends AbstractChannelFragment {
 //            }
 //        }
         return null;
-    }
+    }*/
 
     private MemoryBasedQueueProducer producer = null;
 
-    @Override
+    /*@Override
     public ChannelFragmentSender createSender(final String remoteNodeName, final String remoteChannelName) {
         return null;
-    }
+    }*/
 }
 
 class ConsumerSide extends Thread {
@@ -174,7 +248,7 @@ class ConsumerSide extends Thread {
         try {
             // initialization
             MemoryBasedQueueConsumer consumer =
-                    new MemoryBasedQueueConsumer(myChannel.getName());
+                    new MemoryBasedQueueConsumer(myChannel.context.getInstanceName());
             // loop waiting
             while (!isStopped()) {
 //                logger.info("waiting for message");
@@ -182,10 +256,9 @@ class ConsumerSide extends Thread {
 //                logger.info("new message");
                 ObjectInputStream objectInputStream = new ObjectInputStream(consumer.getMessageInputStream(id));
 //                String src = objectInputStream.readUTF();
-                Message m = (Message)objectInputStream.readObject();
-                if (!m.getPassedNodes().contains(myChannel.getName())) {
-                    for (org.kevoree.framework.KevoreePort p : myChannel.getBindedPorts())
-                        myChannel.forward(p, m);
+                KevoreeSharedMemoryChannel.Message m = (KevoreeSharedMemoryChannel.Message)objectInputStream.readObject();
+                if (!m.getPassedNodes().contains(myChannel.context.getNodeName())) {
+                    myChannel.dispatchLocal(m.getPayload());
                     consumer.notifyReception(id);
                 }
 //                if (!src.equals(myChannel.getNodeName()))

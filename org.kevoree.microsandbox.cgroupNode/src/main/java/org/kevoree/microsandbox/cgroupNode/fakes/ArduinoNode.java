@@ -1,9 +1,9 @@
 package org.kevoree.microsandbox.cgroupNode.fakes;
 
-import org.kevoree.annotation.*;
-import org.kevoree.microsandbox.cgroupNode.NewThreadCreated;
+import org.kevoree.annotation.Library;
+import org.kevoree.annotation.NodeType;
+import org.kevoree.annotation.Start;
 import org.kevoree.microsandbox.cgroupNode.SharedKCLFactory;
-import org.kevoree.microsandbox.core.OnNewThreadNotifier;
 import org.kevoree.microsandbox.monitoredNode.AbstractMonitoredNode;
 
 /**
@@ -18,7 +18,6 @@ import org.kevoree.microsandbox.monitoredNode.AbstractMonitoredNode;
 public class ArduinoNode extends AbstractMonitoredNode<SharedKCLFactory>
 {
 
-
     @Start
     @Override
     public void startNode() {
@@ -26,6 +25,6 @@ public class ArduinoNode extends AbstractMonitoredNode<SharedKCLFactory>
 
     @Override
     protected SharedKCLFactory getClassLoaderFactory() {
-        return new SharedKCLFactory(getName(), false);
+        return new SharedKCLFactory(context.getInstanceName(), false);
     }
 }
