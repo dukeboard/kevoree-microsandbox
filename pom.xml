@@ -4,7 +4,7 @@
     <groupId>org.kevoree.microsandbox</groupId>
     <artifactId>org.kevoree.microsandbox.root</artifactId>
     <packaging>pom</packaging>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.1</version>
     <name>Kevoree :: MicroSandbox :: Root</name>
     <url>https://github.com/dukeboard/kevoree-microsandbox</url>
     <description>Kevoree MicroSandbox</description>
@@ -177,6 +177,21 @@
     </pluginRepositories>
 
     <modules>
+        <module>distributedSlaves/slave0</module>
+        <module>distributedSlaves/slave1</module>
+        <module>distributedSlaves/slave2</module>
+        <module>distributedSlaves/slave3</module>
+        <module>distributedSlaves/slave4</module>
+        <module>distributedSlaves/slave5</module>
+        <module>distributedSlaves/slave6</module>
+        <module>distributedSlaves/slave7</module>
+        <module>distributedSlaves/slave8</module>
+        <module>distributedSlaves/slave9</module>
+        <module>distributedSlaves/slave10</module>
+        <module>distributedSlaves/slave11</module>
+        <module>distributedSlaves/slave12</module>
+        <module>distributedSlaves/slave13</module>
+        <module>distributedSlaves/slave14</module>
         <module>org.kevoree.microsandbox.api</module>
         <module>org.kevoree.microsandbox.sharedResourceAccounting</module>
         <module>org.kevoree.microsandbox.core</module>
@@ -193,6 +208,8 @@
         <module>org.kevoree.microsandbox.SharedMemoryChannel</module>
         <module>org.kevoree.microsandbox.cgroupNode</module>
         <module>org.kevoree.microsandbox.monitoredNode</module>
+
+
 
         <!--<module>microsandbox-experiment</module>-->
     </modules>
