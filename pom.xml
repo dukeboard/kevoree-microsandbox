@@ -12,7 +12,7 @@
     <properties>
         <kevoree.version>2.0.12</kevoree.version>
         <!--2.0.12-->
-        <kevoree.corelibrary.version>2.0.4</kevoree.corelibrary.version>
+        <kevoree.corelibrary.version>2.0.5</kevoree.corelibrary.version>
         <kotlin.version>0.6.31</kotlin.version>
     </properties>
 
@@ -162,6 +162,26 @@
         <repository>
             <id>jetbrains-release</id>
             <url>http://repository.jetbrains.com/all</url>
+        </repository>
+        <repository>
+            <id>reacloud-releases</id>
+            <url>http://maven.reacloud.com/repository/reacloud/release</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>reacloud-snapshots</id>
+            <url>http://maven.reacloud.com/repository/reacloud/snapshots/</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
         </repository>
     </repositories>
 
