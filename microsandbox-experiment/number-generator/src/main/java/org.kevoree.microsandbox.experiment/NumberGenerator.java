@@ -1,18 +1,21 @@
 package org.kevoree.microsandbox.experiment;
 
-import org.kevoree.annotation.*;
-import org.kevoree.framework.AbstractComponentType;
-import org.kevoree.framework.MessagePort;
+import org.kevoree.annotation.ComponentType;
+import org.kevoree.annotation.Output;
+import org.kevoree.annotation.Start;
+import org.kevoree.annotation.Stop;
+import org.kevoree.api.Port;
 
 import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 
-@Requires({
-        @RequiredPort(name = "output", type = PortType.MESSAGE)
-})
 @ComponentType
-public class NumberGenerator extends AbstractComponentType {
+public class NumberGenerator {
+
+    @Output
+    Port output;
+
     final Random random = new Random();
     @Start
     public void start() {
@@ -22,7 +25,7 @@ public class NumberGenerator extends AbstractComponentType {
             @Override
             public void run() {
                 int n = random.nextInt(20000) + 2;
-                getPortByName("output", MessagePort.class).process(n + "");
+                output.send(n);
             }
         }, 300, 300);
     }

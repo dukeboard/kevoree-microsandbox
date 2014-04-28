@@ -2,9 +2,9 @@ package org.daum.library.javase.copterManager.ws;
 
 
 import org.kevoree.annotation.*;
-import org.kevoree.framework.AbstractComponentType;
+import org.kevoree.api.Context;
 import org.kevoree.log.Log;
-import org.kevoree.microsandbox.api.contract.FullContracted;
+import org.kevoree.microsandbox.api.contract.impl.CPUMemoryThroughputContractedImpl;
 import org.webbitserver.BaseWebSocketHandler;
 import org.webbitserver.WebServer;
 import org.webbitserver.WebServers;
@@ -21,19 +21,19 @@ import java.util.concurrent.ExecutionException;
  */
 @Library(name = "JavaSE")
 @ComponentType
-@DictionaryType({
-        @DictionaryAttribute(name = "port", defaultValue = "8092"),
-        @DictionaryAttribute(name = "uselessParameter", optional = true)
-})
-@Provides({
-        @ProvidedPort(name = "service", type = PortType.SERVICE, className = WsHandler.class)
-})
-public class WsServerFaultyMemory extends AbstractComponentType implements WsHandler, FullContracted {
+public class WsServerFaultyMemory extends CPUMemoryThroughputContractedImpl implements WsHandler {
+
+    @Param(optional = true, defaultValue = "8092")
+    int port;
+    @Param(optional = true)
+    String uselessParameter;
+
+    @KevoreeInject
+    Context context;
 
     private WebServer webServer;
 
     private HashMap<String, BaseWebSocketHandler> wspages;
-    private int port;
 
     private MemoryFault fault;
 
@@ -41,30 +41,27 @@ public class WsServerFaultyMemory extends AbstractComponentType implements WsHan
     public void start() {
         fault = new MemoryFault();
         fault.create();
-        Log.debug("Starting {}", getName());
+        Log.debug("Starting {}", context.getInstanceName());
         wspages = new HashMap<String, BaseWebSocketHandler>();
         startWebSock();
     }
 
     @Update
     public void update() {
-        if (Integer.parseInt(getDictionary().get("port").toString()) != port) {
-            stopWebSock();
-            startWebSock();
-        }
+        stopWebSock();
+        startWebSock();
     }
 
 
     @Stop
     public void stopServer() {
         fault.destroy();
-        Log.debug("Stopping {}", getName());
+        Log.debug("Stopping {}", context.getInstanceName());
         stopWebSock();
     }
 
 
     public void startWebSock() {
-        port = Integer.parseInt(getDictionary().get("port").toString());
         webServer = WebServers.createWebServer(port);
         for (String key : wspages.keySet()) {
             webServer.add(key, wspages.get(key));
@@ -85,24 +82,22 @@ public class WsServerFaultyMemory extends AbstractComponentType implements WsHan
         webServer = null;
     }
 
-    @Port(name = "service", method = "addHandler")
+    @Input
     @Override
-    public void addHandler(String name, BaseWebSocketHandler webSocketChannel) {
+    public void addHandler(AddHandlerRequest request) {
 
-        Log.warn("Adding WS " + name);
-        if (!wspages.containsKey(name)) {
-            wspages.put(name, webSocketChannel);
+        Log.warn("Adding WS " + request.getName());
+        if (!wspages.containsKey(request.getName())) {
+            wspages.put(request.getName(), request.getWebSocketChannel());
             stopWebSock();
             startWebSock();
 
         } else {
-            Log.warn("Already added " + name);
+            Log.warn("Already added " + request.getName());
         }
-
     }
 
-
-    @Port(name = "service", method = "removeHandler")
+    @Input
     @Override
     public void removeHandler(String name) {
         wspages.remove(name);
@@ -110,6 +105,4 @@ public class WsServerFaultyMemory extends AbstractComponentType implements WsHan
         stopWebSock();
         startWebSock();
     }
-
-
 }

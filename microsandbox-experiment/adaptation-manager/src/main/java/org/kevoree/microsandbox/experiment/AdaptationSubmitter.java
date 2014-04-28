@@ -1,14 +1,12 @@
 package org.kevoree.microsandbox.experiment;
 
-import org.kevoree.ContainerRoot;
 import org.kevoree.annotation.ComponentType;
-import org.kevoree.annotation.DictionaryAttribute;
-import org.kevoree.annotation.DictionaryType;
+import org.kevoree.annotation.KevoreeInject;
+import org.kevoree.annotation.Param;
 import org.kevoree.annotation.Start;
-import org.kevoree.api.service.core.script.KevScriptEngine;
-import org.kevoree.api.service.core.script.KevScriptEngineException;
-import org.kevoree.framework.AbstractComponentType;
-import org.kevoree.framework.service.handler.ModelListenerAdapter;
+import org.kevoree.api.ModelService;
+import org.kevoree.api.handler.ModelListenerAdapter;
+import org.kevoree.komponents.helpers.SynchronizedUpdateCallback;
 
 import java.io.*;
 
@@ -21,24 +19,30 @@ import java.io.*;
  * @version 1.0
  */
 @ComponentType
-@DictionaryType({
-        @DictionaryAttribute(name = "modelName", defaultValue = "none", optional = false)
-})
-public class AdaptationSubmitter extends AbstractComponentType {
+public class AdaptationSubmitter {
+
+    @Param(optional = true)
+    String modelName;
+
+    @KevoreeInject
+    ModelService modelService;
+
+
+    SynchronizedUpdateCallback callback;
 
     int index;
     String s;
+
     @Start
     public void start() {
-
-        if (getDictionary().containsKey("modelName")) {
-            s= getDictionary().get("modelName").toString();
-            index = Integer.parseInt(s.substring(s.lastIndexOf('/')+1, s.lastIndexOf('.')));
-        }
-        else
+        callback = new SynchronizedUpdateCallback();
+        if (modelName != null) {
+            index = Integer.parseInt(modelName.substring(modelName.lastIndexOf('/') + 1, modelName.lastIndexOf('.')));
+        } else {
             index = 7;
+        }
 
-        getModelService().registerModelListener(new ModelListenerAdapter() {
+        modelService.registerModelListener(new ModelListenerAdapter() {
 
             private boolean doing = false;
 
@@ -46,12 +50,12 @@ public class AdaptationSubmitter extends AbstractComponentType {
 
             @Override
             public synchronized void modelUpdated() {
-                if (index < 7 && !doing && !getDictionary().get("modelName").toString().equalsIgnoreCase("none")) {
+                if (index < 7 && !doing && !modelName.equalsIgnoreCase("none")) {
                     doing = true;
 
-                    getModelService().unregisterModelListener(this);
+                    modelService.unregisterModelListener(this);
                     while (!done && index < 2) {
-                        String tmp = s.replaceFirst("[0-9]+\\.kevs",index + ".kevs");
+                        String tmp = s.replaceFirst("[0-9]+\\.kevs", index + ".kevs");
                         index++;
                         try {
                             Thread.sleep(15000);
@@ -62,19 +66,16 @@ public class AdaptationSubmitter extends AbstractComponentType {
                         InputStream newModel = null;
                         try {
                             // load the new model according to the template name and the currentAdaptationDone value
-                            KevScriptEngine kengine = getKevScriptEngineFactory().createKevScriptEngine();
-
-//                            InputStream newModel = getClass().getClassLoader().getResourceAsStream(getDictionary().get("modelName").toString());
 
                             newModel = new FileInputStream(tmp);
-
-                            kengine.append(loadFromStream(newModel));
-                            kengine.atomicInterpretDeploy();
+                            callback.initialize();
+                            modelService.submitScript(loadFromStream(newModel), callback);
+                            callback.waitForResult(5000);
+                            // TODO maybe 5000 is too short
                         } catch (IOException e) {
                             e.printStackTrace();
-                        } catch (KevScriptEngineException ignored) {
-                        }
-                        finally {
+                        } catch (Exception ignored) {
+                        } finally {
                             if (newModel != null)
                                 try {
                                     newModel.close();
@@ -87,14 +88,6 @@ public class AdaptationSubmitter extends AbstractComponentType {
 
                     doing = false;
                 }
-            }
-
-            @Override
-            public void preRollback(ContainerRoot containerRoot, ContainerRoot containerRoot2) {
-            }
-
-            @Override
-            public void postRollback(ContainerRoot containerRoot, ContainerRoot containerRoot2) {
             }
 
             private String loadFromStream(InputStream stream) throws IOException {

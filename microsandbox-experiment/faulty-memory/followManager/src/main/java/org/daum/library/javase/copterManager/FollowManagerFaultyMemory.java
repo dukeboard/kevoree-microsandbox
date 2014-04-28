@@ -5,22 +5,21 @@ import org.daum.common.followermodel.Event;
 import org.daum.common.followermodel.Follower;
 import org.daum.common.followermodel.Message;
 import org.daum.library.javase.copterManager.cache.MemCache;
+import org.daum.library.javase.copterManager.ws.AddHandlerRequest;
 import org.daum.library.javase.copterManager.ws.WebSocketChannel;
-import org.daum.library.javase.copterManager.ws.WsHandler;
-import org.kevoree.ContainerRoot;
 import org.kevoree.annotation.*;
-import org.kevoree.api.service.core.handler.ModelListener;
+import org.kevoree.api.ModelService;
+import org.kevoree.api.Port;
+import org.kevoree.api.handler.ModelListenerAdapter;
 import org.kevoree.extra.marshalling.JacksonSerializer;
 import org.kevoree.extra.marshalling.RichJSONObject;
-import org.kevoree.library.javase.http.api.AbstractHTTPHandler;
-import org.kevoree.library.javase.http.api.HTTPHelper;
+import org.kevoree.library.javase.http.api.helper.HTTPHelper;
 import org.kevoree.library.javase.http.api.page.AbstractHTTPHandler;
 import org.kevoree.log.Log;
 import org.kevoree.microsandbox.api.contract.CPUContracted;
 import org.kevoree.microsandbox.api.contract.MemoryContracted;
 import org.kevoree.microsandbox.api.contract.ThroughputContracted;
 import org.webbitserver.WebSocketConnection;
-import org.kevoree.microsandbox.api.contract.FullContracted;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -38,18 +37,23 @@ import java.util.Observer;
  * Time: 11:10
  */
 
-@Requires({
-        @RequiredPort(name = "ws", type = PortType.SERVICE, className = WsHandler.class, optional = false, needCheckDependency = true)
-})
-@Provides({
-        @ProvidedPort(name = "followmeuser", type = PortType.MESSAGE)
-})
-@DictionaryType({@DictionaryAttribute(name = "current", optional = true),
-        @DictionaryAttribute(name = "uselessParameter", optional = true)})
 @ComponentType
 public class FollowManagerFaultyMemory extends AbstractHTTPHandler implements Observer, MemoryContracted, CPUContracted, ThroughputContracted {
 
-    private Follower current;
+    @KevoreeInject
+    ModelService modelService;
+
+    @Param(optional = true)
+    String current;
+    @Param(optional = true)
+    String uselessParameter;
+
+    @Output(optional = false)
+    Port addHandler;
+    @Output(optional = false)
+    Port removeHandler;
+
+    private Follower currentFollower;
     private HashMap<String, Follower> list;
     private WebSocketChannel webSocketChannel;
 
@@ -63,37 +67,11 @@ public class FollowManagerFaultyMemory extends AbstractHTTPHandler implements Ob
         webSocketChannel = new WebSocketChannel();
         super.start();
 
-        getModelService().registerModelListener(new ModelListener() {
-            @Override
-            public boolean preUpdate(ContainerRoot containerRoot, ContainerRoot containerRoot1) {
-                return true;
-            }
-
-            @Override
-            public boolean afterLocalUpdate(ContainerRoot containerRoot, ContainerRoot containerRoot1) {
-                return true;
-            }
-
-
-            @Override
-            public boolean initUpdate(ContainerRoot containerRoot, ContainerRoot containerRoot1) {
-                return true;
-            }
-
+        modelService.registerModelListener(new ModelListenerAdapter() {
             @Override
             public void modelUpdated() {
                 Log.debug("Request Ws Demand");
-                getPortByName("ws", WsHandler.class).addHandler("/followmanager", webSocketChannel);
-            }
-
-            @Override
-            public void preRollback(ContainerRoot containerRoot, ContainerRoot containerRoot1) {
-                //To change body of implemented methods use File | Settings | File Templates.
-            }
-
-            @Override
-            public void postRollback(ContainerRoot containerRoot, ContainerRoot containerRoot1) {
-                //To change body of implemented methods use File | Settings | File Templates.
+                addHandler.send(new AddHandlerRequest("/followmanager", webSocketChannel));
             }
         });
 
@@ -104,7 +82,7 @@ public class FollowManagerFaultyMemory extends AbstractHTTPHandler implements Ob
     public void stop() throws Exception {
         fault.destroy();
         Log.debug("Remove Ws Demand");
-        getPortByName("ws", WsHandler.class).removeHandler("/followmanager");
+        removeHandler.send("/followmanager");
         super.stop();
     }
 
@@ -114,17 +92,15 @@ public class FollowManagerFaultyMemory extends AbstractHTTPHandler implements Ob
     }
 
 
-    @Port(name = "followmeuser")
-    public void followme_users(Object json) {
+    @Input
+    public void followmeuser(Object json) {
 
         Follower f = JacksonSerializer.convFromJSON(json.toString()).fromJSON(Follower.class);
         f.isfollowed = false;
 
-        String current_followerId = getDictionary().get("current").toString();
+        if (current != null && current.length() > 0) {
 
-        if (current_followerId != null && current_followerId.length() > 0) {
-
-            if (f.id.equals(current_followerId)) {
+            if (f.id.equals(current)) {
                 f.isfollowed = true;
             }
         }
@@ -163,7 +139,7 @@ public class FollowManagerFaultyMemory extends AbstractHTTPHandler implements Ob
         writer.write(new String(MemCache.getRessource("pages/followers.html"), "UTF-8"));
 //                writer.write(new String(MemCache.getRessource("pages/map-test.html"), "UTF-8"));
         writer.flush();
-        resp.addHeader("Content-Type", HTTPHelper.getHttpHeaderFromURL("pages/followers.html"));
+        resp.addHeader("Content-Type", HTTPHelper.getMimeTypeFromURL("pages/followers.html"));
 
     }
 
@@ -188,5 +164,139 @@ public class FollowManagerFaultyMemory extends AbstractHTTPHandler implements Ob
         } catch (Exception e) {
             Log.error("", e);
         }
+    }
+
+    @Param(optional = true)
+    Double cpu_wall_time;
+    @Param(optional = true)
+    Long cpu_peak_percent_per_second;
+    @Param(optional = true)
+    Long cpu_mean_percent_per_minute;
+    @Param(optional = true)
+    Long cpu_mean_percent_per_hour;
+    @Param(optional = true)
+    Double memory_max_size;
+    @Param(optional = true)
+    Long memory_peak_allocation_per_second;
+    @Param(optional = true)
+    Long memory_peak_allocation_per_minute;
+    @Param(optional = true)
+    Long memory_peak_allocation_per_hour;
+    @Param(optional = true)
+    Integer throughput_msg_per_second;
+    @Param(optional = true)
+    Integer throughput_msg_per_minute;
+    @Param(optional = true)
+    Integer throughput_msg_per_hour;
+
+
+    @Override
+    public double getCpu_wall_time() {
+        return cpu_wall_time;
+    }
+
+    @Override
+    public void setCpu_wall_time(double cpu_wall_time) {
+        this.cpu_wall_time = cpu_wall_time;
+    }
+
+    @Override
+    public long getCpu_peak_percent_per_second() {
+        return cpu_peak_percent_per_second;
+    }
+
+    @Override
+    public void setCpu_peak_percent_per_second(long cpu_peak_percent_per_second) {
+        this.cpu_peak_percent_per_second = cpu_peak_percent_per_second;
+    }
+
+    @Override
+    public long getCpu_mean_percent_per_minute() {
+        return cpu_mean_percent_per_minute;
+    }
+
+    @Override
+    public void setCpu_mean_percent_per_minute(long cpu_mean_percent_per_minute) {
+        this.cpu_mean_percent_per_minute = cpu_mean_percent_per_minute;
+    }
+
+    @Override
+    public long getCpu_mean_percent_per_hour() {
+        return cpu_mean_percent_per_hour;
+    }
+
+    @Override
+    public void setCpu_mean_percent_per_hour(long cpu_mean_percent_per_hour) {
+        this.cpu_mean_percent_per_hour = cpu_mean_percent_per_hour;
+    }
+
+    @Override
+    public double getMemory_max_size() {
+        return memory_max_size;
+    }
+
+    @Override
+    public void setMemory_max_size(double memory_max_size) {
+        this.memory_max_size = memory_max_size;
+    }
+
+    @Override
+    public long getMemory_peak_allocation_per_second() {
+        return memory_peak_allocation_per_second;
+    }
+
+    @Override
+    public void setMemory_peak_allocation_per_second(long memory_peak_allocation_per_second) {
+        this.memory_peak_allocation_per_second = memory_peak_allocation_per_second;
+    }
+
+    @Override
+    public long getMemory_peak_allocation_per_minute() {
+        return memory_peak_allocation_per_minute;
+    }
+
+    @Override
+    public void setMemory_peak_allocation_per_minute(long memory_peak_allocation_per_minute) {
+        this.memory_peak_allocation_per_minute = memory_peak_allocation_per_minute;
+    }
+
+    @Override
+    public long getMemory_peak_allocation_per_hour() {
+        return memory_peak_allocation_per_hour;
+    }
+
+    @Override
+    public void setMemory_peak_allocation_per_hour(long memory_peak_allocation_per_hour) {
+        this.memory_peak_allocation_per_hour = memory_peak_allocation_per_hour;
+    }
+
+    @Override
+    public Integer getThroughput_msg_per_second() {
+        return throughput_msg_per_second;
+    }
+
+    @Override
+    public void setThroughput_msg_per_second(Integer throughput_msg_per_second) {
+        this.throughput_msg_per_second = throughput_msg_per_second;
+    }
+
+    @Override
+    public Integer getThroughput_msg_per_minute() {
+        return throughput_msg_per_minute;
+    }
+
+    @Override
+    public void setThroughput_msg_per_minute(Integer throughput_msg_per_minute) {
+        this.throughput_msg_per_minute = throughput_msg_per_minute;
+    }
+
+    @Override
+    public Integer getThroughput_msg_per_hour() {
+        return throughput_msg_per_hour;
+    }
+
+    @Override
+    public void setThroughput_msg_per_hour(Integer throughput_msg_per_hour) {
+        this.throughput_msg_per_hour = throughput_msg_per_hour;
     }
 }

@@ -1,6 +1,6 @@
 package org.kevoree.library.javase.http.webbit;
 
-import org.kevoree.library.javase.http.api.KevoreeHTTPServletRequest;
+import org.kevoree.library.javase.http.api.page.KevoreeHTTPServletRequest;
 import org.webbitserver.HttpRequest;
 import org.webbitserver.WebServer;
 
