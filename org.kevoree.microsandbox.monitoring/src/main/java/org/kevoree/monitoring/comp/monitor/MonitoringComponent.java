@@ -51,17 +51,17 @@ public class MonitoringComponent implements MicrosandboxEventListener, RankingHe
     Port triggerMonitoringEvent;
 
     @Param(defaultValue = "60")
-    int memory_threshold;
+    double memory_threshold;
     @Param(defaultValue = "70")
-    int cpu_threshold;
+    double cpu_threshold;
     @Param(defaultValue = "80")
-    int net_in_threshold;
+    double net_in_threshold;
     @Param(defaultValue = "80")
-    int net_out_threshold;
+    double net_out_threshold;
     @Param(defaultValue = "80")
-    int io_in_threshold;
+    double io_in_threshold;
     @Param(defaultValue = "80")
-    int io_out_threshold;
+    double io_out_threshold;
     @Param(optional = true, defaultValue = "true")
     boolean adaptiveMonitoring;
     @Param(optional = true, defaultValue = "all-components")
@@ -154,8 +154,10 @@ public class MonitoringComponent implements MicrosandboxEventListener, RankingHe
                 ComponentInstance[] instances = callback.waitForResult(5000);
 
                 // FIXME remove the loop
-                for (ComponentInstance instance : instances) {
-                    System.out.println(instance.path());
+                if (instances != null) {
+                    for (ComponentInstance instance : instances) {
+                        System.out.println(instance.path());
+                    }
                 }
                 return instances;
             } catch (Throwable throwable) {

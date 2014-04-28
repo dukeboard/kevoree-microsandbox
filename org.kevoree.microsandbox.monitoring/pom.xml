@@ -87,6 +87,11 @@
                         </goals>
                     </execution>
                 </executions>
+                <configuration>
+                    <excludes>
+                        <exclude>org.kevoree:org.kevoree.bootstrap</exclude>
+                    </excludes>
+                </configuration>
             </plugin>
             <!-- Java compiler plugin -->
             <plugin>

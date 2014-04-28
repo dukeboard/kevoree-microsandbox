@@ -1,63 +1,60 @@
-{
-addRepo "http://maven.kevoree.org/daum/snapshots"
+repo "https://repo1.maven.org/maven2"
+repo "https://oss.sonatype.org/content/groups/public/"
+repo "http://maven.kevoree.org/daum/snapshots"
 
 
-merge 'mvn:org.kevoree.microsandbox/org.kevoree.microsandbox.javasenode/{project.version}'
-merge "mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.fakeDomo/{kevoree.corelibrary.version}"
-merge "mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.swingUI/{kevoree.corelibrary.version}"
+include mvn:org.kevoree.microsandbox:org.kevoree.microsandbox.javasenode:latest
 
-merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.jexxus/{kevoree.corelibrary.version}'
-merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.defaultChannels/{kevoree.corelibrary.version}'
+include mvn:org.kevoree.library.java:org.kevoree.library.java.toys:release
+include mvn:org.kevoree.library.java:org.kevoree.library.java.ws:release
+include mvn:org.kevoree.library.java:org.kevoree.library.java.channels:release
 
-merge 'mvn:org.kevoree.microsandbox/org.kevoree.microsandbox.monitoring/{project.version}'
-merge 'mvn:org.kevoree.microsandbox/org.kevoree.microsandbox.samples/{project.version}'
-merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.camel/{kevoree.corelibrary.version}'
+include mvn:org.kevoree.microsandbox:org.kevoree.microsandbox.monitoring:latest
+include mvn:org.kevoree.microsandbox:org.kevoree.microsandbox.samples:latest
 
-addNode node0:MonitoredNode {
-    availability_memory='950000000',
-    availability_instr='200000000',
-    availability_write_disc='10000000',
-    availability_read_disc='10000000'
-}
+include mvn:org.kevoree.komponents:camel-channel-http:latest
 
-addComponent MonitoringComponent0@node0 : MonitoringComponent {
-    memory_threshold='95',
-    cpu_threshold='99',
-    net_in_threshold='90',
-    net_out_threshold='90',
-    adaptiveMonitoring='false'
-}
+add node0:MonitoredNode
+set node0.availability_memory='950000000'
+set node0.availability_instr='200000000'
+set node0.availability_write_disc='10000000'
+set node0.availability_read_disc='10000000'
 
-addComponent reasoner0@node0 : ResourceAwareReasoner {
-}
+add node0.MonitoringComponent0: MonitoringComponent
+set node0.MonitoringComponent0.memory_threshold='95'
+set node0.MonitoringComponent0.cpu_threshold='99'
+set node0.MonitoringComponent0.net_in_threshold='90'
+set node0.MonitoringComponent0.net_out_threshold='90'
+set node0.MonitoringComponent0.adaptiveMonitoring='false'
 
-addComponent rankerBasedHeuristicComponent0@node0 : NumberFailureBasedHeuristicComponent {
+add node0.reasoner0: ResourceAwareReasoner
 
-}
+add node0.rankerBasedHeuristicComponent0: NumberFailureBasedHeuristicComponent
 
-addChannel defMSGT_reasoning : defMSG {}
-bind reasoner0.eventHandler@node0 => defMSGT_reasoning
-bind MonitoringComponent0.reasoner@node0 => defMSGT_reasoning
+add defMSGT_reasoning : AsyncBroadcast
 
-addChannel CamelNett280 : CamelNettyService
+bind node0.reasoner0.eventHandler defMSGT_reasoning
+bind node0.MonitoringComponent0.reasoner defMSGT_reasoning
 
-bind rankerBasedHeuristicComponent0.ranking@node0 => CamelNett280
-bind MonitoringComponent0.ranking@node0 => CamelNett280
+add CamelNett280 : CamelNettyService
+add CamelNett281 : CamelNettyService
 
-updateDictionary defMSGT_reasoning
+bind node0.rankerBasedHeuristicComponent0.getRankingOrder CamelNett280
+bind node0.MonitoringComponent0.getRankingOrder CamelNett280
 
-updateDictionary CamelNett280
+bind node0.rankerBasedHeuristicComponent0.triggerMonitoringEvent CamelNett281
+bind node0.MonitoringComponent0.triggerMonitoringEvent CamelNett281
 
+set CamelNett280.port/node0 = '10000'
+set CamelNett281.port/node0 = '10001'
 
-addComponent dacapoExecuter0@node0 : RunningDacapoComponent {
-    dacapo_path = '/home/inti/Downloads/dacapo-2006-10-MR2.jar',
-    dacapo_test = 'xalan',
-    dacapo_n ='4',
-    cpu_wall_time = '0',
-    memory_max_size = '1'
-}
+add node0.dacapoExecuter0: RunningDacapoComponent
+set node0.dacapoExecuter0.dacapo_path = '/home/edaubert/kevoree/inti/dacapo-2006-10-MR2.jar'
+set node0.dacapoExecuter0.dacapo_test = 'xalan'
+set node0.dacapoExecuter0.dacapo_n ='4'
+set node0.dacapoExecuter0.cpu_wall_time = '0'
+set node0.dacapoExecuter0.memory_max_size = '1'
 
-addGroup sync:BasicGroup
-addToGroup sync node0
-
-}
+add sync : WSGroup
+set sync.port/node0 = "9000"
+attach node0 sync

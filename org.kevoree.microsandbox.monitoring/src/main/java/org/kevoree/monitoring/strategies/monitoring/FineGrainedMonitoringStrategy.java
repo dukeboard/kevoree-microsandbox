@@ -38,6 +38,7 @@ public abstract class FineGrainedMonitoringStrategy extends AbstractMonitoringSt
         super(msg);
         this.ranking = ranking;
         this.reason = reason;
+        monitoringRegistry = MonitoringRegistry.getInstance();
     }
 
     protected DataForCheckingContract getInfo(ResourcePrincipal principal) {

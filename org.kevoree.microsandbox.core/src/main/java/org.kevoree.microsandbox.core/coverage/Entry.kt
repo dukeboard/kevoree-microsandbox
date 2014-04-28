@@ -11,5 +11,5 @@ public class Entry(branchParam : Double, instrParam : Double) {
     val branchCoverage : Double = branchParam
     val instrCoverage : Double = instrParam
 
-    /*override*/ fun toString() : String = "Branch: " + branchCoverage + " Instruction: " + instrCoverage
+    public override fun toString() : String = "Branch: " + branchCoverage + " Instruction: " + instrCoverage
 }

@@ -1,43 +1,32 @@
-{
-addRepo "http://maven.kevoree.org/daum/snapshots"
+repo "http://maven.kevoree.org/daum/snapshots"
 
+include mvn:org.kevoree.microsandbox:org.kevoree.microsandbox.javasenode:latest
 
-merge 'mvn:org.kevoree.microsandbox/org.kevoree.microsandbox.javasenode/{project.version}'
+include mvn:org.kevoree.library.java:org.kevoree.library.java.ws:release
+include mvn:org.kevoree.library.java:org.kevoree.library.java.channels:release
 
-merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.jexxus/{kevoree.corelibrary.version}'
-merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.defaultChannels/{kevoree.corelibrary.version}'
+include mvn:org.kevoree.microsandbox:org.kevoree.microsandbox.monitoring:latest
+include mvn:org.kevoree.microsandbox:org.kevoree.microsandbox.samples:latest
 
-merge 'mvn:org.kevoree.microsandbox/org.kevoree.microsandbox.monitoring/{project.version}'
-merge 'mvn:org.kevoree.microsandbox/org.kevoree.microsandbox.samples/{project.version}'
+add node0:MonitoredNode
+set node0.availability_memory='150000000'
+set node0.availability_instr='200000000'
 
-addNode node0:MonitoredNode {
-    availability_memory='150000000',
-    availability_instr='200000000'
-}
+add node0.MonitoringComponent0: MonitoringComponent
+set node0.MonitoringComponent0.memory_threshold='65'
+set node0.MonitoringComponent0.cpu_threshold='10'
+set node0.MonitoringComponent0.net_in_threshold='80'
+set node0.MonitoringComponent0.net_out_threshold='80'
 
-addComponent MonitoringComponent0@node0 : MonitoringComponent {
-    memory_threshold='65',
-    cpu_threshold='10',
-    net_in_threshold='80',
-    net_out_threshold='80'
-}
+add node0.reasoner0: ResourceAwareReasoner
 
-addComponent reasoner0@node0 : ResourceAwareReasoner { }
+add defMSGT_reasoning : ASyncBroadcast
+bind node0.reasoner0.eventHandler defMSGT_reasoning
+bind node0.MonitoringComponent0.reasoner defMSGT_reasoning
 
-addChannel defMSGT_reasoning : defMSG
-bind reasoner0.eventHandler@node0 => defMSGT_reasoning
-bind MonitoringComponent0.reasoner@node0 => defMSGT_reasoning
+add node0.simple0: SimpleComponent
+set node0.simple0.cpu_wall_time='2000000'
 
-updateDictionary defMSGT_reasoning
-
-addComponent simple0@node0 : SimpleComponent {
-    cpu_wall_time='2000000'
-}
-
-updateDictionary channelForNumbers
-
-addGroup sync:BasicGroup
-addToGroup sync node0
-
-}
-
+add sync : WSGroup
+set sync.port/node0 = "9000"
+attach node0 sync

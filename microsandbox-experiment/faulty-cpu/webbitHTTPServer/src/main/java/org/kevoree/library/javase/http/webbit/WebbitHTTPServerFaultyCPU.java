@@ -98,11 +98,11 @@ public class WebbitHTTPServerFaultyCPU extends AbstractHTTPServer implements Mem
     @Param(optional = true)
     Long memory_peak_allocation_per_hour;
     @Param(optional = true)
-    Integer throughput_msg_per_second;
+    String throughput_msg_per_second;
     @Param(optional = true)
-    Integer throughput_msg_per_minute;
+    String throughput_msg_per_minute;
     @Param(optional = true)
-    Integer throughput_msg_per_hour;
+    String throughput_msg_per_hour;
 
     @Override
     public double getCpu_wall_time() {
@@ -185,32 +185,32 @@ public class WebbitHTTPServerFaultyCPU extends AbstractHTTPServer implements Mem
     }
 
     @Override
-    public Integer getThroughput_msg_per_second() {
+    public String getThroughput_msg_per_second() {
         return throughput_msg_per_second;
     }
 
     @Override
-    public void setThroughput_msg_per_second(Integer throughput_msg_per_second) {
+    public void setThroughput_msg_per_second(String throughput_msg_per_second) {
         this.throughput_msg_per_second = throughput_msg_per_second;
     }
 
     @Override
-    public Integer getThroughput_msg_per_minute() {
+    public String getThroughput_msg_per_minute() {
         return throughput_msg_per_minute;
     }
 
     @Override
-    public void setThroughput_msg_per_minute(Integer throughput_msg_per_minute) {
+    public void setThroughput_msg_per_minute(String throughput_msg_per_minute) {
         this.throughput_msg_per_minute = throughput_msg_per_minute;
     }
 
     @Override
-    public Integer getThroughput_msg_per_hour() {
+    public String getThroughput_msg_per_hour() {
         return throughput_msg_per_hour;
     }
 
     @Override
-    public void setThroughput_msg_per_hour(Integer throughput_msg_per_hour) {
+    public void setThroughput_msg_per_hour(String throughput_msg_per_hour) {
         this.throughput_msg_per_hour = throughput_msg_per_hour;
     }
 }

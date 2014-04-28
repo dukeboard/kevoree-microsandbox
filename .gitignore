@@ -14,3 +14,4 @@ org.kevoree.microsandbox.watchdog/src/main/resources/sharedResourceAccounting.ja
 **.o
 **.so
 **.so*
+**org.kevoree.microsandbox.javaSENode/scratch

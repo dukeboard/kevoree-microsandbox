@@ -27,14 +27,14 @@
             <version>${kotlin.version}</version>
         </dependency>
         <!--<dependency>-->
-            <!--<groupId>org.kevoree</groupId>-->
-            <!--<artifactId>org.kevoree.kevscript</artifactId>-->
-            <!--<version>2.1-SNAPSHOT</version>-->
+        <!--<groupId>org.kevoree</groupId>-->
+        <!--<artifactId>org.kevoree.kevscript</artifactId>-->
+        <!--<version>2.1-SNAPSHOT</version>-->
         <!--</dependency>-->
         <!--<dependency>-->
-            <!--<groupId>org.kevoree.microsandbox</groupId>-->
-            <!--<artifactId>org.ipc.memory</artifactId>-->
-            <!--<version>${project.version}</version>-->
+        <!--<groupId>org.kevoree.microsandbox</groupId>-->
+        <!--<artifactId>org.ipc.memory</artifactId>-->
+        <!--<version>${project.version}</version>-->
         <!--</dependency>-->
     </dependencies>
 
@@ -48,7 +48,9 @@
                     <execution>
                         <id>compile</id>
                         <phase>process-sources</phase>
-                        <goals> <goal>compile</goal> </goals>
+                        <goals>
+                            <goal>compile</goal>
+                        </goals>
                     </execution>
                 </executions>
             </plugin>
@@ -64,6 +66,14 @@
                         </goals>
                     </execution>
                 </executions>
+                <configuration>
+                    <!--<model>${project.basedir}/src/main/kevs/runningDacapo.kevs</model>-->
+                    <!--<model>/home/edaubert/kevoree/inti/others/new/JavaFXVideoDisplayOurFaultyMemory.kevs</model>-->
+                    <model>/home/edaubert/kevoree/inti/others/new/JavaFXVideoDisplayOurFaultyCPU.kevs</model>
+                    <excludes>
+                        <exclude>org.kevoree:org.kevoree.bootstrap</exclude>
+                    </excludes>
+                </configuration>
             </plugin>
         </plugins>
     </build>

@@ -260,10 +260,16 @@ public class CGroupDeployer extends FromFileDeployer implements ModelListener {
                 reasonerName, nodeName, "MonitoringComponent");
         script += String.format("addComponent %s@%s : NumberFailureBasedHeuristicComponent\n",
                 monitoringName, nodeName);
-        script += String.format("addChannel %s : CamelNettyService\n", channelName);
-        script += String.format("bind %s.ranking@%s => %s\n", reasonerName, nodeName, channelName);
-        script += String.format("bind %s.ranking@%s => %s\n", monitoringName, nodeName, channelName);
-        script += String.format("updateDictionary %s\n", channelName);
+        script += String.format("addChannel %s : CamelNettyService\n", channelName + "1");
+        script += String.format("bind %s.getRankingOrder@%s => %s\n", reasonerName, nodeName, channelName+ "1");
+        script += String.format("bind %s.getRankingOrder@%s => %s\n", monitoringName, nodeName, channelName+ "1");
+//        script += String.format("updateDictionary %s\n", channelName+ "1");
+        script += String.format("addChannel %s : CamelNettyService\n", channelName + "2");
+        script += String.format("bind %s.triggerMonitoringEvent@%s => %s\n", reasonerName, nodeName, channelName+ "2");
+        script += String.format("bind %s.triggerMonitoringEvent@%s => %s\n", monitoringName, nodeName, channelName+ "2");
+//        script += String.format("updateDictionary %s\n", channelName+ "2");
+
+        // FIXME maybe we need to fix port parameter for the channel
         return script;
     }
 

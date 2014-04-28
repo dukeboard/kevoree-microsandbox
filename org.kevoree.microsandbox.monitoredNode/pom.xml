@@ -15,12 +15,6 @@
     </parent>
 
     <dependencies>
-
-        <!--<dependency>-->
-        <!--<groupId>org.kevoree</groupId>-->
-        <!--<artifactId>org.kevoree.kevscript</artifactId>-->
-        <!--<version>2.1-SNAPSHOT</version>-->
-        <!--</dependency>-->
         <dependency>
             <groupId>org.kevoree.microsandbox</groupId>
             <artifactId>org.kevoree.microsandbox.api</artifactId>
@@ -31,26 +25,6 @@
             <artifactId>org.kevoree.microsandbox.core</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <!--<dependency>
-            <groupId>org.kevoree.tools</groupId>
-            <artifactId>org.kevoree.tools.annotation.api</artifactId>
-            <version>${kevoree.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.kevoree.tools</groupId>
-            <artifactId>org.kevoree.tools.annotation.api</artifactId>
-            <version>${kevoree.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.kevoree.tools</groupId>
-            <artifactId>org.kevoree.tools.javase.framework</artifactId>
-            <version>${kevoree.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.kevoree.tools</groupId>
-            <artifactId>org.kevoree.tools.aether.framework</artifactId>
-            <version>${kevoree.version}</version>
-        </dependency>-->
         <dependency>
             <groupId>org.kevoree.library.java</groupId>
             <artifactId>org.kevoree.library.java.javaNode</artifactId>
@@ -76,7 +50,7 @@
             <artifactId>org.kevoree.bootstrap</artifactId>
             <version>${kevoree.version}</version>
         </dependency>
-       <dependency>
+        <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-simple</artifactId>
             <version>1.7.5</version>
@@ -93,7 +67,9 @@
                     <execution>
                         <id>compile</id>
                         <phase>process-sources</phase>
-                        <goals> <goal>compile</goal> </goals>
+                        <goals>
+                            <goal>compile</goal>
+                        </goals>
                     </execution>
                 </executions>
             </plugin>

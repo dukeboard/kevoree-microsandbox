@@ -15,16 +15,16 @@ public interface ThroughputContracted {
     Integer throughput_msg_per_hour;*/
 
     //    @Param(optional = true)
-    public Integer getThroughput_msg_per_second();
+    public String getThroughput_msg_per_second();
 
-    public void setThroughput_msg_per_second(Integer throughput_msg_per_second);
+    public void setThroughput_msg_per_second(String throughput_msg_per_second);
     //    @Param(optional = true)
-    public Integer getThroughput_msg_per_minute();
+    public String getThroughput_msg_per_minute();
 
-    public void setThroughput_msg_per_minute(Integer throughput_msg_per_minute);
+    public void setThroughput_msg_per_minute(String throughput_msg_per_minute);
     //    @Param(optional = true)
-    public Integer getThroughput_msg_per_hour();
+    public String getThroughput_msg_per_hour();
 
-    public void setThroughput_msg_per_hour(Integer throughput_msg_per_minute);
+    public void setThroughput_msg_per_hour(String throughput_msg_per_minute);
 
 }

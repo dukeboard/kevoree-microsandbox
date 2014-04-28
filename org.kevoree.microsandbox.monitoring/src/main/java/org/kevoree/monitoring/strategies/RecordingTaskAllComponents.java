@@ -1,6 +1,5 @@
 package org.kevoree.monitoring.strategies;
 
-import edu.emory.mathcs.backport.java.util.Arrays;
 import org.kevoree.ComponentInstance;
 import org.kevoree.api.BootstrapService;
 import org.kevoree.api.ModelService;
@@ -12,6 +11,7 @@ import org.kevoree.monitoring.strategies.monitoring.RankChecker;
 import org.kevoree.monitoring.strategies.monitoring.RecordingAllComponentsForEver;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**

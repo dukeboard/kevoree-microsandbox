@@ -24,11 +24,11 @@ public abstract class NetworkThroughputContractedImpl implements NetworkContract
     @Param(optional = true)
     Integer network_output_mean_per_hour;
     @Param(optional = true)
-    Integer throughput_msg_per_second;
+    String throughput_msg_per_second;
     @Param(optional = true)
-    Integer throughput_msg_per_minute;
+    String throughput_msg_per_minute;
     @Param(optional = true)
-    Integer throughput_msg_per_hour;
+    String throughput_msg_per_hour;
 
     @Override
     public Integer getNetwork_input_peak_seconds() {
@@ -91,32 +91,32 @@ public abstract class NetworkThroughputContractedImpl implements NetworkContract
     }
 
     @Override
-    public Integer getThroughput_msg_per_second() {
+    public String getThroughput_msg_per_second() {
         return throughput_msg_per_second;
     }
 
     @Override
-    public void setThroughput_msg_per_second(Integer p0) {
+    public void setThroughput_msg_per_second(String p0) {
         this.throughput_msg_per_second = p0;
     }
 
     @Override
-    public Integer getThroughput_msg_per_minute() {
+    public String getThroughput_msg_per_minute() {
         return throughput_msg_per_minute;
     }
 
     @Override
-    public void setThroughput_msg_per_minute(Integer p0) {
+    public void setThroughput_msg_per_minute(String p0) {
         this.throughput_msg_per_minute = p0;
     }
 
     @Override
-    public Integer getThroughput_msg_per_hour() {
+    public String getThroughput_msg_per_hour() {
         return throughput_msg_per_hour;
     }
 
     @Override
-    public void setThroughput_msg_per_hour(Integer p0) {
+    public void setThroughput_msg_per_hour(String p0) {
         this.throughput_msg_per_hour = p0;
     }
 }

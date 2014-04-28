@@ -1,60 +1,48 @@
-{
-addRepo "http://maven.kevoree.org/daum/snapshots"
 
+repo "http://maven.kevoree.org/daum/snapshots"
 
-merge 'mvn:org.kevoree.microsandbox/org.kevoree.microsandbox.javasenode/{project.version}'
-merge "mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.fakeDomo/{kevoree.corelibrary.version}"
-merge "mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.swingUI/{kevoree.corelibrary.version}"
+include mvn:org.kevoree.microsandbox:org.kevoree.microsandbox.javasenode:latest
 
-merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.jexxus/{kevoree.corelibrary.version}'
-merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.defaultChannels/{kevoree.corelibrary.version}'
+include mvn:org.kevoree.library.java:org.kevoree.library.java.toys:release
+include mvn:org.kevoree.library.java:org.kevoree.library.java.ws:release
+include mvn:org.kevoree.library.java:org.kevoree.library.java.channels:release
 
-merge 'mvn:org.kevoree.microsandbox/org.kevoree.microsandbox.monitoring/{project.version}'
-merge 'mvn:org.kevoree.microsandbox/org.kevoree.microsandbox.samples/{project.version}'
+include mvn:org.kevoree.microsandbox:org.kevoree.microsandbox.monitoring:latest
+include mvn:org.kevoree.microsandbox:org.kevoree.microsandbox.samples:latest
 
-addNode node0:MonitoredNode {
-    availability_memory='150000000',
-    availability_instr='200000000'
-}
+add node0:MonitoredNode
+set node0.availability_memory='150000000'
+set availability_instr='200000000'
 
-addComponent RecordingComponent0@node0 : ForContractInformationRetrieverComponent {
+add node0.RecordingComponent0: ForContractInformationRetrieverComponent
 
-}
+add node0.FakeConso509: ToyConsole
+set node0.FakeConso509.singleFrame='true'
 
-addComponent FakeConso509@node0 : FakeConsole { singleFrame='true' }
-addComponent FakeConso510@node0 : FakeConsole {}
-addComponent fread@node0 : FileExplorer { basedir='.' }
+add node0.FakeConso510: ToyConsole
 
-addComponent memoryConsumer0@node0 : MemoryConsumer {
-    memory_max_size='20',
-    cpu_wall_time='200000',
-    amount = '302400'
-}
+add node0.fread: FileExplorer
+set node0.fread.basedir='.'
 
-addComponent cpuConsumer0@node0 : CPUConsumerWallTime {
-    cpu_wall_time='2000000000',
-    nbLoop='10000000'
-}
+add node0.memoryConsumer0: MemoryConsumer
+set node0.memoryConsumer0.memory_max_size='20'
+set node0.memoryConsumer0.cpu_wall_time='200000'
+set node0.memoryConsumer0.amount = '302400'
 
-addComponent measurer@node0 : MeasuringCPUUsage {
+add node0.cpuConsumer0: CPUConsumerWallTime
+set node0.cpuConsumer0.cpu_wall_time='2000000000'
+set node0.cpuConsumer0.nbLoop='10000000'
 
-}
+add node0.measurer: MeasuringCPUUsage
 
-addChannel defMSGT419 : defMSG
-addChannel defMSGT360 : defMSG
+add defMSGT419 : ASyncBroadcast
+add defMSGT360 : ASyncBroadcast
 
-bind FakeConso509.showText@node0 => defMSGT360
-bind FakeConso509.textEntered@node0 => defMSGT419
-bind FakeConso510.showText@node0 => defMSGT419
-bind FakeConso510.textEntered@node0 => defMSGT360
+bind node0.FakeConso509.showText defMSGT360
+bind node0.FakeConso509.textEntered defMSGT419
+bind node0.FakeConso510.showText defMSGT419
+bind node0.FakeConso510.textEntered defMSGT360
 
-updateDictionary FakeConso510@node0
-updateDictionary defMSGT360
-updateDictionary defMSGT419
-updateDictionary FakeConso509@node0
-
-addGroup sync:BasicGroup
-addToGroup sync node0
-
-}
-
+add sync : WSGroup
+set sync.port/node0 = "9000"
+attach node0 sync

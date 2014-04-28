@@ -23,10 +23,14 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <kotlin.version>0.6.1673</kotlin.version>
-        <!--<kotlin.version>0.7.271</kotlin.version>-->
+        <!--<kotlin.version>0.6.1673</kotlin.version>
         <kevoree.version>3.5.4</kevoree.version>
-        <kevoree.library.version>3.5.2</kevoree.library.version>
+        <kevoree.library.version>3.5.2</kevoree.library.version>-->
+
+        <kotlin.version>0.7.271</kotlin.version>
+        <kevoree.version>3.5.5-SNAPSHOT</kevoree.version>
+        <kevoree.library.version>3.5.3-SNAPSHOT</kevoree.library.version>
+
         <kevoree.komponents.version>1.1.0-SNAPSHOT</kevoree.komponents.version>
         <kevoree.microsandbox.version>1.2.0-SNAPSHOT</kevoree.microsandbox.version>
     </properties>
@@ -84,6 +88,26 @@
         <repository>
             <id>kevoree-snapshots</id>
             <url>http://maven.kevoree.org/snapshots</url>
+        </repository>
+        <repository>
+            <id>reacloud-releases</id>
+            <url>http://maven.reacloud.com/repository/reacloud/release</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>reacloud-snapshots</id>
+            <url>http://maven.reacloud.com/repository/reacloud/snapshots/</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
         </repository>
     </repositories>
 

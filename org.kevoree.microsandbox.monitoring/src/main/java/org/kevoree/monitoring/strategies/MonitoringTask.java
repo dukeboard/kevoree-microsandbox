@@ -1,6 +1,5 @@
 package org.kevoree.monitoring.strategies;
 
-import edu.emory.mathcs.backport.java.util.Arrays;
 import org.kevoree.api.BootstrapService;
 import org.kevoree.api.ModelService;
 import org.kevoree.microsandbox.api.communication.MonitoringReporterFactory;
@@ -18,6 +17,7 @@ import org.kevoree.monitoring.strategies.monitoring.FineGrainedMonitoringStrateg
 import org.kevoree.monitoring.strategies.monitoring.FineGrainedStrategyFactory;
 import org.kevoree.monitoring.strategies.monitoring.GlobalMonitoring;
 
+import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.EnumSet;
 import java.util.List;
