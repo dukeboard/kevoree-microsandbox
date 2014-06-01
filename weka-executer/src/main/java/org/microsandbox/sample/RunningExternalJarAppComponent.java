@@ -38,17 +38,15 @@ public class RunningExternalJarAppComponent extends CPUMemoryContractedImpl {
             long timeBefore = 0;
             try {
                 Thread.sleep(delayTime * 1000);
-                Class<?> cl = loader.loadClass(test);
+                Class<?> cl = loader.loadClass(jar_main);
                 Method method = cl.getMethod("main", new Class[]{String[].class});
 
-                String[] args = arg.split(" ");
+                String[] args = argument.split(" ");
                 timeBefore = System.nanoTime();
 //                System.setSecurityManager(new NoExitSecurityManager());
                 method.invoke(null, new Object[]{args});
 
 
-            } catch (ExitException1 e) {
-                System.err.println(e.getMessage() + " status " + e.status);
             }catch (ClassNotFoundException e) {
 //                e.printStackTrace();
             } catch (IllegalAccessException e) {
