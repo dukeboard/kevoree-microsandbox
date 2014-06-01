@@ -9,6 +9,7 @@
         <relativePath>../../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
+    <version>1.1</version>
 
     <artifactId>org.kevoree.microsandbox.slave0</artifactId>
 
@@ -25,35 +26,52 @@
         <!--<version>${kevoree.version}</version>-->
         <!--</dependency>-->
         <dependency>
-            <groupId>org.kevoree.corelibrary.javase</groupId>
-            <artifactId>org.kevoree.library.javase.javaseNode</artifactId>
-            <version>${kevoree.corelibrary.version}</version>
+            <groupId>org.kevoree.library.java</groupId>
+            <artifactId>org.kevoree.library.java.javaNode</artifactId>
+            <version>${kevoree.library.version}</version>
         </dependency>
     </dependencies>
     <build>
         <plugins>
             <plugin>
                 <groupId>org.kevoree.tools</groupId>
-                <artifactId>org.kevoree.tools.annotation.mavenplugin</artifactId>
+                <artifactId>org.kevoree.tools.mavenplugin</artifactId>
                 <version>${kevoree.version}</version>
                 <extensions>true</extensions>
-                <configuration>
-                    <nodeTypeNames>JavaSENode</nodeTypeNames>
-                </configuration>
                 <executions>
                     <execution>
                         <goals>
                             <goal>generate</goal>
-                            <goal>compile</goal>
                         </goals>
                     </execution>
                 </executions>
+                <configuration>
+                    <excludes>
+                        <exclude>org.kevoree:org.kevoree.bootstrap</exclude>
+                    </excludes>
+                </configuration>
+
+                <!--<groupId>org.kevoree.tools</groupId>-->
+                <!--<artifactId>org.kevoree.tools.annotation.mavenplugin</artifactId>-->
+                <!--<version>${kevoree.version}</version>-->
+                <!--<extensions>true</extensions>-->
+                <!--<configuration>-->
+                    <!--<nodeTypeNames>JavaSENode</nodeTypeNames>-->
+                <!--</configuration>-->
+                <!--<executions>-->
+                    <!--<execution>-->
+                        <!--<goals>-->
+                            <!--<goal>generate</goal>-->
+                            <!--<goal>compile</goal>-->
+                        <!--</goals>-->
+                    <!--</execution>-->
+                <!--</executions>-->
             </plugin>
-            <plugin>
-                <groupId>org.kevoree.platform</groupId>
-                <artifactId>org.kevoree.platform.mavenrunner</artifactId>
-                <version>${kevoree.version}</version>
-            </plugin>
+            <!--<plugin>-->
+                <!--<groupId>org.kevoree.platform</groupId>-->
+                <!--<artifactId>org.kevoree.platform.mavenrunner</artifactId>-->
+                <!--<version>${kevoree.version}</version>-->
+            <!--</plugin>-->
         </plugins>
     </build>
 </project>
