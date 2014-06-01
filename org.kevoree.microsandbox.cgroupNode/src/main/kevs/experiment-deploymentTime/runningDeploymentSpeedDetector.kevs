@@ -1,0 +1,87 @@
+// This file is the experiment to measure the advantage of using CRIU for fast deployment
+// You shouldn't use the file directly. Instead, execute
+// sudo run2.sh distributionDeployment [true|false] LOG_FILE_NAME
+// Notes:
+// 1 - We are talking about the run2.sh within watchdog
+// 2 - True|False means using CRIU or not
+// 3 - the script distributionDeployment is within the module cgroupNode and yeas, I know, the name
+//     is grammatically incorrect.
+// 4 - The script expects that it will find the image of clones to create
+
+{
+addRepo "http://maven.kevoree.org/daum/snapshots"
+
+merge 'mvn:org.kevoree.microsandbox/org.kevoree.microsandbox.cgroupNode/{project.version}'
+merge 'mvn:org.kevoree.microsandbox/org.kevoree.microsandbox.javasenode/{project.version}'
+merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.jexxus/{kevoree.corelibrary.version}'
+merge 'mvn:org.kevoree.microsandbox/org.kevoree.microsandbox.slave0/{project.version}'
+merge 'mvn:org.kevoree.microsandbox/org.kevoree.microsandbox.slave1/{project.version}'
+merge 'mvn:org.kevoree.microsandbox/org.kevoree.microsandbox.slave2/{project.version}'
+//merge 'mvn:org.kevoree.microsandbox/org.kevoree.microsandbox.slave3/{project.version}'
+//merge 'mvn:org.kevoree.microsandbox/org.kevoree.microsandbox.slave4/{project.version}'
+//merge 'mvn:org.kevoree.microsandbox/org.kevoree.microsandbox.slave5/{project.version}'
+//merge 'mvn:org.kevoree.microsandbox/org.kevoree.microsandbox.slave6/{project.version}'
+//merge 'mvn:org.kevoree.microsandbox/org.kevoree.microsandbox.slave7/{project.version}'
+//merge 'mvn:org.kevoree.microsandbox/org.kevoree.microsandbox.slave8/{project.version}'
+//merge 'mvn:org.kevoree.microsandbox/org.kevoree.microsandbox.slave9/{project.version}'
+//merge 'mvn:org.kevoree.microsandbox/org.kevoree.microsandbox.slave10/{project.version}'
+//merge 'mvn:org.kevoree.microsandbox/org.kevoree.microsandbox.slave11/{project.version}'
+//merge 'mvn:org.kevoree.microsandbox/org.kevoree.microsandbox.slave12/{project.version}'
+//merge 'mvn:org.kevoree.microsandbox/org.kevoree.microsandbox.slave13/{project.version}'
+//merge 'mvn:org.kevoree.microsandbox/org.kevoree.microsandbox.slave14/{project.version}'
+
+//merge 'mvn:org.kevoree.microsandbox/org.kevoree.microsandbox.SharedMemoryChannel/{project.version}'
+//merge "mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.fakeDomo/{kevoree.corelibrary.version}"
+//merge "mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.swingUI/{kevoree.corelibrary.version}"
+//merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.defaultChannels/{kevoree.corelibrary.version}'
+//merge 'mvn:org.kevoree.microsandbox/org.kevoree.microsandbox.monitoring/{project.version}'
+//merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.camel/{kevoree.corelibrary.version}'
+
+addNode node0:CGroupsNode {
+    coreLogLevel='DEBUG'
+}
+
+addComponent cgroupDeployer@node0 : CGroupDeployer {
+}
+
+addChannel channel_notif : NaiveSocketChannelByInti
+bind cgroupDeployer.startNotification@node0 => channel_notif
+
+addComponent slave0@node0 : Slave0
+addComponent slave1@node0 : Slave1
+addComponent slave2@node0 : Slave2
+//addComponent slave3@node0 : Slave3
+//addComponent slave4@node0 : Slave4
+//addComponent slave5@node0 : Slave5
+//addComponent slave6@node0 : Slave6
+//addComponent slave7@node0 : Slave7
+//addComponent slave8@node0 : Slave8
+//addComponent slave9@node0 : Slave9
+//addComponent slave10@node0 : Slave10
+//addComponent slave11@node0 : Slave11
+//addComponent slave12@node0 : Slave12
+//addComponent slave13@node0 : Slave13
+//addComponent slave14@node0 : Slave14
+
+bind slave0.notifyStarted@node0 => channel_notif
+bind slave1.notifyStarted@node0 => channel_notif
+bind slave2.notifyStarted@node0 => channel_notif
+//bind slave3.notifyStarted@node0 => channel_notif
+//bind slave4.notifyStarted@node0 => channel_notif
+//bind slave5.notifyStarted@node0 => channel_notif
+//bind slave6.notifyStarted@node0 => channel_notif
+//bind slave7.notifyStarted@node0 => channel_notif
+//bind slave8.notifyStarted@node0 => channel_notif
+//bind slave9.notifyStarted@node0 => channel_notif
+//bind slave10.notifyStarted@node0 => channel_notif
+//bind slave11.notifyStarted@node0 => channel_notif
+//bind slave12.notifyStarted@node0 => channel_notif
+//bind slave13.notifyStarted@node0 => channel_notif
+//bind slave14.notifyStarted@node0 => channel_notif
+
+updateDictionary channel_notif{port='10000'}@node0
+
+addGroup sync:BasicGroup
+addToGroup sync node0
+
+}

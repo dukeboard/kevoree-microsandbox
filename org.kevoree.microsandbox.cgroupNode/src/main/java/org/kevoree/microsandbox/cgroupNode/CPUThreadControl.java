@@ -43,17 +43,20 @@ public class CPUThreadControl {
     }
 
     public static void assignCPULimit(String componentId, int milliSeconds) {
-        writeValue(componentId, CGROUP_SUBSYSTEMS.CPU,  "notify_on_release", 1);
-        writeValue(componentId, CGROUP_SUBSYSTEMS.CPU,  "cpu.cfs_period_us", 1000000);
-        writeValue(componentId, CGROUP_SUBSYSTEMS.CPU, "cpu.cfs_quota_us", milliSeconds * 1000);
-        writeValue(componentId, CGROUP_SUBSYSTEMS.CPU,  "a"+ File.separatorChar + "cpu.shares", 100);
+        try {
+            writeValue(componentId, CGROUP_SUBSYSTEMS.CPU,  "notify_on_release", 1);
+            writeValue(componentId, CGROUP_SUBSYSTEMS.CPU,  "cpu.cfs_period_us", 1000000);
+            writeValue(componentId, CGROUP_SUBSYSTEMS.CPU, "cpu.cfs_quota_us", milliSeconds * 1000);
+            writeValue(componentId, CGROUP_SUBSYSTEMS.CPU,  "a"+ File.separatorChar + "cpu.shares", 100);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 
     private static void writeValue(String componentId,
                                    CGROUP_SUBSYSTEMS subsystem,
                                    String fileName,
-                                   int value)
-    {
+                                   int value) throws FileNotFoundException {
         String path = SYS_FS_CGROUP + subsystem.name + File.separatorChar
                 + KEVOREE_SUBPATH + File.separatorChar + componentId;
         createDir(path);
@@ -68,25 +71,17 @@ public class CPUThreadControl {
             fileName = fileName.substring(index + 1);
         }
 
-        try {
-            writeValue(path + fileName, value);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
+        writeValue(path + fileName, value);
     }
 
-    private static void attach(String idComponent, CGROUP_SUBSYSTEMS subsystem) {
+    private static void attach(String idComponent, CGROUP_SUBSYSTEMS subsystem) throws FileNotFoundException {
         String path = SYS_FS_CGROUP + subsystem.name + File.separatorChar
                 + KEVOREE_SUBPATH + File.separatorChar + idComponent +
                 File.separatorChar + "a" + File.separatorChar;
-        try {
-            writeValue(path + "tasks", getTTID());
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
+        writeValue(path + "tasks", getTTID());
     }
 
-    public static void attachToCPUSubsystem(String componentId) {
+    public static void attachToCPUSubsystem(String componentId) throws FileNotFoundException {
         attach(componentId, CGROUP_SUBSYSTEMS.CPU);
     }
 }

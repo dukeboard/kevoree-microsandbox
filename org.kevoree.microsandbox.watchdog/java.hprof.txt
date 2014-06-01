@@ -1,0 +1,2099 @@
+JAVA PROFILE 1.0.1, created Fri Mar 28 16:17:09 2014
+
+Copyright (c) 2003, 2005, Oracle and/or its affiliates. All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions
+are met:
+
+  - Redistributions of source code must retain the above copyright
+    notice, this list of conditions and the following disclaimer.
+
+  - Redistributions in binary form must reproduce the above copyright
+    notice, this list of conditions and the following disclaimer in the
+    documentation and/or other materials provided with the distribution.
+
+  - Neither the name of Oracle nor the names of its
+    contributors may be used to endorse or promote products derived
+    from this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS
+IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE COPYRIGHT OWNER OR
+CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+
+Header for -agentlib:hprof (or -Xrunhprof) ASCII Output (JDK 5.0 JVMTI based)
+
+WARNING!  This file format is under development, and is subject to
+change without notice.
+
+This file contains the following types of records:
+
+THREAD START
+THREAD END      mark the lifetime of Java threads
+
+TRACE           represents a Java stack trace.  Each trace consists
+                of a series of stack frames.  Other records refer to
+                TRACEs to identify (1) where object allocations have
+                taken place, (2) the frames in which GC roots were
+                found, and (3) frequently executed methods.
+
+HEAP DUMP       is a complete snapshot of all live objects in the Java
+                heap.  Following distinctions are made:
+
+                ROOT    root set as determined by GC
+                CLS     classes 
+                OBJ     instances
+                ARR     arrays
+
+SITES           is a sorted list of allocation sites.  This identifies
+                the most heavily allocated object types, and the TRACE
+                at which those allocations occurred.
+
+CPU SAMPLES     is a statistical profile of program execution.  The VM
+                periodically samples all running threads, and assigns
+                a quantum to active TRACEs in those threads.  Entries
+                in this record are TRACEs ranked by the percentage of
+                total quanta they consumed; top-ranked TRACEs are
+                typically hot spots in the program.
+
+CPU TIME        is a profile of program execution obtained by measuring
+                the time spent in individual methods (excluding the time
+                spent in callees), as well as by counting the number of
+                times each method is called. Entries in this record are
+                TRACEs ranked by the percentage of total CPU time. The
+                "count" field indicates the number of times each TRACE 
+                is invoked.
+
+MONITOR TIME    is a profile of monitor contention obtained by measuring
+                the time spent by a thread waiting to enter a monitor.
+                Entries in this record are TRACEs ranked by the percentage
+                of total monitor contention time and a brief description
+                of the monitor.  The "count" field indicates the number of 
+                times the monitor was contended at that TRACE.
+
+MONITOR DUMP    is a complete snapshot of all the monitors and threads in 
+                the System.
+
+HEAP DUMP, SITES, CPU SAMPLES|TIME and MONITOR DUMP|TIME records are generated 
+at program exit.  They can also be obtained during program execution by typing 
+Ctrl-\ (on Solaris) or by typing Ctrl-Break (on Win32).
+
+--------
+
+THREAD START (obj=500001df, id = 200004, name="Thread-0", group="main")
+THREAD START (obj=500001df, id = 200001, name="main", group="main")
+THREAD START (obj=500001df, id = 200005, name="Kevoree_KCLHandler_Scheduler_1838605207", group="main")
+THREAD START (obj=500001df, id = 200007, name="Kevoree_Core_Scheduler_node0", group="main")
+THREAD END (id = 200001)
+THREAD START (obj=500001df, id = 200008, name="DestroyJavaVM", group="main")
+THREAD START (obj=500001df, id = 200009, name="Kevoree_Core_ListenerScheduler_node0", group="main")
+THREAD START (obj=500001df, id = 200010, name="Kevoree_Deploy_1396019831151_Worker_1", group="main")
+THREAD START (obj=500001df, id = 200011, name="Kevoree_Deploy_1396019831151_Worker_2", group="main")
+THREAD START (obj=500001df, id = 200012, name="Kevoree_Deploy_1396019831151_Worker_3", group="main")
+THREAD START (obj=500001df, id = 200013, name="Kevoree_Deploy_1396019831151_Worker_4", group="main")
+THREAD END (id = 200010)
+THREAD END (id = 200011)
+THREAD END (id = 200013)
+THREAD END (id = 200012)
+THREAD START (obj=500001df, id = 200014, name="Kevoree_Deploy_1396019831155_Worker_1", group="main")
+THREAD START (obj=500001df, id = 200015, name="Kevoree_Deploy_1396019831155_Worker_2", group="main")
+THREAD END (id = 200015)
+THREAD END (id = 200014)
+THREAD START (obj=500001df, id = 200016, name="Kevoree_Deploy_1396019831189_Worker_1", group="main")
+THREAD START (obj=500001df, id = 200017, name="Kevoree_Deploy_1396019831189_Worker_2", group="main")
+THREAD START (obj=500001df, id = 200018, name="Kevoree_Deploy_1396019831189_Worker_3", group="main")
+THREAD END (id = 200017)
+THREAD END (id = 200016)
+THREAD END (id = 200018)
+THREAD START (obj=500001df, id = 200019, name="Kevoree_Deploy_1396019831191_Worker_1", group="main")
+THREAD START (obj=500001df, id = 200020, name="Thread-1", group="kev/hubs[channel_notif]")
+THREAD END (id = 200004)
+THREAD END (id = 200020)
+THREAD END (id = 200019)
+THREAD START (obj=500001df, id = 200021, name="Kevoree_Deploy_1396019831360_Worker_1", group="main")
+THREAD START (obj=500001df, id = 200022, name="Thread-2", group="kev/nodes[node0]/components[cgroupDeployer]")
+THREAD END (id = 200022)
+THREAD END (id = 200021)
+THREAD START (obj=500001df, id = 200023, name="Kevoree_Deploy_1396019831444_Worker_1", group="main")
+THREAD START (obj=500001df, id = 200024, name="Thread-3", group="kev/groups[sync]")
+THREAD END (id = 200024)
+THREAD END (id = 200023)
+THREAD START (obj=500001df, id = 200025, name="Kevoree_Deploy_1396019831460_Worker_1", group="main")
+THREAD END (id = 200025)
+THREAD START (obj=500001df, id = 200026, name="Kevoree_Deploy_1396019831494_Worker_2", group="main")
+THREAD START (obj=500001df, id = 200027, name="Kevoree_Deploy_1396019831494_Worker_1", group="main")
+THREAD START (obj=500001df, id = 200028, name="Kevoree_Deploy_1396019831494_Worker_3", group="main")
+THREAD END (id = 200026)
+THREAD END (id = 200028)
+THREAD END (id = 200027)
+THREAD START (obj=500001df, id = 200029, name="Kevoree_Deploy_1396019831498_Worker_1", group="main")
+THREAD START (obj=500001df, id = 200030, name="Thread-4", group="kev/groups[sync]")
+THREAD END (id = 200030)
+THREAD START (obj=500001df, id = 200031, name="Jexxus-TCPConnectionListener", group="kev/groups[sync]")
+THREAD END (id = 200029)
+THREAD START (obj=500001df, id = 200032, name="Kevoree_Deploy_1396019831516_Worker_1", group="main")
+THREAD START (obj=500001df, id = 200033, name="Thread-6", group="kev/nodes[node0]/components[cgroupDeployer]")
+THREAD START (obj=500008dc, id = 200034, name="Timer-0", group="kev/nodes[node0]/components[cgroupDeployer]")
+THREAD END (id = 200033)
+THREAD END (id = 200032)
+THREAD START (obj=500001df, id = 200035, name="Kevoree_Deploy_1396019831771_Worker_1", group="main")
+THREAD START (obj=500001df, id = 200036, name="Thread-8", group="kev/hubs[channel_notif]")
+THREAD START (obj=500001df, id = 200037, name="Thread-9", group="kev/hubs[channel_notif]")
+THREAD END (id = 200036)
+THREAD END (id = 200035)
+THREAD START (obj=500001df, id = 200038, name="Kevoree_Core_ListenerSchedulerAsync_node0_0", group="main")
+THREAD START (obj=500001df, id = 200039, name="Kevoree_Core_ListenerSchedulerAsync_node0_1", group="main")
+THREAD START (obj=500001df, id = 200040, name="Kevoree_Core_ListenerSchedulerAsync_node0_2", group="main")
+THREAD START (obj=500008f4, id = 200041, name="Thread-10", group="main")
+THREAD END (id = 200041)
+THREAD START (obj=500001df, id = 200042, name="pool-1-thread-1", group="main")
+THREAD START (obj=500001df, id = 200043, name="pool-1-thread-2", group="main")
+THREAD START (obj=500001df, id = 200044, name="process reaper", group="system")
+THREAD START (obj=500001df, id = 200045, name="process reaper", group="system")
+THREAD START (obj=500001df, id = 200046, name="Kevoree_Deploy_1396019832002_Worker_1", group="main")
+THREAD END (id = 200046)
+THREAD START (obj=500001df, id = 200047, name="Kevoree_Deploy_1396019832009_Worker_1", group="main")
+THREAD END (id = 200047)
+THREAD START (obj=500001df, id = 200048, name="Kevoree_Deploy_1396019832009_Worker_1", group="main")
+THREAD START (obj=500001df, id = 200049, name="Thread-11", group="kev/nodes[node0]/components[slave10]")
+THREAD END (id = 200049)
+THREAD END (id = 200048)
+THREAD START (obj=500001df, id = 200050, name="Kevoree_Deploy_1396019832015_Worker_1", group="main")
+THREAD START (obj=500001df, id = 200051, name="Kevoree_Deploy_1396019832019_Worker_1", group="main")
+THREAD END (id = 200050)
+THREAD START (obj=500001df, id = 200053, name="Kevoree_Deploy_1396019832019_Worker_2", group="main")
+THREAD START (obj=500001df, id = 200052, name="Kevoree_Deploy_1396019832019_Worker_3", group="main")
+THREAD START (obj=500001df, id = 200054, name="Kevoree_Deploy_1396019832019_Worker_4", group="main")
+THREAD END (id = 200051)
+THREAD START (obj=500001df, id = 200055, name="Kevoree_Deploy_1396019832021_Worker_1", group="main")
+THREAD END (id = 200052)
+THREAD END (id = 200054)
+THREAD END (id = 200053)
+THREAD START (obj=500001df, id = 200056, name="Thread-12", group="kev/nodes[node0]/components[slave10]")
+THREAD START (obj=500008dc, id = 200057, name="Timer-1", group="kev/nodes[node0]/components[slave10]")
+THREAD END (id = 200056)
+THREAD END (id = 200055)
+THREAD START (obj=500001df, id = 200058, name="Thread-14", group="kev/nodes[node0]/components[slave10]")
+THREAD START (obj=500001df, id = 200059, name="Thread-15", group="kev/hubs[channel_notif]")
+THREAD START (obj=500001df, id = 200060, name="Thread-16", group="kev/nodes[node0]/components[cgroupDeployer]")
+THREAD START (obj=500001df, id = 200062, name="SIGINT handler", group="system")
+THREAD START (obj=500008f4, id = 200063, name="Shutdown Hook", group="main")
+THREAD END (id = 200039)
+THREAD END (id = 200009)
+THREAD END (id = 200040)
+THREAD END (id = 200007)
+THREAD END (id = 200038)
+THREAD START (obj=500001df, id = 200064, name="Kevoree_Deploy_1396019853079_Worker_1", group="main")
+THREAD START (obj=500001df, id = 200065, name="Thread-17", group="kev/hubs[channel_notif]")
+THREAD END (id = 200059)
+THREAD END (id = 200065)
+THREAD END (id = 200064)
+THREAD START (obj=500001df, id = 200066, name="Kevoree_Deploy_1396019853081_Worker_1", group="main")
+THREAD START (obj=500001df, id = 200067, name="Thread-18", group="kev/nodes[node0]/components[slave10]")
+THREAD END (id = 200067)
+THREAD END (id = 200057)
+THREAD END (id = 200058)
+THREAD START (obj=500001df, id = 200068, name="Thread-19", group="kev/nodes[node0]/components[slave10]")
+THREAD END (id = 200066)
+THREAD START (obj=500001df, id = 200069, name="Kevoree_Deploy_1396019853081_Worker_1", group="main")
+THREAD START (obj=500001df, id = 200070, name="Thread-20", group="kev/nodes[node0]/components[cgroupDeployer]")
+THREAD END (id = 200070)
+THREAD END (id = 200034)
+THREAD END (id = 200069)
+THREAD END (id = 200060)
+THREAD START (obj=500001df, id = 200071, name="Thread-21", group="kev/nodes[node0]/components[cgroupDeployer]")
+THREAD START (obj=500001df, id = 200072, name="Kevoree_Deploy_1396019853083_Worker_1", group="main")
+THREAD START (obj=500001df, id = 200073, name="Thread-22", group="kev/groups[sync]")
+THREAD END (id = 200073)
+THREAD END (id = 200031)
+THREAD END (id = 200072)
+THREAD END (id = 200063)
+THREAD END (id = 200062)
+TRACE 300591:
+	java.net.PlainSocketImpl.socketAccept(PlainSocketImpl.java:Unknown line)
+	java.net.AbstractPlainSocketImpl.accept(AbstractPlainSocketImpl.java:398)
+	java.net.ServerSocket.implAccept(ServerSocket.java:530)
+	java.net.ServerSocket.accept(ServerSocket.java:498)
+	jexxus.server.Server$2.run(Server.java:151)
+	java.lang.Thread.run(Thread.java:744)
+TRACE 300615:
+	java.net.PlainSocketImpl.socketAccept(PlainSocketImpl.java:Unknown line)
+	java.net.AbstractPlainSocketImpl.accept(AbstractPlainSocketImpl.java:398)
+	java.net.ServerSocket.implAccept(ServerSocket.java:530)
+	java.net.ServerSocket.accept(ServerSocket.java:498)
+	org.kevoree.microsandbox.javase.components.TCPServer.run(NaiveSocketChannelByInti.java:180)
+	java.lang.Thread.run(Thread.java:744)
+TRACE 300675:
+	java.lang.UNIXProcess.waitForProcessExit(UNIXProcess.java:Unknown line)
+	java.lang.UNIXProcess.access$200(UNIXProcess.java:54)
+	java.lang.UNIXProcess$3.run(UNIXProcess.java:174)
+	java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1145)
+	java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:615)
+	java.lang.Thread.run(Thread.java:744)
+TRACE 300709:
+	java.net.SocketInputStream.socketRead0(SocketInputStream.java:Unknown line)
+	java.net.SocketInputStream.read(SocketInputStream.java:152)
+	java.net.SocketInputStream.read(SocketInputStream.java:122)
+	java.net.SocketInputStream.read(SocketInputStream.java:210)
+	java.io.ObjectInputStream$PeekInputStream.peek(ObjectInputStream.java:2293)
+	java.io.ObjectInputStream$BlockDataInputStream.peek(ObjectInputStream.java:2586)
+	java.io.ObjectInputStream$BlockDataInputStream.peekByte(ObjectInputStream.java:2596)
+TRACE 300728:
+	java.net.SocketInputStream.socketRead0(SocketInputStream.java:Unknown line)
+	java.net.SocketInputStream.read(SocketInputStream.java:152)
+	java.net.SocketInputStream.read(SocketInputStream.java:122)
+	java.net.SocketInputStream.read(SocketInputStream.java:210)
+	java.io.ObjectInputStream$PeekInputStream.peek(ObjectInputStream.java:2293)
+	java.io.ObjectInputStream$BlockDataInputStream.readBlockHeader(ObjectInputStream.java:2473)
+	java.io.ObjectInputStream$BlockDataInputStream.refill(ObjectInputStream.java:2543)
+TRACE 300199:
+	java.lang.ClassLoader.defineClass1(ClassLoader.java:Unknown line)
+	java.lang.ClassLoader.defineClass(ClassLoader.java:800)
+	java.lang.ClassLoader.defineClass(ClassLoader.java:643)
+	org.kevoree.kcl.KevoreeJarClassLoader.internal_defineClass(KevoreeJarClassLoader.kt:304)
+	org.kevoree.kcl.internal.KevoreeLocalLoader$loadClass$1.invoke(KevoreeLocalLoader.kt:46)
+	org.kevoree.kcl.internal.KevoreeLocalLoader$loadClass$1.invoke(KevoreeLocalLoader.kt:Unknown line)
+	jet.runtime.Intrinsics.stupidSync(Intrinsics.java:87)
+TRACE 300453:
+	java.util.zip.Inflater.inflateBytes(Inflater.java:Unknown line)
+	java.util.zip.Inflater.inflate(Inflater.java:259)
+	java.util.zip.InflaterInputStream.read(InflaterInputStream.java:152)
+	java.util.zip.ZipInputStream.read(ZipInputStream.java:193)
+	java.util.jar.JarInputStream.read(JarInputStream.java:207)
+	java.io.FilterInputStream.read(FilterInputStream.java:107)
+	org.kevoree.kcl.internal.KevoreeLazyJarResources.loadJar(KevoreeLazyJarResources.kt:177)
+TRACE 300061:
+	java.lang.ClassLoader.defineClass1(ClassLoader.java:Unknown line)
+	java.lang.ClassLoader.defineClass(ClassLoader.java:800)
+	java.security.SecureClassLoader.defineClass(SecureClassLoader.java:142)
+	java.net.URLClassLoader.defineClass(URLClassLoader.java:449)
+	java.net.URLClassLoader.access$100(URLClassLoader.java:71)
+	java.net.URLClassLoader$1.run(URLClassLoader.java:361)
+	java.net.URLClassLoader$1.run(URLClassLoader.java:355)
+TRACE 300188:
+	java.util.zip.Inflater.inflateBytes(Inflater.java:Unknown line)
+	java.util.zip.Inflater.inflate(Inflater.java:259)
+	java.util.zip.InflaterInputStream.read(InflaterInputStream.java:152)
+	java.util.zip.ZipInputStream.read(ZipInputStream.java:193)
+	java.util.jar.JarInputStream.read(JarInputStream.java:207)
+	java.util.zip.ZipInputStream.closeEntry(ZipInputStream.java:139)
+	java.util.zip.ZipInputStream.getNextEntry(ZipInputStream.java:117)
+TRACE 300202:
+	java.util.zip.Inflater.inflateBytes(Inflater.java:Unknown line)
+	java.util.zip.Inflater.inflate(Inflater.java:259)
+	java.util.zip.InflaterInputStream.read(InflaterInputStream.java:152)
+	java.io.FilterInputStream.read(FilterInputStream.java:133)
+	java.io.FilterInputStream.read(FilterInputStream.java:107)
+	org.kevoree.kcl.internal.KevoreeLazyJarResources.getJarEntryContents(KevoreeLazyJarResources.kt:244)
+	org.kevoree.kcl.internal.KevoreeLazyJarResources.getResource(KevoreeLazyJarResources.kt:41)
+TRACE 300192:
+	java.util.zip.Inflater.reset(Inflater.java:Unknown line)
+	java.util.zip.Inflater.reset(Inflater.java:352)
+	java.util.zip.ZipInputStream.getNextEntry(ZipInputStream.java:120)
+	java.util.jar.JarInputStream.getNextEntry(JarInputStream.java:142)
+	java.util.jar.JarInputStream.getNextJarEntry(JarInputStream.java:179)
+	org.kevoree.kcl.internal.KevoreeLazyJarResources.loadJar(KevoreeLazyJarResources.kt:218)
+	org.kevoree.kcl.internal.KevoreeLazyJarResources.loadJar(KevoreeLazyJarResources.kt:92)
+TRACE 300331:
+	java.lang.Throwable.fillInStackTrace(Throwable.java:Unknown line)
+	java.lang.Throwable.fillInStackTrace(Throwable.java:783)
+	java.lang.Throwable.<init>(Throwable.java:287)
+	java.lang.Exception.<init>(Exception.java:84)
+	java.lang.ReflectiveOperationException.<init>(ReflectiveOperationException.java:75)
+	java.lang.ClassNotFoundException.<init>(ClassNotFoundException.java:82)
+	java.net.URLClassLoader$1.run(URLClassLoader.java:366)
+TRACE 300731:
+	java.net.SocketInputStream.socketRead0(SocketInputStream.java:Unknown line)
+	java.net.SocketInputStream.read(SocketInputStream.java:152)
+	java.net.SocketInputStream.read(SocketInputStream.java:122)
+	java.io.ObjectInputStream$PeekInputStream.read(ObjectInputStream.java:2310)
+	java.io.ObjectInputStream$PeekInputStream.readFully(ObjectInputStream.java:2323)
+	java.io.ObjectInputStream$BlockDataInputStream.readShort(ObjectInputStream.java:2794)
+	java.io.ObjectInputStream.readStreamHeader(ObjectInputStream.java:801)
+TRACE 300169:
+	org.objectweb.asm.ByteVector.<init>(<Unknown Source>:Unknown line)
+	org.objectweb.asm.MethodWriter.<init>(<Unknown Source>:Unknown line)
+	org.objectweb.asm.ClassWriter.visitMethod(<Unknown Source>:Unknown line)
+	org.objectweb.asm.ClassVisitor.visitMethod(<Unknown Source>:Unknown line)
+	org.kevoree.microsandbox.core.instrumentation.ResourceAccountingVisitor.getMethodInstrumenting(ResourceAccountingVisitor.java:53)
+	org.kevoree.microsandbox.core.instrumentation.ResourceAccountingVisitor.visitMethod(ResourceAccountingVisitor.java:45)
+	org.objectweb.asm.ClassVisitor.visitMethod(<Unknown Source>:Unknown line)
+TRACE 300189:
+	java.lang.AbstractStringBuilder.<init>(AbstractStringBuilder.java:64)
+	java.lang.StringBuilder.<init>(StringBuilder.java:85)
+	org.kevoree.kcl.internal.KevoreeLazyJarResources.loadJar(KevoreeLazyJarResources.kt:151)
+	org.kevoree.kcl.internal.KevoreeLazyJarResources.loadJar(KevoreeLazyJarResources.kt:92)
+	org.kevoree.kcl.KevoreeJarClassLoader.add(KevoreeJarClassLoader.kt:537)
+	org.kevoree.platform.standalone.LazyCreationOfKevScriptEngine.checkOrInstall(LazyCreationOfKevScriptEngine.java:61)
+	org.kevoree.platform.standalone.LazyCreationOfKevScriptEngine.createKevScriptEngine(LazyCreationOfKevScriptEngine.java:87)
+TRACE 300307:
+	java.lang.Object.getClass(Object.java:Unknown line)
+	java.util.Arrays.copyOf(Arrays.java:2219)
+	java.util.ArrayList.grow(ArrayList.java:242)
+	java.util.ArrayList.ensureExplicitCapacity(ArrayList.java:216)
+	java.util.ArrayList.ensureCapacityInternal(ArrayList.java:208)
+	java.util.ArrayList.add(ArrayList.java:440)
+	kotlin.KotlinPackage$src$_Iterables$4b9c149f.toCollection(_Iterables.kt:196)
+TRACE 300338:
+	java.lang.Throwable.fillInStackTrace(Throwable.java:Unknown line)
+	java.lang.Throwable.fillInStackTrace(Throwable.java:783)
+	java.lang.Throwable.<init>(Throwable.java:310)
+	java.lang.Exception.<init>(Exception.java:102)
+	java.security.PrivilegedActionException.<init>(PrivilegedActionException.java:66)
+	java.security.AccessController.doPrivileged(AccessController.java:Unknown line)
+	java.net.URLClassLoader.findClass(URLClassLoader.java:354)
+TRACE 300191:
+	java.lang.System.arraycopy(System.java:Unknown line)
+	java.io.BufferedInputStream.read1(BufferedInputStream.java:280)
+	java.io.BufferedInputStream.read(BufferedInputStream.java:334)
+	java.io.FilterInputStream.read(FilterInputStream.java:133)
+	java.io.PushbackInputStream.read(PushbackInputStream.java:186)
+	java.util.zip.InflaterInputStream.fill(InflaterInputStream.java:238)
+	java.util.zip.InflaterInputStream.read(InflaterInputStream.java:158)
+TRACE 300302:
+	java.lang.String.split(String.java:2299)
+	java.lang.String.split(String.java:2355)
+	kotlin.KotlinPackage$src$StringsJVM$dbb83a0.split(StringsJVM.kt:42)
+	kotlin.KotlinPackage.split(<Unknown Source>:1)
+	org.kevoree.loader.XMIModelLoader.loadDeployUnitElement(XMIModelLoader.kt:2238)
+	org.kevoree.loader.XMIModelLoader.loadContainerRootElement(XMIModelLoader.kt:2610)
+	org.kevoree.loader.XMIModelLoader.deserialize(XMIModelLoader.kt:111)
+TRACE 300454:
+	java.util.Arrays.copyOf(Arrays.java:2271)
+	java.io.ByteArrayOutputStream.grow(ByteArrayOutputStream.java:113)
+	java.io.ByteArrayOutputStream.ensureCapacity(ByteArrayOutputStream.java:93)
+	java.io.ByteArrayOutputStream.write(ByteArrayOutputStream.java:140)
+	org.kevoree.kcl.internal.KevoreeLazyJarResources.loadJar(KevoreeLazyJarResources.kt:179)
+	org.kevoree.kcl.internal.KevoreeLazyJarResources.loadJar(KevoreeLazyJarResources.kt:92)
+	org.kevoree.kcl.KevoreeJarClassLoader.add(KevoreeJarClassLoader.kt:537)
+TRACE 300472:
+	java.lang.System.arraycopy(System.java:Unknown line)
+	java.io.ByteArrayOutputStream.write(ByteArrayOutputStream.java:141)
+	org.kevoree.kcl.internal.KevoreeLazyJarResources.loadJar(KevoreeLazyJarResources.kt:179)
+	org.kevoree.kcl.internal.KevoreeLazyJarResources.loadJar(KevoreeLazyJarResources.kt:92)
+	org.kevoree.kcl.KevoreeJarClassLoader.add(KevoreeJarClassLoader.kt:537)
+	org.kevoree.tools.aether.framework.JCLContextHandler.installDeployUnitInternals(JCLContextHandler.kt:194)
+	org.kevoree.tools.aether.framework.JCLContextHandler$INSTALL_DEPLOYUNIT_FILE.call(JCLContextHandler.kt:39)
+TRACE 300475:
+	sun.misc.Unsafe.getInt(Unsafe.java:Unknown line)
+	sun.security.provider.ByteArrayAccess.b2iBig64(ByteArrayAccess.java:278)
+	sun.security.provider.SHA.implCompress(SHA.java:122)
+	sun.security.provider.DigestBase.engineUpdate(DigestBase.java:139)
+	java.security.MessageDigest$Delegate.engineUpdate(MessageDigest.java:568)
+	java.security.MessageDigest.update(MessageDigest.java:313)
+	sun.security.util.ManifestEntryVerifier.update(ManifestEntryVerifier.java:174)
+TRACE 300486:
+	kotlin.KotlinPackage$src$_Iterables$4b9c149f.any(_Iterables.kt:22)
+	kotlin.KotlinPackage.any(<Unknown Source>:1)
+	org.kevoree.kcl.KevoreeJarClassLoader.addWeakClassLoader(KevoreeJarClassLoader.kt:163)
+	org.kevoree.tools.aether.framework.JCLContextHandler$installDeployUnitInternals$res$2.invoke(JCLContextHandler.kt:220)
+	org.kevoree.tools.aether.framework.JCLContextHandler$installDeployUnitInternals$res$2.invoke(JCLContextHandler.kt:Unknown line)
+	kotlin.KotlinPackage$src$_Iterables$4b9c149f.forEach(_Iterables.kt:108)
+	kotlin.KotlinPackage.forEach(<Unknown Source>:1)
+TRACE 300493:
+	java.security.AccessController.doPrivileged(AccessController.java:Unknown line)
+	java.net.URLClassLoader.findClass(URLClassLoader.java:354)
+	java.lang.ClassLoader.loadClass(ClassLoader.java:425)
+	sun.misc.Launcher$AppClassLoader.loadClass(Launcher.java:308)
+	java.lang.ClassLoader.loadClass(ClassLoader.java:358)
+	org.kevoree.kcl.KevoreeJarClassLoader$CurrentLoader.loadClass(KevoreeJarClassLoader.kt:568)
+	org.kevoree.kcl.KevoreeJarClassLoader.callSuperConcreteLoader(KevoreeJarClassLoader.kt:175)
+TRACE 300496:
+	java.security.AccessController.doPrivileged(AccessController.java:Unknown line)
+	java.net.URLClassLoader.findClass(URLClassLoader.java:354)
+	java.lang.ClassLoader.loadClass(ClassLoader.java:425)
+	java.lang.ClassLoader.loadClass(ClassLoader.java:412)
+	sun.misc.Launcher$AppClassLoader.loadClass(Launcher.java:308)
+	java.lang.ClassLoader.loadClass(ClassLoader.java:358)
+	org.kevoree.kcl.KevoreeJarClassLoader$ParentLoader.loadClass(KevoreeJarClassLoader.kt:649)
+TRACE 300508:
+	java.lang.Object.hashCode(Object.java:Unknown line)
+	org.kevoree.impl.DeployUnitImpl.<init>(DeployUnitImpl.kt:18)
+	org.kevoree.impl.DefaultKevoreeFactory.createDeployUnit(DefaultKevoreeFactory.kt:76)
+	org.kevoree.tools.aether.framework.JCLContextHandler.getKCLInternals(JCLContextHandler.kt:244)
+	org.kevoree.tools.aether.framework.JCLContextHandler$installDeployUnitInternals$res$2.invoke(JCLContextHandler.kt:218)
+	org.kevoree.tools.aether.framework.JCLContextHandler$installDeployUnitInternals$res$2.invoke(JCLContextHandler.kt:Unknown line)
+	kotlin.KotlinPackage$src$_Iterables$4b9c149f.forEach(_Iterables.kt:108)
+TRACE 300517:
+	java.security.AccessController.doPrivileged(AccessController.java:Unknown line)
+	java.net.URLClassLoader.findClass(URLClassLoader.java:354)
+	java.lang.ClassLoader.loadClass(ClassLoader.java:425)
+	java.lang.ClassLoader.loadClass(ClassLoader.java:412)
+	sun.misc.Launcher$AppClassLoader.loadClass(Launcher.java:308)
+	java.lang.ClassLoader.loadClass(ClassLoader.java:358)
+	java.lang.ClassLoader.findSystemClass(ClassLoader.java:1059)
+TRACE 300525:
+	java.util.Arrays.copyOf(Arrays.java:2367)
+	java.lang.String.concat(String.java:1975)
+	java.net.URLClassLoader$1.run(URLClassLoader.java:357)
+	java.net.URLClassLoader$1.run(URLClassLoader.java:355)
+	java.security.AccessController.doPrivileged(AccessController.java:Unknown line)
+	java.net.URLClassLoader.findClass(URLClassLoader.java:354)
+	java.lang.ClassLoader.loadClass(ClassLoader.java:425)
+TRACE 300604:
+	org.kevoree.merger.CrossReferenceMerger.mergeDeployUnit(CrossReferenceMerger.scala:40)
+	org.kevoree.merger.sub.DeployUnitMerger$$anonfun$mergeRequiredLibs$1.apply(DeployUnitMerger.scala:92)
+	scala.collection.immutable.List.foreach(List.scala:76)
+	org.kevoree.merger.CrossReferenceMerger.mergeRequiredLibs(CrossReferenceMerger.scala:40)
+	org.kevoree.merger.CrossReferenceMerger.mergeDeployUnit(CrossReferenceMerger.scala:40)
+	org.kevoree.merger.sub.TypeDefinitionMerger$$anonfun$org$kevoree$merger$sub$TypeDefinitionMerger$$mergeNewTypeDefinition$1.apply(TypeDefinitionMerger.scala:197)
+	scala.math.ScalaNumericConversions$class.foreach(ScalaNumericConversions.scala:772)
+TRACE 300695:
+	java.net.PlainDatagramSocketImpl.receive0(PlainDatagramSocketImpl.java:Unknown line)
+	java.net.AbstractPlainDatagramSocketImpl.receive(AbstractPlainDatagramSocketImpl.java:145)
+	java.net.DatagramSocket.receive(DatagramSocket.java:786)
+	org.kevoree.microsandbox.cgroupNode.components.CRIUStrategy.deploy(CRIUStrategy.java:53)
+	org.kevoree.microsandbox.cgroupNode.components.CGroupDeployer$1.run(CGroupDeployer.java:164)
+	java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:471)
+	java.util.concurrent.FutureTask.run(FutureTask.java:262)
+TRACE 300696:
+	java.lang.UNIXProcess.forkAndExec(UNIXProcess.java:Unknown line)
+	java.lang.UNIXProcess.<init>(UNIXProcess.java:135)
+	java.lang.ProcessImpl.start(ProcessImpl.java:130)
+	java.lang.ProcessBuilder.start(ProcessBuilder.java:1022)
+	org.kevoree.microsandbox.cgroupNode.components.CRIUStrategy.deploy(CRIUStrategy.java:32)
+	org.kevoree.microsandbox.cgroupNode.components.CGroupDeployer$1.run(CGroupDeployer.java:164)
+	java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:471)
+TRACE 300698:
+	java.net.PlainDatagramSocketImpl.send(PlainDatagramSocketImpl.java:Unknown line)
+	java.net.DatagramSocket.send(DatagramSocket.java:676)
+	org.kevoree.microsandbox.cgroupNode.components.CRIUStrategy.deploy(CRIUStrategy.java:51)
+	org.kevoree.microsandbox.cgroupNode.components.CGroupDeployer$1.run(CGroupDeployer.java:164)
+	java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:471)
+	java.util.concurrent.FutureTask.run(FutureTask.java:262)
+	java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.access$201(ScheduledThreadPoolExecutor.java:178)
+TRACE 300732:
+	java.net.SocketInputStream.socketRead0(SocketInputStream.java:Unknown line)
+	java.net.SocketInputStream.read(SocketInputStream.java:152)
+	java.net.SocketInputStream.read(SocketInputStream.java:122)
+	java.io.ObjectInputStream$PeekInputStream.read(ObjectInputStream.java:2310)
+	java.io.ObjectInputStream$BlockDataInputStream.read(ObjectInputStream.java:2718)
+	java.io.ObjectInputStream$BlockDataInputStream.readFully(ObjectInputStream.java:2742)
+	java.io.ObjectInputStream.defaultReadFields(ObjectInputStream.java:1979)
+TRACE 300042:
+	java.lang.String.intern(String.java:Unknown line)
+	java.util.jar.Attributes$Name.<init>(Attributes.java:466)
+	java.util.jar.Attributes.putValue(Attributes.java:168)
+	java.util.jar.Attributes.read(Attributes.java:421)
+	java.util.jar.Manifest.read(Manifest.java:199)
+	java.util.jar.Manifest.<init>(Manifest.java:69)
+	java.util.jar.JarFile.getManifestFromReference(JarFile.java:180)
+TRACE 300052:
+	java.security.SecureClassLoader.getPermissions(SecureClassLoader.java:192)
+	java.net.URLClassLoader.getPermissions(URLClassLoader.java:635)
+	sun.misc.Launcher$AppClassLoader.getPermissions(Launcher.java:316)
+	java.security.SecureClassLoader.getProtectionDomain(SecureClassLoader.java:206)
+	java.security.SecureClassLoader.defineClass(SecureClassLoader.java:142)
+	java.net.URLClassLoader.defineClass(URLClassLoader.java:449)
+	java.net.URLClassLoader.access$100(URLClassLoader.java:71)
+TRACE 300066:
+	java.lang.System.nanoTime(System.java:Unknown line)
+	sun.misc.PerfCounter.addElapsedTimeFrom(PerfCounter.java:119)
+	java.net.URLClassLoader.defineClass(URLClassLoader.java:448)
+	java.net.URLClassLoader.access$100(URLClassLoader.java:71)
+	java.net.URLClassLoader$1.run(URLClassLoader.java:361)
+	java.net.URLClassLoader$1.run(URLClassLoader.java:355)
+	java.security.AccessController.doPrivileged(AccessController.java:Unknown line)
+TRACE 300069:
+	java.lang.Class.getDeclaringClass0(Class.java:Unknown line)
+	java.lang.Class.getDeclaringClass(Class.java:1101)
+	java.lang.Class.getEnclosingClass(Class.java:1137)
+	java.lang.Class.getCanonicalName(Class.java:1226)
+	org.resourceaccounting.binderinjector.BinderClassTransformer.searchProperLoader(BinderClassTransformer.java:88)
+	org.resourceaccounting.binderinjector.BinderClassTransformer.transform(BinderClassTransformer.java:57)
+	sun.instrument.TransformerManager.transform(TransformerManager.java:188)
+TRACE 300071:
+	org.kevoree.microsandbox.core.instrumentation.InstrumenterCommand.instrument(InstrumenterCommand.java:26)
+	org.resourceaccounting.binderinjector.BinderClassTransformer.transform(BinderClassTransformer.java:82)
+	sun.instrument.TransformerManager.transform(TransformerManager.java:188)
+	sun.instrument.InstrumentationImpl.transform(InstrumentationImpl.java:424)
+	java.lang.ClassLoader.defineClass1(ClassLoader.java:Unknown line)
+	java.lang.ClassLoader.defineClass(ClassLoader.java:800)
+	java.security.SecureClassLoader.defineClass(SecureClassLoader.java:142)
+TRACE 300074:
+	sun.misc.Unsafe.compareAndSwapInt(Unsafe.java:Unknown line)
+	java.util.concurrent.locks.AbstractQueuedSynchronizer.compareAndSetState(AbstractQueuedSynchronizer.java:566)
+	java.util.concurrent.locks.ReentrantLock$Sync.nonfairTryAcquire(ReentrantLock.java:137)
+	java.util.concurrent.locks.ReentrantLock.tryLock(ReentrantLock.java:370)
+	java.util.concurrent.ConcurrentHashMap$Segment.put(ConcurrentHashMap.java:432)
+	java.util.concurrent.ConcurrentHashMap.putIfAbsent(ConcurrentHashMap.java:1150)
+	java.lang.ClassLoader.getClassLoadingLock(ClassLoader.java:464)
+TRACE 300075:
+	org.objectweb.asm.ClassReader.a(<Unknown Source>:Unknown line)
+	org.objectweb.asm.ClassReader.a(<Unknown Source>:Unknown line)
+	org.objectweb.asm.ClassWriter.<init>(<Unknown Source>:Unknown line)
+	org.kevoree.microsandbox.core.instrumentation.InstrumenterCommand.instrument(InstrumenterCommand.java:27)
+	org.resourceaccounting.binderinjector.BinderClassTransformer.transform(BinderClassTransformer.java:82)
+	sun.instrument.TransformerManager.transform(TransformerManager.java:188)
+	sun.instrument.InstrumentationImpl.transform(InstrumentationImpl.java:424)
+TRACE 300085:
+	java.util.Date.<clinit>(Date.java:617)
+	org.kevoree.core.impl.KevoreeCoreBean.<init>(KevoreeCoreBean.kt:51)
+	org.kevoree.platform.standalone.KevoreeBootStrap.start(KevoreeBootStrap.java:62)
+	org.kevoree.platform.standalone.App.start(App.java:51)
+	org.kevoree.platform.standalone.App.main(App.java:58)
+TRACE 300087:
+	java.util.Arrays.copyOf(Arrays.java:2367)
+	java.lang.AbstractStringBuilder.expandCapacity(AbstractStringBuilder.java:130)
+	java.lang.AbstractStringBuilder.ensureCapacityInternal(AbstractStringBuilder.java:114)
+	java.lang.AbstractStringBuilder.append(AbstractStringBuilder.java:415)
+	java.lang.StringBuilder.append(StringBuilder.java:132)
+	java.lang.Class.getCanonicalName(Class.java:1233)
+	org.resourceaccounting.binderinjector.BinderClassTransformer.searchProperLoader(BinderClassTransformer.java:88)
+TRACE 300092:
+	java.lang.AbstractStringBuilder.<init>(AbstractStringBuilder.java:64)
+	java.lang.StringBuilder.<init>(StringBuilder.java:85)
+	sun.net.www.protocol.jar.Handler.parseContextSpec(Handler.java:206)
+	sun.net.www.protocol.jar.Handler.parseURL(Handler.java:152)
+	java.net.URL.<init>(URL.java:614)
+	java.net.URL.<init>(URL.java:482)
+	sun.misc.URLClassPath$JarLoader.checkResource(URLClassPath.java:757)
+TRACE 300093:
+	java.lang.ClassLoader.findBootstrapClass(ClassLoader.java:Unknown line)
+	java.lang.ClassLoader.findBootstrapClassOrNull(ClassLoader.java:1070)
+	java.lang.ClassLoader.loadClass(ClassLoader.java:414)
+	java.lang.ClassLoader.loadClass(ClassLoader.java:412)
+	sun.misc.Launcher$AppClassLoader.loadClass(Launcher.java:308)
+	java.lang.ClassLoader.loadClass(ClassLoader.java:358)
+	java.lang.ClassLoader.defineClass1(ClassLoader.java:Unknown line)
+TRACE 300109:
+	java.util.Arrays.copyOfRange(Arrays.java:2694)
+	java.lang.String.<init>(String.java:203)
+	java.lang.String.substring(String.java:1877)
+	java.lang.Class.getSimpleBinaryName(Class.java:1282)
+	java.lang.Class.getSimpleName(Class.java:1169)
+	java.lang.Class.getCanonicalName(Class.java:1233)
+	org.resourceaccounting.binderinjector.BinderClassTransformer.searchProperLoader(BinderClassTransformer.java:88)
+TRACE 300118:
+	org.objectweb.asm.ByteVector.<init>(<Unknown Source>:Unknown line)
+	org.objectweb.asm.ClassWriter.visitInnerClass(<Unknown Source>:Unknown line)
+	org.objectweb.asm.ClassVisitor.visitInnerClass(<Unknown Source>:Unknown line)
+	org.objectweb.asm.ClassVisitor.visitInnerClass(<Unknown Source>:Unknown line)
+	org.objectweb.asm.ClassVisitor.visitInnerClass(<Unknown Source>:Unknown line)
+	org.objectweb.asm.ClassVisitor.visitInnerClass(<Unknown Source>:Unknown line)
+	org.objectweb.asm.ClassReader.accept(<Unknown Source>:Unknown line)
+TRACE 300141:
+	sun.security.jca.Providers.getProviderList(Providers.java:138)
+	java.security.SecureRandom.getPrngAlgorithm(SecureRandom.java:542)
+	java.security.SecureRandom.getDefaultPRNG(SecureRandom.java:187)
+	java.security.SecureRandom.<init>(SecureRandom.java:155)
+	java.util.UUID$Holder.<clinit>(UUID.java:96)
+	java.util.UUID.randomUUID(UUID.java:142)
+	org.kevoree.core.impl.KevoreeCoreBean.start(KevoreeCoreBean.kt:168)
+TRACE 300168:
+	java.lang.System.arraycopy(System.java:Unknown line)
+	java.util.Arrays.copyOfRange(Arrays.java:2695)
+	java.lang.String.<init>(String.java:203)
+	org.objectweb.asm.ClassReader.a(<Unknown Source>:Unknown line)
+	org.objectweb.asm.ClassReader.a(<Unknown Source>:Unknown line)
+	org.objectweb.asm.ClassWriter.<init>(<Unknown Source>:Unknown line)
+	org.kevoree.microsandbox.core.instrumentation.InstrumenterCommand.instrument(InstrumenterCommand.java:27)
+TRACE 300170:
+	kotlin.KotlinPackage.contains(<Unknown Source>:1)
+	org.kevoree.tools.aether.framework.NodeTypeBootstrapHelper.resolveKevoreeArtifact(NodeTypeBootstrapHelper.kt:27)
+	org.kevoree.platform.standalone.LazyCreationOfKevScriptEngine.checkOrInstall(LazyCreationOfKevScriptEngine.java:57)
+	org.kevoree.platform.standalone.LazyCreationOfKevScriptEngine.createKevScriptEngine(LazyCreationOfKevScriptEngine.java:87)
+	org.kevoree.platform.standalone.KevoreeBootStrap.start(KevoreeBootStrap.java:159)
+	org.kevoree.platform.standalone.App.start(App.java:51)
+	org.kevoree.platform.standalone.App.main(App.java:58)
+TRACE 300182:
+	sun.misc.Unsafe.getObject(Unsafe.java:Unknown line)
+	java.util.concurrent.ConcurrentHashMap.putIfAbsent(ConcurrentHashMap.java:1147)
+	java.lang.ClassLoader.getClassLoadingLock(ClassLoader.java:464)
+	java.lang.ClassLoader.loadClass(ClassLoader.java:405)
+	sun.misc.Launcher$AppClassLoader.loadClass(Launcher.java:308)
+	java.lang.ClassLoader.loadClass(ClassLoader.java:358)
+	kotlin.KotlinPackage.any(<Unknown Source>:1)
+TRACE 300186:
+	java.lang.String.substring(String.java:1909)
+	sun.net.www.protocol.jar.Handler.parseURL(Handler.java:147)
+	java.net.URL.<init>(URL.java:614)
+	java.net.URL.<init>(URL.java:482)
+	java.net.URL.<init>(URL.java:431)
+	org.kevoree.kcl.internal.KevoreeLazyJarResources.loadJar(KevoreeLazyJarResources.kt:151)
+	org.kevoree.kcl.internal.KevoreeLazyJarResources.loadJar(KevoreeLazyJarResources.kt:92)
+TRACE 300187:
+	java.lang.System.arraycopy(System.java:Unknown line)
+	java.io.PushbackInputStream.read(PushbackInputStream.java:180)
+	java.util.zip.InflaterInputStream.fill(InflaterInputStream.java:238)
+	java.util.zip.InflaterInputStream.read(InflaterInputStream.java:158)
+	java.util.zip.ZipInputStream.read(ZipInputStream.java:193)
+	java.util.jar.JarInputStream.read(JarInputStream.java:207)
+	java.util.zip.ZipInputStream.closeEntry(ZipInputStream.java:139)
+TRACE 300190:
+	sun.net.www.protocol.jar.Handler.indexOfBangSlash(Handler.java:46)
+	sun.net.www.protocol.jar.Handler.parseAbsoluteSpec(Handler.java:169)
+	sun.net.www.protocol.jar.Handler.parseURL(Handler.java:150)
+	java.net.URL.<init>(URL.java:614)
+	java.net.URL.<init>(URL.java:482)
+	java.net.URL.<init>(URL.java:431)
+	org.kevoree.kcl.internal.KevoreeLazyJarResources.loadJar(KevoreeLazyJarResources.kt:151)
+TRACE 300193:
+	java.util.Hashtable.get(Hashtable.java:437)
+	java.net.URL.getURLStreamHandler(URL.java:1143)
+	java.net.URL.<init>(URL.java:590)
+	java.net.URL.<init>(URL.java:482)
+	java.net.URL.<init>(URL.java:431)
+	org.kevoree.kcl.internal.KevoreeLazyJarResources.loadJar(KevoreeLazyJarResources.kt:151)
+	org.kevoree.kcl.internal.KevoreeLazyJarResources.loadJar(KevoreeLazyJarResources.kt:92)
+TRACE 300200:
+	java.util.zip.Inflater.reset(Inflater.java:Unknown line)
+	java.util.zip.Inflater.reset(Inflater.java:352)
+	java.util.zip.ZipFile.releaseInflater(ZipFile.java:458)
+	java.util.zip.ZipFile.access$100(ZipFile.java:56)
+	java.util.zip.ZipFile$ZipFileInflaterInputStream.close(ZipFile.java:404)
+	java.io.FilterInputStream.close(FilterInputStream.java:181)
+	sun.net.www.protocol.jar.JarURLConnection$JarURLInputStream.close(JarURLConnection.java:108)
+TRACE 300201:
+	java.util.Arrays.copyOf(Arrays.java:2271)
+	java.util.zip.ZipCoder.getBytes(ZipCoder.java:89)
+	java.util.zip.ZipFile.getEntry(ZipFile.java:306)
+	java.util.jar.JarFile.getEntry(JarFile.java:226)
+	sun.net.www.protocol.jar.URLJarFile.getEntry(URLJarFile.java:128)
+	sun.net.www.protocol.jar.JarURLConnection.connect(JarURLConnection.java:132)
+	sun.net.www.protocol.jar.JarURLConnection.getInputStream(JarURLConnection.java:150)
+TRACE 300203:
+	org.kevoree.tools.marShell.parser.sub.KevsAbstractParser$class.$init$(KevsAbstractParser.scala:26)
+	org.kevoree.tools.marShell.parser.KevsParser.<init>(KevsParser.scala:22)
+	org.kevoree.tools.marShell.KevScriptAbstractEngine$class.$init$(KevScriptAbstractEngine.scala:48)
+	org.kevoree.tools.marShell.KevScriptOfflineEngine.<init>(KevScriptOfflineEngine.scala:31)
+	sun.reflect.NativeConstructorAccessorImpl.newInstance0(NativeConstructorAccessorImpl.java:Unknown line)
+	sun.reflect.NativeConstructorAccessorImpl.newInstance(NativeConstructorAccessorImpl.java:57)
+	sun.reflect.DelegatingConstructorAccessorImpl.newInstance(DelegatingConstructorAccessorImpl.java:45)
+TRACE 300204:
+	org.objectweb.asm.ClassReader.accept(<Unknown Source>:Unknown line)
+	org.kevoree.microsandbox.core.instrumentation.InstrumenterCommand.instrument(InstrumenterCommand.java:42)
+	org.resourceaccounting.binderinjector.BinderClassTransformer.transform(BinderClassTransformer.java:82)
+	sun.instrument.TransformerManager.transform(TransformerManager.java:188)
+	sun.instrument.InstrumentationImpl.transform(InstrumentationImpl.java:424)
+	java.lang.ClassLoader.defineClass1(ClassLoader.java:Unknown line)
+	java.lang.ClassLoader.defineClass(ClassLoader.java:800)
+TRACE 300206:
+	java.lang.Object.getClass(Object.java:Unknown line)
+	org.resourceaccounting.binderinjector.BinderClassTransformer.searchProperLoader(BinderClassTransformer.java:88)
+	org.resourceaccounting.binderinjector.BinderClassTransformer.transform(BinderClassTransformer.java:57)
+	sun.instrument.TransformerManager.transform(TransformerManager.java:188)
+	sun.instrument.InstrumentationImpl.transform(InstrumentationImpl.java:424)
+	java.lang.ClassLoader.defineClass1(ClassLoader.java:Unknown line)
+	java.lang.ClassLoader.defineClass(ClassLoader.java:800)
+TRACE 300207:
+	org.objectweb.asm.ByteVector.<init>(<Unknown Source>:Unknown line)
+	org.objectweb.asm.Attribute.write(<Unknown Source>:Unknown line)
+	org.objectweb.asm.Attribute.a(<Unknown Source>:Unknown line)
+	org.objectweb.asm.ClassWriter.toByteArray(<Unknown Source>:Unknown line)
+	org.kevoree.microsandbox.core.instrumentation.InstrumenterCommand.instrument(InstrumenterCommand.java:47)
+	org.resourceaccounting.binderinjector.BinderClassTransformer.transform(BinderClassTransformer.java:82)
+	sun.instrument.TransformerManager.transform(TransformerManager.java:188)
+TRACE 300208:
+	scala.sys.SystemProperties.contains(SystemProperties.scala:26)
+	scala.sys.PropImpl.isSet(PropImpl.scala:17)
+	scala.sys.PropImpl.value(PropImpl.scala:16)
+	scala.sys.BooleanProp$BooleanPropImpl.value(BooleanProp.scala:33)
+	scala.util.control.NoStackTrace$.<init>(NoStackTrace.scala:26)
+	scala.util.control.NoStackTrace$.<clinit>(NoStackTrace.scala:Unknown line)
+	scala.util.control.BreakControl.fillInStackTrace(Breaks.scala:95)
+TRACE 300209:
+	java.util.HashMap.hash(HashMap.java:371)
+	java.util.HashMap.getEntry(HashMap.java:466)
+	java.util.HashMap.get(HashMap.java:421)
+	sun.net.www.protocol.jar.JarFileFactory.getCachedJarFile(JarFileFactory.java:122)
+	sun.net.www.protocol.jar.JarFileFactory.get(JarFileFactory.java:81)
+	sun.net.www.protocol.jar.JarURLConnection.connect(JarURLConnection.java:122)
+	sun.net.www.protocol.jar.JarURLConnection.getInputStream(JarURLConnection.java:150)
+TRACE 300214:
+	java.lang.Class.getEnclosingMethod0(Class.java:Unknown line)
+	java.lang.Class.getEnclosingMethodInfo(Class.java:959)
+	java.lang.Class.isLocalOrAnonymousClass(Class.java:1296)
+	java.lang.Class.getCanonicalName(Class.java:1224)
+	java.lang.Class.getCanonicalName(Class.java:1230)
+	org.resourceaccounting.binderinjector.BinderClassTransformer.searchProperLoader(BinderClassTransformer.java:88)
+	org.resourceaccounting.binderinjector.BinderClassTransformer.transform(BinderClassTransformer.java:57)
+TRACE 300218:
+	java.lang.ClassLoader.findLoadedClass0(ClassLoader.java:Unknown line)
+	java.lang.ClassLoader.findLoadedClass(ClassLoader.java:1093)
+	org.kevoree.kcl.KevoreeJarClassLoader.getLoadedClass(KevoreeJarClassLoader.kt:290)
+	org.kevoree.kcl.internal.KevoreeLocalLoader$loadClass$1.invoke(KevoreeLocalLoader.kt:44)
+	org.kevoree.kcl.internal.KevoreeLocalLoader$loadClass$1.invoke(KevoreeLocalLoader.kt:Unknown line)
+	jet.runtime.Intrinsics.stupidSync(Intrinsics.java:87)
+	org.kevoree.kcl.internal.KevoreeLocalLoader.loadClass(KevoreeLocalLoader.kt:43)
+TRACE 300219:
+	java.util.Arrays.copyOf(Arrays.java:2271)
+	java.io.ByteArrayOutputStream.toByteArray(ByteArrayOutputStream.java:178)
+	org.kevoree.kcl.internal.KevoreeLazyJarResources.getJarEntryContents(KevoreeLazyJarResources.kt:251)
+	org.kevoree.kcl.internal.KevoreeLazyJarResources.getResource(KevoreeLazyJarResources.kt:41)
+	org.kevoree.kcl.KevoreeJarClassLoader.loadClassBytes(KevoreeJarClassLoader.kt:551)
+	org.kevoree.kcl.internal.KevoreeLocalLoader.loadClass(KevoreeLocalLoader.kt:41)
+	org.kevoree.kcl.KevoreeJarClassLoader.callSuperConcreteLoader(KevoreeJarClassLoader.kt:175)
+TRACE 300221:
+	org.objectweb.asm.ByteVector.<init>(<Unknown Source>:Unknown line)
+	org.objectweb.asm.ClassWriter.<init>(<Unknown Source>:Unknown line)
+	org.objectweb.asm.ClassWriter.<init>(<Unknown Source>:Unknown line)
+	org.kevoree.microsandbox.core.instrumentation.InstrumenterCommand.instrument(InstrumenterCommand.java:27)
+	org.resourceaccounting.binderinjector.BinderClassTransformer.transform(BinderClassTransformer.java:82)
+	sun.instrument.TransformerManager.transform(TransformerManager.java:188)
+	sun.instrument.InstrumentationImpl.transform(InstrumentationImpl.java:424)
+TRACE 300222:
+	sun.reflect.Reflection.getCallerClass(Reflection.java:Unknown line)
+	java.lang.Class.getEnclosingClass(Class.java:1148)
+	java.lang.Class.getCanonicalName(Class.java:1226)
+	org.resourceaccounting.binderinjector.BinderClassTransformer.searchProperLoader(BinderClassTransformer.java:88)
+	org.resourceaccounting.binderinjector.BinderClassTransformer.transform(BinderClassTransformer.java:57)
+	sun.instrument.TransformerManager.transform(TransformerManager.java:188)
+	sun.instrument.InstrumentationImpl.transform(InstrumentationImpl.java:424)
+TRACE 300223:
+	java.lang.Class.getClassLoader0(Class.java:Unknown line)
+	java.lang.ClassLoader.getClassLoader(ClassLoader.java:1552)
+	java.lang.Class.getEnclosingClass(Class.java:1148)
+	java.lang.Class.getSimpleBinaryName(Class.java:1277)
+	java.lang.Class.getSimpleName(Class.java:1169)
+	java.lang.Class.getCanonicalName(Class.java:1233)
+	org.resourceaccounting.binderinjector.BinderClassTransformer.searchProperLoader(BinderClassTransformer.java:88)
+TRACE 300224:
+	org.kevoree.tools.marShell.parser.sub.KevsNodeParser$class.parseRemoveChild(KevsNodeParser.scala:70)
+	org.kevoree.tools.marShell.parser.KevsParser.parseRemoveChild(KevsParser.scala:22)
+	org.kevoree.tools.marShell.parser.sub.KevsNodeParser$$anonfun$parseNode$3.apply(KevsNodeParser.scala:97)
+	org.kevoree.tools.marShell.parser.sub.KevsNodeParser$$anonfun$parseNode$3.apply(KevsNodeParser.scala:97)
+	scala.util.parsing.combinator.Parsers$Parser.p$3(Parsers.scala:232)
+	scala.util.parsing.combinator.Parsers$Parser$$anonfun$append$1$$anonfun$apply$1.apply(Parsers.scala:233)
+	scala.util.parsing.combinator.Parsers$Failure.append(Parsers.scala:186)
+TRACE 300225:
+	java.lang.Object.getClass(Object.java:Unknown line)
+	org.resourceaccounting.binderinjector.BinderClassTransformer.searchProperLoader(BinderClassTransformer.java:88)
+	org.resourceaccounting.binderinjector.BinderClassTransformer.transform(BinderClassTransformer.java:57)
+	sun.instrument.TransformerManager.transform(TransformerManager.java:188)
+	sun.instrument.InstrumentationImpl.transform(InstrumentationImpl.java:424)
+	java.lang.ClassLoader.defineClass1(ClassLoader.java:Unknown line)
+	java.lang.ClassLoader.defineClass(ClassLoader.java:800)
+TRACE 300226:
+	scala.util.parsing.combinator.Parsers$$anon$3.apply(Parsers.scala:207)
+	scala.util.parsing.combinator.Parsers$$anon$3.apply(Parsers.scala:207)
+	scala.util.parsing.combinator.Parsers$Success.flatMapWithNext(Parsers.scala:139)
+	scala.util.parsing.combinator.Parsers$Parser$$anonfun$flatMap$1.apply(Parsers.scala:224)
+	scala.util.parsing.combinator.Parsers$$anon$3.apply(Parsers.scala:207)
+	scala.util.parsing.combinator.Parsers$Parser$$anonfun$map$1.apply(Parsers.scala:227)
+	scala.util.parsing.combinator.Parsers$$anon$3.apply(Parsers.scala:207)
+TRACE 300227:
+	java.lang.Class.getEnclosingMethod0(Class.java:Unknown line)
+	java.lang.Class.getEnclosingMethodInfo(Class.java:959)
+	java.lang.Class.getEnclosingClass(Class.java:1132)
+	java.lang.Class.getSimpleBinaryName(Class.java:1277)
+	java.lang.Class.getSimpleName(Class.java:1169)
+	java.lang.Class.getCanonicalName(Class.java:1233)
+	org.resourceaccounting.binderinjector.BinderClassTransformer.searchProperLoader(BinderClassTransformer.java:88)
+TRACE 300228:
+	scala.util.parsing.input.CharSequenceReader.first(CharSequenceReader.scala:28)
+	scala.util.parsing.combinator.Parsers$$anonfun$acceptIf$1.apply(Parsers.scala:531)
+	scala.util.parsing.combinator.Parsers$$anon$3.apply(Parsers.scala:207)
+	scala.util.parsing.combinator.Parsers$Parser$$anonfun$flatMap$1.apply(Parsers.scala:224)
+	scala.util.parsing.combinator.Parsers$$anon$3.apply(Parsers.scala:207)
+	scala.util.parsing.combinator.Parsers$Parser$$anonfun$map$1.apply(Parsers.scala:227)
+	scala.util.parsing.combinator.Parsers$$anon$3.apply(Parsers.scala:207)
+TRACE 300230:
+	org.kevoree.impl.DefaultKevoreeFactory.createRepository(DefaultKevoreeFactory.kt:75)
+	org.kevoree.tools.marShell.interpreter.sub.KevsAddRepoInterpreter.interpret(KevsAddRepoInterpreter.scala:39)
+	org.kevoree.tools.marShell.interpreter.sub.KevsAddTBlockInterpreter$$anonfun$interpret$1.apply(KevsAddTBlockInterpreter.scala:40)
+	org.kevoree.tools.marShell.interpreter.sub.KevsAddTBlockInterpreter$$anonfun$interpret$1.apply(KevsAddTBlockInterpreter.scala:39)
+	scala.math.ScalaNumericConversions$class.forall(ScalaNumericConversions.scala:69)
+	scala.collection.immutable.List.forall(List.scala:76)
+	org.kevoree.tools.marShell.interpreter.sub.KevsAddTBlockInterpreter.interpret(KevsAddTBlockInterpreter.scala:39)
+TRACE 300233:
+	java.util.zip.Inflater.inflateBytes(Inflater.java:Unknown line)
+	java.util.zip.Inflater.inflate(Inflater.java:259)
+	java.util.zip.InflaterInputStream.read(InflaterInputStream.java:152)
+	sun.misc.Resource.getBytes(Resource.java:124)
+	java.net.URLClassLoader.defineClass(URLClassLoader.java:444)
+	java.net.URLClassLoader.access$100(URLClassLoader.java:71)
+	java.net.URLClassLoader$1.run(URLClassLoader.java:361)
+TRACE 300249:
+	com.sun.org.apache.xerces.internal.utils.XMLSecurityManager.getSystemProperty(XMLSecurityManager.java:488)
+	com.sun.org.apache.xerces.internal.utils.XMLSecurityManager.readSystemProperties(XMLSecurityManager.java:467)
+	com.sun.org.apache.xerces.internal.utils.XMLSecurityManager.<init>(XMLSecurityManager.java:185)
+	com.sun.org.apache.xerces.internal.impl.PropertyManager.initConfigurableReaderProperties(PropertyManager.java:133)
+	com.sun.org.apache.xerces.internal.impl.PropertyManager.<init>(PropertyManager.java:73)
+	com.sun.xml.internal.stream.XMLInputFactoryImpl.<init>(XMLInputFactoryImpl.java:51)
+	sun.reflect.NativeConstructorAccessorImpl.newInstance0(NativeConstructorAccessorImpl.java:Unknown line)
+TRACE 300292:
+	com.sun.org.apache.xerces.internal.util.XMLChar.<clinit>(XMLChar.java:292)
+	com.sun.org.apache.xerces.internal.impl.XMLDocumentScannerImpl$XMLDeclDriver.next(XMLDocumentScannerImpl.java:757)
+	com.sun.org.apache.xerces.internal.impl.XMLDocumentScannerImpl.next(XMLDocumentScannerImpl.java:606)
+	com.sun.org.apache.xerces.internal.impl.XMLNSDocumentScannerImpl.next(XMLNSDocumentScannerImpl.java:117)
+	com.sun.org.apache.xerces.internal.impl.XMLStreamReaderImpl.setInputSource(XMLStreamReaderImpl.java:207)
+	com.sun.org.apache.xerces.internal.impl.XMLStreamReaderImpl.<init>(XMLStreamReaderImpl.java:189)
+	com.sun.xml.internal.stream.XMLInputFactoryImpl.getXMLStreamReaderImpl(XMLInputFactoryImpl.java:262)
+TRACE 300293:
+	java.util.Arrays.copyOf(Arrays.java:2271)
+	sun.misc.Resource.getBytes(Resource.java:117)
+	java.net.URLClassLoader.defineClass(URLClassLoader.java:444)
+	java.net.URLClassLoader.access$100(URLClassLoader.java:71)
+	java.net.URLClassLoader$1.run(URLClassLoader.java:361)
+	java.net.URLClassLoader$1.run(URLClassLoader.java:355)
+	java.security.AccessController.doPrivileged(AccessController.java:Unknown line)
+TRACE 300294:
+	sun.misc.Unsafe.getObject(Unsafe.java:Unknown line)
+	java.util.concurrent.ConcurrentHashMap.putIfAbsent(ConcurrentHashMap.java:1147)
+	java.lang.ClassLoader.checkCerts(ClassLoader.java:948)
+	java.lang.ClassLoader.preDefineClass(ClassLoader.java:666)
+	java.lang.ClassLoader.defineClass(ClassLoader.java:794)
+	java.security.SecureClassLoader.defineClass(SecureClassLoader.java:142)
+	java.net.URLClassLoader.defineClass(URLClassLoader.java:449)
+TRACE 300295:
+	com.sun.org.apache.xerces.internal.impl.XMLEntityScanner.skipChar(XMLEntityScanner.java:1430)
+	com.sun.org.apache.xerces.internal.impl.XMLNSDocumentScannerImpl.scanAttribute(XMLNSDocumentScannerImpl.java:416)
+	com.sun.org.apache.xerces.internal.impl.XMLNSDocumentScannerImpl.scanStartElement(XMLNSDocumentScannerImpl.java:254)
+	com.sun.org.apache.xerces.internal.impl.XMLDocumentFragmentScannerImpl$FragmentContentDriver.next(XMLDocumentFragmentScannerImpl.java:2770)
+	com.sun.org.apache.xerces.internal.impl.XMLDocumentScannerImpl.next(XMLDocumentScannerImpl.java:606)
+	com.sun.org.apache.xerces.internal.impl.XMLNSDocumentScannerImpl.next(XMLNSDocumentScannerImpl.java:117)
+	com.sun.org.apache.xerces.internal.impl.XMLStreamReaderImpl.next(XMLStreamReaderImpl.java:558)
+TRACE 300296:
+	org.kevoree.impl.ComponentTypeImpl.path(ComponentTypeImpl.kt:Unknown line)
+	org.kevoree.impl.NamedElementInternal$$TImpl.setName(NamedElementInternal.kt:27)
+	org.kevoree.impl.ComponentTypeImpl.setName(ComponentTypeImpl.kt:Unknown line)
+	org.kevoree.loader.XMIModelLoader.loadComponentTypeElement(XMIModelLoader.kt:1005)
+	org.kevoree.loader.XMIModelLoader.loadTypeDefinitionElement(XMIModelLoader.kt:1896)
+	org.kevoree.loader.XMIModelLoader.loadContainerRootElement(XMIModelLoader.kt:2574)
+	org.kevoree.loader.XMIModelLoader.deserialize(XMIModelLoader.kt:111)
+TRACE 300297:
+	com.sun.org.apache.xerces.internal.impl.XMLEntityScanner.peekChar(XMLEntityScanner.java:495)
+	com.sun.org.apache.xerces.internal.impl.XMLScanner.scanAttributeValue(XMLScanner.java:827)
+	com.sun.org.apache.xerces.internal.impl.XMLNSDocumentScannerImpl.scanAttribute(XMLNSDocumentScannerImpl.java:438)
+	com.sun.org.apache.xerces.internal.impl.XMLNSDocumentScannerImpl.scanStartElement(XMLNSDocumentScannerImpl.java:254)
+	com.sun.org.apache.xerces.internal.impl.XMLDocumentFragmentScannerImpl$FragmentContentDriver.next(XMLDocumentFragmentScannerImpl.java:2770)
+	com.sun.org.apache.xerces.internal.impl.XMLDocumentScannerImpl.next(XMLDocumentScannerImpl.java:606)
+	com.sun.org.apache.xerces.internal.impl.XMLNSDocumentScannerImpl.next(XMLNSDocumentScannerImpl.java:117)
+TRACE 300298:
+	java.lang.Object.hashCode(Object.java:Unknown line)
+	org.kevoree.impl.DictionaryValueImpl.<init>(DictionaryValueImpl.kt:12)
+	org.kevoree.impl.DefaultKevoreeFactory.createDictionaryValue(DefaultKevoreeFactory.kt:66)
+	org.kevoree.loader.XMIModelLoader.loadDictionaryValueElement(XMIModelLoader.kt:240)
+	org.kevoree.loader.XMIModelLoader.loadDictionaryTypeElement(XMIModelLoader.kt:578)
+	org.kevoree.loader.XMIModelLoader.loadNodeTypeElement(XMIModelLoader.kt:1347)
+	org.kevoree.loader.XMIModelLoader.loadTypeDefinitionElement(XMIModelLoader.kt:1881)
+TRACE 300299:
+	org.kevoree.impl.MessagePortTypeImpl.path(MessagePortTypeImpl.kt:Unknown line)
+	org.kevoree.impl.NamedElementInternal$$TImpl.setName(NamedElementInternal.kt:27)
+	org.kevoree.impl.MessagePortTypeImpl.setName(MessagePortTypeImpl.kt:Unknown line)
+	org.kevoree.loader.XMIModelLoader.loadMessagePortTypeElement(XMIModelLoader.kt:1589)
+	org.kevoree.loader.XMIModelLoader.loadTypeDefinitionElement(XMIModelLoader.kt:1890)
+	org.kevoree.loader.XMIModelLoader.loadContainerRootElement(XMIModelLoader.kt:2574)
+	org.kevoree.loader.XMIModelLoader.deserialize(XMIModelLoader.kt:111)
+TRACE 300300:
+	org.kevoree.impl.TypeLibraryImpl.path(TypeLibraryImpl.kt:Unknown line)
+	org.kevoree.impl.NamedElementInternal$$TImpl.setName(NamedElementInternal.kt:27)
+	org.kevoree.impl.TypeLibraryImpl.setName(TypeLibraryImpl.kt:Unknown line)
+	org.kevoree.loader.XMIModelLoader.loadTypeLibraryElement(XMIModelLoader.kt:2018)
+	org.kevoree.loader.XMIModelLoader.loadContainerRootElement(XMIModelLoader.kt:2592)
+	org.kevoree.loader.XMIModelLoader.deserialize(XMIModelLoader.kt:111)
+	org.kevoree.loader.XMIModelLoader.loadModelFromStream(XMIModelLoader.kt:83)
+TRACE 300301:
+	com.sun.org.apache.xerces.internal.impl.XMLEntityScanner.scanContent(XMLEntityScanner.java:980)
+	com.sun.org.apache.xerces.internal.impl.XMLDocumentFragmentScannerImpl$FragmentContentDriver.next(XMLDocumentFragmentScannerImpl.java:2803)
+	com.sun.org.apache.xerces.internal.impl.XMLDocumentScannerImpl.next(XMLDocumentScannerImpl.java:606)
+	com.sun.org.apache.xerces.internal.impl.XMLNSDocumentScannerImpl.next(XMLNSDocumentScannerImpl.java:117)
+	com.sun.org.apache.xerces.internal.impl.XMLStreamReaderImpl.next(XMLStreamReaderImpl.java:558)
+	com.sun.org.apache.xerces.internal.impl.XMLStreamReaderImpl.nextTag(XMLStreamReaderImpl.java:1238)
+	org.kevoree.loader.XMIModelLoader.loadContainerRootElement(XMIModelLoader.kt:2561)
+TRACE 300303:
+	sun.misc.Unsafe.getLong(Unsafe.java:Unknown line)
+	java.nio.DirectLongBufferU.get(DirectLongBufferU.java:253)
+	sun.misc.PerfCounter.get(PerfCounter.java:83)
+	sun.misc.PerfCounter.add(PerfCounter.java:97)
+	sun.misc.PerfCounter.addTime(PerfCounter.java:112)
+	java.lang.ClassLoader.loadClass(ClassLoader.java:428)
+	sun.misc.Launcher$AppClassLoader.loadClass(Launcher.java:308)
+TRACE 300304:
+	java.util.ArrayList$Itr.next(ArrayList.java:832)
+	java.util.Collections$UnmodifiableCollection$1.next(Collections.java:1067)
+	scala.collection.JavaConversions$JIteratorWrapper.next(JavaConversions.scala:575)
+	scala.math.ScalaNumericConversions$class.exists(ScalaNumericConversions.scala:798)
+	scala.collection.JavaConversions$JIteratorWrapper.exists(JavaConversions.scala:573)
+	scala.math.ScalaNumericConversions$class.exists(ScalaNumericConversions.scala:78)
+	scala.collection.JavaConversions$JListWrapper.exists(JavaConversions.scala:615)
+TRACE 300305:
+	java.util.HashMap.containsKey(HashMap.java:453)
+	org.kevoree.impl.ContainerRootInternal$$TImpl.removeDeployUnits(ContainerRootInternal.kt:652)
+	org.kevoree.impl.ContainerRootImpl.removeDeployUnits(ContainerRootImpl.kt:Unknown line)
+	org.kevoree.impl.ContainerRootInternal$$TImpl.reflexiveMutator(ContainerRootInternal.kt:1059)
+	org.kevoree.impl.ContainerRootImpl.reflexiveMutator(ContainerRootImpl.kt:Unknown line)
+	org.kevoree.container.RemoveFromContainerCommand.run(RemoveFromContainerCommand.kt:7)
+	org.kevoree.container.KMFContainerImpl$$TImpl.setEContainer(KMFContainerImpl.kt:48)
+TRACE 300306:
+	org.kevoree.impl.DeployUnitInternal$$TImpl.getTargetNodeType(DeployUnitInternal.kt:180)
+	org.kevoree.impl.DeployUnitImpl.getTargetNodeType(DeployUnitImpl.kt:Unknown line)
+	org.kevoree.framework.kaspects.DeployUnitAspect.isModelEquals(DeployUnitAspect.kt:38)
+	org.kevoree.merger.sub.DeployUnitMerger$$anonfun$2.apply(DeployUnitMerger.scala:31)
+	scala.math.ScalaNumericConversions$class.find(ScalaNumericConversions.scala:825)
+	scala.collection.JavaConversions$JIteratorWrapper.find(JavaConversions.scala:573)
+	scala.math.ScalaNumericConversions$class.find(ScalaNumericConversions.scala:80)
+TRACE 300308:
+	java.util.zip.InflaterInputStream.<init>(InflaterInputStream.java:187)
+	java.util.zip.ZipFile$ZipFileInflaterInputStream.<init>(ZipFile.java:389)
+	java.util.zip.ZipFile.getInputStream(ZipFile.java:370)
+	java.util.jar.JarFile.getInputStream(JarFile.java:409)
+	sun.net.www.protocol.jar.JarURLConnection.getInputStream(JarURLConnection.java:162)
+	java.net.URL.openStream(URL.java:1037)
+	org.kevoree.kcl.internal.KevoreeLazyJarResources.getJarEntryContents(KevoreeLazyJarResources.kt:242)
+TRACE 300309:
+	org.kevoree.impl.DeployUnitInternal$$TImpl.getRequiredLibs(DeployUnitInternal.kt:123)
+	org.kevoree.impl.DeployUnitImpl.getRequiredLibs(DeployUnitImpl.kt:Unknown line)
+	org.kevoree.merger.CrossReferenceMerger.mergeRequiredLibs(CrossReferenceMerger.scala:40)
+	org.kevoree.merger.CrossReferenceMerger.mergeDeployUnit(CrossReferenceMerger.scala:40)
+	org.kevoree.merger.sub.DeployUnitMerger$$anonfun$mergeRequiredLibs$1.apply(DeployUnitMerger.scala:92)
+	scala.collection.immutable.List.foreach(List.scala:76)
+	org.kevoree.merger.CrossReferenceMerger.mergeRequiredLibs(CrossReferenceMerger.scala:40)
+TRACE 300310:
+	java.util.HashMap.put(HashMap.java:509)
+	org.kevoree.impl.DeployUnitInternal$$TImpl.addRequiredLibs(DeployUnitInternal.kt:149)
+	org.kevoree.impl.DeployUnitImpl.addRequiredLibs(DeployUnitImpl.kt:Unknown line)
+	org.kevoree.merger.sub.DeployUnitMerger$$anonfun$mergeRequiredLibs$1.apply(DeployUnitMerger.scala:92)
+	scala.collection.immutable.List.foreach(List.scala:76)
+	org.kevoree.merger.CrossReferenceMerger.mergeRequiredLibs(CrossReferenceMerger.scala:40)
+	org.kevoree.merger.CrossReferenceMerger.mergeDeployUnit(CrossReferenceMerger.scala:40)
+TRACE 300311:
+	org.objectweb.asm.ClassWriter.<init>(<Unknown Source>:Unknown line)
+	org.objectweb.asm.ClassWriter.<init>(<Unknown Source>:Unknown line)
+	org.kevoree.microsandbox.core.instrumentation.InstrumenterCommand.instrument(InstrumenterCommand.java:27)
+	org.resourceaccounting.binderinjector.BinderClassTransformer.transform(BinderClassTransformer.java:82)
+	sun.instrument.TransformerManager.transform(TransformerManager.java:188)
+	sun.instrument.InstrumentationImpl.transform(InstrumentationImpl.java:424)
+	java.lang.ClassLoader.defineClass1(ClassLoader.java:Unknown line)
+TRACE 300312:
+	com.sun.org.apache.xerces.internal.xni.QName.setValues(QName.java:139)
+	com.sun.org.apache.xerces.internal.util.XMLAttributesImpl.addAttributeNS(XMLAttributesImpl.java:786)
+	com.sun.org.apache.xerces.internal.impl.XMLNSDocumentScannerImpl.scanAttribute(XMLNSDocumentScannerImpl.java:547)
+	com.sun.org.apache.xerces.internal.impl.XMLNSDocumentScannerImpl.scanStartElement(XMLNSDocumentScannerImpl.java:254)
+	com.sun.org.apache.xerces.internal.impl.XMLDocumentFragmentScannerImpl$FragmentContentDriver.next(XMLDocumentFragmentScannerImpl.java:2770)
+	com.sun.org.apache.xerces.internal.impl.XMLDocumentScannerImpl.next(XMLDocumentScannerImpl.java:606)
+	com.sun.org.apache.xerces.internal.impl.XMLNSDocumentScannerImpl.next(XMLNSDocumentScannerImpl.java:117)
+TRACE 300313:
+	com.sun.org.apache.xerces.internal.util.XMLAttributesImpl.getLocalName(XMLAttributesImpl.java:665)
+	com.sun.org.apache.xerces.internal.impl.XMLStreamReaderImpl.getAttributeLocalName(XMLStreamReaderImpl.java:703)
+	org.kevoree.loader.XMIModelLoader.loadAdaptationPrimitiveTypeElement(XMIModelLoader.kt:2517)
+	org.kevoree.loader.XMIModelLoader.loadContainerRootElement(XMIModelLoader.kt:2628)
+	org.kevoree.loader.XMIModelLoader.deserialize(XMIModelLoader.kt:111)
+	org.kevoree.loader.XMIModelLoader.loadModelFromStream(XMIModelLoader.kt:83)
+	org.kevoree.framework.KevoreeXmiHelper.loadStream(KevoreeXmiHelper.kt:93)
+TRACE 300314:
+	java.lang.String.equals(String.java:975)
+	org.kevoree.merger.CrossReferenceMerger.mergeDeployUnit(CrossReferenceMerger.scala:40)
+	org.kevoree.merger.sub.TypeDefinitionMerger$$anonfun$org$kevoree$merger$sub$TypeDefinitionMerger$$mergeNewTypeDefinition$1.apply(TypeDefinitionMerger.scala:197)
+	scala.math.ScalaNumericConversions$class.foreach(ScalaNumericConversions.scala:772)
+	scala.collection.JavaConversions$JIteratorWrapper.foreach(JavaConversions.scala:573)
+	scala.math.ScalaNumericConversions$class.foreach(ScalaNumericConversions.scala:73)
+	scala.collection.JavaConversions$JListWrapper.foreach(JavaConversions.scala:615)
+TRACE 300315:
+	scala.collection.mutable.ArrayBuffer.$plus$eq(ArrayBuffer.scala:82)
+	scala.collection.mutable.ArrayBuffer.$plus$eq(ArrayBuffer.scala:47)
+	scala.collection.TraversableLike$$anonfun$filter$1.apply(TraversableLike.scala:252)
+	scala.math.ScalaNumericConversions$class.foreach(ScalaNumericConversions.scala:772)
+	scala.collection.JavaConversions$JIteratorWrapper.foreach(JavaConversions.scala:573)
+	scala.math.ScalaNumericConversions$class.foreach(ScalaNumericConversions.scala:73)
+	scala.collection.JavaConversions$JListWrapper.foreach(JavaConversions.scala:615)
+TRACE 300316:
+	com.sun.org.apache.xerces.internal.impl.XMLNSDocumentScannerImpl.scanStartElement(XMLNSDocumentScannerImpl.java:297)
+	com.sun.org.apache.xerces.internal.impl.XMLDocumentFragmentScannerImpl$FragmentContentDriver.next(XMLDocumentFragmentScannerImpl.java:2770)
+	com.sun.org.apache.xerces.internal.impl.XMLDocumentScannerImpl.next(XMLDocumentScannerImpl.java:606)
+	com.sun.org.apache.xerces.internal.impl.XMLNSDocumentScannerImpl.next(XMLNSDocumentScannerImpl.java:117)
+	com.sun.org.apache.xerces.internal.impl.XMLStreamReaderImpl.next(XMLStreamReaderImpl.java:558)
+	com.sun.org.apache.xerces.internal.impl.XMLStreamReaderImpl.nextTag(XMLStreamReaderImpl.java:1246)
+	org.kevoree.loader.XMIModelLoader.loadContainerRootElement(XMIModelLoader.kt:2561)
+TRACE 300317:
+	java.util.HashMap$HashIterator.<init>(HashMap.java:912)
+	java.util.HashMap$ValueIterator.<init>(HashMap.java:952)
+	java.util.HashMap$ValueIterator.<init>(HashMap.java:952)
+	java.util.HashMap.newValueIterator(HashMap.java:975)
+	java.util.HashMap$Values.iterator(HashMap.java:1042)
+	kotlin.KotlinPackage$src$_Iterables$4b9c149f.toCollection(_Iterables.kt:196)
+	kotlin.KotlinPackage$src$_Iterables$4b9c149f.toList(_Iterables.kt:220)
+TRACE 300318:
+	com.sun.org.apache.xerces.internal.impl.XMLDocumentFragmentScannerImpl.seekCloseOfStartTag(XMLDocumentFragmentScannerImpl.java:1385)
+	com.sun.org.apache.xerces.internal.impl.XMLNSDocumentScannerImpl.scanStartElement(XMLNSDocumentScannerImpl.java:263)
+	com.sun.org.apache.xerces.internal.impl.XMLDocumentFragmentScannerImpl$FragmentContentDriver.next(XMLDocumentFragmentScannerImpl.java:2770)
+	com.sun.org.apache.xerces.internal.impl.XMLDocumentScannerImpl.next(XMLDocumentScannerImpl.java:606)
+	com.sun.org.apache.xerces.internal.impl.XMLNSDocumentScannerImpl.next(XMLNSDocumentScannerImpl.java:117)
+	com.sun.org.apache.xerces.internal.impl.XMLStreamReaderImpl.next(XMLStreamReaderImpl.java:558)
+	com.sun.org.apache.xerces.internal.impl.XMLStreamReaderImpl.nextTag(XMLStreamReaderImpl.java:1246)
+TRACE 300319:
+	com.sun.org.apache.xerces.internal.util.XMLAttributesImpl.addAttributeNS(XMLAttributesImpl.java:790)
+	com.sun.org.apache.xerces.internal.impl.XMLNSDocumentScannerImpl.scanAttribute(XMLNSDocumentScannerImpl.java:547)
+	com.sun.org.apache.xerces.internal.impl.XMLNSDocumentScannerImpl.scanStartElement(XMLNSDocumentScannerImpl.java:254)
+	com.sun.org.apache.xerces.internal.impl.XMLDocumentFragmentScannerImpl$FragmentContentDriver.next(XMLDocumentFragmentScannerImpl.java:2770)
+	com.sun.org.apache.xerces.internal.impl.XMLDocumentScannerImpl.next(XMLDocumentScannerImpl.java:606)
+	com.sun.org.apache.xerces.internal.impl.XMLNSDocumentScannerImpl.next(XMLNSDocumentScannerImpl.java:117)
+	com.sun.org.apache.xerces.internal.impl.XMLStreamReaderImpl.next(XMLStreamReaderImpl.java:558)
+TRACE 300321:
+	scala.collection.JavaConversions$.asScalaBuffer$71ac3aba(JavaConversions.scala:443)
+	org.kevoree.merger.CrossReferenceMerger.mergeRequiredLibs(CrossReferenceMerger.scala:40)
+	org.kevoree.merger.CrossReferenceMerger.mergeDeployUnit(CrossReferenceMerger.scala:40)
+	org.kevoree.merger.sub.DeployUnitMerger$$anonfun$mergeRequiredLibs$1.apply(DeployUnitMerger.scala:92)
+	scala.collection.immutable.List.foreach(List.scala:76)
+	org.kevoree.merger.CrossReferenceMerger.mergeRequiredLibs(CrossReferenceMerger.scala:40)
+	org.kevoree.merger.CrossReferenceMerger.mergeDeployUnit(CrossReferenceMerger.scala:40)
+TRACE 300322:
+	org.kevoree.tools.marShell.interpreter.KevsInterpreterAspects$.rich(KevsInterpreterAspects.scala:62)
+	org.kevoree.tools.marShell.interpreter.sub.KevsAddTBlockInterpreter$$anonfun$interpret$1.apply(KevsAddTBlockInterpreter.scala:40)
+	org.kevoree.tools.marShell.interpreter.sub.KevsAddTBlockInterpreter$$anonfun$interpret$1.apply(KevsAddTBlockInterpreter.scala:39)
+	scala.math.ScalaNumericConversions$class.forall(ScalaNumericConversions.scala:69)
+	scala.collection.immutable.List.forall(List.scala:76)
+	org.kevoree.tools.marShell.interpreter.sub.KevsAddTBlockInterpreter.interpret(KevsAddTBlockInterpreter.scala:39)
+	org.kevoree.tools.marShell.interpreter.KevsScriptInterpreter$$anonfun$interpret$1.apply(KevsScriptInterpreter.scala:42)
+TRACE 300325:
+	org.kevoree.tools.marShell.interpreter.KevsInterpreterAspects$.rich(KevsInterpreterAspects.scala:60)
+	org.kevoree.tools.marShell.interpreter.sub.KevsAddTBlockInterpreter$$anonfun$interpret$1.apply(KevsAddTBlockInterpreter.scala:40)
+	org.kevoree.tools.marShell.interpreter.sub.KevsAddTBlockInterpreter$$anonfun$interpret$1.apply(KevsAddTBlockInterpreter.scala:39)
+	scala.math.ScalaNumericConversions$class.forall(ScalaNumericConversions.scala:69)
+	scala.collection.immutable.List.forall(List.scala:76)
+	org.kevoree.tools.marShell.interpreter.sub.KevsAddTBlockInterpreter.interpret(KevsAddTBlockInterpreter.scala:39)
+	org.kevoree.tools.marShell.interpreter.KevsScriptInterpreter$$anonfun$interpret$1.apply(KevsScriptInterpreter.scala:42)
+TRACE 300327:
+	org.kevoree.tools.marShell.interpreter.KevsInterpreterAspects$.rich(KevsInterpreterAspects.scala:69)
+	org.kevoree.tools.marShell.interpreter.sub.KevsAddTBlockInterpreter$$anonfun$interpret$1.apply(KevsAddTBlockInterpreter.scala:40)
+	org.kevoree.tools.marShell.interpreter.sub.KevsAddTBlockInterpreter$$anonfun$interpret$1.apply(KevsAddTBlockInterpreter.scala:39)
+	scala.math.ScalaNumericConversions$class.forall(ScalaNumericConversions.scala:69)
+	scala.collection.immutable.List.forall(List.scala:76)
+	org.kevoree.tools.marShell.interpreter.sub.KevsAddTBlockInterpreter.interpret(KevsAddTBlockInterpreter.scala:39)
+	org.kevoree.tools.marShell.interpreter.KevsScriptInterpreter$$anonfun$interpret$1.apply(KevsScriptInterpreter.scala:42)
+TRACE 300328:
+	java.util.HashMap.<init>(HashMap.java:239)
+	java.util.HashMap.<init>(HashMap.java:281)
+	org.kevoree.impl.PortTypeRefImpl.<init>(PortTypeRefImpl.kt:16)
+	org.kevoree.impl.DefaultKevoreeFactory.createPortTypeRef(DefaultKevoreeFactory.kt:68)
+	org.kevoree.impl.PortTypeRefInternal$$TImpl.getClonelazy(PortTypeRefInternal.kt:204)
+	org.kevoree.impl.PortTypeRefImpl.getClonelazy(PortTypeRefImpl.kt:Unknown line)
+	org.kevoree.impl.ComponentTypeInternal$$TImpl.getClonelazy(ComponentTypeInternal.kt:525)
+TRACE 300329:
+	java.lang.System.identityHashCode(System.java:Unknown line)
+	java.util.IdentityHashMap.hash(IdentityHashMap.java:301)
+	java.util.IdentityHashMap.get(IdentityHashMap.java:334)
+	org.kevoree.impl.DeployUnitInternal$$TImpl.resolve(DeployUnitInternal.kt:319)
+	org.kevoree.impl.DeployUnitImpl.resolve(DeployUnitImpl.kt:Unknown line)
+	org.kevoree.impl.ContainerRootInternal$$TImpl.resolve(ContainerRootInternal.kt:1343)
+	org.kevoree.impl.ContainerRootImpl.resolve(ContainerRootImpl.kt:Unknown line)
+TRACE 300339:
+	java.net.URL.<init>(URL.java:544)
+	java.net.URL.<init>(URL.java:482)
+	java.net.URL.<init>(URL.java:431)
+	sun.net.www.protocol.jar.Handler.parseAbsoluteSpec(Handler.java:175)
+	sun.net.www.protocol.jar.Handler.parseURL(Handler.java:150)
+	java.net.URL.<init>(URL.java:614)
+	java.net.URL.<init>(URL.java:482)
+TRACE 300340:
+	java.lang.System.currentTimeMillis(System.java:Unknown line)
+	java.util.Date.<init>(Date.java:163)
+	org.kevoree.impl.DeployUnitImpl.<init>(DeployUnitImpl.kt:18)
+	org.kevoree.impl.DefaultKevoreeFactory.createDeployUnit(DefaultKevoreeFactory.kt:76)
+	org.kevoree.tools.aether.framework.JCLContextHandler.getKCLInternals(JCLContextHandler.kt:244)
+	org.kevoree.tools.aether.framework.JCLContextHandler$installDeployUnitInternals$res$2.invoke(JCLContextHandler.kt:218)
+	org.kevoree.tools.aether.framework.JCLContextHandler$installDeployUnitInternals$res$2.invoke(JCLContextHandler.kt:Unknown line)
+TRACE 300341:
+	java.util.Collections.unmodifiableList(Collections.java:1190)
+	org.kevoree.impl.DeployUnitInternal$$TImpl.getRequiredLibs(DeployUnitInternal.kt:126)
+	org.kevoree.impl.DeployUnitImpl.getRequiredLibs(DeployUnitImpl.kt:Unknown line)
+	org.kevoree.tools.aether.framework.NodeTypeBootstrapHelper$installNodeType$1.invoke(NodeTypeBootstrapHelper.kt:100)
+	org.kevoree.tools.aether.framework.NodeTypeBootstrapHelper$installNodeType$1.invoke(NodeTypeBootstrapHelper.kt:Unknown line)
+	kotlin.KotlinPackage$src$_Iterables$4b9c149f.all(_Iterables.kt:14)
+	kotlin.KotlinPackage.all(<Unknown Source>:1)
+TRACE 300355:
+	sun.security.pkcs.PKCS7.parseSignedData(PKCS7.java:252)
+	sun.security.pkcs.PKCS7.parse(PKCS7.java:158)
+	sun.security.pkcs.PKCS7.parse(PKCS7.java:126)
+	sun.security.pkcs.PKCS7.<init>(PKCS7.java:108)
+	sun.security.util.SignatureFileVerifier.<init>(SignatureFileVerifier.java:96)
+	java.util.jar.JarVerifier.processEntry(JarVerifier.java:286)
+	java.util.jar.JarVerifier.update(JarVerifier.java:218)
+TRACE 300402:
+	sun.security.x509.X509CertInfo.get(X509CertInfo.java:572)
+	sun.security.x509.X509CertImpl.parse(X509CertImpl.java:1784)
+	sun.security.x509.X509CertImpl.<init>(X509CertImpl.java:196)
+	sun.security.provider.X509Factory.engineGenerateCertificate(X509Factory.java:97)
+	java.security.cert.CertificateFactory.generateCertificate(CertificateFactory.java:339)
+	sun.security.pkcs.PKCS7.parseSignedData(PKCS7.java:299)
+	sun.security.pkcs.PKCS7.parse(PKCS7.java:158)
+TRACE 300421:
+	java.lang.String.intern(String.java:Unknown line)
+	java.util.jar.Attributes$Name.<init>(Attributes.java:466)
+	java.util.jar.Attributes.putValue(Attributes.java:168)
+	java.util.jar.Attributes.read(Attributes.java:421)
+	java.util.jar.Manifest.read(Manifest.java:251)
+	sun.security.util.SignatureFileVerifier.processImpl(SignatureFileVerifier.java:206)
+	sun.security.util.SignatureFileVerifier.process(SignatureFileVerifier.java:193)
+TRACE 300442:
+	java.math.BigInteger.mulAdd(BigInteger.java:1930)
+	java.math.BigInteger.montReduce(BigInteger.java:1880)
+	java.math.BigInteger.oddModPow(BigInteger.java:1850)
+	java.math.BigInteger.modPow(BigInteger.java:1599)
+	sun.security.rsa.RSACore.crypt(RSACore.java:113)
+	sun.security.rsa.RSACore.rsa(RSACore.java:91)
+	sun.security.rsa.RSASignature.engineVerify(RSASignature.java:195)
+TRACE 300447:
+	java.math.BigInteger.mulAdd(BigInteger.java:1930)
+	java.math.BigInteger.squareToLen(BigInteger.java:1319)
+	java.math.BigInteger.oddModPow(BigInteger.java:1754)
+	java.math.BigInteger.modPow(BigInteger.java:1599)
+	sun.security.rsa.RSACore.crypt(RSACore.java:113)
+	sun.security.rsa.RSACore.rsa(RSACore.java:91)
+	sun.security.rsa.RSASignature.engineVerify(RSASignature.java:195)
+TRACE 300452:
+	sun.security.provider.SHA.implCompress(SHA.java:122)
+	sun.security.provider.DigestBase.engineUpdate(DigestBase.java:139)
+	java.security.MessageDigest$Delegate.engineUpdate(MessageDigest.java:568)
+	java.security.MessageDigest.update(MessageDigest.java:313)
+	sun.security.util.ManifestEntryVerifier.update(ManifestEntryVerifier.java:174)
+	java.util.jar.JarVerifier.update(JarVerifier.java:215)
+	java.util.jar.JarInputStream.read(JarInputStream.java:212)
+TRACE 300455:
+	java.lang.ref.Reference$ReferenceHandler.run(Reference.java:135)
+TRACE 300456:
+	sun.misc.Unsafe.getInt(Unsafe.java:Unknown line)
+	sun.security.provider.ByteArrayAccess.b2iBig64(ByteArrayAccess.java:289)
+	sun.security.provider.SHA.implCompress(SHA.java:122)
+	sun.security.provider.DigestBase.engineUpdate(DigestBase.java:139)
+	java.security.MessageDigest$Delegate.engineUpdate(MessageDigest.java:568)
+	java.security.MessageDigest.update(MessageDigest.java:313)
+	sun.security.util.ManifestEntryVerifier.update(ManifestEntryVerifier.java:174)
+TRACE 300457:
+	java.lang.Thread.currentThread(Thread.java:Unknown line)
+	java.util.concurrent.locks.ReentrantLock$Sync.tryRelease(ReentrantLock.java:154)
+	java.util.concurrent.locks.AbstractQueuedSynchronizer.release(AbstractQueuedSynchronizer.java:1260)
+	java.util.concurrent.locks.ReentrantLock.unlock(ReentrantLock.java:460)
+	java.util.concurrent.LinkedBlockingQueue.take(LinkedBlockingQueue.java:449)
+	java.util.concurrent.ThreadPoolExecutor.getTask(ThreadPoolExecutor.java:1068)
+	java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1130)
+TRACE 300470:
+	java.util.zip.CRC32.updateBytes(CRC32.java:Unknown line)
+	java.util.zip.CRC32.update(CRC32.java:65)
+	java.util.zip.ZipInputStream.read(ZipInputStream.java:199)
+	java.util.jar.JarInputStream.read(JarInputStream.java:207)
+	java.util.zip.ZipInputStream.closeEntry(ZipInputStream.java:139)
+	java.util.zip.ZipInputStream.getNextEntry(ZipInputStream.java:117)
+	java.util.jar.JarInputStream.getNextEntry(JarInputStream.java:142)
+TRACE 300471:
+	java.lang.System.arraycopy(System.java:Unknown line)
+	java.util.Arrays.copyOf(Arrays.java:2272)
+	java.io.ByteArrayOutputStream.grow(ByteArrayOutputStream.java:113)
+	java.io.ByteArrayOutputStream.ensureCapacity(ByteArrayOutputStream.java:93)
+	java.io.ByteArrayOutputStream.write(ByteArrayOutputStream.java:140)
+	org.kevoree.kcl.internal.KevoreeLazyJarResources.loadJar(KevoreeLazyJarResources.kt:179)
+	org.kevoree.kcl.internal.KevoreeLazyJarResources.loadJar(KevoreeLazyJarResources.kt:92)
+TRACE 300473:
+	java.lang.AbstractStringBuilder.length(AbstractStringBuilder.java:74)
+	java.lang.StringBuilder.length(StringBuilder.java:72)
+	java.lang.StringBuffer.append(StringBuffer.java:300)
+	java.util.regex.Matcher.appendReplacement(Matcher.java:841)
+	java.util.regex.Matcher.replaceAll(Matcher.java:906)
+	java.lang.String.replace(String.java:2180)
+	org.kevoree.resolver.MavenResolver.getArtefactLocalBasePath(MavenResolver.java:35)
+TRACE 300474:
+	java.lang.String.<init>(String.java:315)
+	java.util.jar.Attributes.read(Attributes.java:412)
+	java.util.jar.Manifest.read(Manifest.java:251)
+	sun.security.util.SignatureFileVerifier.processImpl(SignatureFileVerifier.java:206)
+	sun.security.util.SignatureFileVerifier.process(SignatureFileVerifier.java:193)
+	java.util.jar.JarVerifier.processEntry(JarVerifier.java:307)
+	java.util.jar.JarVerifier.update(JarVerifier.java:218)
+TRACE 300476:
+	sun.misc.Unsafe.getInt(Unsafe.java:Unknown line)
+	sun.security.provider.ByteArrayAccess.b2iBig64(ByteArrayAccess.java:286)
+	sun.security.provider.SHA.implCompress(SHA.java:122)
+	sun.security.provider.SHA.implDigest(SHA.java:103)
+	sun.security.provider.DigestBase.engineDigest(DigestBase.java:186)
+	sun.security.provider.DigestBase.engineDigest(DigestBase.java:165)
+	java.security.MessageDigest$Delegate.engineDigest(MessageDigest.java:576)
+TRACE 300477:
+	java.lang.Object.hashCode(Object.java:Unknown line)
+	org.kevoree.kcl.internal.KevoreeLazyJarResources.loadJar(KevoreeLazyJarResources.kt:184)
+	org.kevoree.kcl.internal.KevoreeLazyJarResources.loadJar(KevoreeLazyJarResources.kt:92)
+	org.kevoree.kcl.KevoreeJarClassLoader.add(KevoreeJarClassLoader.kt:537)
+	org.kevoree.tools.aether.framework.JCLContextHandler.installDeployUnitInternals(JCLContextHandler.kt:194)
+	org.kevoree.tools.aether.framework.JCLContextHandler$INSTALL_DEPLOYUNIT_FILE.call(JCLContextHandler.kt:39)
+	org.kevoree.tools.aether.framework.JCLContextHandler$INSTALL_DEPLOYUNIT_FILE.call(JCLContextHandler.kt:Unknown line)
+TRACE 300478:
+	java.net.URLStreamHandler.parseURL(URLStreamHandler.java:265)
+	sun.net.www.protocol.file.Handler.parseURL(Handler.java:67)
+	java.net.URL.<init>(URL.java:614)
+	java.net.URL.<init>(URL.java:482)
+	java.net.URL.<init>(URL.java:431)
+	org.kevoree.kcl.internal.KevoreeLazyJarResources.loadJar(KevoreeLazyJarResources.kt:186)
+	org.kevoree.kcl.internal.KevoreeLazyJarResources.loadJar(KevoreeLazyJarResources.kt:92)
+TRACE 300479:
+	java.lang.System.arraycopy(System.java:Unknown line)
+	java.io.PushbackInputStream.unread(PushbackInputStream.java:235)
+	java.util.zip.ZipInputStream.readEnd(ZipInputStream.java:366)
+	java.util.zip.ZipInputStream.read(ZipInputStream.java:195)
+	java.util.jar.JarInputStream.read(JarInputStream.java:207)
+	java.io.FilterInputStream.read(FilterInputStream.java:107)
+	org.kevoree.kcl.internal.KevoreeLazyJarResources.loadJar(KevoreeLazyJarResources.kt:177)
+TRACE 300480:
+	java.util.Arrays.copyOfRange(Arrays.java:2694)
+	java.lang.String.<init>(String.java:203)
+	java.util.zip.ZipCoder.toString(ZipCoder.java:59)
+	java.util.zip.ZipInputStream.readLOC(ZipInputStream.java:297)
+	java.util.zip.ZipInputStream.getNextEntry(ZipInputStream.java:121)
+	java.util.jar.JarInputStream.getNextEntry(JarInputStream.java:142)
+	java.util.jar.JarInputStream.getNextJarEntry(JarInputStream.java:179)
+TRACE 300481:
+	java.util.zip.CRC32.updateBytes(CRC32.java:Unknown line)
+	java.util.zip.CRC32.update(CRC32.java:65)
+	java.util.zip.ZipInputStream.read(ZipInputStream.java:199)
+	java.util.jar.JarInputStream.read(JarInputStream.java:207)
+	java.io.FilterInputStream.read(FilterInputStream.java:107)
+	org.kevoree.kcl.internal.KevoreeLazyJarResources.loadJar(KevoreeLazyJarResources.kt:177)
+	org.kevoree.kcl.internal.KevoreeLazyJarResources.loadJar(KevoreeLazyJarResources.kt:92)
+TRACE 300482:
+	java.lang.System.arraycopy(System.java:Unknown line)
+	java.io.PushbackInputStream.unread(PushbackInputStream.java:235)
+	java.util.zip.ZipInputStream.readEnd(ZipInputStream.java:366)
+	java.util.zip.ZipInputStream.read(ZipInputStream.java:195)
+	java.util.jar.JarInputStream.read(JarInputStream.java:207)
+	java.util.zip.ZipInputStream.closeEntry(ZipInputStream.java:139)
+	java.util.zip.ZipInputStream.getNextEntry(ZipInputStream.java:117)
+TRACE 300483:
+	org.kevoree.kcl.internal.KevoreeLazyJarResources.loadJar(KevoreeLazyJarResources.kt:171)
+	org.kevoree.kcl.internal.KevoreeLazyJarResources.loadJar(KevoreeLazyJarResources.kt:92)
+	org.kevoree.kcl.KevoreeJarClassLoader.add(KevoreeJarClassLoader.kt:537)
+	org.kevoree.tools.aether.framework.JCLContextHandler.installDeployUnitInternals(JCLContextHandler.kt:194)
+	org.kevoree.tools.aether.framework.JCLContextHandler$INSTALL_DEPLOYUNIT_FILE.call(JCLContextHandler.kt:39)
+	org.kevoree.tools.aether.framework.JCLContextHandler$INSTALL_DEPLOYUNIT_FILE.call(JCLContextHandler.kt:Unknown line)
+	java.util.concurrent.FutureTask.run(FutureTask.java:262)
+TRACE 300484:
+	jet.runtime.Intrinsics.areEqual(Intrinsics.java:82)
+	org.kevoree.tools.aether.framework.JCLContextHandler$installDeployUnitInternals$res$1.invoke(JCLContextHandler.kt:217)
+	org.kevoree.tools.aether.framework.JCLContextHandler$installDeployUnitInternals$res$1.invoke(JCLContextHandler.kt:Unknown line)
+	kotlin.KotlinPackage$src$_Iterables$4b9c149f.filterTo(_Iterables.kt:47)
+	kotlin.KotlinPackage$src$_Collections$e68928b.filter(_Collections.kt:14)
+	kotlin.KotlinPackage.filter(<Unknown Source>:1)
+	org.kevoree.tools.aether.framework.JCLContextHandler.installDeployUnitInternals(JCLContextHandler.kt:217)
+TRACE 300485:
+	org.kevoree.kcl.KevoreeJarClassLoader$addWeakClassLoader$1.invoke(KevoreeJarClassLoader.kt:163)
+	org.kevoree.kcl.KevoreeJarClassLoader$addWeakClassLoader$1.invoke(KevoreeJarClassLoader.kt:Unknown line)
+	kotlin.KotlinPackage$src$_Iterables$4b9c149f.any(_Iterables.kt:22)
+	kotlin.KotlinPackage.any(<Unknown Source>:1)
+	org.kevoree.kcl.KevoreeJarClassLoader.addWeakClassLoader(KevoreeJarClassLoader.kt:163)
+	org.kevoree.tools.aether.framework.JCLContextHandler$installDeployUnitInternals$res$2.invoke(JCLContextHandler.kt:220)
+	org.kevoree.tools.aether.framework.JCLContextHandler$installDeployUnitInternals$res$2.invoke(JCLContextHandler.kt:Unknown line)
+TRACE 300487:
+	org.kevoree.tools.aether.framework.JCLContextHandler.getKCLInternals(JCLContextHandler.kt:242)
+	org.kevoree.tools.aether.framework.JCLContextHandler$installDeployUnitInternals$res$2.invoke(JCLContextHandler.kt:218)
+	org.kevoree.tools.aether.framework.JCLContextHandler$installDeployUnitInternals$res$2.invoke(JCLContextHandler.kt:Unknown line)
+	kotlin.KotlinPackage$src$_Iterables$4b9c149f.forEach(_Iterables.kt:108)
+	kotlin.KotlinPackage.forEach(<Unknown Source>:1)
+	org.kevoree.tools.aether.framework.JCLContextHandler.installDeployUnitInternals(JCLContextHandler.kt:217)
+	org.kevoree.tools.aether.framework.JCLContextHandler$INSTALL_DEPLOYUNIT_FILE.call(JCLContextHandler.kt:39)
+TRACE 300488:
+	sun.misc.Unsafe.compareAndSwapInt(Unsafe.java:Unknown line)
+	java.util.concurrent.locks.AbstractQueuedSynchronizer.compareAndSetState(AbstractQueuedSynchronizer.java:566)
+	java.util.concurrent.ThreadPoolExecutor$Worker.tryAcquire(ThreadPoolExecutor.java:628)
+	java.util.concurrent.locks.AbstractQueuedSynchronizer.acquire(AbstractQueuedSynchronizer.java:1197)
+	java.util.concurrent.ThreadPoolExecutor$Worker.lock(ThreadPoolExecutor.java:641)
+	java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1131)
+	java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:615)
+TRACE 300489:
+	org.kevoree.tools.aether.framework.JCLContextHandler$installDeployUnitInternals$res$1.invoke(JCLContextHandler.kt:217)
+	org.kevoree.tools.aether.framework.JCLContextHandler$installDeployUnitInternals$res$1.invoke(JCLContextHandler.kt:Unknown line)
+	kotlin.KotlinPackage$src$_Iterables$4b9c149f.filterTo(_Iterables.kt:47)
+	kotlin.KotlinPackage$src$_Collections$e68928b.filter(_Collections.kt:14)
+	kotlin.KotlinPackage.filter(<Unknown Source>:1)
+	org.kevoree.tools.aether.framework.JCLContextHandler.installDeployUnitInternals(JCLContextHandler.kt:217)
+	org.kevoree.tools.aether.framework.JCLContextHandler$INSTALL_DEPLOYUNIT_FILE.call(JCLContextHandler.kt:39)
+TRACE 300490:
+	org.kevoree.tools.aether.framework.JCLContextHandler.buildQuery(JCLContextHandler.kt:310)
+	org.kevoree.tools.aether.framework.JCLContextHandler.buildKEY(JCLContextHandler.kt:304)
+	org.kevoree.tools.aether.framework.JCLContextHandler.getKCLInternals(JCLContextHandler.kt:241)
+	org.kevoree.tools.aether.framework.JCLContextHandler$installDeployUnitInternals$res$2.invoke(JCLContextHandler.kt:218)
+	org.kevoree.tools.aether.framework.JCLContextHandler$installDeployUnitInternals$res$2.invoke(JCLContextHandler.kt:Unknown line)
+	kotlin.KotlinPackage$src$_Iterables$4b9c149f.forEach(_Iterables.kt:108)
+	kotlin.KotlinPackage.forEach(<Unknown Source>:1)
+TRACE 300491:
+	org.kevoree.tools.aether.framework.JCLContextHandler.buildQuery(JCLContextHandler.kt:316)
+	org.kevoree.tools.aether.framework.JCLContextHandler.buildKEY(JCLContextHandler.kt:304)
+	org.kevoree.tools.aether.framework.JCLContextHandler.getKCLInternals(JCLContextHandler.kt:241)
+	org.kevoree.tools.aether.framework.JCLContextHandler$installDeployUnitInternals$res$2.invoke(JCLContextHandler.kt:218)
+	org.kevoree.tools.aether.framework.JCLContextHandler$installDeployUnitInternals$res$2.invoke(JCLContextHandler.kt:Unknown line)
+	kotlin.KotlinPackage$src$_Iterables$4b9c149f.forEach(_Iterables.kt:108)
+	kotlin.KotlinPackage.forEach(<Unknown Source>:1)
+TRACE 300494:
+	java.util.WeakHashMap.expungeStaleEntries(WeakHashMap.java:386)
+	java.util.WeakHashMap.getTable(WeakHashMap.java:418)
+	java.util.WeakHashMap.remove(WeakHashMap.java:667)
+	java.util.zip.ZipFile$ZipFileInputStream.close(ZipFile.java:733)
+	java.util.zip.ZipFile$ZipFileInputStream.read(ZipFile.java:687)
+	java.util.zip.ZipFile$ZipFileInflaterInputStream.fill(ZipFile.java:415)
+	java.util.zip.InflaterInputStream.read(InflaterInputStream.java:158)
+TRACE 300499:
+	org.resourceaccounting.invocations.InvocationAmountTable.<init>(InvocationAmountTable.java:18)
+	org.resourceaccounting.binder.ResourceCounterImpl.<init>(ResourceCounterImpl.java:31)
+	org.resourceaccounting.binder.ResourceCounter.<clinit>(ResourceCounter.java:18)
+	org.resourceaccounting.binderinjector.ResourceCounterAgent.onHandlerSet(ResourceCounterAgent.java:74)
+	org.kevoree.microsandbox.core.OnNewThreadNotifier.setHandler(OnNewThreadNotifier.java:31)
+	org.kevoree.microsandbox.cgroupNode.CGroupsNode.startNode(CGroupsNode.java:34)
+	org.kevoree.core.impl.KevoreeCoreBean.checkBootstrapNode(KevoreeCoreBean.kt:393)
+TRACE 300502:
+	org.kevoreeadaptation.impl.DefaultKevoreeAdaptationFactory.createAdaptationPrimitive(DefaultKevoreeAdaptationFactory.kt:19)
+	org.kevoree.kompare.sub.Kompare2$$TImpl.processAddInstance(Kompare2.kt:356)
+	org.kevoree.kompare.KevoreeKompareBean.processAddInstance(KevoreeKompareBean.kt:Unknown line)
+	org.kevoree.kompare.sub.Kompare2$$TImpl.getUpdateNodeAdaptationModel(Kompare2.kt:83)
+	org.kevoree.kompare.KevoreeKompareBean.getUpdateNodeAdaptationModel(KevoreeKompareBean.kt:Unknown line)
+	org.kevoree.kompare.KevoreeKompareBean.compareModels(KevoreeKompareBean.kt:34)
+	org.kevoree.kompare.KevoreeKompareBean.kompare(KevoreeKompareBean.kt:16)
+TRACE 300503:
+	org.kevoree.framework.kaspects.TypeDefinitionAspect.foundRelevantDeployUnitOnNodeSuperTypes(TypeDefinitionAspect.kt:62)
+	org.kevoree.framework.kaspects.TypeDefinitionAspect.foundRelevantDeployUnitOnNodeSuperTypes(TypeDefinitionAspect.kt:70)
+	org.kevoree.framework.kaspects.TypeDefinitionAspect.foundRelevantDeployUnitOnNodeSuperTypes(TypeDefinitionAspect.kt:70)
+	org.kevoree.framework.kaspects.TypeDefinitionAspect.foundRelevantDeployUnit(TypeDefinitionAspect.kt:52)
+	org.kevoree.kompare.sub.Kompare2$$TImpl.checkTypes(Kompare2.kt:180)
+	org.kevoree.kompare.KevoreeKompareBean.checkTypes(KevoreeKompareBean.kt:Unknown line)
+	org.kevoree.kompare.sub.Kompare2$$TImpl.getUpdateNodeAdaptationModel(Kompare2.kt:156)
+TRACE 300504:
+	java.lang.Class.getClassLoader0(Class.java:Unknown line)
+	java.lang.ClassLoader.getClassLoader(ClassLoader.java:1552)
+	java.lang.Class.getDeclaringClass(Class.java:1104)
+	java.lang.Class.getEnclosingClass(Class.java:1137)
+	java.lang.Class.getCanonicalName(Class.java:1226)
+	org.resourceaccounting.binderinjector.BinderClassTransformer.searchProperLoader(BinderClassTransformer.java:88)
+	org.resourceaccounting.binderinjector.BinderClassTransformer.transform(BinderClassTransformer.java:57)
+TRACE 300506:
+	java.util.zip.ZipFile.read(ZipFile.java:Unknown line)
+	java.util.zip.ZipFile.access$1400(ZipFile.java:56)
+	java.util.zip.ZipFile$ZipFileInputStream.read(ZipFile.java:679)
+	java.util.zip.ZipFile$ZipFileInflaterInputStream.fill(ZipFile.java:415)
+	java.util.zip.InflaterInputStream.read(InflaterInputStream.java:158)
+	sun.misc.Resource.getBytes(Resource.java:124)
+	java.net.URLClassLoader.defineClass(URLClassLoader.java:444)
+TRACE 300507:
+	java.lang.Class.getEnclosingMethod0(Class.java:Unknown line)
+	java.lang.Class.getEnclosingMethodInfo(Class.java:959)
+	java.lang.Class.getEnclosingClass(Class.java:1132)
+	java.lang.Class.getCanonicalName(Class.java:1226)
+	org.resourceaccounting.binderinjector.BinderClassTransformer.searchProperLoader(BinderClassTransformer.java:88)
+	org.resourceaccounting.binderinjector.BinderClassTransformer.transform(BinderClassTransformer.java:57)
+	sun.instrument.TransformerManager.transform(TransformerManager.java:188)
+TRACE 300509:
+	org.kevoree.microsandbox.cgroupNode.SharedClassLoader.loadClass(SharedClassLoader.java:167)
+	org.kevoree.kcl.KevoreeJarClassLoader.loadClass(KevoreeJarClassLoader.kt:308)
+	org.kevoree.microsandbox.javase.components.NaiveSocketChannelByInti.<init>(NaiveSocketChannelByInti.java:35)
+	sun.reflect.NativeConstructorAccessorImpl.newInstance0(NativeConstructorAccessorImpl.java:Unknown line)
+	sun.reflect.NativeConstructorAccessorImpl.newInstance(NativeConstructorAccessorImpl.java:57)
+	sun.reflect.DelegatingConstructorAccessorImpl.newInstance(DelegatingConstructorAccessorImpl.java:45)
+	java.lang.reflect.Constructor.newInstance(Constructor.java:526)
+TRACE 300518:
+	java.lang.System.nanoTime(System.java:Unknown line)
+	java.lang.ClassLoader.loadClass(ClassLoader.java:409)
+	java.lang.ClassLoader.loadClass(ClassLoader.java:412)
+	sun.misc.Launcher$AppClassLoader.loadClass(Launcher.java:308)
+	java.lang.ClassLoader.loadClass(ClassLoader.java:358)
+	java.lang.ClassLoader.findSystemClass(ClassLoader.java:1059)
+	org.kevoree.kcl.KevoreeJarClassLoader.callCLfindSystemClass(KevoreeJarClassLoader.kt:611)
+TRACE 300519:
+	java.lang.ClassLoader.findBootstrapClass(ClassLoader.java:Unknown line)
+	java.lang.ClassLoader.findBootstrapClassOrNull(ClassLoader.java:1070)
+	java.lang.ClassLoader.loadClass(ClassLoader.java:414)
+	java.lang.ClassLoader.loadClass(ClassLoader.java:412)
+	sun.misc.Launcher$AppClassLoader.loadClass(Launcher.java:308)
+	java.lang.ClassLoader.loadClass(ClassLoader.java:358)
+	java.lang.ClassLoader.findSystemClass(ClassLoader.java:1059)
+TRACE 300520:
+	java.lang.Thread.currentThread(Thread.java:Unknown line)
+	java.util.concurrent.locks.ReentrantLock$Sync.nonfairTryAcquire(ReentrantLock.java:134)
+	java.util.concurrent.locks.ReentrantLock.tryLock(ReentrantLock.java:370)
+	java.util.concurrent.ConcurrentHashMap$Segment.put(ConcurrentHashMap.java:432)
+	java.util.concurrent.ConcurrentHashMap.putIfAbsent(ConcurrentHashMap.java:1150)
+	java.lang.ClassLoader.getClassLoadingLock(ClassLoader.java:464)
+	java.lang.ClassLoader.loadClass(ClassLoader.java:405)
+TRACE 300521:
+	sun.misc.Unsafe.getObjectVolatile(Unsafe.java:Unknown line)
+	java.util.concurrent.ConcurrentHashMap.entryAt(ConcurrentHashMap.java:305)
+	java.util.concurrent.ConcurrentHashMap$Segment.put(ConcurrentHashMap.java:438)
+	java.util.concurrent.ConcurrentHashMap.putIfAbsent(ConcurrentHashMap.java:1150)
+	java.lang.ClassLoader.getClassLoadingLock(ClassLoader.java:464)
+	java.lang.ClassLoader.loadClass(ClassLoader.java:405)
+	sun.misc.Launcher$AppClassLoader.loadClass(Launcher.java:308)
+TRACE 300522:
+	java.util.zip.ZipFile.getEntry(ZipFile.java:Unknown line)
+	java.util.zip.ZipFile.getEntry(ZipFile.java:306)
+	java.util.jar.JarFile.getEntry(JarFile.java:226)
+	java.util.jar.JarFile.getJarEntry(JarFile.java:209)
+	sun.misc.URLClassPath$JarLoader.getResource(URLClassPath.java:840)
+	sun.misc.URLClassPath.getResource(URLClassPath.java:199)
+	java.net.URLClassLoader$1.run(URLClassLoader.java:358)
+TRACE 300523:
+	org.slf4j.impl.StaticLoggerBinder.<init>(StaticLoggerBinder.java:72)
+	org.slf4j.impl.StaticLoggerBinder.<clinit>(StaticLoggerBinder.java:44)
+	org.slf4j.LoggerFactory.bind(LoggerFactory.java:128)
+	org.slf4j.LoggerFactory.performInitialization(LoggerFactory.java:107)
+	org.slf4j.LoggerFactory.getILoggerFactory(LoggerFactory.java:295)
+	org.slf4j.LoggerFactory.getLogger(LoggerFactory.java:269)
+	org.slf4j.LoggerFactory.getLogger(LoggerFactory.java:281)
+TRACE 300524:
+	java.lang.System.nanoTime(System.java:Unknown line)
+	java.lang.ClassLoader.loadClass(ClassLoader.java:424)
+	java.lang.ClassLoader.loadClass(ClassLoader.java:412)
+	sun.misc.Launcher$AppClassLoader.loadClass(Launcher.java:308)
+	java.lang.ClassLoader.loadClass(ClassLoader.java:358)
+	org.kevoree.kcl.KevoreeJarClassLoader$ParentLoader.loadClass(KevoreeJarClassLoader.kt:649)
+	org.kevoree.kcl.KevoreeJarClassLoader.callSuperConcreteLoader(KevoreeJarClassLoader.kt:175)
+TRACE 300527:
+	org.kevoree.microsandbox.monitoredNode.ControlAdmissionSystem.registerComponent(ControlAdmissionSystem.kt:104)
+	org.kevoree.microsandbox.monitoredNode.MonitoredAddInstance.execute(MonitoredAddInstance.kt:56)
+	org.kevoree.framework.deploy.PrimitiveCommandExecutionHelper$KevoreeParDeployPhase$Worker.call(PrimitiveCommandExecutionHelper.kt:123)
+	org.kevoree.framework.deploy.PrimitiveCommandExecutionHelper$KevoreeParDeployPhase$Worker.call(PrimitiveCommandExecutionHelper.kt:Unknown line)
+	java.util.concurrent.FutureTask.run(FutureTask.java:262)
+	java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1145)
+	java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:615)
+TRACE 300528:
+	java.util.zip.ZipCoder.getBytes(ZipCoder.java:80)
+	java.util.zip.ZipFile.getEntry(ZipFile.java:306)
+	java.util.jar.JarFile.getEntry(JarFile.java:226)
+	java.util.jar.JarFile.getJarEntry(JarFile.java:209)
+	sun.misc.URLClassPath$JarLoader.getResource(URLClassPath.java:840)
+	sun.misc.URLClassPath.getResource(URLClassPath.java:199)
+	java.net.URLClassLoader$1.run(URLClassLoader.java:358)
+TRACE 300529:
+	java.net.URLClassLoader$1.run(URLClassLoader.java:366)
+	java.net.URLClassLoader$1.run(URLClassLoader.java:355)
+	java.security.AccessController.doPrivileged(AccessController.java:Unknown line)
+	java.net.URLClassLoader.findClass(URLClassLoader.java:354)
+	java.lang.ClassLoader.loadClass(ClassLoader.java:425)
+	java.lang.ClassLoader.loadClass(ClassLoader.java:412)
+	sun.misc.Launcher$AppClassLoader.loadClass(Launcher.java:308)
+TRACE 300531:
+	java.lang.ClassLoader.findBootstrapClass(ClassLoader.java:Unknown line)
+	java.lang.ClassLoader.findBootstrapClassOrNull(ClassLoader.java:1070)
+	java.lang.ClassLoader.loadClass(ClassLoader.java:414)
+	java.lang.ClassLoader.loadClass(ClassLoader.java:412)
+	sun.misc.Launcher$AppClassLoader.loadClass(Launcher.java:308)
+	java.lang.ClassLoader.loadClass(ClassLoader.java:358)
+	org.kevoree.kcl.KevoreeJarClassLoader$ParentLoader.loadClass(KevoreeJarClassLoader.kt:649)
+TRACE 300533:
+	sun.reflect.annotation.AnnotationParser.parseSig(AnnotationParser.java:386)
+	sun.reflect.annotation.AnnotationParser.parseAnnotation(AnnotationParser.java:200)
+	sun.reflect.annotation.AnnotationParser.parseAnnotations2(AnnotationParser.java:88)
+	sun.reflect.annotation.AnnotationParser.parseAnnotations(AnnotationParser.java:70)
+	java.lang.reflect.Method.declaredAnnotations(Method.java:714)
+	java.lang.reflect.Method.getAnnotation(Method.java:700)
+	org.kevoree.library.defaultNodeTypes.reflect.MethodAnnotationResolver.resolve(MethodAnnotationResolver.java:42)
+TRACE 300560:
+	java.lang.reflect.Proxy.defineClass0(Proxy.java:Unknown line)
+	java.lang.reflect.Proxy.getProxyClass0(Proxy.java:639)
+	java.lang.reflect.Proxy.newProxyInstance(Proxy.java:722)
+	sun.reflect.annotation.AnnotationParser.annotationForMap(AnnotationParser.java:258)
+	sun.reflect.annotation.AnnotationParser.parseAnnotation(AnnotationParser.java:248)
+	sun.reflect.annotation.AnnotationParser.parseAnnotations2(AnnotationParser.java:88)
+	sun.reflect.annotation.AnnotationParser.parseAnnotations(AnnotationParser.java:70)
+TRACE 300565:
+	java.lang.String.intern(String.java:Unknown line)
+	java.lang.Class.searchMethods(Class.java:2750)
+	java.lang.Class.getMethod0(Class.java:2774)
+	java.lang.Class.getMethod(Class.java:1663)
+	java.lang.Class.getEnumConstantsShared(Class.java:3038)
+	java.lang.Class.enumConstantDirectory(Class.java:3067)
+	java.lang.Enum.valueOf(Enum.java:231)
+TRACE 300567:
+	java.lang.Class.getDeclaredMethods0(Class.java:Unknown line)
+	java.lang.Class.privateGetDeclaredMethods(Class.java:2531)
+	java.lang.Class.getDeclaredMethods(Class.java:1855)
+	org.kevoree.library.defaultNodeTypes.reflect.MethodAnnotationResolver.resolve(MethodAnnotationResolver.java:41)
+	org.kevoree.library.defaultNodeTypes.reflect.MethodAnnotationResolver.resolve(MethodAnnotationResolver.java:56)
+	org.kevoree.library.defaultNodeTypes.reflect.MethodAnnotationResolver.resolve(MethodAnnotationResolver.java:50)
+	org.kevoree.library.defaultNodeTypes.reflect.MethodAnnotationResolver.resolve(MethodAnnotationResolver.java:35)
+TRACE 300581:
+	java.lang.Class.forName0(Class.java:Unknown line)
+	java.lang.Class.forName(Class.java:190)
+	java.net.InetAddress.loadImpl(InetAddress.java:1520)
+	java.net.InetAddressImplFactory.create(InetAddress.java:1613)
+	java.net.InetAddress.<clinit>(InetAddress.java:945)
+	java.net.InetSocketAddress.<init>(InetSocketAddress.java:185)
+	java.net.ServerSocket.<init>(ServerSocket.java:237)
+TRACE 300592:
+	scala.collection.mutable.HashSet.nnSizeMapAdd(HashSet.scala:41)
+	scala.math.ScalaNumericConversions$class.addEntry$31d510d2(ScalaNumericConversions.scala:131)
+	scala.collection.mutable.HashSet.addEntry(HashSet.scala:41)
+	scala.collection.mutable.HashSet.$plus$eq(HashSet.scala:59)
+	scala.collection.mutable.HashSet.$plus$eq(HashSet.scala:41)
+	scala.collection.mutable.GrowingBuilder.$plus$eq(GrowingBuilder.scala:26)
+	scala.collection.mutable.GrowingBuilder.$plus$eq(GrowingBuilder.scala:24)
+TRACE 300593:
+	scala.collection.mutable.ListBuffer.<init>(ListBuffer.scala:58)
+	scala.util.parsing.combinator.Parsers$$anonfun$rep1$1.apply(Parsers.scala:643)
+	scala.util.parsing.combinator.Parsers$$anon$3.apply(Parsers.scala:207)
+	scala.util.parsing.combinator.Parsers$Parser$$anonfun$append$1.apply(Parsers.scala:233)
+	scala.util.parsing.combinator.Parsers$$anon$3.apply(Parsers.scala:207)
+	scala.util.parsing.combinator.lexical.Scanners$Scanner.<init>(Scanners.scala:53)
+	scala.util.parsing.combinator.lexical.Scanners$Scanner.rest(Scanners.scala:66)
+TRACE 300594:
+	scala.collection.mutable.ListBuffer.$plus$eq(ListBuffer.scala:125)
+	scala.util.parsing.combinator.Parsers$$anonfun$rep1$1.apply(Parsers.scala:643)
+	scala.util.parsing.combinator.Parsers$$anon$3.apply(Parsers.scala:207)
+	scala.util.parsing.combinator.Parsers$Parser$$anonfun$append$1.apply(Parsers.scala:233)
+	scala.util.parsing.combinator.Parsers$$anon$3.apply(Parsers.scala:207)
+	scala.util.parsing.combinator.Parsers$Parser$$anonfun$map$1.apply(Parsers.scala:227)
+	scala.util.parsing.combinator.Parsers$$anon$3.apply(Parsers.scala:207)
+TRACE 300595:
+	scala.util.parsing.combinator.Parsers$Parser.$tilde(Parsers.scala:979)
+	scala.util.parsing.combinator.Parsers$$anonfun$acceptSeq$1.apply(Parsers.scala:561)
+	scala.math.ScalaNumericConversions$class.foldRight(ScalaNumericConversions.scala:120)
+	scala.collection.immutable.List.foldRight(List.scala:76)
+	scala.math.ScalaNumericConversions$class.acceptSeq(ScalaNumericConversions.scala:561)
+	scala.util.parsing.combinator.lexical.Scanners.acceptSeq(Scanners.scala:29)
+	scala.math.ScalaNumericConversions$class.accept(ScalaNumericConversions.scala:506)
+TRACE 300596:
+	scala.util.parsing.combinator.Parsers$$anonfun$acceptSeq$1.apply(Parsers.scala:561)
+	scala.math.ScalaNumericConversions$class.foldRight(ScalaNumericConversions.scala:120)
+	scala.collection.immutable.List.foldRight(List.scala:76)
+	scala.math.ScalaNumericConversions$class.acceptSeq(ScalaNumericConversions.scala:561)
+	scala.util.parsing.combinator.lexical.Scanners.acceptSeq(Scanners.scala:29)
+	scala.math.ScalaNumericConversions$class.accept(ScalaNumericConversions.scala:506)
+	scala.util.parsing.combinator.lexical.Scanners.accept(Scanners.scala:29)
+TRACE 300597:
+	scala.util.parsing.combinator.Parsers$$anonfun$accept$1.apply(Parsers.scala:497)
+	scala.util.parsing.combinator.Parsers$$anonfun$acceptIf$1.apply(Parsers.scala:531)
+	scala.util.parsing.combinator.Parsers$$anon$3.apply(Parsers.scala:207)
+	scala.util.parsing.combinator.Parsers$Parser$$anonfun$flatMap$1.apply(Parsers.scala:224)
+	scala.util.parsing.combinator.Parsers$$anon$3.apply(Parsers.scala:207)
+	scala.util.parsing.combinator.Parsers$Parser$$anonfun$flatMap$1.apply(Parsers.scala:224)
+	scala.util.parsing.combinator.Parsers$$anon$3.apply(Parsers.scala:207)
+TRACE 300598:
+	java.lang.Character.toString(Character.java:4438)
+	java.lang.String.valueOf(String.java:2854)
+	scala.collection.mutable.StringBuilder.append(StringBuilder.scala:187)
+	scala.collection.TraversableOnce$$anonfun$addString$1.apply(TraversableOnce.scala:300)
+	scala.collection.immutable.List.foreach(List.scala:76)
+	scala.math.ScalaNumericConversions$class.addString(ScalaNumericConversions.scala:298)
+	scala.collection.immutable.List.addString(List.scala:76)
+TRACE 300599:
+	scala.util.parsing.combinator.Parsers$$anonfun$rep1$1.apply(Parsers.scala:643)
+	scala.util.parsing.combinator.Parsers$$anon$3.apply(Parsers.scala:207)
+	scala.util.parsing.combinator.Parsers$Parser$$anonfun$append$1.apply(Parsers.scala:233)
+	scala.util.parsing.combinator.Parsers$$anon$3.apply(Parsers.scala:207)
+	scala.util.parsing.combinator.Parsers$Parser$$anonfun$map$1.apply(Parsers.scala:227)
+	scala.util.parsing.combinator.Parsers$$anon$3.apply(Parsers.scala:207)
+	scala.util.parsing.combinator.Parsers$$anon$3.apply(Parsers.scala:207)
+TRACE 300600:
+	org.kevoree.impl.DictionaryAttributeInternal$$TImpl.path(DictionaryAttributeInternal.kt:166)
+	org.kevoree.impl.DictionaryAttributeImpl.path(DictionaryAttributeImpl.kt:Unknown line)
+	org.kevoree.impl.DictionaryAttributeInternal$$TImpl.setOptional(DictionaryAttributeInternal.kt:34)
+	org.kevoree.impl.DictionaryAttributeImpl.setOptional(DictionaryAttributeImpl.kt:Unknown line)
+	org.kevoree.loader.XMIModelLoader.loadDictionaryAttributeElement(XMIModelLoader.kt:503)
+	org.kevoree.loader.XMIModelLoader.loadDictionaryTypeElement(XMIModelLoader.kt:572)
+	org.kevoree.loader.XMIModelLoader.loadNodeTypeElement(XMIModelLoader.kt:1347)
+TRACE 300601:
+	com.sun.org.apache.xerces.internal.util.XMLChar.isNameStart(XMLChar.java:843)
+	com.sun.org.apache.xerces.internal.impl.XMLScanner.isValidNameStartChar(XMLScanner.java:1384)
+	com.sun.org.apache.xerces.internal.impl.XMLDocumentFragmentScannerImpl.seekCloseOfStartTag(XMLDocumentFragmentScannerImpl.java:1393)
+	com.sun.org.apache.xerces.internal.impl.XMLNSDocumentScannerImpl.scanStartElement(XMLNSDocumentScannerImpl.java:263)
+	com.sun.org.apache.xerces.internal.impl.XMLDocumentFragmentScannerImpl$FragmentContentDriver.next(XMLDocumentFragmentScannerImpl.java:2770)
+	com.sun.org.apache.xerces.internal.impl.XMLDocumentScannerImpl.next(XMLDocumentScannerImpl.java:606)
+	com.sun.org.apache.xerces.internal.impl.XMLNSDocumentScannerImpl.next(XMLNSDocumentScannerImpl.java:117)
+TRACE 300602:
+	org.kevoree.loader.XMIModelLoader.unescapeXml(XMIModelLoader.kt:21)
+	org.kevoree.loader.XMIModelLoader.loadDeployUnitElement(XMIModelLoader.kt:2218)
+	org.kevoree.loader.XMIModelLoader.loadContainerRootElement(XMIModelLoader.kt:2610)
+	org.kevoree.loader.XMIModelLoader.deserialize(XMIModelLoader.kt:111)
+	org.kevoree.loader.XMIModelLoader.loadModelFromStream(XMIModelLoader.kt:83)
+	org.kevoree.framework.KevoreeXmiHelper.loadStream(KevoreeXmiHelper.kt:93)
+	org.kevoree.tools.marShell.interpreter.sub.KevsMergerInterpreter.interpret(KevsMergerInterpreter.scala:107)
+TRACE 300603:
+	java.util.Collections.unmodifiableList(Collections.java:1190)
+	org.kevoree.impl.DeployUnitInternal$$TImpl.getRequiredLibs(DeployUnitInternal.kt:126)
+	org.kevoree.impl.DeployUnitImpl.getRequiredLibs(DeployUnitImpl.kt:Unknown line)
+	org.kevoree.merger.CrossReferenceMerger.mergeRequiredLibs(CrossReferenceMerger.scala:40)
+	org.kevoree.merger.CrossReferenceMerger.mergeDeployUnit(CrossReferenceMerger.scala:40)
+	org.kevoree.merger.sub.DeployUnitMerger$$anonfun$mergeRequiredLibs$1.apply(DeployUnitMerger.scala:92)
+	scala.collection.immutable.List.foreach(List.scala:76)
+TRACE 300605:
+	java.lang.Long.parseLong(Long.java:439)
+	java.lang.Long.parseLong(Long.java:483)
+	org.kevoree.merger.CrossReferenceMerger.mergeDeployUnit(CrossReferenceMerger.scala:40)
+	org.kevoree.merger.sub.DeployUnitMerger$$anonfun$mergeRequiredLibs$1.apply(DeployUnitMerger.scala:92)
+	scala.collection.immutable.List.foreach(List.scala:76)
+	org.kevoree.merger.CrossReferenceMerger.mergeRequiredLibs(CrossReferenceMerger.scala:40)
+	org.kevoree.merger.CrossReferenceMerger.mergeDeployUnit(CrossReferenceMerger.scala:40)
+TRACE 300606:
+	java.util.ArrayList.get(ArrayList.java:411)
+	com.sun.org.apache.xerces.internal.impl.XMLDocumentFragmentScannerImpl.getString(XMLDocumentFragmentScannerImpl.java:3269)
+	com.sun.org.apache.xerces.internal.impl.XMLNSDocumentScannerImpl.scanAttribute(XMLNSDocumentScannerImpl.java:437)
+	com.sun.org.apache.xerces.internal.impl.XMLNSDocumentScannerImpl.scanStartElement(XMLNSDocumentScannerImpl.java:254)
+	com.sun.org.apache.xerces.internal.impl.XMLDocumentFragmentScannerImpl$FragmentContentDriver.next(XMLDocumentFragmentScannerImpl.java:2770)
+	com.sun.org.apache.xerces.internal.impl.XMLDocumentScannerImpl.next(XMLDocumentScannerImpl.java:606)
+	com.sun.org.apache.xerces.internal.impl.XMLNSDocumentScannerImpl.next(XMLNSDocumentScannerImpl.java:117)
+TRACE 300607:
+	scala.collection.JavaConversions$JIteratorWrapper.find(JavaConversions.scala:573)
+	scala.math.ScalaNumericConversions$class.find(ScalaNumericConversions.scala:80)
+	scala.collection.JavaConversions$JListWrapper.find(JavaConversions.scala:615)
+	org.kevoree.merger.CrossReferenceMerger.mergeDeployUnit(CrossReferenceMerger.scala:40)
+	org.kevoree.merger.sub.DeployUnitMerger$$anonfun$mergeRequiredLibs$1.apply(DeployUnitMerger.scala:92)
+	scala.collection.immutable.List.foreach(List.scala:76)
+	org.kevoree.merger.CrossReferenceMerger.mergeRequiredLibs(CrossReferenceMerger.scala:40)
+TRACE 300608:
+	java.lang.System.currentTimeMillis(System.java:Unknown line)
+	java.util.Date.<init>(Date.java:163)
+	org.kevoree.impl.DeployUnitImpl.<init>(DeployUnitImpl.kt:18)
+	org.kevoree.impl.DefaultKevoreeFactory.createDeployUnit(DefaultKevoreeFactory.kt:76)
+	org.kevoree.loader.XMIModelLoader.loadDeployUnitElement(XMIModelLoader.kt:2182)
+	org.kevoree.loader.XMIModelLoader.loadContainerRootElement(XMIModelLoader.kt:2610)
+	org.kevoree.loader.XMIModelLoader.deserialize(XMIModelLoader.kt:111)
+TRACE 300609:
+	scala.math.ScalaNumericConversions$class.prefixLength(ScalaNumericConversions.scala:92)
+	scala.collection.mutable.ArrayBuffer.prefixLength(ArrayBuffer.scala:47)
+	scala.math.ScalaNumericConversions$class.find(ScalaNumericConversions.scala:45)
+	scala.collection.mutable.ArrayBuffer.find(ArrayBuffer.scala:47)
+	org.kevoree.merger.resolver.TypeDefinitionResolver$$anonfun$resolveNodeTypeDefinition$1.apply(TypeDefinitionResolver.scala:34)
+	scala.math.ScalaNumericConversions$class.foreach(ScalaNumericConversions.scala:772)
+	scala.collection.JavaConversions$JIteratorWrapper.foreach(JavaConversions.scala:573)
+TRACE 300610:
+	scala.math.ScalaNumericConversions$class.foreach(ScalaNumericConversions.scala:772)
+	scala.collection.JavaConversions$JIteratorWrapper.foreach(JavaConversions.scala:573)
+	scala.math.ScalaNumericConversions$class.foreach(ScalaNumericConversions.scala:73)
+	scala.collection.JavaConversions$JListWrapper.foreach(JavaConversions.scala:615)
+	scala.math.ScalaNumericConversions$class.org$kevoree$merger$sub$TypeDefinitionMerger$$mergeNewTypeDefinition$6acb0cf0$bb3f264(ScalaNumericConversions.scala:210)
+	org.kevoree.merger.sub.TypeDefinitionMerger$$anonfun$mergeTypeDefinition$1.apply(TypeDefinitionMerger.scala:35)
+	scala.math.ScalaNumericConversions$class.foreach(ScalaNumericConversions.scala:772)
+TRACE 300611:
+	java.lang.String.toCharArray(String.java:2753)
+	java.util.zip.ZipCoder.getBytes(ZipCoder.java:78)
+	java.util.zip.ZipFile.getEntry(ZipFile.java:306)
+	java.util.jar.JarFile.getEntry(JarFile.java:226)
+	sun.net.www.protocol.jar.URLJarFile.getEntry(URLJarFile.java:128)
+	sun.net.www.protocol.jar.JarURLConnection.connect(JarURLConnection.java:132)
+	sun.net.www.protocol.jar.JarURLConnection.getInputStream(JarURLConnection.java:150)
+TRACE 300616:
+	java.lang.System.identityHashCode(System.java:Unknown line)
+	java.util.IdentityHashMap.hash(IdentityHashMap.java:301)
+	java.util.IdentityHashMap.put(IdentityHashMap.java:429)
+	org.kevoree.impl.ComponentTypeInternal$$TImpl.getClonelazy(ComponentTypeInternal.kt:505)
+	org.kevoree.impl.ComponentTypeImpl.getClonelazy(ComponentTypeImpl.kt:Unknown line)
+	org.kevoree.impl.ContainerRootInternal$$TImpl.getClonelazy(ContainerRootInternal.kt:1159)
+	org.kevoree.impl.ContainerRootImpl.getClonelazy(ContainerRootImpl.kt:Unknown line)
+TRACE 300620:
+	org.objectweb.asm.ClassWriter.<init>(<Unknown Source>:Unknown line)
+	org.kevoree.microsandbox.core.instrumentation.InstrumenterCommand.instrument(InstrumenterCommand.java:27)
+	org.resourceaccounting.binderinjector.BinderClassTransformer.transform(BinderClassTransformer.java:82)
+	sun.instrument.TransformerManager.transform(TransformerManager.java:188)
+	sun.instrument.InstrumentationImpl.transform(InstrumentationImpl.java:424)
+	java.lang.ClassLoader.defineClass1(ClassLoader.java:Unknown line)
+	java.lang.ClassLoader.defineClass(ClassLoader.java:800)
+TRACE 300621:
+	org.kevoree.impl.NetworkPropertyImpl.path(NetworkPropertyImpl.kt:Unknown line)
+	org.kevoree.impl.NamedElementInternal$$TImpl.setName(NamedElementInternal.kt:27)
+	org.kevoree.impl.NetworkPropertyImpl.setName(NetworkPropertyImpl.kt:Unknown line)
+	org.kevoree.framework.KevoreePlatformHelper.updateNodeLinkProp(KevoreePlatformHelper.kt:79)
+	org.kevoree.library.NodeNetworkHelper.addNetworkProperty(NodeNetworkHelper.java:51)
+	org.kevoree.library.NodeNetworkHelper.updateModelWithNetworkProperty(NodeNetworkHelper.java:69)
+	org.kevoree.library.BasicGroup.triggerModelUpdate(BasicGroup.java:104)
+TRACE 300623:
+	java.lang.System.identityHashCode(System.java:Unknown line)
+	java.util.IdentityHashMap.hash(IdentityHashMap.java:301)
+	java.util.IdentityHashMap.get(IdentityHashMap.java:334)
+	org.kevoree.impl.PortTypeRefInternal$$TImpl.resolve(PortTypeRefInternal.kt:218)
+	org.kevoree.impl.PortTypeRefImpl.resolve(PortTypeRefImpl.kt:Unknown line)
+	org.kevoree.impl.ComponentTypeInternal$$TImpl.resolve(ComponentTypeInternal.kt:610)
+	org.kevoree.impl.ComponentTypeImpl.resolve(ComponentTypeImpl.kt:Unknown line)
+TRACE 300624:
+	org.kevoree.framework.kaspects.DeployUnitAspect.isModelEquals(DeployUnitAspect.kt:27)
+	org.kevoree.framework.kaspects.DeployUnitAspect.checkTransitiveUpdate(DeployUnitAspect.kt:71)
+	org.kevoree.framework.kaspects.DeployUnitAspect.isUpdated(DeployUnitAspect.kt:56)
+	org.kevoree.framework.kaspects.TypeDefinitionAspect$isUpdated$oneUpdated$1.invoke(TypeDefinitionAspect.kt:41)
+	org.kevoree.framework.kaspects.TypeDefinitionAspect$isUpdated$oneUpdated$1.invoke(TypeDefinitionAspect.kt:Unknown line)
+	kotlin.KotlinPackage$src$_Iterables$4b9c149f.any(_Iterables.kt:22)
+	kotlin.KotlinPackage.any(<Unknown Source>:1)
+TRACE 300625:
+	java.util.IdentityHashMap.get(IdentityHashMap.java:333)
+	org.kevoree.impl.DeployUnitInternal$$TImpl.resolve(DeployUnitInternal.kt:329)
+	org.kevoree.impl.DeployUnitImpl.resolve(DeployUnitImpl.kt:Unknown line)
+	org.kevoree.impl.ContainerRootInternal$$TImpl.resolve(ContainerRootInternal.kt:1343)
+	org.kevoree.impl.ContainerRootImpl.resolve(ContainerRootImpl.kt:Unknown line)
+	org.kevoree.cloner.DefaultModelCloner.clone(DefaultModelCloner.kt:50)
+	org.kevoree.cloner.DefaultModelCloner.clone(DefaultModelCloner.kt:16)
+TRACE 300640:
+	java.lang.Character.toString(Character.java:4438)
+	java.lang.String.valueOf(String.java:2854)
+	scala.collection.mutable.StringBuilder.append(StringBuilder.scala:187)
+	scala.util.parsing.combinator.Parsers$$anonfun$accept$2.apply(Parsers.scala:497)
+	scala.util.parsing.combinator.Parsers$$anonfun$acceptIf$1.apply(Parsers.scala:531)
+	scala.util.parsing.combinator.Parsers$$anon$3.apply(Parsers.scala:207)
+	scala.util.parsing.combinator.Parsers$Parser$$anonfun$flatMap$1.apply(Parsers.scala:224)
+TRACE 300641:
+	java.lang.Character.toString(Character.java:4438)
+	java.lang.String.valueOf(String.java:2854)
+	scala.collection.mutable.StringBuilder.append(StringBuilder.scala:187)
+	scala.util.parsing.combinator.Parsers$$anonfun$accept$2.apply(Parsers.scala:497)
+	scala.util.parsing.combinator.Parsers$$anonfun$acceptIf$1.apply(Parsers.scala:531)
+	scala.util.parsing.combinator.Parsers$$anon$3.apply(Parsers.scala:207)
+	scala.util.parsing.combinator.Parsers$Parser$$anonfun$map$1.apply(Parsers.scala:227)
+TRACE 300642:
+	scala.util.parsing.combinator.Parsers$Parser.$tilde(Parsers.scala:979)
+	org.kevoree.tools.marShell.lexer.KevsLexical$$anonfun$token$2$$anonfun$apply$16.apply(KevsLexical.scala:93)
+	org.kevoree.tools.marShell.lexer.KevsLexical$$anonfun$token$2$$anonfun$apply$16.apply(KevsLexical.scala:93)
+	scala.util.parsing.combinator.Parsers$$anonfun$positioned$1.apply(Parsers.scala:795)
+	scala.util.parsing.combinator.Parsers$$anon$3.apply(Parsers.scala:207)
+	scala.util.parsing.combinator.Parsers$Parser$$anonfun$append$1$$anonfun$apply$1.apply(Parsers.scala:233)
+	scala.util.parsing.combinator.Parsers$Failure.append(Parsers.scala:186)
+TRACE 300643:
+	org.kevoree.impl.ContainerRootInternal$$TImpl.resolve(ContainerRootInternal.kt:1279)
+	org.kevoree.impl.ContainerRootImpl.resolve(ContainerRootImpl.kt:Unknown line)
+	org.kevoree.cloner.DefaultModelCloner.clone(DefaultModelCloner.kt:50)
+	org.kevoree.cloner.DefaultModelCloner.clone(DefaultModelCloner.kt:16)
+	org.kevoree.cloner.DefaultModelCloner.clone(DefaultModelCloner.kt:12)
+	org.kevoree.tools.marShell.KevScriptOfflineEngine.interpret(KevScriptOfflineEngine.scala:43)
+	org.kevoree.microsandbox.cgroupNode.components.CGroupDeployer.calculateAcceptableArchitecture(CGroupDeployer.java:250)
+TRACE 300644:
+	java.lang.Object.getClass(Object.java:Unknown line)
+	java.util.Arrays.copyOf(Arrays.java:2219)
+	java.util.ArrayList.toArray(ArrayList.java:358)
+	java.util.Collections$UnmodifiableCollection.toArray(Collections.java:1058)
+	java.util.ArrayList.addAll(ArrayList.java:559)
+	org.kevoree.tools.marShell.interpreter.sub.KevsMoveComponentInstanceInterpreter.interpret(KevsMoveComponentInstanceInterpreter.scala:48)
+	org.kevoree.tools.marShell.interpreter.sub.KevsAddTBlockInterpreter$$anonfun$interpret$1.apply(KevsAddTBlockInterpreter.scala:40)
+TRACE 300645:
+	scala.util.parsing.combinator.Parsers$Parser.$tilde(Parsers.scala:979)
+	org.kevoree.tools.marShell.lexer.KevsLexical$$anonfun$token$4$$anonfun$apply$23.apply(KevsLexical.scala:95)
+	org.kevoree.tools.marShell.lexer.KevsLexical$$anonfun$token$4$$anonfun$apply$23.apply(KevsLexical.scala:95)
+	scala.util.parsing.combinator.Parsers$$anonfun$positioned$1.apply(Parsers.scala:795)
+	scala.util.parsing.combinator.Parsers$$anon$3.apply(Parsers.scala:207)
+	scala.util.parsing.combinator.Parsers$Parser$$anonfun$append$1$$anonfun$apply$1.apply(Parsers.scala:233)
+	scala.util.parsing.combinator.Parsers$Failure.append(Parsers.scala:186)
+TRACE 300646:
+	scala.util.parsing.combinator.Parsers$Parser.p$3(Parsers.scala:232)
+	scala.util.parsing.combinator.Parsers$Parser$$anonfun$append$1$$anonfun$apply$1.apply(Parsers.scala:233)
+	scala.util.parsing.combinator.Parsers$Failure.append(Parsers.scala:186)
+	scala.util.parsing.combinator.Parsers$Parser$$anonfun$append$1.apply(Parsers.scala:233)
+	scala.util.parsing.combinator.Parsers$$anon$3.apply(Parsers.scala:207)
+	scala.util.parsing.combinator.Parsers$Parser$$anonfun$append$1.apply(Parsers.scala:233)
+	scala.util.parsing.combinator.Parsers$$anon$3.apply(Parsers.scala:207)
+TRACE 300647:
+	org.kevoree.tools.marShell.interpreter.sub.KevsUpdateDictionaryInterpreter.interpret(KevsUpdateDictionaryInterpreter.scala:66)
+	org.kevoree.tools.marShell.interpreter.sub.KevsAddTBlockInterpreter$$anonfun$interpret$1.apply(KevsAddTBlockInterpreter.scala:40)
+	org.kevoree.tools.marShell.interpreter.sub.KevsAddTBlockInterpreter$$anonfun$interpret$1.apply(KevsAddTBlockInterpreter.scala:39)
+	scala.math.ScalaNumericConversions$class.forall(ScalaNumericConversions.scala:69)
+	scala.collection.immutable.List.forall(List.scala:76)
+	org.kevoree.tools.marShell.interpreter.sub.KevsAddTBlockInterpreter.interpret(KevsAddTBlockInterpreter.scala:39)
+	org.kevoree.tools.marShell.interpreter.KevsScriptInterpreter$$anonfun$interpret$1.apply(KevsScriptInterpreter.scala:42)
+TRACE 300651:
+	sun.nio.cs.StreamEncoder.flushLeftoverChar(StreamEncoder.java:233)
+	sun.nio.cs.StreamEncoder.implClose(StreamEncoder.java:301)
+	sun.nio.cs.StreamEncoder.close(StreamEncoder.java:149)
+	java.io.OutputStreamWriter.close(OutputStreamWriter.java:233)
+	java.io.BufferedWriter.close(BufferedWriter.java:266)
+	java.io.PrintWriter.close(PrintWriter.java:339)
+	org.kevoree.microsandbox.cgroupNode.components.CGroupDeployer.preUpdate(CGroupDeployer.java:143)
+TRACE 300670:
+	java.util.HashMap.roundUpToPowerOf2(HashMap.java:303)
+	java.util.HashMap.inflateTable(HashMap.java:317)
+	java.util.HashMap.put(HashMap.java:492)
+	org.kevoree.impl.PortInternal$$TImpl.noOpposite_addBindings(PortInternal.kt:100)
+	org.kevoree.impl.PortImpl.noOpposite_addBindings(PortImpl.kt:Unknown line)
+	org.kevoree.impl.PortInternal$$TImpl.resolve(PortInternal.kt:228)
+	org.kevoree.impl.PortImpl.resolve(PortImpl.kt:Unknown line)
+TRACE 300671:
+	java.lang.UNIXProcess.initStreams(UNIXProcess.java:160)
+	java.lang.UNIXProcess$2.run(UNIXProcess.java:145)
+	java.lang.UNIXProcess$2.run(UNIXProcess.java:143)
+	java.security.AccessController.doPrivileged(AccessController.java:Unknown line)
+	java.lang.UNIXProcess.<init>(UNIXProcess.java:143)
+	java.lang.ProcessImpl.start(ProcessImpl.java:130)
+	java.lang.ProcessBuilder.start(ProcessBuilder.java:1022)
+TRACE 300674:
+	java.lang.Thread.currentThread(Thread.java:Unknown line)
+	java.lang.Thread.interrupted(Thread.java:982)
+	java.util.concurrent.locks.AbstractQueuedSynchronizer.acquireInterruptibly(AbstractQueuedSynchronizer.java:1218)
+	java.util.concurrent.locks.ReentrantLock.lockInterruptibly(ReentrantLock.java:340)
+	java.util.concurrent.LinkedBlockingQueue.take(LinkedBlockingQueue.java:439)
+	java.util.concurrent.ThreadPoolExecutor.getTask(ThreadPoolExecutor.java:1068)
+	java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1130)
+TRACE 300676:
+	java.lang.Object.hashCode(Object.java:Unknown line)
+	org.kevoree.impl.DeployUnitImpl.<init>(DeployUnitImpl.kt:18)
+	org.kevoree.impl.DefaultKevoreeFactory.createDeployUnit(DefaultKevoreeFactory.kt:76)
+	org.kevoree.tools.aether.framework.JCLContextHandler.getKCLInternals(JCLContextHandler.kt:244)
+	org.kevoree.tools.aether.framework.JCLContextHandler.installDeployUnitInternals(JCLContextHandler.kt:212)
+	org.kevoree.tools.aether.framework.JCLContextHandler.installDeployUnitNoFileInternals(JCLContextHandler.kt:353)
+	org.kevoree.tools.aether.framework.JCLContextHandler$INSTALL_DEPLOYUNIT.call(JCLContextHandler.kt:45)
+TRACE 300677:
+	org.kevoree.library.defaultNodeTypes.command.AddBindingCommand.execute(AddBindingCommand.kt:59)
+	org.kevoree.framework.deploy.PrimitiveCommandExecutionHelper$KevoreeParDeployPhase$Worker.call(PrimitiveCommandExecutionHelper.kt:123)
+	org.kevoree.framework.deploy.PrimitiveCommandExecutionHelper$KevoreeParDeployPhase$Worker.call(PrimitiveCommandExecutionHelper.kt:Unknown line)
+	java.util.concurrent.FutureTask.run(FutureTask.java:262)
+	java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1145)
+	java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:615)
+	java.lang.Thread.run(Thread.java:744)
+TRACE 300690:
+	sun.net.InetAddressCachePolicy.<clinit>(InetAddressCachePolicy.java:90)
+	java.net.InetAddress$Cache.getPolicy(InetAddress.java:751)
+	java.net.InetAddress$Cache.put(InetAddress.java:763)
+	java.net.InetAddress.cacheInitIfNeeded(InetAddress.java:842)
+	java.net.InetAddress.getCachedAddresses(InetAddress.java:875)
+	java.net.InetAddress.getAllByName0(InetAddress.java:1242)
+	java.net.InetAddress.getAllByName(InetAddress.java:1162)
+TRACE 300697:
+	java.lang.System.currentTimeMillis(System.java:Unknown line)
+	java.util.Date.<init>(Date.java:163)
+	org.kevoree.log.Log$Logger.log(Log.java:586)
+	org.kevoree.log.Log.info(Log.java:360)
+	org.kevoree.log.Log.info(Log.java:399)
+	org.kevoree.microsandbox.cgroupNode.components.CRIUStrategy.deploy(CRIUStrategy.java:54)
+	org.kevoree.microsandbox.cgroupNode.components.CGroupDeployer$1.run(CGroupDeployer.java:164)
+TRACE 300699:
+	java.io.FileOutputStream.writeBytes(FileOutputStream.java:Unknown line)
+	java.io.FileOutputStream.write(FileOutputStream.java:345)
+	java.io.BufferedOutputStream.flushBuffer(BufferedOutputStream.java:82)
+	java.io.BufferedOutputStream.flush(BufferedOutputStream.java:140)
+	java.io.PrintStream.write(PrintStream.java:482)
+	sun.nio.cs.StreamEncoder.writeBytes(StreamEncoder.java:221)
+	sun.nio.cs.StreamEncoder.implFlushBuffer(StreamEncoder.java:291)
+TRACE 300706:
+	java.io.ObjectInputStream$HandleTable.<init>(ObjectInputStream.java:3260)
+	java.io.ObjectInputStream.<init>(ObjectInputStream.java:296)
+	org.kevoree.microsandbox.javase.components.TCPServer.run(NaiveSocketChannelByInti.java:187)
+	java.lang.Thread.run(Thread.java:744)
+TRACE 300717:
+	java.lang.ClassLoader.findBootstrapClass(ClassLoader.java:Unknown line)
+	java.lang.ClassLoader.findBootstrapClassOrNull(ClassLoader.java:1070)
+	java.lang.ClassLoader.loadClass(ClassLoader.java:414)
+	java.lang.ClassLoader.loadClass(ClassLoader.java:412)
+	sun.misc.Launcher$AppClassLoader.loadClass(Launcher.java:308)
+	java.lang.ClassLoader.loadClass(ClassLoader.java:358)
+	sun.misc.Unsafe.defineClass(Unsafe.java:Unknown line)
+TRACE 300733:
+	java.net.PlainSocketImpl.socketClose0(PlainSocketImpl.java:Unknown line)
+	java.net.AbstractPlainSocketImpl.socketClose(AbstractPlainSocketImpl.java:688)
+	java.net.AbstractPlainSocketImpl.close(AbstractPlainSocketImpl.java:520)
+	java.net.SocksSocketImpl.close(SocksSocketImpl.java:1077)
+	java.net.Socket.close(Socket.java:1441)
+	org.kevoree.microsandbox.javase.components.TCPServer.run(NaiveSocketChannelByInti.java:203)
+	java.lang.Thread.run(Thread.java:744)
+TRACE 300737:
+	org.kevoree.impl.ContainerNodeInternal$$TImpl.path(ContainerNodeInternal.kt:447)
+	org.kevoree.impl.ContainerNodeImpl.path(ContainerNodeImpl.kt:Unknown line)
+	org.kevoree.impl.InstanceInternal$$TImpl.setMetaData(InstanceInternal.kt:42)
+	org.kevoree.impl.ContainerNodeImpl.setMetaData(ContainerNodeImpl.kt:Unknown line)
+	org.kevoree.impl.ContainerNodeInternal$$TImpl.getClonelazy(ContainerNodeInternal.kt:362)
+	org.kevoree.impl.ContainerNodeImpl.getClonelazy(ContainerNodeImpl.kt:Unknown line)
+	org.kevoree.impl.ContainerRootInternal$$TImpl.getClonelazy(ContainerRootInternal.kt:1155)
+TRACE 300738:
+	org.kevoree.kompare.sub.Kompare2$$TImpl.checkChannels(Kompare2.kt:580)
+	org.kevoree.kompare.KevoreeKompareBean.checkChannels(KevoreeKompareBean.kt:Unknown line)
+	org.kevoree.kompare.sub.Kompare2$$TImpl.getUpdateNodeAdaptationModel(Kompare2.kt:108)
+	org.kevoree.kompare.KevoreeKompareBean.getUpdateNodeAdaptationModel(KevoreeKompareBean.kt:Unknown line)
+	org.kevoree.kompare.KevoreeKompareBean.compareModels(KevoreeKompareBean.kt:34)
+	org.kevoree.kompare.KevoreeKompareBean.kompare(KevoreeKompareBean.kt:16)
+	org.kevoree.library.defaultNodeTypes.JavaSENode.kompare(JavaSENode.java:103)
+CPU SAMPLES BEGIN (total = 5023) Fri Mar 28 16:17:33 2014
+rank   self  accum   count trace method
+   1 39,26% 39,26%    1972 300591 java.net.PlainSocketImpl.socketAccept
+   2 37,29% 76,55%    1873 300615 java.net.PlainSocketImpl.socketAccept
+   3 16,50% 93,05%     829 300675 java.lang.UNIXProcess.waitForProcessExit
+   4  0,88% 93,93%      44 300709 java.net.SocketInputStream.socketRead0
+   5  0,46% 94,39%      23 300728 java.net.SocketInputStream.socketRead0
+   6  0,34% 94,72%      17 300199 java.lang.ClassLoader.defineClass1
+   7  0,30% 95,02%      15 300453 java.util.zip.Inflater.inflateBytes
+   8  0,14% 95,16%       7 300061 java.lang.ClassLoader.defineClass1
+   9  0,10% 95,26%       5 300188 java.util.zip.Inflater.inflateBytes
+  10  0,10% 95,36%       5 300202 java.util.zip.Inflater.inflateBytes
+  11  0,08% 95,44%       4 300192 java.util.zip.Inflater.reset
+  12  0,08% 95,52%       4 300331 java.lang.Throwable.fillInStackTrace
+  13  0,08% 95,60%       4 300731 java.net.SocketInputStream.socketRead0
+  14  0,06% 95,66%       3 300169 org.objectweb.asm.ByteVector.<init>
+  15  0,06% 95,72%       3 300189 java.lang.AbstractStringBuilder.<init>
+  16  0,06% 95,78%       3 300307 java.lang.Object.getClass
+  17  0,06% 95,84%       3 300338 java.lang.Throwable.fillInStackTrace
+  18  0,04% 95,88%       2 300191 java.lang.System.arraycopy
+  19  0,04% 95,92%       2 300302 java.lang.String.split
+  20  0,04% 95,96%       2 300454 java.util.Arrays.copyOf
+  21  0,04% 96,00%       2 300472 java.lang.System.arraycopy
+  22  0,04% 96,04%       2 300475 sun.misc.Unsafe.getInt
+  23  0,04% 96,08%       2 300486 kotlin.KotlinPackage$src$_Iterables$4b9c149f.any
+  24  0,04% 96,12%       2 300493 java.security.AccessController.doPrivileged
+  25  0,04% 96,16%       2 300496 java.security.AccessController.doPrivileged
+  26  0,04% 96,20%       2 300508 java.lang.Object.hashCode
+  27  0,04% 96,24%       2 300517 java.security.AccessController.doPrivileged
+  28  0,04% 96,28%       2 300525 java.util.Arrays.copyOf
+  29  0,04% 96,32%       2 300604 org.kevoree.merger.CrossReferenceMerger.mergeDeployUnit
+  30  0,04% 96,36%       2 300695 java.net.PlainDatagramSocketImpl.receive0
+  31  0,04% 96,40%       2 300696 java.lang.UNIXProcess.forkAndExec
+  32  0,04% 96,44%       2 300698 java.net.PlainDatagramSocketImpl.send
+  33  0,04% 96,48%       2 300732 java.net.SocketInputStream.socketRead0
+  34  0,02% 96,50%       1 300042 java.lang.String.intern
+  35  0,02% 96,52%       1 300052 java.security.SecureClassLoader.getPermissions
+  36  0,02% 96,54%       1 300066 java.lang.System.nanoTime
+  37  0,02% 96,56%       1 300069 java.lang.Class.getDeclaringClass0
+  38  0,02% 96,58%       1 300071 org.kevoree.microsandbox.core.instrumentation.InstrumenterCommand.instrument
+  39  0,02% 96,60%       1 300074 sun.misc.Unsafe.compareAndSwapInt
+  40  0,02% 96,62%       1 300075 org.objectweb.asm.ClassReader.a
+  41  0,02% 96,64%       1 300085 java.util.Date.<clinit>
+  42  0,02% 96,66%       1 300087 java.util.Arrays.copyOf
+  43  0,02% 96,68%       1 300092 java.lang.AbstractStringBuilder.<init>
+  44  0,02% 96,70%       1 300093 java.lang.ClassLoader.findBootstrapClass
+  45  0,02% 96,72%       1 300109 java.util.Arrays.copyOfRange
+  46  0,02% 96,74%       1 300118 org.objectweb.asm.ByteVector.<init>
+  47  0,02% 96,75%       1 300141 sun.security.jca.Providers.getProviderList
+  48  0,02% 96,77%       1 300168 java.lang.System.arraycopy
+  49  0,02% 96,79%       1 300170 kotlin.KotlinPackage.contains
+  50  0,02% 96,81%       1 300182 sun.misc.Unsafe.getObject
+  51  0,02% 96,83%       1 300186 java.lang.String.substring
+  52  0,02% 96,85%       1 300187 java.lang.System.arraycopy
+  53  0,02% 96,87%       1 300190 sun.net.www.protocol.jar.Handler.indexOfBangSlash
+  54  0,02% 96,89%       1 300193 java.util.Hashtable.get
+  55  0,02% 96,91%       1 300200 java.util.zip.Inflater.reset
+  56  0,02% 96,93%       1 300201 java.util.Arrays.copyOf
+  57  0,02% 96,95%       1 300203 org.kevoree.tools.marShell.parser.sub.KevsAbstractParser$class.$init$
+  58  0,02% 96,97%       1 300204 org.objectweb.asm.ClassReader.accept
+  59  0,02% 96,99%       1 300206 java.lang.Object.getClass
+  60  0,02% 97,01%       1 300207 org.objectweb.asm.ByteVector.<init>
+  61  0,02% 97,03%       1 300208 scala.sys.SystemProperties.contains
+  62  0,02% 97,05%       1 300209 java.util.HashMap.hash
+  63  0,02% 97,07%       1 300214 java.lang.Class.getEnclosingMethod0
+  64  0,02% 97,09%       1 300218 java.lang.ClassLoader.findLoadedClass0
+  65  0,02% 97,11%       1 300219 java.util.Arrays.copyOf
+  66  0,02% 97,13%       1 300221 org.objectweb.asm.ByteVector.<init>
+  67  0,02% 97,15%       1 300222 sun.reflect.Reflection.getCallerClass
+  68  0,02% 97,17%       1 300223 java.lang.Class.getClassLoader0
+  69  0,02% 97,19%       1 300224 org.kevoree.tools.marShell.parser.sub.KevsNodeParser$class.parseRemoveChild
+  70  0,02% 97,21%       1 300225 java.lang.Object.getClass
+  71  0,02% 97,23%       1 300226 scala.util.parsing.combinator.Parsers$$anon$3.apply
+  72  0,02% 97,25%       1 300227 java.lang.Class.getEnclosingMethod0
+  73  0,02% 97,27%       1 300228 scala.util.parsing.input.CharSequenceReader.first
+  74  0,02% 97,29%       1 300230 org.kevoree.impl.DefaultKevoreeFactory.createRepository
+  75  0,02% 97,31%       1 300233 java.util.zip.Inflater.inflateBytes
+  76  0,02% 97,33%       1 300249 com.sun.org.apache.xerces.internal.utils.XMLSecurityManager.getSystemProperty
+  77  0,02% 97,35%       1 300292 com.sun.org.apache.xerces.internal.util.XMLChar.<clinit>
+  78  0,02% 97,37%       1 300293 java.util.Arrays.copyOf
+  79  0,02% 97,39%       1 300294 sun.misc.Unsafe.getObject
+  80  0,02% 97,41%       1 300295 com.sun.org.apache.xerces.internal.impl.XMLEntityScanner.skipChar
+  81  0,02% 97,43%       1 300296 org.kevoree.impl.ComponentTypeImpl.path
+  82  0,02% 97,45%       1 300297 com.sun.org.apache.xerces.internal.impl.XMLEntityScanner.peekChar
+  83  0,02% 97,47%       1 300298 java.lang.Object.hashCode
+  84  0,02% 97,49%       1 300299 org.kevoree.impl.MessagePortTypeImpl.path
+  85  0,02% 97,51%       1 300300 org.kevoree.impl.TypeLibraryImpl.path
+  86  0,02% 97,53%       1 300301 com.sun.org.apache.xerces.internal.impl.XMLEntityScanner.scanContent
+  87  0,02% 97,55%       1 300303 sun.misc.Unsafe.getLong
+  88  0,02% 97,57%       1 300304 java.util.ArrayList$Itr.next
+  89  0,02% 97,59%       1 300305 java.util.HashMap.containsKey
+  90  0,02% 97,61%       1 300306 org.kevoree.impl.DeployUnitInternal$$TImpl.getTargetNodeType
+  91  0,02% 97,63%       1 300308 java.util.zip.InflaterInputStream.<init>
+  92  0,02% 97,65%       1 300309 org.kevoree.impl.DeployUnitInternal$$TImpl.getRequiredLibs
+  93  0,02% 97,67%       1 300310 java.util.HashMap.put
+  94  0,02% 97,69%       1 300311 org.objectweb.asm.ClassWriter.<init>
+  95  0,02% 97,71%       1 300312 com.sun.org.apache.xerces.internal.xni.QName.setValues
+  96  0,02% 97,73%       1 300313 com.sun.org.apache.xerces.internal.util.XMLAttributesImpl.getLocalName
+  97  0,02% 97,75%       1 300314 java.lang.String.equals
+  98  0,02% 97,77%       1 300315 scala.collection.mutable.ArrayBuffer.$plus$eq
+  99  0,02% 97,79%       1 300316 com.sun.org.apache.xerces.internal.impl.XMLNSDocumentScannerImpl.scanStartElement
+ 100  0,02% 97,81%       1 300317 java.util.HashMap$HashIterator.<init>
+ 101  0,02% 97,83%       1 300318 com.sun.org.apache.xerces.internal.impl.XMLDocumentFragmentScannerImpl.seekCloseOfStartTag
+ 102  0,02% 97,85%       1 300319 com.sun.org.apache.xerces.internal.util.XMLAttributesImpl.addAttributeNS
+ 103  0,02% 97,87%       1 300321 scala.collection.JavaConversions$.asScalaBuffer$71ac3aba
+ 104  0,02% 97,89%       1 300322 org.kevoree.tools.marShell.interpreter.KevsInterpreterAspects$.rich
+ 105  0,02% 97,91%       1 300325 org.kevoree.tools.marShell.interpreter.KevsInterpreterAspects$.rich
+ 106  0,02% 97,93%       1 300327 org.kevoree.tools.marShell.interpreter.KevsInterpreterAspects$.rich
+ 107  0,02% 97,95%       1 300328 java.util.HashMap.<init>
+ 108  0,02% 97,97%       1 300329 java.lang.System.identityHashCode
+ 109  0,02% 97,99%       1 300339 java.net.URL.<init>
+ 110  0,02% 98,01%       1 300340 java.lang.System.currentTimeMillis
+ 111  0,02% 98,03%       1 300341 java.util.Collections.unmodifiableList
+ 112  0,02% 98,05%       1 300355 sun.security.pkcs.PKCS7.parseSignedData
+ 113  0,02% 98,07%       1 300402 sun.security.x509.X509CertInfo.get
+ 114  0,02% 98,09%       1 300421 java.lang.String.intern
+ 115  0,02% 98,11%       1 300442 java.math.BigInteger.mulAdd
+ 116  0,02% 98,13%       1 300447 java.math.BigInteger.mulAdd
+ 117  0,02% 98,15%       1 300452 sun.security.provider.SHA.implCompress
+ 118  0,02% 98,17%       1 300455 java.lang.ref.Reference$ReferenceHandler.run
+ 119  0,02% 98,19%       1 300456 sun.misc.Unsafe.getInt
+ 120  0,02% 98,21%       1 300457 java.lang.Thread.currentThread
+ 121  0,02% 98,23%       1 300470 java.util.zip.CRC32.updateBytes
+ 122  0,02% 98,25%       1 300471 java.lang.System.arraycopy
+ 123  0,02% 98,27%       1 300473 java.lang.AbstractStringBuilder.length
+ 124  0,02% 98,29%       1 300474 java.lang.String.<init>
+ 125  0,02% 98,31%       1 300476 sun.misc.Unsafe.getInt
+ 126  0,02% 98,33%       1 300477 java.lang.Object.hashCode
+ 127  0,02% 98,35%       1 300478 java.net.URLStreamHandler.parseURL
+ 128  0,02% 98,37%       1 300479 java.lang.System.arraycopy
+ 129  0,02% 98,39%       1 300480 java.util.Arrays.copyOfRange
+ 130  0,02% 98,41%       1 300481 java.util.zip.CRC32.updateBytes
+ 131  0,02% 98,43%       1 300482 java.lang.System.arraycopy
+ 132  0,02% 98,45%       1 300483 org.kevoree.kcl.internal.KevoreeLazyJarResources.loadJar
+ 133  0,02% 98,47%       1 300484 jet.runtime.Intrinsics.areEqual
+ 134  0,02% 98,49%       1 300485 org.kevoree.kcl.KevoreeJarClassLoader$addWeakClassLoader$1.invoke
+ 135  0,02% 98,51%       1 300487 org.kevoree.tools.aether.framework.JCLContextHandler.getKCLInternals
+ 136  0,02% 98,53%       1 300488 sun.misc.Unsafe.compareAndSwapInt
+ 137  0,02% 98,55%       1 300489 org.kevoree.tools.aether.framework.JCLContextHandler$installDeployUnitInternals$res$1.invoke
+ 138  0,02% 98,57%       1 300490 org.kevoree.tools.aether.framework.JCLContextHandler.buildQuery
+ 139  0,02% 98,59%       1 300491 org.kevoree.tools.aether.framework.JCLContextHandler.buildQuery
+ 140  0,02% 98,61%       1 300494 java.util.WeakHashMap.expungeStaleEntries
+ 141  0,02% 98,63%       1 300499 org.resourceaccounting.invocations.InvocationAmountTable.<init>
+ 142  0,02% 98,65%       1 300502 org.kevoreeadaptation.impl.DefaultKevoreeAdaptationFactory.createAdaptationPrimitive
+ 143  0,02% 98,67%       1 300503 org.kevoree.framework.kaspects.TypeDefinitionAspect.foundRelevantDeployUnitOnNodeSuperTypes
+ 144  0,02% 98,69%       1 300504 java.lang.Class.getClassLoader0
+ 145  0,02% 98,71%       1 300506 java.util.zip.ZipFile.read
+ 146  0,02% 98,73%       1 300507 java.lang.Class.getEnclosingMethod0
+ 147  0,02% 98,75%       1 300509 org.kevoree.microsandbox.cgroupNode.SharedClassLoader.loadClass
+ 148  0,02% 98,77%       1 300518 java.lang.System.nanoTime
+ 149  0,02% 98,79%       1 300519 java.lang.ClassLoader.findBootstrapClass
+ 150  0,02% 98,81%       1 300520 java.lang.Thread.currentThread
+ 151  0,02% 98,83%       1 300521 sun.misc.Unsafe.getObjectVolatile
+ 152  0,02% 98,85%       1 300522 java.util.zip.ZipFile.getEntry
+ 153  0,02% 98,87%       1 300523 org.slf4j.impl.StaticLoggerBinder.<init>
+ 154  0,02% 98,89%       1 300524 java.lang.System.nanoTime
+ 155  0,02% 98,91%       1 300527 org.kevoree.microsandbox.monitoredNode.ControlAdmissionSystem.registerComponent
+ 156  0,02% 98,92%       1 300528 java.util.zip.ZipCoder.getBytes
+ 157  0,02% 98,94%       1 300529 java.net.URLClassLoader$1.run
+ 158  0,02% 98,96%       1 300531 java.lang.ClassLoader.findBootstrapClass
+ 159  0,02% 98,98%       1 300533 sun.reflect.annotation.AnnotationParser.parseSig
+ 160  0,02% 99,00%       1 300560 java.lang.reflect.Proxy.defineClass0
+ 161  0,02% 99,02%       1 300565 java.lang.String.intern
+ 162  0,02% 99,04%       1 300567 java.lang.Class.getDeclaredMethods0
+ 163  0,02% 99,06%       1 300581 java.lang.Class.forName0
+ 164  0,02% 99,08%       1 300592 scala.collection.mutable.HashSet.nnSizeMapAdd
+ 165  0,02% 99,10%       1 300593 scala.collection.mutable.ListBuffer.<init>
+ 166  0,02% 99,12%       1 300594 scala.collection.mutable.ListBuffer.$plus$eq
+ 167  0,02% 99,14%       1 300595 scala.util.parsing.combinator.Parsers$Parser.$tilde
+ 168  0,02% 99,16%       1 300596 scala.util.parsing.combinator.Parsers$$anonfun$acceptSeq$1.apply
+ 169  0,02% 99,18%       1 300597 scala.util.parsing.combinator.Parsers$$anonfun$accept$1.apply
+ 170  0,02% 99,20%       1 300598 java.lang.Character.toString
+ 171  0,02% 99,22%       1 300599 scala.util.parsing.combinator.Parsers$$anonfun$rep1$1.apply
+ 172  0,02% 99,24%       1 300600 org.kevoree.impl.DictionaryAttributeInternal$$TImpl.path
+ 173  0,02% 99,26%       1 300601 com.sun.org.apache.xerces.internal.util.XMLChar.isNameStart
+ 174  0,02% 99,28%       1 300602 org.kevoree.loader.XMIModelLoader.unescapeXml
+ 175  0,02% 99,30%       1 300603 java.util.Collections.unmodifiableList
+ 176  0,02% 99,32%       1 300605 java.lang.Long.parseLong
+ 177  0,02% 99,34%       1 300606 java.util.ArrayList.get
+ 178  0,02% 99,36%       1 300607 scala.collection.JavaConversions$JIteratorWrapper.find
+ 179  0,02% 99,38%       1 300608 java.lang.System.currentTimeMillis
+ 180  0,02% 99,40%       1 300609 scala.math.ScalaNumericConversions$class.prefixLength
+ 181  0,02% 99,42%       1 300610 scala.math.ScalaNumericConversions$class.foreach
+ 182  0,02% 99,44%       1 300611 java.lang.String.toCharArray
+ 183  0,02% 99,46%       1 300616 java.lang.System.identityHashCode
+ 184  0,02% 99,48%       1 300620 org.objectweb.asm.ClassWriter.<init>
+ 185  0,02% 99,50%       1 300621 org.kevoree.impl.NetworkPropertyImpl.path
+ 186  0,02% 99,52%       1 300623 java.lang.System.identityHashCode
+ 187  0,02% 99,54%       1 300624 org.kevoree.framework.kaspects.DeployUnitAspect.isModelEquals
+ 188  0,02% 99,56%       1 300625 java.util.IdentityHashMap.get
+ 189  0,02% 99,58%       1 300640 java.lang.Character.toString
+ 190  0,02% 99,60%       1 300641 java.lang.Character.toString
+ 191  0,02% 99,62%       1 300642 scala.util.parsing.combinator.Parsers$Parser.$tilde
+ 192  0,02% 99,64%       1 300643 org.kevoree.impl.ContainerRootInternal$$TImpl.resolve
+ 193  0,02% 99,66%       1 300644 java.lang.Object.getClass
+ 194  0,02% 99,68%       1 300645 scala.util.parsing.combinator.Parsers$Parser.$tilde
+ 195  0,02% 99,70%       1 300646 scala.util.parsing.combinator.Parsers$Parser.p$3
+ 196  0,02% 99,72%       1 300647 org.kevoree.tools.marShell.interpreter.sub.KevsUpdateDictionaryInterpreter.interpret
+ 197  0,02% 99,74%       1 300651 sun.nio.cs.StreamEncoder.flushLeftoverChar
+ 198  0,02% 99,76%       1 300670 java.util.HashMap.roundUpToPowerOf2
+ 199  0,02% 99,78%       1 300671 java.lang.UNIXProcess.initStreams
+ 200  0,02% 99,80%       1 300674 java.lang.Thread.currentThread
+ 201  0,02% 99,82%       1 300676 java.lang.Object.hashCode
+ 202  0,02% 99,84%       1 300677 org.kevoree.library.defaultNodeTypes.command.AddBindingCommand.execute
+ 203  0,02% 99,86%       1 300690 sun.net.InetAddressCachePolicy.<clinit>
+ 204  0,02% 99,88%       1 300697 java.lang.System.currentTimeMillis
+ 205  0,02% 99,90%       1 300699 java.io.FileOutputStream.writeBytes
+ 206  0,02% 99,92%       1 300706 java.io.ObjectInputStream$HandleTable.<init>
+ 207  0,02% 99,94%       1 300717 java.lang.ClassLoader.findBootstrapClass
+ 208  0,02% 99,96%       1 300733 java.net.PlainSocketImpl.socketClose0
+ 209  0,02% 99,98%       1 300737 org.kevoree.impl.ContainerNodeInternal$$TImpl.path
+ 210  0,02% 100,00%       1 300738 org.kevoree.kompare.sub.Kompare2$$TImpl.checkChannels
+CPU SAMPLES END

@@ -8,6 +8,7 @@ import org.kevoree.microsandbox.monitoredNode.KevoreeComponentResourceContract;
 import org.resourceaccounting.contract.ResourceContract;
 import org.resourceaccounting.contract.ResourceContractProvider;
 
+import java.io.FileNotFoundException;
 import java.util.*;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -42,7 +43,7 @@ public class NewThreadCreated {
             Thread t = Thread.currentThread();
             // fixme : go to the root ThreadGroup if needed
             String name = t.getThreadGroup().getName();
-            System.out.println("ONE THREAD " + name);
+//            System.err.println("ONE THREAD " + name);
             if (!name.startsWith(componentPrefix)) return true;
             String path = name.replaceAll("kev/","");
             String filePath = path.replaceAll("/","_");
@@ -57,22 +58,37 @@ public class NewThreadCreated {
                     if (contract != null && contract.getCPU() > 0) {
                         components.put(name, ++lastId);
                         double tmp = (1000.0 * contract.getCPU()) / description.availability_instr;
-                        System.out.printf("%d %d %f %d\n", contract.getCPU(), description.availability_instr, tmp,
-                                (int)Math.round(tmp));
-                        CPUThreadControl.assignCPULimit(filePath, (int)Math.round(tmp));
+                        int valueToAssign = (int)Math.round(tmp);
+                        if (valueToAssign == 0) valueToAssign = 1;
+//                        System.err.printf("Instructions to execute: %d; Available Instructions: %d;  %f; Milliseconds per Second %d\n", contract.getCPU(), description.availability_instr, tmp,
+//                                valueToAssign);
+                        CPUThreadControl.assignCPULimit(filePath, valueToAssign);
 //                        CPUThreadControl.assignLimit(lastId, (int)Math.round(tmp));
                         id = lastId;
-                        CPUThreadControl.attachToCPUSubsystem(filePath);
-//                        System.out.printf("Attaching 2 thread to %s and assigning id=%d\n", name, id);
+
+                        try {
+                            CPUThreadControl.attachToCPUSubsystem(filePath);
+                        } catch (FileNotFoundException e) {
+                            e.printStackTrace();
+                        }
+//                        System.err.printf("Attaching 2 thread to %s and assigning id=%d\n", name, id);
                     }
                     else {
-                        System.out.println((contract != null));
+//                        System.err.println((contract != null));
                     }
                 }
                 else {
                     id = components.get(name);
-                    CPUThreadControl.attachToCPUSubsystem(filePath);
-//                    System.out.printf("Attaching 1 thread to %s and assigning id=%d\n", name, id);
+
+                    try {
+                        CPUThreadControl.attachToCPUSubsystem(filePath);
+//                        System.err.printf("Attaching 1 thread to %s and assigning id=%d\n", name, id);
+                    } catch (FileNotFoundException e) {
+                        // Somethings the cgroup subsystem will remove the groups when they are done, however,
+                        // the map won't know about it. In such a case we just call as the first time
+                        components.remove(name);
+                        return equals(obj);
+                    }
                 }
             }
         }

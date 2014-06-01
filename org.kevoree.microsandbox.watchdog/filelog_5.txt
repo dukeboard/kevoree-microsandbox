@@ -1,0 +1,5 @@
+Node node0 started in 165 milliseconds. (Average = 165.272274, Total = 165)
+Node node0 started in 167 milliseconds. (Average = 166.157276, Total = 332)
+Node node0 started in 177 milliseconds. (Average = 169.862383, Total = 509)
+Node node0 started in 179 milliseconds. (Average = 172.274713, Total = 689)
+Node node0 started in 180 milliseconds. (Average = 173.979980, Total = 869)

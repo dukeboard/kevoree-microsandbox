@@ -7,13 +7,13 @@
     <groupId>org.kevoree.microsandbox.experiment</groupId>
     <artifactId>microsandbox.experiment</artifactId>
     <packaging>pom</packaging>
-    <version>1.2.0-SNAPSHOT</version>
+    <version>1.1</version>
 
     <modules>
         <module>nofaulty</module>
         <module>faulty-cpu</module>
         <module>faulty-memory</module>
-        <!--<module>faulty-interaction</module>-->
+            <!--<module>faulty-interaction</module>-->
         <module>experiment-scripts</module>
         <module>adaptation-manager</module>
         <module>../contracted-fake-console</module>
@@ -32,7 +32,7 @@
         <kevoree.library.version>3.5.3-SNAPSHOT</kevoree.library.version>
 
         <kevoree.komponents.version>1.1.0-SNAPSHOT</kevoree.komponents.version>
-        <kevoree.microsandbox.version>1.2.0-SNAPSHOT</kevoree.microsandbox.version>
+        <kevoree.microsandbox.version>1.1</kevoree.microsandbox.version>
     </properties>
 
     <dependencies>

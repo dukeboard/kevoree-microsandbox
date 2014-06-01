@@ -13,6 +13,8 @@ import org.kevoree.library.defaultNodeTypes.wrapper.WrapperFactory;
 import org.kevoree.microsandbox.api.contract.PlatformDescription;
 import org.kevoreeadaptation.AdaptationPrimitive;
 
+import java.util.Dictionary;
+
 /**
  * Created with IntelliJ IDEA.
  * User: inti

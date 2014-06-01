@@ -1,7 +1,7 @@
 {
 addRepo "http://maven.kevoree.org/daum/snapshots"
 
-merge 'mvn:org.kevoree.microsandbox/org.kevoree.microsandbox.cgroupNode/1.0-SNAPSHOT'
+merge 'mvn:org.kevoree.microsandbox/org.kevoree.microsandbox.cgroupNode/{project.version}'
 merge 'mvn:org.kevoree.microsandbox/org.kevoree.microsandbox.javasenode/{project.version}'
 merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.jexxus/{kevoree.corelibrary.version}'
 merge 'mvn:org.kevoree.microsandbox/org.kevoree.microsandbox.samples/{project.version}'

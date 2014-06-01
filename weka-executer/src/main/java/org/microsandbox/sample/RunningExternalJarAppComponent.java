@@ -37,16 +37,19 @@ public class RunningExternalJarAppComponent extends CPUMemoryContractedImpl {
         public void run() {
             long timeBefore = 0;
             try {
-                Thread.sleep(delayTime);
-                Class<?> cl = loader.loadClass(jar_main);
+                Thread.sleep(delayTime * 1000);
+                Class<?> cl = loader.loadClass(test);
                 Method method = cl.getMethod("main", new Class[]{String[].class});
 
-                String[] args = argument.split(" ");
-                timeBefore = System.currentTimeMillis();
-                method.invoke(null,new Object[]{args});
+                String[] args = arg.split(" ");
+                timeBefore = System.nanoTime();
+//                System.setSecurityManager(new NoExitSecurityManager());
+                method.invoke(null, new Object[]{args});
 
 
-            } catch (ClassNotFoundException e) {
+            } catch (ExitException1 e) {
+                System.err.println(e.getMessage() + " status " + e.status);
+            }catch (ClassNotFoundException e) {
 //                e.printStackTrace();
             } catch (IllegalAccessException e) {
 //                e.printStackTrace();
@@ -54,7 +57,7 @@ public class RunningExternalJarAppComponent extends CPUMemoryContractedImpl {
 //                e.printStackTrace();
             } catch (InvocationTargetException e) {
 //                e.printStackTrace();
-                System.err.println("Not a big deal if the test has finished");
+                System.err.println("The invoked method throw an exception: not a big deal if the test has finished");
             } catch (InterruptedException e) {
 //                e.printStackTrace();
             }
@@ -62,11 +65,12 @@ public class RunningExternalJarAppComponent extends CPUMemoryContractedImpl {
 
             }
             finally {
-                long consumedTime = System.currentTimeMillis() - timeBefore;
+//                System.setSecurityManager(null);
+                long consumedTime = System.nanoTime() - timeBefore;
                 System.out.println("============================================");
-                System.out.println(" Time taken to execute : " + consumedTime);
+                System.out.printf(" Execution Time: %f seconds\n", consumedTime/1000000000.0);
                 System.out.println("============================================");
-                System.exit(0);
+//                System.exit(0);
             }
         }
     }

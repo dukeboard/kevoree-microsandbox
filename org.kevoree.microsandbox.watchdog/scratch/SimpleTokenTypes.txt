@@ -1,0 +1,7 @@
+// $ANTLR 2.7.2: lexer.g -> SimpleTokenTypes.txt$
+Simple    // output token vocab name
+WS_=4
+A=5
+B=6
+C=7
+D=8

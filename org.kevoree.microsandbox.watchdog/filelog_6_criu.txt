@@ -1,0 +1,6 @@
+Node node0 started in 46 milliseconds. (Average = 46.671762, Total = 46)
+Node virtualNode2 started in 2073 milliseconds. (Average = 1059.927850, Total = 2119)
+Node virtualNode3 started in 2264 milliseconds. (Average = 1461.564582, Total = 4384)
+Node virtualNode1 started in 2290 milliseconds. (Average = 1668.819219, Total = 6675)
+Node virtualNode4 started in 2686 milliseconds. (Average = 1872.406768, Total = 9362)
+Node virtualNode5 started in 2846 milliseconds. (Average = 2034.771977, Total = 12208)

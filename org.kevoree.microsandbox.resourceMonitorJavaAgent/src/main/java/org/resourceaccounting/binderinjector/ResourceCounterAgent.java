@@ -20,6 +20,7 @@ import java.lang.instrument.UnmodifiableClassException;
 
 public class ResourceCounterAgent implements OnNewThreadNotifier.HandlerSet{
     private static final String SCAPEGOAT = "scapegoat";
+    private static final String SQUIRREL = "squirrel";
     private static volatile Instrumentation globalInst;
 
     public static void premain(String agentArgs, Instrumentation inst) {
@@ -33,7 +34,11 @@ public class ResourceCounterAgent implements OnNewThreadNotifier.HandlerSet{
 
         globalInst = inst;
 
-        final boolean isScapegoat = agentArgs != null && agentArgs.length() > 0 && agentArgs.equals(SCAPEGOAT);
+
+
+        final boolean isScapegoat = agentArgs != null && agentArgs.length() > 0 && agentArgs.contains(SCAPEGOAT);
+        final boolean isSquirrel =  !isScapegoat &&
+                agentArgs != null && agentArgs.length() > 0 && agentArgs.contains(SQUIRREL);
 
         if (isScapegoat) {
             ResourceCounter.setResourceContractProvider(new DefaultResourceContractProvider("",""));
@@ -51,6 +56,7 @@ public class ResourceCounterAgent implements OnNewThreadNotifier.HandlerSet{
             System.out.println("Agent started and it has been detected non-scapegoat mode");
             BinderClassTransformer bct = new BinderClassTransformer(inst, false);
             bct.setScapegoat(false);
+            bct.setSquirrel(isSquirrel);
             inst.addTransformer(bct,true);
         }
 

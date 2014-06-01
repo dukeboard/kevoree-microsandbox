@@ -1,0 +1,35 @@
+//sample of KevScript configuration
+
+merge 'mvn:org.kevoree.microsandbox/org.kevoree.microsandbox.cgroupNode/{project.version}'
+merge 'mvn:org.kevoree.microsandbox/org.kevoree.microsandbox.javasenode/{project.version}'
+merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.jexxus/{kevoree.corelibrary.version}'
+merge 'mvn:org.kevoree.microsandbox/weka-executer/{project.version}'
+
+addNode node0:CGroupsNode {
+    coreLogLevel='DEBUG'
+}
+
+addComponent cgroupDeployer@node0 : CGroupDeployer {
+//distributed_deployment = 'false'
+}
+
+addComponent wekaExecuter@node0 : RunningExternalJarAppComponent {
+	jar_path = '/home/inti/Downloads/dacapo-9.12-bach.jar',
+	jar_main = 'Harness',
+	arguments = '-n 8 --no-validation -s small --scratch-directory directoryMagic0 lusearch',
+	delayTime = '5', // 5 seconds
+	memory_max_size = '1100',
+	cpu_wall_time = '90000000'
+}
+
+addComponent wekaExecuter1@node0 : RunningExternalJarAppComponent {
+	jar_path = '/home/inti/Downloads/dacapo-9.12-bach.jar',
+	jar_main = 'Harness',
+	arguments = '-n 8 --no-validation -s small --scratch-directory directoryMagic1 lusearch',
+	delayTime = '5', // 5 seconds
+	memory_max_size = '1100',
+	cpu_wall_time = '90000000'
+}
+
+addGroup sync:BasicGroup
+addToGroup sync node0

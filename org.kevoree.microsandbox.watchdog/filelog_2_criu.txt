@@ -1,0 +1,2 @@
+Node node0 started in 35 milliseconds. (Average = 35.017657, Total = 35)
+Node virtualNode1 started in 662 milliseconds. (Average = 348.919465, Total = 697)

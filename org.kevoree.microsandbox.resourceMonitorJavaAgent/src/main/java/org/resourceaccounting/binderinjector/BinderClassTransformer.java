@@ -21,6 +21,7 @@ public class BinderClassTransformer implements ClassFileTransformer {
     private InstrumenterCommand cmd = new InstrumenterCommand();
 
     boolean debug = false;
+    private boolean squirrel;
 
     public void setScapegoat(boolean scapegoat) {
         isScapegoat = scapegoat;
@@ -67,7 +68,7 @@ public class BinderClassTransformer implements ClassFileTransformer {
                 instr_instr = MonitoringStatusList.instance().isCPUMonitored(appId);
 //                System.out.printf("Classloader %d %s %s %s %s 000\n",hash, appId, className,instr_mem, instr_instr);
             }
-            else if (MonitoringStatusList.instance().isMemoryMonitored(appId)) {
+            else if (!squirrel && MonitoringStatusList.instance().isMemoryMonitored(appId)) {
                 instr_mem = true;
 //                System.out.printf("Classloader %d %s %s %s %s 111\n",hash, appId, className,instr_mem, instr_instr);
             }
@@ -95,5 +96,9 @@ public class BinderClassTransformer implements ClassFileTransformer {
 
     public static synchronized void setHandler(Object h) {
         handler = h;
+    }
+
+    public void setSquirrel(boolean squirrel) {
+        this.squirrel = squirrel;
     }
 }

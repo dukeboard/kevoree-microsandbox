@@ -1,0 +1,79 @@
+// $ANTLR 2.7.2: idl.g -> IDLTokenTypes.txt$
+IDL    // output token vocab name
+SEMI(";")=4
+TK_module="module"=5
+LCURLY("{")=6
+RCURLY("}")=7
+TK_interface="interface"=8
+COLON(":")=9
+COMMA(",")=10
+SCOPEOP("::")=11
+TK_const="const"=12
+ASSIGN("=")=13
+OR("|")=14
+XOR("^")=15
+AND("&")=16
+LSHIFT("<<")=17
+RSHIFT(">>")=18
+PLUS("+")=19
+MINUS("-")=20
+STAR("*")=21
+DIV("/")=22
+MOD("%")=23
+TILDE("~")=24
+LPAREN("(")=25
+RPAREN(")")=26
+TK_TRUE="TRUE"=27
+TK_FALSE="FALSE"=28
+TK_typedef="typedef"=29
+TK_native="native"=30
+TK_octet="octet"=31
+TK_any="any"=32
+TK_unsigned="unsigned"=33
+TK_short="short"=34
+TK_long="long"=35
+TK_char="char"=36
+TK_float="float"=37
+TK_double="double"=38
+TK_boolean="boolean"=39
+TK_struct="struct"=40
+TK_union="union"=41
+TK_switch="switch"=42
+TK_case="case"=43
+TK_default="default"=44
+TK_enum="enum"=45
+TK_sequence="sequence"=46
+LT_("<")=47
+GT(">")=48
+TK_string="string"=49
+LBRACK("[")=50
+RBRACK("]")=51
+TK_readonly="readonly"=52
+TK_attribute="attribute"=53
+TK_exception="exception"=54
+TK_oneway="oneway"=55
+TK_void="void"=56
+TK_in="in"=57
+TK_out="out"=58
+TK_inout="inout"=59
+TK_raises="raises"=60
+TK_context="context"=61
+INT("an integer value")=62
+OCTAL=63
+HEX("a hexadecimal value value")=64
+STRING_LITERAL("a string literal")=65
+CHAR_LITERAL("a character literal")=66
+FLOAT("an floating point value")=67
+IDENT("an identifer")=68
+QUESTION("?")=69
+DOT(".")=70
+NOT("!")=71
+WS_("white space")=72
+PREPROC_DIRECTIVE("a preprocessor directive")=73
+SL_COMMENT("a comment")=74
+ML_COMMENT("a comment")=75
+ESC("an escape sequence")=76
+VOCAB("an escaped character value")=77
+DIGIT("a digit")=78
+OCTDIGIT("an octal digit")=79
+HEXDIGIT("a hexadecimal digit")=80

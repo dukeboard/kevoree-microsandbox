@@ -1,0 +1,399 @@
+// $ANTLR 2.7.2: "TinyBasicTreeWalker.g" -> "TinyBasicTreeWalker.java"$
+
+	package tinybasic;
+
+import antlr.TreeParser;
+import antlr.Token;
+import antlr.collections.AST;
+import antlr.RecognitionException;
+import antlr.ANTLRException;
+import antlr.NoViableAltException;
+import antlr.MismatchedTokenException;
+import antlr.SemanticException;
+import antlr.collections.impl.BitSet;
+import antlr.ASTPair;
+import antlr.collections.impl.ASTArray;
+
+
+public class TinyBasicTreeWalker extends antlr.TreeParser       implements TinyBasicTreeWalkerTokenTypes
+ {
+
+	Context theContext=null;
+	DTDataType zero=null,posOne=null,negOne=null ;
+	
+	//protected void blah() throws DTExecException{
+	//	throw new DTExecException("oops");
+	//}
+
+
+public TinyBasicTreeWalker() {
+	tokenNames = _tokenNames;
+}
+
+	public final void compilationUnit(AST _t,
+		Context context
+	) throws RecognitionException {
+		
+		AST compilationUnit_AST_in = (AST)_t;
+		AST pd = null;
+		
+				theContext=context;
+				theContext.initialize();
+				zero	= new DTInteger(theContext.getCurrentScope(),0);
+				posOne	= new DTInteger(theContext.getCurrentScope(),1);
+				negOne	= new DTInteger(theContext.getCurrentScope(),-1);
+			
+		
+		try {      // for error handling
+			pd = (AST)_t;
+			match(_t,PROGRAM_DEF);
+			_t = _t.getNextSibling();
+			
+						try{
+							programDefinition(pd);
+						} catch(DTExecException didit){
+							System.out.println("Yes it works!"+didit);
+						}
+					
+		}
+		catch (RecognitionException ex) {
+			reportError(ex);
+			if (_t!=null) {_t = _t.getNextSibling();}
+		}
+		_retTree = _t;
+	}
+	
+	public final void programDefinition(AST _t) throws RecognitionException {
+		
+		AST programDefinition_AST_in = (AST)_t;
+		
+		try {      // for error handling
+			AST __t20006 = _t;
+			AST tmp1_AST_in = (AST)_t;
+			match(_t,PROGRAM_DEF);
+			_t = _t.getFirstChild();
+			moduleBody(_t);
+			_t = _retTree;
+			_t = __t20006;
+			_t = _t.getNextSibling();
+		}
+		catch (RecognitionException ex) {
+			reportError(ex);
+			if (_t!=null) {_t = _t.getNextSibling();}
+		}
+		_retTree = _t;
+	}
+	
+	public final void moduleBody(AST _t) throws RecognitionException {
+		
+		AST moduleBody_AST_in = (AST)_t;
+		
+		try {      // for error handling
+			AST __t20010 = _t;
+			AST tmp2_AST_in = (AST)_t;
+			match(_t,PARAMETERS);
+			_t = _t.getFirstChild();
+			parameters(_t);
+			_t = _retTree;
+			_t = __t20010;
+			_t = _t.getNextSibling();
+			AST __t20011 = _t;
+			AST tmp3_AST_in = (AST)_t;
+			match(_t,CODE_BLOCK);
+			_t = _t.getFirstChild();
+			{
+			int _cnt20013=0;
+			_loop20013:
+			do {
+				if (_t==null) _t=ASTNULL;
+				if ((_tokenSet_0.member(_t.getType()))) {
+					statement(_t);
+					_t = _retTree;
+				}
+				else {
+					if ( _cnt20013>=1 ) { break _loop20013; } else {throw new NoViableAltException(_t);}
+				}
+				
+				_cnt20013++;
+			} while (true);
+			}
+			_t = __t20011;
+			_t = _t.getNextSibling();
+			AST tmp4_AST_in = (AST)_t;
+			match(_t,EXIT_MODULE);
+			_t = _t.getNextSibling();
+			
+						throw new DTExitModuleException("Done folks");
+					
+		}
+		catch (RecognitionException ex) {
+			reportError(ex);
+			if (_t!=null) {_t = _t.getNextSibling();}
+		}
+		_retTree = _t;
+	}
+	
+	public final void subroutineDefinition(AST _t) throws RecognitionException {
+		
+		AST subroutineDefinition_AST_in = (AST)_t;
+		
+		try {      // for error handling
+			AST __t20008 = _t;
+			AST tmp5_AST_in = (AST)_t;
+			match(_t,SUBROUTINE_DEF);
+			_t = _t.getFirstChild();
+			AST tmp6_AST_in = (AST)_t;
+			match(_t,IDENT);
+			_t = _t.getNextSibling();
+			moduleBody(_t);
+			_t = _retTree;
+			_t = __t20008;
+			_t = _t.getNextSibling();
+		}
+		catch (RecognitionException ex) {
+			reportError(ex);
+			if (_t!=null) {_t = _t.getNextSibling();}
+		}
+		_retTree = _t;
+	}
+	
+	public final void parameters(AST _t) throws RecognitionException {
+		
+		AST parameters_AST_in = (AST)_t;
+		
+		try {      // for error handling
+			{
+			_loop20016:
+			do {
+				if (_t==null) _t=ASTNULL;
+				if ((_t.getType()==VAR_PROXY)) {
+					parameter(_t);
+					_t = _retTree;
+				}
+				else {
+					break _loop20016;
+				}
+				
+			} while (true);
+			}
+		}
+		catch (RecognitionException ex) {
+			reportError(ex);
+			if (_t!=null) {_t = _t.getNextSibling();}
+		}
+		_retTree = _t;
+	}
+	
+	public final void statement(AST _t) throws RecognitionException {
+		
+		AST statement_AST_in = (AST)_t;
+		
+		try {      // for error handling
+			if (_t==null) _t=ASTNULL;
+			switch ( _t.getType()) {
+			case WHEN_ERROR_CALL:
+			{
+				when_error_call_statement(_t);
+				_t = _retTree;
+				break;
+			}
+			case TK_dim:
+			{
+				dim_statement(_t);
+				_t = _retTree;
+				break;
+			}
+			case EQ:
+			{
+				assign_statement(_t);
+				_t = _retTree;
+				break;
+			}
+			case FOR_LOOP:
+			{
+				forNextStatement(_t);
+				_t = _retTree;
+				break;
+			}
+			case PRINT_ASCII:
+			{
+				printAsciiStatement(_t);
+				_t = _retTree;
+				break;
+			}
+			case IF_THEN_BLOCK:
+			{
+				ifThenBlock(_t);
+				_t = _retTree;
+				break;
+			}
+			case TK_until:
+			{
+				doUntilLoop(_t);
+				_t = _retTree;
+				break;
+			}
+			case TK_do:
+			{
+				doLoopUntil(_t);
+				_t = _retTree;
+				break;
+			}
+			case SUB_EXECUTE:
+			{
+				subExecuteStatement(_t);
+				_t = _retTree;
+				break;
+			}
+			case EXIT_MODULE:
+			{
+				exitModuleStatement(_t);
+				_t = _retTree;
+				break;
+			}
+			default:
+			{
+				throw new NoViableAltException(_t);
+			}
+			}
+		}
+		catch (RecognitionException ex) {
+			reportError(ex);
+			if (_t!=null) {_t = _t.getNextSibling();}
+		}
+		_retTree = _t;
+	}
+	
+	public final void parameter(AST _t) throws RecognitionException {
+		
+		AST parameter_AST_in = (AST)_t;
+		int argNum=0;
+		
+		try {      // for error handling
+			AST __t20018 = _t;
+			AST tmp7_AST_in = (AST)_t;
+			match(_t,VAR_PROXY);
+			_t = _t.getFirstChild();
+			arg(_t,argNum);
+			_t = _retTree;
+			argNum++;
+			_t = __t20018;
+			_t = _t.getNextSibling();
+		}
+		catch (RecognitionException ex) {
+			reportError(ex);
+			if (_t!=null) {_t = _t.getNextSibling();}
+		}
+		_retTree = _t;
+	}
+	
+	public final void arg(AST _t,
+		int argNum
+	) throws RecognitionException {
+		
+		AST arg_AST_in = (AST)_t;
+		AST s = null;
+		AST i = null;
+		AST f = null;
+		DTDataType v=null;
+		
+		try {      // for error handling
+			{
+			if (_t==null) _t=ASTNULL;
+			switch ( _t.getType()) {
+			case STR_VAR:
+			{
+				s = (AST)_t;
+				match(_t,STR_VAR);
+				_t = _t.getNextSibling();
+				break;
+			}
+			case INT_VAR:
+			{
+				i = (AST)_t;
+				match(_t,INT_VAR);
+				_t = _t.getNextSibling();
+				break;
+			}
+			case FLT_VAR:
+			{
+				f = (AST)_t;
+				match(_t,FLT_VAR);
+				_t = _t.getNextSibling();
+				break;
+			}
+			default:
+			{
+				throw new NoViableAltException(_t);
+			}
+			}
+			}
+		}
+		catch (RecognitionException ex) {
+			reportError(ex);
+			if (_t!=null) {_t = _t.getNextSibling();}
+		}
+		_retTree = _t;
+	}
+	
+	public final void when_error_call_statement(AST _t) throws RecognitionException {
+		
+		AST when_error_call_statement_AST_in = (AST)_t;
+		AST i = null;
+		
+		try {      // for error handling
+			AST __t20087 = _t;
+			AST tmp8_AST_in = (AST)_t;
+			match(_t,WHEN_ERROR_CALL);
+			_t = _t.getFirstChild();
+			AST tmp9_AST_in = (AST)_t;
+			match(_t,TK_call);
+			_t = _t.getNextSibling();
+			i = (AST)_t;
+			match(_t,IDENT);
+			_t = _t.getNextSibling();
+			System.out.println(" Attaching error:"+i.getText());
+			_t = __t20087;
+			_t = _t.getNextSibling();
+		}
+		catch (RecognitionException ex) {
+			reportError(ex);
+			if (_t!=null) {_t = _t.getNextSibling();}
+		}
+		_retTree = _t;
+	}
+	
+	public final void dim_statement(AST _t) throws RecognitionException {
+		
+		AST dim_statement_AST_in = (AST)_t;
+		AST dv1 = null;
+		AST dv2 = null;
+		AST dv3 = null;
+		DTDataType i1=null,i2=null,i3=null;
+		
+		try {      // for error handling
+			AST __t20089 = _t;
+			AST tmp10_AST_in = (AST)_t;
+			match(_t,TK_dim);
+			_t = _t.getFirstChild();
+			{
+			if (_t==null) _t=ASTNULL;
+			switch ( _t.getType()) {
+			case ARRAY1D:
+			{
+				AST __t20091 = _t;
+				AST tmp11_AST_in = (AST)_t;
+				match(_t,ARRAY1D);
+				_t = _t.getFirstChild();
+				dv1 = _t==ASTNULL ? null : (AST)_t;
+				dimension_variable(_t);
+				_t = _retTree;
+				i1=expr(_t);
+				_t = _retTree;
+				theContext.setDimension(dv1.getText(),i1);
+				_t = __t20091;
+				_t = _t.getNextSibling();
+				break;
+			}
+			case ARRAY2D:
+			

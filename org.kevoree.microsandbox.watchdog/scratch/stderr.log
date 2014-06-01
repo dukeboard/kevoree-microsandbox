@@ -1,0 +1,133 @@
+ANTLR Parser Generator   Version 2.7.2   1989-2003 jGuru.com
+ANTLR Parser Generator   Version 2.7.2   1989-2003 jGuru.com
+ANTLR Parser Generator   Version 2.7.2   1989-2003 jGuru.com
+ANTLR Parser Generator   Version 2.7.2   1989-2003 jGuru.com
+ANTLR Parser Generator   Version 2.7.2   1989-2003 jGuru.com
+./scratch/antlr/csharp/lexer.g:36: warning:lexical nondeterminism upon
+./scratch/antlr/csharp/lexer.g:36:     k==1:'*'
+./scratch/antlr/csharp/lexer.g:36:     k==2:'/'
+./scratch/antlr/csharp/lexer.g:36:     between alt 1 and exit branch of block
+ANTLR Parser Generator   Version 2.7.2   1989-2003 jGuru.com
+ANTLR Parser Generator   Version 2.7.2   1989-2003 jGuru.com
+./scratch/antlr/csharp/tinyc.g:78:17: warning:nondeterminism between alts 1 and 2 of block upon
+./scratch/antlr/csharp/tinyc.g:78:17:     k==1:"else"
+ANTLR Parser Generator   Version 2.7.2   1989-2003 jGuru.com
+ANTLR Parser Generator   Version 2.7.2   1989-2003 jGuru.com
+ANTLR Parser Generator   Version 2.7.2   1989-2003 jGuru.com
+ANTLR Parser Generator   Version 2.7.2   1989-2003 jGuru.com
+ANTLR Parser Generator   Version 2.7.2   1989-2003 jGuru.com
+ANTLR Parser Generator   Version 2.7.2   1989-2003 jGuru.com
+ANTLR Parser Generator   Version 2.7.2   1989-2003 jGuru.com
+ANTLR Parser Generator   Version 2.7.2   1989-2003 jGuru.com
+ANTLR Parser Generator   Version 2.7.2   1989-2003 jGuru.com
+ANTLR Parser Generator   Version 2.7.2   1989-2003 jGuru.com
+ANTLR Parser Generator   Version 2.7.2   1989-2003 jGuru.com
+ANTLR Parser Generator   Version 2.7.2   1989-2003 jGuru.com
+ANTLR Parser Generator   Version 2.7.2   1989-2003 jGuru.com
+./scratch/antlr/csharp/instr.g:21:40: warning:nondeterminism between alts 1 and 2 of block upon
+./scratch/antlr/csharp/instr.g:21:40:     k==1:"else"
+./scratch/antlr/csharp/instr.g:21:40:     k==2:LBRACE,"if",ID
+./scratch/antlr/csharp/instr.g:49:35: warning:lexical nondeterminism between alts 1 and 2 of block upon
+ANTLR Parser Generator   Version 2.7.2   1989-2003 jGuru.com
+./scratch/antlr/java/lexer.g:35: warning:lexical nondeterminism upon
+./scratch/antlr/java/lexer.g:35:     k==1:'*'
+./scratch/antlr/java/lexer.g:35:     k==2:'/'
+./scratch/antlr/java/lexer.g:35:     between alt 1 and exit branch of block
+ANTLR Parser Generator   Version 2.7.2   1989-2003 jGuru.com
+./scratch/antlr/csharp/instr.g:49:35:     k==1:'\n'
+ANTLR Parser Generator   Version 2.7.2   1989-2003 jGuru.com
+ANTLR Parser Generator   Version 2.7.2   1989-2003 jGuru.com
+ANTLR Parser Generator   Version 2.7.2   1989-2003 jGuru.com
+ANTLR Parser Generator   Version 2.7.2   1989-2003 jGuru.com
+ANTLR Parser Generator   Version 2.7.2   1989-2003 jGuru.com
+ANTLR Parser Generator   Version 2.7.2   1989-2003 jGuru.com
+ANTLR Parser Generator   Version 2.7.2   1989-2003 jGuru.com
+./scratch/antlr/java/instr.g:16:40: warning:nondeterminism between alts 1 and 2 of block upon
+./scratch/antlr/java/instr.g:16:40:     k==1:"else"
+./scratch/antlr/java/instr.g:16:40:     k==2:LBRACE,"if",ID
+./scratch/antlr/cpp/instr.g:26:40: warning:nondeterminism between alts 1 and 2 of block upon
+./scratch/antlr/cpp/instr.g:26:40:     k==1:"else"
+./scratch/antlr/cpp/instr.g:26:40:     k==2:LBRACE,"if",ID
+./scratch/antlr/java/instr.g:44:35: warning:lexical nondeterminism between alts 1 and 2 of block upon
+./scratch/antlr/java/instr.g:44:35:     k==1:'\n'
+./scratch/antlr/java/pascal.g:250: warning:nondeterminism upon
+./scratch/antlr/java/pascal.g:250:     k==1:SEMI
+./scratch/antlr/java/pascal.g:250:     k==2:RPAREN,SEMI,"end"
+./scratch/antlr/java/pascal.g:250:     between alt 1 and exit branch of block
+./scratch/antlr/java/pascal.g:375: warning:nondeterminism between alts 1 and 2 of block upon
+./scratch/antlr/java/pascal.g:375:     k==1:IDENT
+./scratch/antlr/java/pascal.g:375:     k==2:ASSIGN
+./scratch/antlr/java/pascal.g:380: warning:nondeterminism between alts 2 and 3 of block upon
+./scratch/antlr/java/pascal.g:380:     k==1:IDENT
+./scratch/antlr/java/pascal.g:380:     k==2:POINTER
+./scratch/antlr/java/pascal.g:466: warning:nondeterminism between alts 1 and 2 of block upon
+./scratch/antlr/java/pascal.g:466:     k==1:IDENT
+./scratch/antlr/java/pascal.g:466:     k==2:COMMA,RPAREN,SEMI,EQUAL,PLUS,MINUS,DOTDOT,RBRACK,"of","end",NOT_EQUAL,LT,LE,GE,GT,"in","or",STAR,SLASH,"div","mod","and","then","else","do","until","to","downto"
+./scratch/antlr/java/pascal.g:466: warning:nondeterminism between alts 1 and 4 of block upon
+./scratch/antlr/java/pascal.g:466:     k==1:IDENT
+./scratch/antlr/java/pascal.g:466:     k==2:COMMA,RPAREN,SEMI,EQUAL,PLUS,MINUS,DOTDOT,RBRACK,"of","end",NOT_EQUAL,LT,LE,GE,GT,"in","or",STAR,SLASH,"div","mod","and","then","else","do","until","to","downto"
+./scratch/antlr/java/pascal.g:466: warning:nondeterminism between alts 2 and 4 of block upon
+./scratch/antlr/java/pascal.g:466:     k==1:IDENT
+./scratch/antlr/java/pascal.g:466:     k==2:COMMA,RPAREN,SEMI,EQUAL,PLUS,MINUS,DOTDOT,RBRACK,"of","end",NOT_EQUAL,LT,LE,GE,GT,"in","or",STAR,SLASH,"div","mod","and","then","else","do","until","to","downto"
+ANTLR Parser Generator   Version 2.7.2   1989-2003 jGuru.com
+ANTLR Parser Generator   Version 2.7.2   1989-2003 jGuru.com
+ANTLR Parser Generator   Version 2.7.2   1989-2003 jGuru.com
+./scratch/antlr/java/pascal.g:520: warning:nondeterminism between alts 1 and 2 of block upon
+./scratch/antlr/java/pascal.g:520:     k==1:IDENT
+./scratch/antlr/java/pascal.g:520:     k==2:DOT,COMMA,RPAREN,LBRACK,POINTER
+./scratch/antlr/java/pascal.g:520: warning:nondeterminism between alts 1 and 3 of block upon
+./scratch/antlr/java/pascal.g:520:     k==1:IDENT
+./scratch/antlr/java/pascal.g:520:     k==2:COMMA,RPAREN
+./scratch/antlr/java/pascal.g:520: warning:nondeterminism between alts 1 and 4 of block upon
+./scratch/antlr/java/pascal.g:520:     k==1:IDENT
+./scratch/antlr/java/pascal.g:520:     k==2:COMMA,RPAREN
+./scratch/antlr/java/pascal.g:520: warning:nondeterminism between alts 2 and 3 of block upon
+./scratch/antlr/java/pascal.g:520:     k==1:IDENT
+./scratch/antlr/java/pascal.g:520:     k==2:COMMA,RPAREN
+ANTLR Parser Generator   Version 2.7.2   1989-2003 jGuru.com
+ANTLR Parser Generator   Version 2.7.2   1989-2003 jGuru.com
+ANTLR Parser Generator   Version 2.7.2   1989-2003 jGuru.com
+./scratch/antlr/java/pascal.g:520: warning:nondeterminism between alts 2 and 4 of block upon
+./scratch/antlr/java/pascal.g:520:     k==1:IDENT
+./scratch/antlr/java/pascal.g:520:     k==2:COMMA,RPAREN
+./scratch/antlr/java/pascal.g:520: warning:nondeterminism between alts 3 and 4 of block upon
+./scratch/antlr/java/pascal.g:520:     k==1:IDENT
+./scratch/antlr/java/pascal.g:520:     k==2:COMMA,RPAREN
+./scratch/antlr/java/pascal.g:559:7: warning:nondeterminism between alts 1 and 2 of block upon
+./scratch/antlr/java/pascal.g:559:7:     k==1:"else"
+./scratch/antlr/java/pascal.g:559:7:     k==2:SEMI,IDENT,NUM_INT,"end","case","goto","begin","if","else","while","repeat","until","for","with"
+ANTLR Parser Generator   Version 2.7.2   1989-2003 jGuru.com
+ANTLR Parser Generator   Version 2.7.2   1989-2003 jGuru.com
+ANTLR Parser Generator   Version 2.7.2   1989-2003 jGuru.com
+error: grammar TinyCParser not defined
+ANTLR Parser Generator   Version 2.7.2   1989-2003 jGuru.com
+ANTLR Parser Generator   Version 2.7.2   1989-2003 jGuru.com
+ANTLR Parser Generator   Version 2.7.2   1989-2003 jGuru.com
+ANTLR Parser Generator   Version 2.7.2   1989-2003 jGuru.com
+ANTLR Parser Generator   Version 2.7.2   1989-2003 jGuru.com
+ANTLR Parser Generator   Version 2.7.2   1989-2003 jGuru.com
+ANTLR Parser Generator   Version 2.7.2   1989-2003 jGuru.com
+JavaTokenTypes.txt:1:1: expecting ID, found 'null'
+Exiting due to errors.
+ANTLR Parser Generator   Version 2.7.2   1989-2003 jGuru.com
+ANTLR Parser Generator   Version 2.7.2   1989-2003 jGuru.com
+ANTLR Parser Generator   Version 2.7.2   1989-2003 jGuru.com
+ANTLR Parser Generator   Version 2.7.2   1989-2003 jGuru.com
+ANTLR Parser Generator   Version 2.7.2   1989-2003 jGuru.com
+ANTLR Parser Generator   Version 2.7.2   1989-2003 jGuru.com
+ANTLR Parser Generator   Version 2.7.2   1989-2003 jGuru.com
+ANTLR Parser Generator   Version 2.7.2   1989-2003 jGuru.com
+ANTLR Parser Generator   Version 2.7.2   1989-2003 jGuru.com
+error: grammar TinyCParser not defined
+ANTLR Parser Generator   Version 2.7.2   1989-2003 jGuru.com
+ANTLR Parser Generator   Version 2.7.2   1989-2003 jGuru.com
+./scratch/antlr/cpp/treewalk.g:28:17: warning:nondeterminism between alts 1 and 2 of block upon
+./scratch/antlr/cpp/treewalk.g:28:17:     k==1:"else"
+ANTLR Parser Generator   Version 2.7.2   1989-2003 jGuru.com
+The invoked method throw an exception: not a big deal if the test has finished
+ANTLR Parser Generator   Version 2.7.2   1989-2003 jGuru.com
+ANTLR Parser Generator   Version 2.7.2   1989-2003 jGuru.com
+The invoked method throw an exception: not a big deal if the test has finished
+The invoked method throw an exception: not a big deal if the test has finished
+./scratch/antlr/java/TinyBasicTreeWalker.g:86:17: warning:Rule 'assign_statement' returns a value
+The invoked method throw an exception: not a big deal if the test has finished
