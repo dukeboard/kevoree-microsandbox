@@ -51,7 +51,7 @@ public class CGroupDeployer extends FromFileDeployer implements ModelListener {
     public void start() {
         modelService.registerModelListener(this);
 
-        if (log_file_for_experiments.isEmpty()) {
+        if (log_file_for_experiments == null || log_file_for_experiments.isEmpty()) {
             if (logOutputStream == null)
                 logOutputStream = System.err;
         } else try {
@@ -60,7 +60,7 @@ public class CGroupDeployer extends FromFileDeployer implements ModelListener {
             e.printStackTrace();
         }
 
-        if (KevScriptToDeploy.isEmpty())
+        if (KevScriptToDeploy==null || KevScriptToDeploy.isEmpty())
             return;
 
         deployerStrategy = SlaveRuntimeDeployerFactory.get(CRIU_Based_Deployment ?
