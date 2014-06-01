@@ -36,22 +36,43 @@ public class RunningExternalJarAppComponent extends AbstractComponentType
     private String arg;
     private long delayTime;
 
+    protected static class ExitException1 extends SecurityException
+    {
+        public final int status;
+        public ExitException1(int status)
+        {
+            super("There is no escape!");
+            this.status = status;
+        }
+    }
+
+    private static class NoExitSecurityManager extends SecurityManager {
+        @Override
+        public void checkExit(int status) {
+            super.checkExit(status);
+            throw new ExitException1( status);
+        }
+    }
+
     class WekaExecuter implements Runnable {
 
         @Override
         public void run() {
             long timeBefore = 0;
             try {
-                Thread.sleep(delayTime);
+                Thread.sleep(delayTime * 1000);
                 Class<?> cl = loader.loadClass(test);
                 Method method = cl.getMethod("main", new Class[]{String[].class});
 
                 String[] args = arg.split(" ");
-                timeBefore = System.currentTimeMillis();
-                method.invoke(null,new Object[]{args});
+                timeBefore = System.nanoTime();
+//                System.setSecurityManager(new NoExitSecurityManager());
+                method.invoke(null, new Object[]{args});
 
 
-            } catch (ClassNotFoundException e) {
+            } catch (ExitException1 e) {
+                System.err.println(e.getMessage() + " status " + e.status);
+            }catch (ClassNotFoundException e) {
 //                e.printStackTrace();
             } catch (IllegalAccessException e) {
 //                e.printStackTrace();
@@ -59,7 +80,7 @@ public class RunningExternalJarAppComponent extends AbstractComponentType
 //                e.printStackTrace();
             } catch (InvocationTargetException e) {
 //                e.printStackTrace();
-                System.err.println("Not a big deal if the test has finished");
+                System.err.println("The invoked method throw an exception: not a big deal if the test has finished");
             } catch (InterruptedException e) {
 //                e.printStackTrace();
             }
@@ -67,11 +88,12 @@ public class RunningExternalJarAppComponent extends AbstractComponentType
 
             }
             finally {
-                long consumedTime = System.currentTimeMillis() - timeBefore;
+//                System.setSecurityManager(null);
+                long consumedTime = System.nanoTime() - timeBefore;
                 System.out.println("============================================");
-                System.out.println(" Time taken to execute : " + consumedTime);
+                System.out.printf(" Execution Time: %f seconds\n", consumedTime/1000000000.0);
                 System.out.println("============================================");
-                System.exit(0);
+//                System.exit(0);
             }
         }
     }

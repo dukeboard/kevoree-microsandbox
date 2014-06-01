@@ -6,8 +6,8 @@ addRepo "http://repo.maven.apache.org/maven2"
 
 //merge "mvn:org.kevoree.corelibrary.sky/org.kevoree.library.sky.minicloud/2.0.4"
 
-merge 'mvn:org.kevoree.microsandbox/org.kevoree.microsandbox.javasenode/1.0-SNAPSHOT'
-merge 'mvn:org.kevoree.microsandbox/org.kevoree.microsandbox.monitoring/1.0-SNAPSHOT'
+merge 'mvn:org.kevoree.microsandbox/org.kevoree.microsandbox.javasenode/{project.version}'
+merge 'mvn:org.kevoree.microsandbox/org.kevoree.microsandbox.monitoring/{project.version}'
 
 
 //addNode node0 : MiniCloudNode { coreLogLevel="WARN",logLevel="WARN"}
@@ -33,9 +33,9 @@ addComponent monitoringComponent@node0 //monitoredNode
     fineGrainedStrategy='single-component'
 }
 
-merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.defaultChannels/2.0.4'
-merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.jexxus/2.0.4'
-merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.camel/2.0.4'
+merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.defaultChannels/{kevoree.corelibrary.version}'
+merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.jexxus/{kevoree.corelibrary.version}'
+merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.camel/{kevoree.corelibrary.version}'
 
 merge "mvn:org.kevoree.microsandbox.experiment/copter-video/1.0.0-SNAPSHOT"
 
@@ -62,14 +62,6 @@ merge "mvn:org.kevoree.microsandbox.experiment.fault.memory/webBrowser/1.0.0-SNA
 merge "mvn:org.kevoree.microsandbox.experiment.fault.memory/wsServer/1.0.0-SNAPSHOT"
 merge "mvn:org.kevoree.microsandbox.experiment.fault.memory/webbitHTTPServer/1.0.0-SNAPSHOT"
 merge "mvn:org.kevoree.microsandbox.experiment.fault.memory/webSocketClientHandler/1.0.0-SNAPSHOT"
-
-// merge "mvn:org.kevoree.microsandbox.experiment.fault.interaction/followManager/1.0.0-SNAPSHOT"
-// merge "mvn:org.kevoree.microsandbox.experiment.fault.interaction/followResource/1.0.0-SNAPSHOT"
-// merge "mvn:org.kevoree.microsandbox.experiment.fault.interaction/videoViewer/1.0.0-SNAPSHOT"
-// merge "mvn:org.kevoree.microsandbox.experiment.fault.interaction/webBrowser/1.0.0-SNAPSHOT"
-// merge "mvn:org.kevoree.microsandbox.experiment.fault.interaction/wsServer/1.0.0-SNAPSHOT"
-// merge "mvn:org.kevoree.microsandbox.experiment.fault.interaction/webbitHTTPServer/1.0.0-SNAPSHOT"
-// merge "mvn:org.kevoree.microsandbox.experiment.fault.interaction/webSocketClientHandler/1.0.0-SNAPSHOT"
 
 // TODO this component must be located on another node + replace the url by a http one
 addComponent mediaSender@node0 : FakeCopterMediaSender { url = 'http://download.oracle.com/otndocs/products/javafx/JavaRap/prog_index.m3u8'}
@@ -148,80 +140,22 @@ bind FollowMan511.ws@node0 => defSERVIC618
 bind javaFXWebBrowser.handle@node0 => webSocketHandlerMessage
 bind websockletJavaFXHandler.handle@node0 => webSocketHandlerMessage
 
+addComponent reasoner0@node0 : ResourceAwareReasoner {
+}
+
+addComponent rankerBasedHeuristicComponent0@node0 : NumberFailureBasedHeuristicComponent {
+
+}
+
+addChannel defMSGT_reasoning : defMSG {}
+bind reasoner0.eventHandler@node0 => defMSGT_reasoning
+bind monitoringComponent.reasoner@node0 => defMSGT_reasoning
+
+addChannel CamelNett280 : CamelNettyService
+bind rankerBasedHeuristicComponent0.ranking@node0 => CamelNett280
+bind monitoringComponent.ranking@node0 => CamelNett280
+updateDictionary defMSGT_reasoning
+updateDictionary CamelNett280
+
 addGroup group12081044961:BasicGroup
 addToGroup group12081044961 node0
-
-//addComponent mediaSender@node0 : FakeCopterMediaSender { url = 'http://download.oracle.com/otndocs/products/javafx/JavaRap/prog_index.m3u8'}
-
-//addComponent WsServer650@monitoredNode : WsServer {
-//    port='8092',
-//    cpu_wall_time = '0',
-//    memory_max_size = '0',
-//    throughput_msg_per_second='all=0;service=0'
-//}
-//addComponent SprayWebS142@monitoredNode : WebbitHTTPServer {
-//    port='9500',
-//    cpu_wall_time = '0',
-//    memory_max_size = '0',
-//    throughput_msg_per_second='all=0;service=0'
-//}
-
-//addComponent Resources407@monitoredNode : ResourcesPage {
-//    urlPattern='/media/',
-//    patternToRemove = '/media/',
-
-//}
-//addComponent FollowMan511@monitoredNode : FollowManager {
-//    urlPattern='/',
-//    current='jed'
-//    cpu_wall_time = '0',
-//    memory_max_size = '0',
-//    throughput_msg_per_second='all=0;service=0'
-//}
-
-//addComponent javaFXWebBrowser@monitoredNode : JavaFXWebBrowser {
-//    cpu_wall_time = '0',
-//    memory_max_size = '0',
-//    throughput_msg_per_second='all=0;service=0'
-//}
-//addComponent websockletJavaFXHandler@monitoredNode : WebSocketClientHandler {
-//    cpu_wall_time = '0',
-//    memory_max_size = '0',
-//    throughput_msg_per_second='all=0;service=0'
-//}
-
-//addComponent  videoDisplay@monitoredNode : JavaFXVideoDisplayFaultyMemory {
-//    cpu_wall_time = '0',
-//    memory_max_size = '0',
-//    throughput_msg_per_second='all=0;service=0'
-//}
-
-//addChannel channelMediaSender : CamelNetty
-
-//addChannel defSERVIC618 : defSERVICE
-//addChannel defMSG472 : defMSG
-//addChannel defMSG222 : defMSG
-//addChannel webSocketHandlerMessage : defMSG
-
-//bind mediaSender.media@node0 => channelMediaSender
-//bind videoDisplay.media@monitoredNode => channelMediaSender
-
-//bind SprayWebS142.request@monitoredNode => defMSG472
-//bind SprayWebS142.response@monitoredNode => defMSG222
-
-//bind FollowMan511.request@monitoredNode => defMSG472
-//bind FollowMan511.content@monitoredNode => defMSG222
-
-//bind Resources407.request@monitoredNode => defMSG472
-//bind Resources407.content@monitoredNode => defMSG222
-
-//bind WsServer650.service@monitoredNode => defSERVIC618
-//bind FollowMan511.ws@monitoredNode => defSERVIC618
-
-//bind javaFXWebBrowser.handle@monitoredNode => webSocketHandlerMessage
-//bind websockletJavaFXHandler.handle@monitoredNode => webSocketHandlerMessage
-
-//updateDictionary channelMediaSender{port = "10000"}@node0,{port = "10001"}@monitoredNode
-
-//addGroup group1208104496:BasicGroup
-//addToGroup group1208104496 node0

@@ -25,8 +25,8 @@ class PROCESSBasedStrategy implements SlaveRuntimeDeployer {
                     "-Dthread.control.library="+System.getProperty("thread.control.library"),
                     "-Dnode.bootstrap="+fileName,
                     "-Xbootclasspath/p:"+ path +"ext-rt.jar:"
-                            + path + "shared-res-1.0-SNAPSHOT.jar",
-                    "-javaagent:" + path + "ext-agent1.0-SNAPSHOT.jar",
+                            + path + "shared-res-1.1.jar",
+                    "-javaagent:" + path + "ext-agent1.1.jar",
                     String.format("-Dnode.name=%s", nodeName),
                     "-jar",
                     jarPath);
