@@ -7,6 +7,7 @@ import org.kevoree.log.Log;
 import org.kevoree.microsandbox.api.contract.impl.CPUMemoryContractedImpl;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -79,7 +80,8 @@ public class RunningDacapoComponent extends CPUMemoryContractedImpl {
     public void start() {
         try {
             FlexyClassLoader ll = (FlexyClassLoader)this.getClass().getClassLoader();
-            ll.load(new File(dacapo_path).toURI().toURL());
+            ll.load(new FileInputStream(new File(dacapo_path).toURI().toURL().getFile()));
+//            ll.load();
 
             loader = ll;//new MyLoader(new URL[]{new File(path).toURI().toURL()}, this.getClass().getClassLoader());
         } catch (MalformedURLException e) {

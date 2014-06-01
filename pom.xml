@@ -15,8 +15,8 @@
         <kevoree.version>3.5.4</kevoree.version>
         <kevoree.library.version>3.5.2</kevoree.library.version>-->
         <kotlin.version>0.7.271</kotlin.version>
-        <kevoree.version>3.5.5-SNAPSHOT</kevoree.version>
-        <kevoree.library.version>3.5.3-SNAPSHOT</kevoree.library.version>
+        <kevoree.version>3.5.6</kevoree.version>
+        <kevoree.library.version>3.5.3</kevoree.library.version>
         <kevoree.komponents.version>1.1.0-SNAPSHOT</kevoree.komponents.version>
     </properties>
 
