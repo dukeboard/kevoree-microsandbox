@@ -12,6 +12,7 @@ if [ ! -d $2 ]; then
 fi
 
 IFS=$'\n'
+CRIU_APP='/home/inti/Downloads/criu-1.2/criu'
 
 ready_to_dump() {
 	local c
@@ -27,7 +28,7 @@ close_ports() {
 	let c=0
 	for line in $(lsof -a -p $1 -i | grep java | grep $1 | grep CLOSE_WAIT) ; do	
 		socketID=`echo $line | awk '{print $4}' | cut -d "u" -f 1`
-		../../Downloads/criu-1.2/criu exec -t $1 close $socketID &> /dev/null
+		${CRIU_APP} exec -t $1 close $socketID &> /dev/null
 		echo "Socket $socketID with index $c"
 		let c=c+1
 	done
@@ -46,4 +47,4 @@ c=`close_ports $1`
 echo "$c sockets were closed"
 
 echo "Dumping process with id $1"
-../../Downloads/criu-1.2/criu dump -t $1 -D $2 --tcp-established -v2 -o dump.log && echo OK
+${CRIU_APP} dump -t $1 -D $2 --tcp-established -v2 -o dump.log && echo OK
