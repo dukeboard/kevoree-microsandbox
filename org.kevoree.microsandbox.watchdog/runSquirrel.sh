@@ -1,5 +1,11 @@
 #!/bin/sh
 
+# Usage
+# Use this if you want to use Squirrel to isolate components in CPU containers and
+# processes to isolate components in memory containers.
+# No memory instrumentation is used
+#
+
 ./createPathCPU.sh
 
 criu=false

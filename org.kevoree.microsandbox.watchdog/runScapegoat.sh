@@ -1,5 +1,10 @@
 #!/bin/sh
 
+# Usage
+# Use this if you want to use Scapegoat for CPU and memory monitoring.
+# Instrumentation is used
+#
+
 criu=false
 if [ $# -gt 2 ]; then
 	criu=$3

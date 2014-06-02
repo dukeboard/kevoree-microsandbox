@@ -1,5 +1,14 @@
 #!/bin/sh
 
+# Usage
+# Use this if you want to use Squirrel to isolate components in CPU containers and
+# memory instrumentation to monitor memory consumption.
+# This is the first approach we are proposing. Just remeber that the behaviour also depends on
+# the kevsscripts you define, for instance: Using contracts regarding resource consumption and
+# the kind of components and nodetype you use.
+# It's pretty ugly (FIXME)
+#
+
 ./createPathCPU.sh
 
 criu=false
