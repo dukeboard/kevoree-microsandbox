@@ -1,8 +1,0 @@
-// $ANTLR 2.7.2: javalex.g -> JavaTokenTypes.txt$
-Java    // output token vocab name
-JAVADOC_OPEN=4
-JAVADOC_CLOSE=5
-INT="int"=6
-ID=7
-SEMI=8
-WS=9

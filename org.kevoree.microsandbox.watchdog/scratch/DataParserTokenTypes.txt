@@ -1,4 +1,0 @@
-// $ANTLR 2.7.2: data.g -> DataParserTokenTypes.txt$
-DataParser    // output token vocab name
-SHORT=4
-STRING=5

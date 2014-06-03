@@ -1,7 +1,0 @@
-// $ANTLR 2.7.2: parser1.g -> SimpleParserTokenTypes.txt$
-SimpleParser    // output token vocab name
-WS_=4
-A=5
-B=6
-C=7
-D=8

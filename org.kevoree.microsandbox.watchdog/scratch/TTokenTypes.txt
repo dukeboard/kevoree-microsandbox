@@ -1,6 +1,0 @@
-// $ANTLR 2.7.2: t.g -> TTokenTypes.txt$
-T    // output token vocab name
-P=4
-BR=5
-NEWLINE=6
-TAB=7

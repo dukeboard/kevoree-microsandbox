@@ -1,6 +1,0 @@
-// $ANTLR 2.7.2: unicode.g -> LTokenTypes.txt$
-L    // output token vocab name
-ID=4
-WS=5
-ID_START_LETTER=6
-ID_LETTER=7

@@ -1,9 +1,0 @@
-// $ANTLR 2.7.2: links.g -> LinkExtractorTokenTypes.txt$
-LinkExtractor    // output token vocab name
-AHREF=4
-IMG=5
-ATTR=6
-WORD=7
-STRING=8
-WS=9
-SCARF=10
