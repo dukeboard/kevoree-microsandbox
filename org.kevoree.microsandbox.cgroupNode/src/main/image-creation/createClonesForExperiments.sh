@@ -56,12 +56,15 @@ fi
 cp -f createImages.sh $1
 cp -f createSingleClone.sh $1
 cp -f dump.sh $1
+cp -f restore.sh $1
 cp -f newns.c $1
+cp -f ReplaceVariable.java $1
 
 previous=`pwd`
 cd $1
 
 gcc -o newns newns.c
+javac ReplaceVariable.java
 ./createImages.sh $2
 
 cd ${previous}

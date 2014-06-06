@@ -9,9 +9,9 @@ import org.kevoree.api.ModelService;
 import org.kevoree.api.handler.ModelListener;
 import org.kevoree.cloner.DefaultModelCloner;
 import org.kevoree.kevscript.KevScriptEngine;
-import org.kevoree.komponents.helpers.SynchronizedUpdateCallback;
 import org.kevoree.log.Log;
 import org.kevoree.microsandbox.cgroupNode.CGroupsNode;
+import org.kevoree.microsandbox.cgroupNode.helper.SynchronizedUpdateCallback;
 
 import java.io.*;
 import java.util.*;
@@ -202,6 +202,7 @@ public class CGroupDeployer extends FromFileDeployer implements ModelListener {
 //            }
             SynchronizedUpdateCallback callback = new SynchronizedUpdateCallback();
             callback.initialize();
+            System.out.printf("%s %s\n", modelService, model);
             modelService.update(model, callback);
             callback.waitForResult(5000);
         }
@@ -233,9 +234,10 @@ public class CGroupDeployer extends FromFileDeployer implements ModelListener {
                     if (count == 0) continue;
                     String newName = "virtualNode" + count;
 //                    Log.info("\t\tHERE {} and then it goes to {}", count, newName);
-                    script += String.format("addNode %s : %s\n", newName, CGroupsNode.class.getSimpleName()/*CGroupsNode.class.getSimpleName()*/);
-                    script += String.format("moveComponent %s@%s => %s\n",
-                            instance.getName(), nodeName, newName);
+                    script += String.format("add %s : %s\n", newName, CGroupsNode.class.getSimpleName());
+
+                    script += String.format("move %s.%s %s\n",
+                            nodeName, instance.getName(), newName);
                     nodesToCreate.put(instance.getName(), newName);
                 }
 
@@ -256,17 +258,19 @@ public class CGroupDeployer extends FromFileDeployer implements ModelListener {
         String reasonerName = "r_" + nodeName;
         String monitoringName = "mc_" + nodeName;
         String channelName = nodeName + "defMSGT_reasoning";
-        script += String.format("addComponent %s@%s : %s{ adaptiveMonitoring='false' }\n",
-                reasonerName, nodeName, "MonitoringComponent");
-        script += String.format("addComponent %s@%s : NumberFailureBasedHeuristicComponent\n",
+        script += String.format("add %s.%s : %s\n",
+                nodeName, reasonerName, "MonitoringComponent");
+        script += String.format("set %s.%s.adaptiveMonitoring = 'false'", nodeName, reasonerName);
+
+        script += String.format("add %s@%s : NumberFailureBasedHeuristicComponent\n",
                 monitoringName, nodeName);
-        script += String.format("addChannel %s : CamelNettyService\n", channelName + "1");
-        script += String.format("bind %s.getRankingOrder@%s => %s\n", reasonerName, nodeName, channelName+ "1");
-        script += String.format("bind %s.getRankingOrder@%s => %s\n", monitoringName, nodeName, channelName+ "1");
+        script += String.format("add %s : CamelNettyService\n", channelName + "1");
+        script += String.format("bind %s.%s.getRankingOrder %s\n", nodeName, reasonerName, channelName+ "1");
+        script += String.format("bind %s.%s.getRankingOrder %s\n", nodeName, monitoringName, channelName+ "1");
 //        script += String.format("updateDictionary %s\n", channelName+ "1");
-        script += String.format("addChannel %s : CamelNettyService\n", channelName + "2");
-        script += String.format("bind %s.triggerMonitoringEvent@%s => %s\n", reasonerName, nodeName, channelName+ "2");
-        script += String.format("bind %s.triggerMonitoringEvent@%s => %s\n", monitoringName, nodeName, channelName+ "2");
+        script += String.format("add %s : CamelNettyService\n", channelName + "2");
+        script += String.format("bind %s.%s.triggerMonitoringEvent %s\n", nodeName, reasonerName, channelName+ "2");
+        script += String.format("bind %s.%s.triggerMonitoringEvent %s\n", nodeName, monitoringName, channelName+ "2");
 //        script += String.format("updateDictionary %s\n", channelName+ "2");
 
         // FIXME maybe we need to fix port parameter for the channel
@@ -350,7 +354,6 @@ public class CGroupDeployer extends FromFileDeployer implements ModelListener {
             for (ComponentInstance componentInstance : node.getComponents()) {
                 buffer.append("add ").append(nodeName).append(".").append(componentInstance.getName()).append(" : ").append(componentInstance.getTypeDefinition().getName()).append("\n");
                 exportDictionary(componentInstance, buffer);
-                buffer.append("}\n");
             }
         }
 
@@ -504,23 +507,42 @@ public class CGroupDeployer extends FromFileDeployer implements ModelListener {
                     buffer.append(channel.getName()).append(".").append(value.getName()).append(" = \"").append(value.getValue()).append("\"\n");
                 }
             }
-            for (FragmentDictionary fragmentDictionary : channel.getFragmentDictionary()) {
-                for (DictionaryValue value : fragmentDictionary.getValues()) {
-
-                    buffer.append("set ");
-                    buffer.append(channel.getName()).append(".").append(value.getName()).append("/").append(fragmentDictionary.getName());
-                    if (value.getName().equalsIgnoreCase("port")) {
-                        // FIXME Ugly hack
-                        if (fragmentDictionary.getName().equals("node0")) {
-                            buffer.append(" = \"" + 10000 + "\"");
-                        } else
-                            buffer.append(" = \"" + port + "\"");
-                        port++;
-                    } else {
-                        buffer.append(" = \"").append(value.getValue()).append("\"\n");
-                    }
+            Set<String> visitedNodes = new HashSet<String>();
+            for (MBinding binding : channel.getBindings()) {
+                Port p = binding.getPort();
+                ComponentInstance comp = (ComponentInstance) p.eContainer();
+                ContainerNode node = (ContainerNode) comp.eContainer();
+                if (visitedNodes.contains(node.getName())) continue;
+                if (node.getName().startsWith(context.getNodeName())) {
+                    buffer.append(String.format("set %s.%s/%s = \"%d\"\n", channel.getName(), "port", node.getName(), 10000));
                 }
+                else {
+                    buffer.append(String.format("set %s.%s/%s = \"%d\"\n", channel.getName(), "port", node.getName(), port++));
+                }
+                visitedNodes.add(node.getName());
+//                binding.
+//                System.out.printf("\tttttt %s\n", binding.eContainer());
+//                if (binding.eContainer())
             }
+//            boolean b = true;
+//            while(b);
+//            for (FragmentDictionary fragmentDictionary : channel.getFragmentDictionary()) {
+//                for (DictionaryValue value : fragmentDictionary.getValues()) {
+//
+//                    buffer.append("set ");
+//                    buffer.append(channel.getName()).append(".").append(value.getName()).append("/").append(fragmentDictionary.getName());
+//                    if (value.getName().equalsIgnoreCase("port")) {
+//                        // FIXME Ugly hack
+//                        if (fragmentDictionary.getName().equals("node0")) {
+//                            buffer.append(" = \"" + 10000 + "\"");
+//                        } else
+//                            buffer.append(" = \"" + port + "\"");
+//                        port++;
+//                    } else {
+//                        buffer.append(" = \"").append(value.getValue()).append("\"\n");
+//                    }
+//                }
+//            }
         }
 
         return buffer.toString();

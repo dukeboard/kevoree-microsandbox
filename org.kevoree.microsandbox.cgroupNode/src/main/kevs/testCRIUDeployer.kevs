@@ -34,15 +34,15 @@ include mvn:org.kevoree.library.java:org.kevoree.library.java.javaNode:3.4.1
 include mvn:org.kevoree:org.kevoree.annotation.api:3.4.1
 include mvn:org.kevoree.library.java:org.kevoree.library.java.channels:3.4.1
 
-include mvn:org.kevoree.microsandbox:org.kevoree.microsandbox.cgroupNode:{project.version}
-include mvn:org.kevoree.microsandbox:org.kevoree.microsandbox.javasenode:{project.version}
+include mvn:org.kevoree.microsandbox:org.kevoree.microsandbox.cgroupNode:1.1
+include mvn:org.kevoree.microsandbox:org.kevoree.microsandbox.javasenode:1.1
 //include mvn:org.kevoree.corelibrary.javase:org.kevoree.library.javase.jexxus:{kevoree.corelibrary.version}
-include mvn:org.kevoree.microsandbox:org.kevoree.microsandbox.samples:{project.version}
+include mvn:org.kevoree.microsandbox:org.kevoree.microsandbox.samples:1.1
 
 
-add {node.name} : CGroupsNode/{project.version}
+add {node.name} : CGroupsNode/1.1
 set {node.name}.log = "info"
 set {node.name}.started = "true"
 
-add {node.name}.NodeNameRestarter : NodeNameRestarter/{project.version}
+add {node.name}.NodeNameRestarter : NodeNameRestarter/1.1
 set {node.name}.NodeNameRestarter.udp_port='{wakeup.port}'

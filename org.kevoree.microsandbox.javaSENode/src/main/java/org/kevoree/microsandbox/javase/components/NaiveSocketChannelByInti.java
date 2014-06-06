@@ -48,8 +48,8 @@ public class NaiveSocketChannelByInti implements ChannelDispatch {
     public void startp() {
         try {
             if (context.getNodeName().equals("node0")) {
-                portServer = parsePortNumber(context.getNodeName());
-                server = new TCPServer(portServer, this);
+                portServer = port;//parsePortNumber(context.getNodeName());
+                server = new TCPServer(port, this);
                 t_server = new Thread(server);
                 t_server.start();
             }
@@ -92,9 +92,10 @@ public class NaiveSocketChannelByInti implements ChannelDispatch {
     @Override
     public void dispatch(final Object payload, final Callback callback) {
         if (!channelContext.getRemotePortPaths().isEmpty()) {
+            ContainerRoot model = modelService.getCurrentModel().getModel();
             List<String> alreadySentToNodes = new ArrayList<String>();
             for (String remotePortPath : channelContext.getRemotePortPaths()) {
-                org.kevoree.Port port = modelService.getCurrentModel().getModel().findByPath(remotePortPath, org.kevoree.Port.class);
+                org.kevoree.Port port = model.findByPath(remotePortPath, org.kevoree.Port.class);
                 // only send data for provided ports
                 if (port != null && ((ComponentInstance) port.eContainer()).getProvided().contains(port)) {
                     ContainerNode remoteNode = (ContainerNode) port.eContainer().eContainer();
@@ -102,8 +103,8 @@ public class NaiveSocketChannelByInti implements ChannelDispatch {
                         try {
                             lock_sender.lock();
                             int portInteger = parsePortNumber(remoteNode.getName());
+                            logger.debug("Channel in node {} is trying to send to port {}", context.getNodeName(), portInteger);
                             TCPClient.send(payload, portInteger);
-//                        logger.info("Sending");
                         } catch (Exception e) {
                             logger.debug("Error while sending message to " + remoteNode.getName());
                         } finally {
@@ -118,8 +119,9 @@ public class NaiveSocketChannelByInti implements ChannelDispatch {
     }
 
     public Object dispatchLocal(Object payload) {
+        ContainerRoot model = modelService.getCurrentModel().getModel();
         for (Port p : channelContext.getLocalPorts()) {
-            org.kevoree.Port port = modelService.getCurrentModel().getModel().findByPath(p.getPath(), org.kevoree.Port.class);
+            org.kevoree.Port port = model.findByPath(p.getPath(), org.kevoree.Port.class);
             if (port != null && ((ComponentInstance) port.eContainer()).getProvided().contains(port)) {
                 p.send(payload);
             }

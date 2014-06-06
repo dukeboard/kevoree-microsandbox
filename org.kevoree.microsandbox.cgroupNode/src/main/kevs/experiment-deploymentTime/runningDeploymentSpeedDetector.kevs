@@ -26,105 +26,57 @@ include mvn:org.kevoree:org.kevoree.annotation.api:3.4.1
 include mvn:org.kevoree.library.java:org.kevoree.library.java.channels:3.4.1
 
 ////merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.jexxus/{kevoree.corelibrary.version}'
-include mvn:org.kevoree.microsandbox:org.kevoree.microsandbox.cgroupNode:{project.version}
-include mvn:org.kevoree.microsandbox:org.kevoree.microsandbox.javasenode:{project.version}
-include mvn:org.kevoree.microsandbox:org.kevoree.microsandbox.samples:{project.version}
-include mvn:org.kevoree.microsandbox:org.kevoree.microsandbox.slave0:{project.version}
-include mvn:org.kevoree.microsandbox:org.kevoree.microsandbox.slave1:{project.version}
-include mvn:org.kevoree.microsandbox:org.kevoree.microsandbox.slave2:{project.version}
-//include mvn:org.kevoree.microsandbox:org.kevoree.microsandbox.slave3:{project.version}
-//include mvn:org.kevoree.microsandbox:org.kevoree.microsandbox.slave4:{project.version}
-//include mvn:org.kevoree.microsandbox:org.kevoree.microsandbox.slave5:{project.version}
-//include mvn:org.kevoree.microsandbox:org.kevoree.microsandbox.slave6:{project.version}
-//include mvn:org.kevoree.microsandbox:org.kevoree.microsandbox.slave7:{project.version}
-//include mvn:org.kevoree.microsandbox:org.kevoree.microsandbox.slave8:{project.version}
-//include mvn:org.kevoree.microsandbox:org.kevoree.microsandbox.slave9:{project.version}
-//include mvn:org.kevoree.microsandbox:org.kevoree.microsandbox.slave10:{project.version}
-//include mvn:org.kevoree.microsandbox:org.kevoree.microsandbox.slave11:{project.version}
-//include mvn:org.kevoree.microsandbox:org.kevoree.microsandbox.slave12:{project.version}
-//include mvn:org.kevoree.microsandbox:org.kevoree.microsandbox.slave13:{project.version}
-//include mvn:org.kevoree.microsandbox:org.kevoree.microsandbox.slave14:{project.version}
+include mvn:org.kevoree.microsandbox:org.kevoree.microsandbox.cgroupNode:1.1
+include mvn:org.kevoree.microsandbox:org.kevoree.microsandbox.javasenode:1.1
+include mvn:org.kevoree.microsandbox:org.kevoree.microsandbox.samples:1.1
 
-//addRepo "http://maven.kevoree.org/daum/snapshots"
+include mvn:org.kevoree.microsandbox:org.kevoree.microsandbox.slave0:1.1
+include mvn:org.kevoree.microsandbox:org.kevoree.microsandbox.slave1:1.1
+include mvn:org.kevoree.microsandbox:org.kevoree.microsandbox.slave2:1.1
+//include mvn:org.kevoree.microsandbox:org.kevoree.microsandbox.slave3:1.1
+//include mvn:org.kevoree.microsandbox:org.kevoree.microsandbox.slave4:1.1
+//include mvn:org.kevoree.microsandbox:org.kevoree.microsandbox.slave5:1.1
+//include mvn:org.kevoree.microsandbox:org.kevoree.microsandbox.slave6:1.1
+//include mvn:org.kevoree.microsandbox:org.kevoree.microsandbox.slave7:1.1
+//include mvn:org.kevoree.microsandbox:org.kevoree.microsandbox.slave8:1.1
+//include mvn:org.kevoree.microsandbox:org.kevoree.microsandbox.slave9:1.1
+//include mvn:org.kevoree.microsandbox:org.kevoree.microsandbox.slave10:1.1
+//include mvn:org.kevoree.microsandbox:org.kevoree.microsandbox.slave11:1.1
+//include mvn:org.kevoree.microsandbox:org.kevoree.microsandbox.slave12:1.1
+//include mvn:org.kevoree.microsandbox:org.kevoree.microsandbox.slave13:1.1
+//include mvn:org.kevoree.microsandbox:org.kevoree.microsandbox.slave14:1.1
 
-//merge 'mvn:org.kevoree.microsandbox/org.kevoree.microsandbox.cgroupNode/{project.version}'
-//merge 'mvn:org.kevoree.microsandbox/org.kevoree.microsandbox.javasenode/{project.version}'
-////merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.jexxus/{kevoree.corelibrary.version}'
-//merge 'mvn:org.kevoree.microsandbox/org.kevoree.microsandbox.slave0/{project.version}'
-//merge 'mvn:org.kevoree.microsandbox/org.kevoree.microsandbox.slave1/{project.version}'
-//merge 'mvn:org.kevoree.microsandbox/org.kevoree.microsandbox.slave2/{project.version}'
-//merge 'mvn:org.kevoree.microsandbox/org.kevoree.microsandbox.slave3/{project.version}'
-//merge 'mvn:org.kevoree.microsandbox/org.kevoree.microsandbox.slave4/{project.version}'
-//merge 'mvn:org.kevoree.microsandbox/org.kevoree.microsandbox.slave5/{project.version}'
-//merge 'mvn:org.kevoree.microsandbox/org.kevoree.microsandbox.slave6/{project.version}'
-//merge 'mvn:org.kevoree.microsandbox/org.kevoree.microsandbox.slave7/{project.version}'
-//merge 'mvn:org.kevoree.microsandbox/org.kevoree.microsandbox.slave8/{project.version}'
-//merge 'mvn:org.kevoree.microsandbox/org.kevoree.microsandbox.slave9/{project.version}'
-//merge 'mvn:org.kevoree.microsandbox/org.kevoree.microsandbox.slave10/{project.version}'
-//merge 'mvn:org.kevoree.microsandbox/org.kevoree.microsandbox.slave11/{project.version}'
-//merge 'mvn:org.kevoree.microsandbox/org.kevoree.microsandbox.slave12/{project.version}'
-//merge 'mvn:org.kevoree.microsandbox/org.kevoree.microsandbox.slave13/{project.version}'
-//merge 'mvn:org.kevoree.microsandbox/org.kevoree.microsandbox.slave14/{project.version}'
-
-//merge 'mvn:org.kevoree.microsandbox/org.kevoree.microsandbox.SharedMemoryChannel/{project.version}'
-//merge "mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.fakeDomo/{kevoree.corelibrary.version}"
-//merge "mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.swingUI/{kevoree.corelibrary.version}"
-//merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.defaultChannels/{kevoree.corelibrary.version}'
-//merge 'mvn:org.kevoree.microsandbox/org.kevoree.microsandbox.monitoring/{project.version}'
-//merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.camel/{kevoree.corelibrary.version}'
-
-add node0 : CGroupsNode/{project.version}
+add node0 : CGroupsNode/1.1
 set node0.log = "info"
 set node0.started = "true"
-//addNode node0:CGroupsNode {
-//    coreLogLevel='DEBUG'
-//}
 
-add node0.cgroupDeployer : CGroupDeployer/{project.version}
-//addComponent cgroupDeployer@node0 : CGroupDeployer
+add node0.cgroupDeployer : CGroupDeployer
 
-add channel_notif: NaiveSocketChannelByInti/{project.version}
-//addChannel channel_notif : NaiveSocketChannelByInti
+add channel_notif: NaiveSocketChannelByInti
 
 bind node0.cgroupDeployer.startNotification channel_notif
-//bind cgroupDeployer.startNotification@node0 => channel_notif
 
-add node0.slave0 : Slave0/{project.version}
-add node0.slave1 : Slave1/{project.version}
-add node0.slave2 : Slave2/{project.version}
-//add node0.slave3 : Slave3/{project.version}
-//add node0.slave4 : Slave4/{project.version}
-//add node0.slave5 : Slave5/{project.version}
-//add node0.slave6 : Slave6/{project.version}
-//add node0.slave7 : Slave7/{project.version}
-//add node0.slave8 : Slave8/{project.version}
-//add node0.slave9 : Slave9/{project.version}
-//add node0.slave10 : Slave10/{project.version}
-//add node0.slave11 : Slave11/{project.version}
-//add node0.slave12 : Slave12/{project.version}
-//add node0.slave13 : Slave13/{project.version}
-//add node0.slave14 : Slave14/{project.version}
+add node0.slave0 : Slave0/1.1
+add node0.slave1 : Slave1/1.1
+add node0.slave2 : Slave2/1.1
+//add node0.slave3 : Slave3/1.1
+//add node0.slave4 : Slave4/1.1
+//add node0.slave5 : Slave5/1.1
+//add node0.slave6 : Slave6/1.1
+//add node0.slave7 : Slave7/1.1
+//add node0.slave8 : Slave8/1.1
+//add node0.slave9 : Slave9/1.1
+//add node0.slave10 : Slave10/1.1
+//add node0.slave11 : Slave11/1.1
+//add node0.slave12 : Slave12/1.1
+//add node0.slave13 : Slave13/1.1
+//add node0.slave14 : Slave14/1.1
 
-//addComponent slave0@node0 : Slave0
-//addComponent slave1@node0 : Slave1
-//addComponent slave2@node0 : Slave2
-//addComponent slave3@node0 : Slave3
-//addComponent slave4@node0 : Slave4
-//addComponent slave5@node0 : Slave5
-//addComponent slave6@node0 : Slave6
-//addComponent slave7@node0 : Slave7
-//addComponent slave8@node0 : Slave8
-//addComponent slave9@node0 : Slave9
-//addComponent slave10@node0 : Slave10
-//addComponent slave11@node0 : Slave11
-//addComponent slave12@node0 : Slave12
-//addComponent slave13@node0 : Slave13
-//addComponent slave14@node0 : Slave14
 
 bind node0.slave0.notifyStarted channel_notif
 bind node0.slave1.notifyStarted channel_notif
 bind node0.slave2.notifyStarted channel_notif
-//bind node0.slave3.notifyStarted channel_notif
+//  bind node0.slave3.notifyStarted channel_notif
 //bind node0.slave4.notifyStarted channel_notif
 //bind node0.slave5.notifyStarted channel_notif
 //bind node0.slave6.notifyStarted channel_notif
@@ -138,26 +90,9 @@ bind node0.slave2.notifyStarted channel_notif
 //bind node0.slave14.notifyStarted channel_notif
 
 
-//bind slave0.notifyStarted@node0 => channel_notif
-//bind slave1.notifyStarted@node0 => channel_notif
-//bind slave2.notifyStarted@node0 => channel_notif
-//bind slave3.notifyStarted@node0 => channel_notif
-//bind slave4.notifyStarted@node0 => channel_notif
-//bind slave5.notifyStarted@node0 => channel_notif
-//bind slave6.notifyStarted@node0 => channel_notif
-//bind slave7.notifyStarted@node0 => channel_notif
-//bind slave8.notifyStarted@node0 => channel_notif
-//bind slave9.notifyStarted@node0 => channel_notif
-//bind slave10.notifyStarted@node0 => channel_notif
-//bind slave11.notifyStarted@node0 => channel_notif
-//bind slave12.notifyStarted@node0 => channel_notif
-//bind slave13.notifyStarted@node0 => channel_notif
-//bind slave14.notifyStarted@node0 => channel_notif
-
 set channel_notif.port/node0 = '10000'
-//updateDictionary channel_notif{port='10000'}@node0
 
 //addGroup sync:BasicGroup
 //addToGroup sync node0
 
-}
+//}

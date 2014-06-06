@@ -75,7 +75,9 @@ public class FromFileDeployer {
             s= s.replace("{project.version}", System.getProperty("project.version"));
             s= s.replace("{kevoree.corelibrary.version}", System.getProperty("kevoree.corelibrary.version"));
             // FIXME modelService mustbeinitialized and so this class must be a component type or we need to provide an empty model instead of using ModelService
-            scriptEngine.execute(s, (ContainerRoot)new DefaultModelCloner().clone(modelService.getCurrentModel().getModel()));
+            ContainerRoot result = (ContainerRoot)new DefaultModelCloner().clone(modelService.getCurrentModel().getModel());
+            scriptEngine.execute(s, result);
+            return result;
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {

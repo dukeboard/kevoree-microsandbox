@@ -19,13 +19,13 @@ class CRIUStrategy implements SlaveRuntimeDeployer {
         DatagramSocket socket = null;
         try {
             // restore virtual machine
-            ProcessBuilder builder = new ProcessBuilder("/home/inti/tests/executingInCRIU/restore.sh",
+            ProcessBuilder builder = new ProcessBuilder("/home/inti/tests/executingInCRIU//K3/restore.sh",
                     nodeName);
 
 //            if (!Files.exists(Paths.get(nodeName))) {
 //                Files.createDirectory(Paths.get(nodeName));
 //            }
-            builder = builder.directory(new File("/home/inti/tests/executingInCRIU"));
+            builder = builder.directory(new File("/home/inti/tests/executingInCRIU/K3"));
 
             long ll = System.nanoTime();
 

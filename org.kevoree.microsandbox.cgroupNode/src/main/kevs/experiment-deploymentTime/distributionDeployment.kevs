@@ -15,32 +15,32 @@ include mvn:org.kevoree.library.java:org.kevoree.library.java.javaNode:3.4.1
 include mvn:org.kevoree:org.kevoree.annotation.api:3.4.1
 include mvn:org.kevoree.library.java:org.kevoree.library.java.channels:3.4.1
 
-include mvn:org.kevoree.microsandbox:org.kevoree.microsandbox.cgroupNode:{project.version}
-include mvn:org.kevoree.microsandbox:org.kevoree.microsandbox.javasenode:{project.version}
-include mvn:org.kevoree.microsandbox:org.kevoree.microsandbox.samples:{project.version}
+include mvn:org.kevoree.microsandbox:org.kevoree.microsandbox.cgroupNode:1.1
+include mvn:org.kevoree.microsandbox:org.kevoree.microsandbox.javasenode:1.1
+include mvn:org.kevoree.microsandbox:org.kevoree.microsandbox.samples:1.1
 
 //addRepo "http://maven.kevoree.org/daum/snapshots"
 
-//merge 'mvn:org.kevoree.microsandbox/org.kevoree.microsandbox.cgroupNode/{project.version}'
-//merge 'mvn:org.kevoree.microsandbox/org.kevoree.microsandbox.javasenode/{project.version}'
+//merge 'mvn:org.kevoree.microsandbox/org.kevoree.microsandbox.cgroupNode/1.1'
+//merge 'mvn:org.kevoree.microsandbox/org.kevoree.microsandbox.javasenode/1.1'
 ////merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.jexxus/{kevoree.corelibrary.version}'
-//merge 'mvn:org.kevoree.microsandbox/org.kevoree.microsandbox.samples/{project.version}'
+//merge 'mvn:org.kevoree.microsandbox/org.kevoree.microsandbox.samples/1.1'
 
 //merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.fakeDomo/{kevoree.corelibrary.version}'
 //merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.swingUI/{kevoree.corelibrary.version}'
 //merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.defaultChannels/{kevoree.corelibrary.version}'
-//merge 'mvn:org.kevoree.microsandbox/org.kevoree.microsandbox.monitoring/{project.version}'
+//merge 'mvn:org.kevoree.microsandbox/org.kevoree.microsandbox.monitoring/1.1'
 //merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.camel/{kevoree.corelibrary.version}'
 
-add node0 : CGroupsNode/{project.version}
+add node0 : CGroupsNode/1.1
 set node0.log = "info"
 set node0.started = "true"
 //addNode node0:CGroupsNode
 
-add node0.cgroupDeployer : CGroupDeployer/{project.version}
-set node0.cgroupDeployer.CRIU_Based_Deployment = '{use.criu}'
-set node0.cgroupDeployer.log_file_for_experiments = '{experiment.log}'
-set node0.cgroupDeployer.distributed_deployment = 'false'
+add node0.cgroupDeployer : CGroupDeployer/1.1
+set node0.cgroupDeployer.CRIU_Based_Deployment = 'true'
+set node0.cgroupDeployer.log_file_for_experiments = 'pepe.log'
+set node0.cgroupDeployer.distributed_deployment = 'true'
 set node0.cgroupDeployer.KevScriptToDeploy='/home/inti/programs/kevoree-microsandbox/org.kevoree.microsandbox.cgroupNode/src/main/kevs/experiment-deploymentTime/runningDeploymentSpeedDetector.kevs'
 
 //addComponent cgroupDeployer@node0 : CGroupDeployer {
@@ -50,7 +50,7 @@ set node0.cgroupDeployer.KevScriptToDeploy='/home/inti/programs/kevoree-microsan
 //    KevScriptToDeploy='/home/inti/programs/kevoree-microsandbox/org.kevoree.microsandbox.cgroupNode/src/main/kevs/experiment-deploymentTime/runningDeploymentSpeedDetector.kevs'
 //}
 
-add channel_notif: NaiveSocketChannelByInti/{project.version}
+add channel_notif: NaiveSocketChannelByInti/1.1
 //addChannel channel_notif : NaiveSocketChannelByInti
 
 bind node0.cgroupDeployer.startNotification channel_notif
@@ -59,9 +59,9 @@ bind node0.cgroupDeployer.startNotification channel_notif
 set channel_notif.port/node0 = '10000'
 //updateDictionary channel_notif{port='10000'}@node0
 
-add sync : WSGroup
-set sync.port/node0 = "9000"
-attach node0 sync
+//add sync : WSGroup
+//set sync.port/node0 = "9000"
+//attach node0 sync
 //addGroup sync:BasicGroup
 //addToGroup sync node0
 

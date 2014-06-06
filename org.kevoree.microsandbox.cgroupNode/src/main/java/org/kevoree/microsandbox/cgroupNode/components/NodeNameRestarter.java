@@ -2,9 +2,10 @@ package org.kevoree.microsandbox.cgroupNode.components;
 
 import org.kevoree.annotation.*;
 import org.kevoree.api.Context;
+import org.kevoree.api.handler.UpdateCallback;
 import org.kevoree.core.impl.KevoreeCoreBean;
-import org.kevoree.komponents.helpers.SynchronizedUpdateCallback;
 import org.kevoree.log.Log;
+import org.kevoree.microsandbox.cgroupNode.helper.SynchronizedUpdateCallback;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
@@ -30,7 +31,7 @@ public class NodeNameRestarter extends FromFileDeployer {
             try {
                 byte[] receiveData = new byte[1024];
                 DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
-                serverSocket = new DatagramSocket(udp_port/*9876*/);
+                serverSocket = new DatagramSocket(udp_port + 9875/*9876*/);
                 serverSocket.receive(receivePacket);
                 String sentence = new String(
                         receivePacket.getData(), receivePacket.getOffset(), receivePacket.getLength());
@@ -51,6 +52,7 @@ public class NodeNameRestarter extends FromFileDeployer {
 
                 SynchronizedUpdateCallback callback = new SynchronizedUpdateCallback();
                 callback.initialize();
+
                 modelService.update(getContainerRoot(lines[1]), callback);
                 callback.waitForResult(5000);
             } catch (SocketException e) {

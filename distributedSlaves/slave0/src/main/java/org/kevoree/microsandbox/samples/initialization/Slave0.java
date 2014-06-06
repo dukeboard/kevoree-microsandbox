@@ -27,9 +27,10 @@ public class Slave0 {
 
             @Override
             public void run() {
-                if (notifyStarted.getConnectedBindingsSize() > 0)
-                    notifyStarted.send(String.format("%s,%d", context.getNodeName(),l));
-                Log.info("Sending notification ******************** {}", l);
+                if (notifyStarted.getConnectedBindingsSize() > 0) {
+                    notifyStarted.send(String.format("%s,%d", context.getNodeName(), l));
+                    Log.info("Sending notification ******************** {} from {}", l, context.getNodeName());
+                }
             }
         }, 100);
     }

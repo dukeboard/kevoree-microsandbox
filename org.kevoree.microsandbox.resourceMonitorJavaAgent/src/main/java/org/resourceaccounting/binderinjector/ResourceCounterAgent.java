@@ -64,7 +64,7 @@ public class ResourceCounterAgent implements OnNewThreadNotifier.HandlerSet{
             @Override
             public void run() {
                 try {
-                    Thread.sleep(2000);
+                    Thread.sleep(1000);
                     globalInst.retransformClasses(Integer.class);
                     System.out.println("Retransforming the proxy class");
                 }
