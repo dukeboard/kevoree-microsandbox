@@ -1,5 +1,6 @@
 package org.kevoree.microsandbox.cgroupNode.components;
 
+import org.kevoree.ContainerRoot;
 import org.kevoree.annotation.*;
 import org.kevoree.api.Context;
 import org.kevoree.api.handler.UpdateCallback;
@@ -48,12 +49,12 @@ public class NodeNameRestarter extends FromFileDeployer {
 
                 serverSocket.close();
 
-                Log.info("BEFORE UPDATE MODEL NANOTIME {}", System.nanoTime());
 
+                ContainerRoot modelToDeploy = getContainerRoot(lines[1]);
+                Log.info("BEFORE UPDATE MODEL NANOTIME {}", System.nanoTime());
                 SynchronizedUpdateCallback callback = new SynchronizedUpdateCallback();
                 callback.initialize();
-
-                modelService.update(getContainerRoot(lines[1]), callback);
+                modelService.update(modelToDeploy, callback);
                 callback.waitForResult(5000);
             } catch (SocketException e) {
                 e.printStackTrace();

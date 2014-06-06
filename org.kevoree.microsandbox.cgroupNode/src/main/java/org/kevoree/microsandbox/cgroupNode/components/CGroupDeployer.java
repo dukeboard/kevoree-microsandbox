@@ -126,7 +126,8 @@ public class CGroupDeployer extends FromFileDeployer implements ModelListener {
             Log.info("Another Script:\n" + locura);
 
             try {
-                new KevScriptEngine().execute(locura, another);
+                if (locura != null && !locura.isEmpty())
+                    new KevScriptEngine().execute(locura, another);
 
 
                 final File file = File.createTempFile("kevModel", ".kevs");
@@ -139,7 +140,7 @@ public class CGroupDeployer extends FromFileDeployer implements ModelListener {
 
                 printModel("New model to deploy", another);
                 initialTime = System.nanoTime();
-                Log.info("INITIAL NANOTIME (REMEMBER TO REMOVE THIS) {}", initialTime);
+                Log.debug("INITIAL NANOTIME (REMEMBER TO REMOVE THIS) {}", initialTime);
 
                 totalForkTime = 0;
                 countForks = 0;
@@ -235,6 +236,8 @@ public class CGroupDeployer extends FromFileDeployer implements ModelListener {
                     String newName = "virtualNode" + count;
 //                    Log.info("\t\tHERE {} and then it goes to {}", count, newName);
                     script += String.format("add %s : %s\n", newName, CGroupsNode.class.getSimpleName());
+                    script += String.format("set %s.log = \"info\"\n", newName);
+                    script += String.format("set %s.started = \"true\"\n", newName);
 
                     script += String.format("move %s.%s %s\n",
                             nodeName, instance.getName(), newName);

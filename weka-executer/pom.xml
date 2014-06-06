@@ -10,6 +10,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>weka-executer</artifactId>
+    <version>1.1</version>
 
     <dependencies>
         <dependency>

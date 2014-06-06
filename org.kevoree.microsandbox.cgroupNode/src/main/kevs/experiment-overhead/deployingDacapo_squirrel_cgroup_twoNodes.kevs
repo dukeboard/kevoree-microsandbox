@@ -1,35 +1,52 @@
-//sample of KevScript configuration
+repo "http://repo1.maven.org/maven2/"
+include mvn:org.kevoree.library.java:org.kevoree.library.java.ws:3.4.1
+include mvn:org.kevoree.kcl:org.kevoree.kcl:7
+include mvn:org.kevoree:org.kevoree.maven.resolver:16
+include mvn:org.kevoree.log:org.kevoree.log:1
+include mvn:org.java-websocket:Java-WebSocket:1.3.0
+include mvn:org.kevoree.modeling:org.kevoree.modeling.microframework:1.9.11
+include mvn:org.kevoree:org.kevoree.kevscript:3.4.1
+include mvn:org.kevoree:org.kevoree.api:3.4.1
+include mvn:fr.inria.jfilter:jfilter-library:1.3
+include mvn:org.jetbrains.kotlin:kotlin-stdlib:0.6.1673
+include mvn:org.kevoree:org.kevoree.model:3.4.1
+include mvn:org.jetbrains.kotlin:kotlin-runtime:0.6.1673
+include mvn:org.kevoree.library.java:org.kevoree.library.java.javaNode:3.4.1
+include mvn:org.kevoree:org.kevoree.annotation.api:3.4.1
+include mvn:org.kevoree.library.java:org.kevoree.library.java.channels:3.4.1
 
-merge 'mvn:org.kevoree.microsandbox/org.kevoree.microsandbox.cgroupNode/{project.version}'
-merge 'mvn:org.kevoree.microsandbox/org.kevoree.microsandbox.javasenode/{project.version}'
-merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.jexxus/{kevoree.corelibrary.version}'
-merge 'mvn:org.kevoree.microsandbox/weka-executer/{project.version}'
+include mvn:org.kevoree.microsandbox:org.kevoree.microsandbox.cgroupNode:1.1
+include mvn:org.kevoree.microsandbox:org.kevoree.microsandbox.javasenode:1.1
+include mvn:org.kevoree.microsandbox:weka-executer:1.1
 
-addNode node0:CGroupsNode {
-    coreLogLevel='DEBUG'
-}
+add node0 : CGroupsNode/1.1
+set node0.log = "info"
+set node0.started = "true"
 
-addComponent cgroupDeployer@node0 : CGroupDeployer {
-//distributed_deployment = 'false'
-}
+//addNode node0:CGroupsNode {
+//    coreLogLevel='DEBUG'
+//}
 
-addComponent wekaExecuter@node0 : RunningExternalJarAppComponent {
-	jar_path = '/home/inti/Downloads/dacapo-9.12-bach.jar',
-	jar_main = 'Harness',
-	arguments = '-n 8 --no-validation -s small --scratch-directory directoryMagic0 lusearch',
-	delayTime = '5', // 5 seconds
-	memory_max_size = '1100',
-	cpu_wall_time = '90000000'
-}
+add node0.cgroupDeployer : CGroupDeployer
 
-addComponent wekaExecuter1@node0 : RunningExternalJarAppComponent {
-	jar_path = '/home/inti/Downloads/dacapo-9.12-bach.jar',
-	jar_main = 'Harness',
-	arguments = '-n 8 --no-validation -s small --scratch-directory directoryMagic1 lusearch',
-	delayTime = '5', // 5 seconds
-	memory_max_size = '1100',
-	cpu_wall_time = '90000000'
-}
+//addComponent cgroupDeployer@node0 : CGroupDeployer
 
-addGroup sync:BasicGroup
-addToGroup sync node0
+add node0.wekaExecuter0 : RunningExternalJarAppComponent/1.1
+set node0.wekaExecuter0.jar_path = '/home/inti/Downloads/dacapo-9.12-bach.jar'
+set node0.wekaExecuter0.jar_main = 'Harness'
+set node0.wekaExecuter0.argument = '-n 8 --no-validation -s small --scratch-directory directoryMagic0 lusearch'
+set node0.wekaExecuter0.delayTime = '5'
+set node0.wekaExecuter0.memory_max_size = '1100'
+set node0.wekaExecuter0.cpu_wall_time = '90000000'
+
+add node0.wekaExecuter1 : RunningExternalJarAppComponent/1.1
+set node0.wekaExecuter1.jar_path = '/home/inti/Downloads/dacapo-9.12-bach.jar'
+set node0.wekaExecuter1.jar_main = 'Harness'
+set node0.wekaExecuter1.argument = '-n 8 --no-validation -s small --scratch-directory directoryMagic1 lusearch'
+set node0.wekaExecuter1.delayTime = '5'
+set node0.wekaExecuter1.memory_max_size = '1100'
+set node0.wekaExecuter1.cpu_wall_time = '90000000'
+
+
+//addGroup sync:BasicGroup
+//addToGroup sync node0
