@@ -1,4 +1,4 @@
-package org.microsandbox.sample;
+package sample;
 
 import org.kevoree.annotation.*;
 import org.kevoree.microsandbox.api.contract.impl.CPUMemoryContractedImpl;
@@ -17,7 +17,7 @@ import java.net.URLClassLoader;
  * Time: 2:22 PM
  */
 @ComponentType
-public class RunningExternalJarAppComponent extends CPUMemoryContractedImpl {
+public class RunningExternalJarAppComponent2 extends CPUMemoryContractedImpl {
 
 
     @Param(optional = false)
@@ -37,6 +37,7 @@ public class RunningExternalJarAppComponent extends CPUMemoryContractedImpl {
         public void run() {
             long timeBefore = 0;
             try {
+                System.err.println("Executing thread ==========================" + this.getClass().getCanonicalName());
                 Class<?> cl = loader.loadClass(jar_main);
                 Method method = cl.getMethod("main", new Class[]{String[].class});
 
@@ -57,7 +58,6 @@ public class RunningExternalJarAppComponent extends CPUMemoryContractedImpl {
                 System.err.println("The invoked method throw an exception: not a big deal if the test has finished");
             }
             catch (Exception e) {
-                e.printStackTrace();
 
             }
             finally {
@@ -77,7 +77,7 @@ public class RunningExternalJarAppComponent extends CPUMemoryContractedImpl {
         public void run() {
             int c = 0;
             try {
-            Thread.sleep(delayTime * 1000);
+                Thread.sleep(delayTime * 1000);
                 loader = new URLClassLoader(new URL[]{new File(jar_path).toURI().toURL()}, this.getClass().getClassLoader());
             } catch (MalformedURLException e) {
                 e.printStackTrace();

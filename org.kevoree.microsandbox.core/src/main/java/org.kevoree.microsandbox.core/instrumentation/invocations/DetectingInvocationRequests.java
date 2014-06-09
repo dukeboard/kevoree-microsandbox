@@ -16,7 +16,7 @@ public class DetectingInvocationRequests extends ClassVisitor {
     private boolean conditionsToBeValidComponentPort;
 
     public DetectingInvocationRequests(ClassVisitor next) {
-        super(Opcodes.ASM4, next);
+        super(Opcodes.ASM5, next);
         className = "";
         conditionsToBeValidComponentPort = false;
     }

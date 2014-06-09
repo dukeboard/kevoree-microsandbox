@@ -45,8 +45,6 @@ public class CGroupsNode extends AbstractMonitoredNode<SharedKCLFactory>
         gcWatcher = new GCWatcher("gc_cycles.log");
         gcWatcher.register();
 
-        org.kevoree.NodeType node = modelService.getCurrentModel().getModel().findByPath(context.getPath(), org.kevoree.NodeType.class);
-
         threadCreated = new NewThreadCreated("kev/", description, context.getNodeName());
         OnNewThreadNotifier.getInstance().setHandler(threadCreated);
     }
@@ -112,11 +110,26 @@ public class CGroupsNode extends AbstractMonitoredNode<SharedKCLFactory>
 //            long eden = m.get("PS Eden Space").getUsed();
 //            long survivor = m.get("PS Survivor Space").getUsed();
 
+//                for (String name: m.keySet())
+//                    stream.printf("\tSpace !!!!!!!!!!!!!!!!!!!!! %s %d\n", name, m.get(name).getUsed());
+
                 String sOld = (m.containsKey("PS Old Gen"))? "PS Old Gen" : "Tenured Gen";
                 String sSurvivor = (m.containsKey("PS Survivor Space"))? "PS Survivor Space" : "Survivor Space";
 
                 long used = m.get(sOld).getUsed() + m.get(sSurvivor).getUsed();
                 long max = m.get(sOld).getMax() + m.get(sSurvivor).getMax();
+                if (m.containsKey("Metaspace")) {
+                    used += m.get("Metaspace").getUsed();
+                    max += m.get("Metaspace").getMax();
+                }
+                if (m.containsKey("Code Cache")) {
+                    used += m.get("Code Cache").getUsed();
+                    max += m.get("Code Cache").getMax();
+                }
+                if (m.containsKey("Compressed Class Space")) {
+                    used += m.get("Compressed Class Space").getUsed();
+                    max += m.get("Compressed Class Space").getMax();
+                }
                 stream.printf("%d bytes used out of %d\n", used, max);
                 if (used > maxUsed)
                 {

@@ -233,7 +233,7 @@
         <module>org.kevoree.microsandbox.SharedMemoryChannel</module>
         <module>org.kevoree.microsandbox.cgroupNode</module>
         <module>org.kevoree.microsandbox.monitoredNode</module>
-
+        <module>weka-executer2</module>
 
 
         <!--<module>microsandbox-experiment</module>-->

@@ -8,9 +8,11 @@ import org.objectweb.asm.util.CheckClassAdapter;
 import org.kevoree.microsandbox.core.instrumentation.io.NetworkAccessInstrumentation;
 import org.kevoree.microsandbox.core.instrumentation.memory.AddPrincipalIdentifier;
 import org.kevoree.microsandbox.core.instrumentation.memory.MemoryAllocationMethodInstrumentation;
+import org.objectweb.asm.util.TraceClassVisitor;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PrintWriter;
 
 /**
  * Created with IntelliJ IDEA.
@@ -26,13 +28,19 @@ public class InstrumenterCommand {
         ClassReader reader = new ClassReader(code);
         ClassWriter writer = new ClassWriter(reader, ClassWriter.COMPUTE_MAXS);
         ClassVisitor tmp = writer;
-//      tmp = new TraceClassVisitor(tmp, new PrintWriter(System.out));
-        //tmp = new CheckClassAdapter(tmp,true);
+
+//        if (className.equals("org/dacapo/harness/TestHarness")) {
+//            tmp = new TraceClassVisitor(tmp, new PrintWriter(System.out));
         tmp = new ResourceAccountingVisitor(tmp, instr_mem, instr_instr);
-        if (thread_creation)
+        if (thread_creation) {
+//            System.out.println("Adding the option to instrument thread calls");
             tmp = new ThreadCreationVisitor(tmp,
                     "java/lang/Integer",
                     "__reportNewThread__");
+        }
+
+//            tmp = new CheckClassAdapter(tmp,true);
+//        }
 
         //tmp = new InstForAccountingPerInvocation(tmp);
 
@@ -52,7 +60,7 @@ public class InstrumenterCommand {
         ClassWriter writer = new ClassWriter(reader, 0);
         ClassVisitor visitor = new AddPrincipalIdentifier(writer);
         if (applyMemoryAccounting) {
-            visitor = new ClassVisitor(Opcodes.ASM4, visitor) {
+            visitor = new ClassVisitor(Opcodes.ASM5, visitor) {
                 String className;
                 @Override
                 public void visit(int i, int i2, String s, String s2, String s3, String[] strings) {
@@ -78,7 +86,7 @@ public class InstrumenterCommand {
     public byte[] instrumentForMemoryAccounting(InputStream code) throws IOException {
         ClassReader reader = new ClassReader(code);
         ClassWriter writer = new ClassWriter(reader, 0);
-        ClassVisitor visitor =  new ClassVisitor(Opcodes.ASM4, writer) {
+        ClassVisitor visitor =  new ClassVisitor(Opcodes.ASM5, writer) {
                 String className;
                 @Override
                 public void visit(int i, int i2, String s, String s2, String s3, String[] strings) {
@@ -103,7 +111,7 @@ public class InstrumenterCommand {
     public String getSuperClass(InputStream code) throws IOException {
         ClassReader reader = new ClassReader(code);
         final String[] superClass = {null};
-        reader.accept(new ClassVisitor(Opcodes.ASM4) {
+        reader.accept(new ClassVisitor(Opcodes.ASM5) {
             @Override
             public void visit(int classVersion, int flags, String name,
                               String signature, String superclass, String[] strings) {
@@ -128,7 +136,7 @@ public class InstrumenterCommand {
     public byte[] createIntegerClass(InputStream code) throws IOException {
         ClassReader reader = new ClassReader(code);
         ClassWriter writer = new ClassWriter(reader, 0);
-        ClassVisitor visitor = new ClassVisitor(Opcodes.ASM4, writer) {
+        ClassVisitor visitor = new ClassVisitor(Opcodes.ASM5, writer) {
             @Override
             public void visitEnd() {
                 // adding method to catch object finalization

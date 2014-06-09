@@ -45,6 +45,7 @@ open class MonitoredAddInstance(val wrapperFactory: WrapperFactory, val c: Insta
                     subThread!!.stop() //kill sub thread
                 } catch(t: Throwable){
                     //ignore killing thread
+                    t.printStackTrace()
                 }
             }
             val message = "Could not add the instance " + c.name!! + ":" + c.typeDefinition!!.name!!
@@ -85,6 +86,7 @@ open class MonitoredAddInstance(val wrapperFactory: WrapperFactory, val c: Insta
                     monitoringRegistry.register(c.path() + "_contract", r.contract)
                 }
                 val loader: ClassLoader? = bs.get(c.typeDefinition!!.deployUnit!!)
+//                Log.info("Component: {}, loader: {}", c.name, loader?.hashCode())
                 if (loader != null) {
                     //                Log.info("------^^^^^^^ {}", c.getName())
 

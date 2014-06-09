@@ -23,7 +23,7 @@ public abstract class AbstractMethodInstrumentation extends InstructionAdapter {
 
 
     protected AbstractMethodInstrumentation(MethodVisitor visitor, String className) {
-        super(Opcodes.ASM4, visitor);
+        super(Opcodes.ASM5, visitor);
         this.className = className;
         this.strategy = new IdRetriveStrategyForKevoree(this);
     }

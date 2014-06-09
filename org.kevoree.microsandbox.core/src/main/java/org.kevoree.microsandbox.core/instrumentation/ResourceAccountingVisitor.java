@@ -26,7 +26,7 @@ public class ResourceAccountingVisitor extends ClassVisitor {
     private boolean isEnum = false;
 
     public ResourceAccountingVisitor(ClassVisitor classVisitor, boolean memory, boolean instructions) {
-        super(Opcodes.ASM4, classVisitor);
+        super(Opcodes.ASM5, classVisitor);
         this.memory = memory;
         this.instructions = instructions;
     }

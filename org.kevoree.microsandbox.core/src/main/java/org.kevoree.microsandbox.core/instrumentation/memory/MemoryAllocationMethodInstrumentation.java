@@ -25,9 +25,26 @@ public class MemoryAllocationMethodInstrumentation extends AbstractMethodInstrum
 
     }
 
+//    @Override
+//    public void visitMethodInsn(int opcode, String involvedClass, String calledMethod, String s3) {
+//        super.visitMethodInsn(opcode, involvedClass, calledMethod, s3);
+//        if ( opcode == Opcodes.INVOKESPECIAL
+//                && calledMethod.equals("<init>")
+//                && ExtraInstrumentationRules.isMemoryAccountable(involvedClass)
+//                ) {
+//            if (countOfNew > 0) {
+//                dup();
+//                invokestatic("java/lang/Integer", "__reportAboutMemory__", "(Ljava/lang/Object;)I");
+//                putfield(involvedClass, "__principalID__", "I");
+//                countOfNew --;
+//            }
+//        }
+//    }
+
     @Override
-    public void visitMethodInsn(int opcode, String involvedClass, String calledMethod, String s3) {
-        super.visitMethodInsn(opcode, involvedClass, calledMethod, s3);
+    public void visitMethodInsn(int opcode, String involvedClass,
+                                String calledMethod, String s3, boolean b) {
+        super.visitMethodInsn(opcode, involvedClass, calledMethod, s3, b);
         if ( opcode == Opcodes.INVOKESPECIAL
                 && calledMethod.equals("<init>")
                 && ExtraInstrumentationRules.isMemoryAccountable(involvedClass)

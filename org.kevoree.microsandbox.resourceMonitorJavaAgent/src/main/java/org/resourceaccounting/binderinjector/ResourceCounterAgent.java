@@ -41,6 +41,7 @@ public class ResourceCounterAgent implements OnNewThreadNotifier.HandlerSet{
                 agentArgs != null && agentArgs.length() > 0 && agentArgs.contains(SQUIRREL);
 
         if (isScapegoat) {
+            System.out.println("Agent started and it has been detected Scapegoat mode");
             ResourceCounter.setResourceContractProvider(new DefaultResourceContractProvider("",""));
             ResourceCounter.setObjectSizeProvider(new ObjectSizeProvider() {
                 public long sizeOf(Object obj) {
@@ -64,7 +65,7 @@ public class ResourceCounterAgent implements OnNewThreadNotifier.HandlerSet{
             @Override
             public void run() {
                 try {
-                    Thread.sleep(1000);
+                    Thread.sleep(300);
                     globalInst.retransformClasses(Integer.class);
                     System.out.println("Retransforming the proxy class");
                 }

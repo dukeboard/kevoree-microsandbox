@@ -18,6 +18,7 @@ include mvn:org.kevoree.library.java:org.kevoree.library.java.channels:3.4.1
 include mvn:org.kevoree.microsandbox:org.kevoree.microsandbox.cgroupNode:1.1
 include mvn:org.kevoree.microsandbox:org.kevoree.microsandbox.javasenode:1.1
 include mvn:org.kevoree.microsandbox:weka-executer:1.1
+include mvn:org.kevoree.microsandbox:weka-executer2:1.1
 
 add node0 : CGroupsNode/1.1
 set node0.log = "info"
@@ -34,15 +35,15 @@ add node0.cgroupDeployer : CGroupDeployer
 add node0.wekaExecuter0 : RunningExternalJarAppComponent/1.1
 set node0.wekaExecuter0.jar_path = '/home/inti/Downloads/dacapo-9.12-bach.jar'
 set node0.wekaExecuter0.jar_main = 'Harness'
-set node0.wekaExecuter0.argument = '-n 8 --no-validation -s small --scratch-directory directoryMagic0 lusearch'
+set node0.wekaExecuter0.argument = '-n 8 --no-validation --scratch-directory directoryMagic0 pmd'
 set node0.wekaExecuter0.delayTime = '5'
 set node0.wekaExecuter0.memory_max_size = '1100'
 set node0.wekaExecuter0.cpu_wall_time = '90000000'
 
-add node0.wekaExecuter1 : RunningExternalJarAppComponent/1.1
+add node0.wekaExecuter1 : RunningExternalJarAppComponent2/1.1
 set node0.wekaExecuter1.jar_path = '/home/inti/Downloads/dacapo-9.12-bach.jar'
 set node0.wekaExecuter1.jar_main = 'Harness'
-set node0.wekaExecuter1.argument = '-n 8 --no-validation -s small --scratch-directory directoryMagic1 lusearch'
+set node0.wekaExecuter1.argument = '-n 8 --no-validation --scratch-directory directoryMagic1 pmd'
 set node0.wekaExecuter1.delayTime = '5'
 set node0.wekaExecuter1.memory_max_size = '1100'
 set node0.wekaExecuter1.cpu_wall_time = '90000000'

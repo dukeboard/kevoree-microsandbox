@@ -17,7 +17,7 @@ public class DetectingInvocationReceptions extends ClassVisitor {
     private boolean conditionsToBeValidComponent;
 
     public DetectingInvocationReceptions(ClassVisitor next) {
-        super(Opcodes.ASM4, next);
+        super(Opcodes.ASM5, next);
         className = "";
         conditionsToBeValidComponent = false;
     }

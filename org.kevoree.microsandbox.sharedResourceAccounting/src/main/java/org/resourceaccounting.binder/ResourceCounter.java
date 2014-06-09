@@ -305,6 +305,7 @@ public class ResourceCounter {
     public static Object handlerNewThread = new Object();
 
     public synchronized static void reportNewThread() {
+//        System.out.println("Low-Level handler Called");
         handlerNewThread.equals(null);
     }
 

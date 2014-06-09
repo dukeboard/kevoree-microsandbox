@@ -33,18 +33,18 @@ include mvn:org.kevoree.microsandbox:org.kevoree.microsandbox.samples:1.1
 include mvn:org.kevoree.microsandbox:org.kevoree.microsandbox.slave0:1.1
 include mvn:org.kevoree.microsandbox:org.kevoree.microsandbox.slave1:1.1
 include mvn:org.kevoree.microsandbox:org.kevoree.microsandbox.slave2:1.1
-//include mvn:org.kevoree.microsandbox:org.kevoree.microsandbox.slave3:1.1
-//include mvn:org.kevoree.microsandbox:org.kevoree.microsandbox.slave4:1.1
-//include mvn:org.kevoree.microsandbox:org.kevoree.microsandbox.slave5:1.1
-//include mvn:org.kevoree.microsandbox:org.kevoree.microsandbox.slave6:1.1
-//include mvn:org.kevoree.microsandbox:org.kevoree.microsandbox.slave7:1.1
-//include mvn:org.kevoree.microsandbox:org.kevoree.microsandbox.slave8:1.1
-//include mvn:org.kevoree.microsandbox:org.kevoree.microsandbox.slave9:1.1
-//include mvn:org.kevoree.microsandbox:org.kevoree.microsandbox.slave10:1.1
-//include mvn:org.kevoree.microsandbox:org.kevoree.microsandbox.slave11:1.1
-//include mvn:org.kevoree.microsandbox:org.kevoree.microsandbox.slave12:1.1
-//include mvn:org.kevoree.microsandbox:org.kevoree.microsandbox.slave13:1.1
-//include mvn:org.kevoree.microsandbox:org.kevoree.microsandbox.slave14:1.1
+include mvn:org.kevoree.microsandbox:org.kevoree.microsandbox.slave3:1.1
+include mvn:org.kevoree.microsandbox:org.kevoree.microsandbox.slave4:1.1
+include mvn:org.kevoree.microsandbox:org.kevoree.microsandbox.slave5:1.1
+include mvn:org.kevoree.microsandbox:org.kevoree.microsandbox.slave6:1.1
+include mvn:org.kevoree.microsandbox:org.kevoree.microsandbox.slave7:1.1
+include mvn:org.kevoree.microsandbox:org.kevoree.microsandbox.slave8:1.1
+include mvn:org.kevoree.microsandbox:org.kevoree.microsandbox.slave9:1.1
+include mvn:org.kevoree.microsandbox:org.kevoree.microsandbox.slave10:1.1
+include mvn:org.kevoree.microsandbox:org.kevoree.microsandbox.slave11:1.1
+include mvn:org.kevoree.microsandbox:org.kevoree.microsandbox.slave12:1.1
+include mvn:org.kevoree.microsandbox:org.kevoree.microsandbox.slave13:1.1
+include mvn:org.kevoree.microsandbox:org.kevoree.microsandbox.slave14:1.1
 
 add node0 : CGroupsNode/1.1
 set node0.log = "info"
@@ -59,35 +59,35 @@ bind node0.cgroupDeployer.startNotification channel_notif
 add node0.slave0 : Slave0/1.1
 add node0.slave1 : Slave1/1.1
 add node0.slave2 : Slave2/1.1
-//add node0.slave3 : Slave3/1.1
-//add node0.slave4 : Slave4/1.1
-//add node0.slave5 : Slave5/1.1
-//add node0.slave6 : Slave6/1.1
-//add node0.slave7 : Slave7/1.1
-//add node0.slave8 : Slave8/1.1
-//add node0.slave9 : Slave9/1.1
-//add node0.slave10 : Slave10/1.1
-//add node0.slave11 : Slave11/1.1
-//add node0.slave12 : Slave12/1.1
-//add node0.slave13 : Slave13/1.1
-//add node0.slave14 : Slave14/1.1
+add node0.slave3 : Slave3/1.1
+add node0.slave4 : Slave4/1.1
+add node0.slave5 : Slave5/1.1
+add node0.slave6 : Slave6/1.1
+add node0.slave7 : Slave7/1.1
+add node0.slave8 : Slave8/1.1
+add node0.slave9 : Slave9/1.1
+add node0.slave10 : Slave10/1.1
+add node0.slave11 : Slave11/1.1
+add node0.slave12 : Slave12/1.1
+add node0.slave13 : Slave13/1.1
+add node0.slave14 : Slave14/1.1
 
 
 bind node0.slave0.notifyStarted channel_notif
 bind node0.slave1.notifyStarted channel_notif
 bind node0.slave2.notifyStarted channel_notif
-//  bind node0.slave3.notifyStarted channel_notif
-//bind node0.slave4.notifyStarted channel_notif
-//bind node0.slave5.notifyStarted channel_notif
-//bind node0.slave6.notifyStarted channel_notif
-//bind node0.slave7.notifyStarted channel_notif
-//bind node0.slave8.notifyStarted channel_notif
-//bind node0.slave9.notifyStarted channel_notif
-//bind node0.slave10.notifyStarted channel_notif
-//bind node0.slave11.notifyStarted channel_notif
-//bind node0.slave12.notifyStarted channel_notif
-//bind node0.slave13.notifyStarted channel_notif
-//bind node0.slave14.notifyStarted channel_notif
+bind node0.slave3.notifyStarted channel_notif
+bind node0.slave4.notifyStarted channel_notif
+bind node0.slave5.notifyStarted channel_notif
+bind node0.slave6.notifyStarted channel_notif
+bind node0.slave7.notifyStarted channel_notif
+bind node0.slave8.notifyStarted channel_notif
+bind node0.slave9.notifyStarted channel_notif
+bind node0.slave10.notifyStarted channel_notif
+bind node0.slave11.notifyStarted channel_notif
+bind node0.slave12.notifyStarted channel_notif
+bind node0.slave13.notifyStarted channel_notif
+bind node0.slave14.notifyStarted channel_notif
 
 
 set channel_notif.port/node0 = '10000'

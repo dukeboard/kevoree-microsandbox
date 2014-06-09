@@ -43,7 +43,7 @@ public class NewThreadCreated {
             Thread t = Thread.currentThread();
             // fixme : go to the root ThreadGroup if needed
             String name = t.getThreadGroup().getName();
-//            System.err.println("ONE THREAD " + name);
+            System.err.println("ONE THREAD " + name);
             if (!name.startsWith(componentPrefix)) return true;
             String path = name.replaceAll("kev/","");
             String filePath = path.replaceAll("/","_");
@@ -60,8 +60,8 @@ public class NewThreadCreated {
                         double tmp = (1000.0 * contract.getCPU()) / description.availability_instr;
                         int valueToAssign = (int)Math.round(tmp);
                         if (valueToAssign == 0) valueToAssign = 1;
-//                        System.err.printf("Instructions to execute: %d; Available Instructions: %d;  %f; Milliseconds per Second %d\n", contract.getCPU(), description.availability_instr, tmp,
-//                                valueToAssign);
+                        System.err.printf("Instructions to execute: %d; Available Instructions: %d;  %f; Milliseconds per Second %d\n", contract.getCPU(), description.availability_instr, tmp,
+                                valueToAssign);
                         CPUThreadControl.assignCPULimit(filePath, valueToAssign);
 //                        CPUThreadControl.assignLimit(lastId, (int)Math.round(tmp));
                         id = lastId;
@@ -71,10 +71,10 @@ public class NewThreadCreated {
                         } catch (FileNotFoundException e) {
                             e.printStackTrace();
                         }
-//                        System.err.printf("Attaching 2 thread to %s and assigning id=%d\n", name, id);
+                        System.err.printf("Attaching 2 thread to %s and assigning id=%d\n", name, id);
                     }
                     else {
-//                        System.err.println((contract != null));
+                        System.err.println((contract != null));
                     }
                 }
                 else {

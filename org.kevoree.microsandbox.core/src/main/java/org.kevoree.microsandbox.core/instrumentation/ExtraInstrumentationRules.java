@@ -1,11 +1,12 @@
 package org.kevoree.microsandbox.core.instrumentation;
 
 
-import org.resourceaccounting.binder.ResourceCounter;
+//import org.resourceaccounting.binder.ResourceCounter;
 
 public class ExtraInstrumentationRules {
 
-    public final static String MONITOR_CLASS_NAME = ResourceCounter.class.getCanonicalName().replace('.','/');
+    public final static String MONITOR_CLASS_NAME = "org/resourceaccounting/binder/ResourceCounter";
+    //ResourceCounter.class.getCanonicalName().replace('.','/');
 
     public static boolean isInstrumentable(String className) {
 

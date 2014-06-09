@@ -18,7 +18,7 @@ public class AdaptingExistentFinalizeInRT extends InstructionAdapter {
     private final String className;
 
     public AdaptingExistentFinalizeInRT(String classname, MethodVisitor visitor) {
-        super(Opcodes.ASM4, visitor);
+        super(Opcodes.ASM5, visitor);
         this.className = classname;
     }
 

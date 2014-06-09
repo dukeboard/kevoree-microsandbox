@@ -56,6 +56,7 @@ public class BinderClassTransformer implements ClassFileTransformer {
         boolean instr_thread_creation = !isScapegoat;
         ClassLoader original = classLoader;
         classLoader = searchProperLoader(classLoader);
+//        System.out.printf("Discovering if class %s has to be modified %s\n", className, classLoader);
         if (classLoader != null) {
             int hash = classLoader.hashCode();
             String appId = MonitoringStatusList.instance().getAppId(hash);
@@ -66,7 +67,7 @@ public class BinderClassTransformer implements ClassFileTransformer {
             if (isScapegoat && MonitoringStatusList.instance().isMonitored(appId)) {
                 instr_mem = MonitoringStatusList.instance().isMemoryMonitored(appId);
                 instr_instr = MonitoringStatusList.instance().isCPUMonitored(appId);
-//                System.out.printf("Classloader %d %s %s %s %s 000\n",hash, appId, className,instr_mem, instr_instr);
+                System.out.printf("Classloader %d %s %s %s %s 000\n",hash, appId, className,instr_mem, instr_instr);
             }
             else if (!squirrel && MonitoringStatusList.instance().isMemoryMonitored(appId)) {
                 instr_mem = true;
@@ -87,8 +88,11 @@ public class BinderClassTransformer implements ClassFileTransformer {
     private ClassLoader searchProperLoader(ClassLoader loader) {
         while (loader != null &&
                 !loader.getClass().getCanonicalName().endsWith("KevoreeJarClassLoaderCoverageInjection") &&
-                !loader.getClass().getCanonicalName().endsWith("SharedClassLoader"))
+                !loader.getClass().getCanonicalName().endsWith("SharedClassLoader") &&
+                !loader.getClass().getCanonicalName().endsWith("FlexyClassLoaderImpl")) {
             loader = loader.getParent();
+        }
+
         return loader;
     }
 

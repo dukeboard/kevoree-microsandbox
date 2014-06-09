@@ -19,7 +19,7 @@ public class AddPrincipalIdentifier extends ClassVisitor {
     private boolean hasFinalize = false;
 
     public AddPrincipalIdentifier(ClassVisitor classVisitor) {
-        super(Opcodes.ASM4, classVisitor);
+        super(Opcodes.ASM5, classVisitor);
     }
 
     @Override

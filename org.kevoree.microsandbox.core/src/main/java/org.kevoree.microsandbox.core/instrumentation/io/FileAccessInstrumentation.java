@@ -16,7 +16,7 @@ public class FileAccessInstrumentation extends ClassVisitor {
     private String className;
 
     public FileAccessInstrumentation(ClassVisitor classVisitor) {
-        super(Opcodes.ASM4, classVisitor);
+        super(Opcodes.ASM5, classVisitor);
     }
 
     @Override

@@ -20,7 +20,7 @@ public class NetworkAccessInstrumentation extends ClassVisitor {
     private String className;
 
     public NetworkAccessInstrumentation(ClassVisitor classVisitor) {
-        super(Opcodes.ASM4, classVisitor);
+        super(Opcodes.ASM5, classVisitor);
     }
 
     @Override

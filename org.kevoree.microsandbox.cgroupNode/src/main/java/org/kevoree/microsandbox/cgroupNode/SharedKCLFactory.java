@@ -27,6 +27,9 @@ public class SharedKCLFactory implements KevoreeCLFactory {
 
     @Override
     public FlexyClassLoader createClassLoader(DeployUnit deployUnit, File file) {
+        Log.info("USING OR AT LEAST CALLING THE CLASSLOADER FACTORY");
+        System.out.println("USING OR AT LEAST CALLING THE CLASSLOADER FACTORY");
+        System.err.println("USING OR AT LEAST CALLING THE CLASSLOADER FACTORY");
 //        InterprocessLock lll = new InterprocessLock("llllllllll".getBytes(), false);
 //        System.err.println("New classloader created");
         FlexyClassLoader classLoader = new SharedClassLoader(nodeName, useShared);
