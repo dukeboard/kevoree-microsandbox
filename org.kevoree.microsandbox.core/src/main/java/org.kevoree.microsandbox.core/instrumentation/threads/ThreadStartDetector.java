@@ -18,7 +18,7 @@ public class ThreadStartDetector extends InstructionAdapter {
     public ThreadStartDetector(MethodVisitor methodVisitor,
                                String targetClass,
                                String targetMethod) {
-        super(Opcodes.ASM4, methodVisitor);
+        super(Opcodes.ASM5, methodVisitor);
         this.targetClass = targetClass.replace('.','/');
         this.targetMethod = targetMethod.replace('.','/');
     }

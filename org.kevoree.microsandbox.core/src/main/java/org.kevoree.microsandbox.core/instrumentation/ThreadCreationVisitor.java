@@ -15,7 +15,7 @@ public class ThreadCreationVisitor extends ClassVisitor {
 
     public ThreadCreationVisitor(ClassVisitor classVisitor,
                                  String targetClass, String targetMethod) {
-        super(Opcodes.ASM4, classVisitor);
+        super(Opcodes.ASM5, classVisitor);
         this.targetClass = targetClass;
         this.targetMethod = targetMethod;
     }
@@ -27,6 +27,7 @@ public class ThreadCreationVisitor extends ClassVisitor {
         if (isPotentialThread &&
                 methodName.equals("run") &&
                 signature.equals("()V")) {
+//            System.out.println("Instrumenting possible thread");
 
             return new ThreadStartDetector(
                     super.visitMethod(flags,
@@ -48,8 +49,10 @@ public class ThreadCreationVisitor extends ClassVisitor {
                             superclass.equals("java/lang/Thread");
 
         for (int i = 0 ; !isPotentialThread && interfaces != null && i < interfaces.length ; ++i) {
-            isPotentialThread = interfaces[i].equals("java.lang/Runnable");
+            isPotentialThread = interfaces[i].equals("java/lang/Runnable");
         }
+//        if (isPotentialThread)
+//            System.out.println("A potential Thread is class " + name);
 
         super.visit(classVersion, flags, name, signature, superclass, interfaces);
     }
