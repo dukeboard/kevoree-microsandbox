@@ -19,7 +19,6 @@ import java.util.concurrent.ThreadFactory;
  * Time: 21:32
  */
 @ComponentType
-@Library(name = "JavaSE")
 public class SciMarkBench implements Runnable {
 
     @Param(defaultValue = "false", optional = true)

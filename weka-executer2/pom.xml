@@ -45,6 +45,13 @@
                         </goals>
                     </execution>
                 </executions>
+                <configuration>
+                    <excludes>
+                        <exclude>org.kevoree:org.kevoree.bootstrap</exclude>
+                        <exclude>org.kevoree.microsandbox:org.kevoree.microsandbox.core</exclude>
+                        <exclude>org.kevoree.microsandbox:org.kevoree.microsandbox.sharedResourceAccounting</exclude>
+                    </excludes>
+                </configuration>
             </plugin>
         </plugins>
     </build>

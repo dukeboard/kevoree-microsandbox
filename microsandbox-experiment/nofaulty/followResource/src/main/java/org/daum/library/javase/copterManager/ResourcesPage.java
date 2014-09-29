@@ -34,7 +34,7 @@ public class ResourcesPage extends AbstractParentHTTPHandler implements MemoryCo
         String url = applyPatternToRemove(req.getRequestURI());
         stream.write(MemCache.getRessource(url));
         stream.flush();
-        resp.addHeader("Content-Type", HTTPHelper.getMimeTypeFromURL(url));
+        resp.addHeader("Content-Type", "text/html; charset=utf-8"/*HTTPHelper.getMimeTypeFromURL(url)*/);
     }
 
     @Param(optional = true)

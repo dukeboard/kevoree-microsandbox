@@ -2,6 +2,7 @@ package org.kevoree.library.javase.copter;
 
 import org.kevoree.annotation.*;
 import org.kevoree.api.Port;
+import org.kevoree.log.Log;
 
 /**
  * User: Erwan Daubert - erwan.daubert@gmail.com
@@ -11,7 +12,6 @@ import org.kevoree.api.Port;
  * @author Erwan Daubert
  * @version 1.0
  */
-@Library(name = "copterManager")
 @ComponentType(description = "This component simulate the copter which send an url of the stream that it is recording")
 public class FakeCopterMediaSender {
 
@@ -23,9 +23,24 @@ public class FakeCopterMediaSender {
 
     @Start
     public void start() {
-        if (media.getConnectedBindingsSize() > 0) {
-            media.send(url);
-        }
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Log.debug("Start waiting {}", System.nanoTime());
+                    Thread.sleep(15000);
+                    Log.debug("Stop waiting {}", System.nanoTime());
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                if (media.getConnectedBindingsSize() > 0) {
+                    Log.info("Sending info URL from {}", this.getClass().getName());
+                    media.send(url);
+                }
+            }
+        }).start();
+
     }
 
     @Update

@@ -3,6 +3,7 @@ package org.kevoree.monitoring.strategies;
 import org.kevoree.ComponentInstance;
 import org.kevoree.api.BootstrapService;
 import org.kevoree.api.ModelService;
+import org.kevoree.log.Log;
 import org.kevoree.microsandbox.api.heuristic.MonitoringEvent;
 import org.kevoree.microsandbox.api.heuristic.RankingHeuristicComponent;
 import org.kevoree.monitoring.comp.monitor.ContractVerificationRequired;
@@ -26,7 +27,16 @@ public abstract class AbstractMonitoringTask implements Runnable, ContractVerifi
     protected final Object msg;
     //    protected String nameOfRankerFunction;
     protected MonitoringComponent monitoringComponent;
-    protected MonitoringStrategy currentStrategy;
+    private MonitoringStrategy currentStrategy;
+
+    protected synchronized void setCurrentStrategy(MonitoringStrategy monitoringStrategy) {
+        currentStrategy = monitoringStrategy;
+    }
+
+    protected synchronized MonitoringStrategy getCurrentStrategy() {
+        return currentStrategy;
+    }
+
 
     public AbstractMonitoringTask(BootstrapService bootstraper,
                                   ModelService service,/*String nameOfRankerFunction*/
@@ -62,22 +72,26 @@ public abstract class AbstractMonitoringTask implements Runnable, ContractVerifi
     }
 
     @Override
-    public void verifyContract(ResourcePrincipal principal, Object obj) {
+    public synchronized void verifyContract(ResourcePrincipal principal, Object obj) {
         currentStrategy.verifyContract(principal, obj);
     }
 
     @Override
-    public void onGCVerifyContract(long used, long max) {
+    public synchronized void onGCVerifyContract(long used, long max) {
         if (currentStrategy != null)
             currentStrategy.onGCVerifyContract(used, max);
     }
 
     public ComponentInstance[] getRankingOrder(String nodeName) {
+        ComponentInstance[] r;
         if (monitoringComponent != null) {
-            return monitoringComponent.getRankingOrder(nodeName);
+            r = monitoringComponent.getRankingOrder(nodeName);
+//            Log.debug("OOOOOOOOOOOO\n\n\n1111111111111111 {}\n\n\n", r.length);
         } else {
-           return new ComponentInstance[0];
+           r = new ComponentInstance[0];
+//           Log.debug("OOOOOOOOOOOO\n\n\nOOOOOOOOOOOOOOOOOO\n\n\n");
         }
+        return r;
     }
 
     @Override

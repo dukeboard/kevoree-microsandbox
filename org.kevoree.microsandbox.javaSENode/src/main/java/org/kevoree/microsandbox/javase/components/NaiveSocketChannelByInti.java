@@ -5,7 +5,7 @@ import org.kevoree.annotation.*;
 import org.kevoree.annotation.ChannelType;
 import org.kevoree.api.*;
 import org.kevoree.api.Port;
-import org.slf4j.LoggerFactory;
+import org.kevoree.log.Log;
 
 import java.io.*;
 import java.net.ServerSocket;
@@ -22,10 +22,7 @@ import java.util.concurrent.locks.ReentrantLock;
  * Date: 1/13/14
  * Time: 1:45 PM
  */
-@ChannelType//(theadStrategy = ThreadStrategy.SHARED_THREAD)
-/*@DictionaryType({
-        @DictionaryAttribute(name = "port", optional = true, fragmentDependant = true)
-})*/
+@ChannelType
 public class NaiveSocketChannelByInti implements ChannelDispatch {
 
     @Param(fragmentDependent = true, optional = true, defaultValue = "7000")
@@ -42,20 +39,20 @@ public class NaiveSocketChannelByInti implements ChannelDispatch {
     private Thread t_server;
     private int portServer;
 
-    private org.slf4j.Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Start
     public void startp() {
         try {
-            if (context.getNodeName().equals("node0")) {
+            Log.info("\t\t\tINTI - STARTING A NAIVE SOCKET CHANNEL BY INTI IN NODE {}", modelService.getNodeName());
+//            if (context.getNodeName().equals("node0")) {
                 portServer = port;//parsePortNumber(context.getNodeName());
-                server = new TCPServer(port, this);
+                server = new TCPServer();
                 t_server = new Thread(server);
                 t_server.start();
-            }
+//            }
 
         } catch (Exception e) {
-            logger.error("Starting ", e);
+            Log.error("Starting ", e);
         }
 
     }
@@ -91,22 +88,35 @@ public class NaiveSocketChannelByInti implements ChannelDispatch {
 
     @Override
     public void dispatch(final Object payload, final Callback callback) {
+//        Log.info("\tINTI - DISSSSSSSSSSSSSSSSSSSSSSSPATCH {} {} {}",
+//                context.getInstanceName(),
+//                context.getNodeName(),
+//                payload);
         if (!channelContext.getRemotePortPaths().isEmpty()) {
+//            Log.info("\tINTI - DISSSSSSSSSSSSSSSSSSSSSSSPATCH to REMOTE {} {} {}",
+//                    context.getInstanceName(),
+//                    context.getNodeName(),
+//                    payload);
             ContainerRoot model = modelService.getCurrentModel().getModel();
             List<String> alreadySentToNodes = new ArrayList<String>();
             for (String remotePortPath : channelContext.getRemotePortPaths()) {
-                org.kevoree.Port port = model.findByPath(remotePortPath, org.kevoree.Port.class);
-                // only send data for provided ports
+                org.kevoree.Port port = (org.kevoree.Port)model.findByPath(remotePortPath/*, org.kevoree.Port.class*/);
+//                Log.info("\t\tINTI - DISSSSSSSSSSSSSSSSSSSSSSSPATCH to REMOTE {} {}",
+//                        remotePortPath, port.path());
+                // only sendToOther data for provided ports
                 if (port != null && ((ComponentInstance) port.eContainer()).getProvided().contains(port)) {
                     ContainerNode remoteNode = (ContainerNode) port.eContainer().eContainer();
                     if (!alreadySentToNodes.contains(remoteNode.path())) {
+//                        Log.info("\t\tINTI - DISSSSSSSSSSSSSSSSSSSSSSSPATCH WILL SEND TO REMOTE");
                         try {
                             lock_sender.lock();
                             int portInteger = parsePortNumber(remoteNode.getName());
-                            logger.debug("Channel in node {} is trying to send to port {}", context.getNodeName(), portInteger);
-                            TCPClient.send(payload, portInteger);
+                            Log.debug("Channel in node {} is trying to sendToOther to port {}",
+                                    context.getNodeName(), portInteger);
+                            sendToOther(payload, portInteger);
                         } catch (Exception e) {
-                            logger.debug("Error while sending message to " + remoteNode.getName());
+                            Log.error("Error while sending message to {}. Error\n{}",
+                                    remoteNode.getName(), e.toString());
                         } finally {
                             lock_sender.unlock();
                         }
@@ -121,7 +131,7 @@ public class NaiveSocketChannelByInti implements ChannelDispatch {
     public Object dispatchLocal(Object payload) {
         ContainerRoot model = modelService.getCurrentModel().getModel();
         for (Port p : channelContext.getLocalPorts()) {
-            org.kevoree.Port port = model.findByPath(p.getPath(), org.kevoree.Port.class);
+            org.kevoree.Port port = (org.kevoree.Port)model.findByPath(p.getPath()/*, org.kevoree.Port.class*/);
             if (port != null && ((ComponentInstance) port.eContainer()).getProvided().contains(port)) {
                 p.send(payload);
             }
@@ -131,141 +141,83 @@ public class NaiveSocketChannelByInti implements ChannelDispatch {
 
     private java.util.concurrent.locks.Lock lock_sender = new ReentrantLock();
 
-    /*@Override
-    public ChannelFragmentSender createSender(final String remoteNodeName, final String remoteChannelName) {
-        logger.info("Creating Sender in NaiveIntiSocketChannel");
-        return new ChannelFragmentSender() {
-            @Override
-            public Object sendMessageToRemote(Message message) {
-                try {
-                    lock_sender.lock();
-                    if (!remoteNodeName.equals(getNodeName())) {
-                        if (!message.getPassedNodes().contains(getNodeName()))
-                            message.getPassedNodes().add(getNodeName());
-                        message.setDestNodeName(remoteNodeName);
-
-                        int port = parsePortNumber(remoteNodeName);
-                        TCPClient.send(message, port);
-//                        logger.info("Sending");
-                    }
-                } catch (Exception e) {
-                    logger.debug("Error while sending message to " + remoteNodeName);
-                } finally {
-                    lock_sender.unlock();
-                }
-                return null;
-            }
-        };
-    }*/
-
     public int parsePortNumber(String nodeName) throws IOException {
         try {
             //logger.debug("look for port on " + nodeName);
             Channel instance = modelService.getCurrentModel().getModel().findHubsByID(context.getInstanceName());
             FragmentDictionary fragmentDictionary = instance.findFragmentDictionaryByID(nodeName);
             if (fragmentDictionary != null) {
-                DictionaryValue dictionaryValue = fragmentDictionary.findValuesByID("port");
+                Value dictionaryValue = fragmentDictionary.findValuesByID("port");
+//                DictionaryValue dictionaryValue = fragmentDictionary.findValuesByID("port");
                 if (dictionaryValue != null) {
                     return Integer.parseInt(dictionaryValue.getValue());
                 }
             }
             return 7000;
-//            return Integer.parseInt(KevoreePropertyHelper.instance$.getProperty(getModelElement(), "port", true, nodeName));
         } catch (NumberFormatException e) {
             throw new IOException(e);
         }
     }
-}
 
-class TCPServer implements Runnable {
+    class TCPServer implements Runnable {
 
-    private final int portServer;
-    private final NaiveSocketChannelByInti myChannel;
+        public TCPServer() {
+        }
 
-    private org.slf4j.Logger logger = LoggerFactory.getLogger(this.getClass());
+        synchronized boolean isStopped() {
+            return isStopped;
+        }
 
-    public TCPServer(int portServer, NaiveSocketChannelByInti myChannel) {
-        this.portServer = portServer;
-        this.myChannel = myChannel;
-    }
+        synchronized void setStopped(boolean stopped) {
+            isStopped = stopped;
+        }
 
-    synchronized boolean isStopped() {
-        return isStopped;
-    }
+        private boolean isStopped;
 
-    synchronized void setStopped(boolean stopped) {
-        isStopped = stopped;
-    }
-
-    private boolean isStopped;
-
-    @Override
-    public void run() {
-        String clientSentence;
-        ServerSocket welcomeSocket = null;
-        try {
-            welcomeSocket = new ServerSocket(portServer);
-            welcomeSocket.setSoTimeout(500);
-            while (!isStopped()) {
-                Socket connectionSocket = null;
-                try {
-                    connectionSocket = welcomeSocket.accept();
-                } catch (SocketTimeoutException ex) {
-                    continue;
-                }
-                InputStream inputStream = connectionSocket.getInputStream();
-
-                ObjectInputStream objectInputStream = new ObjectInputStream(inputStream);
-                Object o = objectInputStream.readObject();
-                for (Port p : myChannel.channelContext.getLocalPorts()) {
-                    org.kevoree.Port port = myChannel.modelService.getCurrentModel().getModel().findByPath(p.getPath(), org.kevoree.Port.class);
-                    if (port != null && ((ComponentInstance) port.eContainer()).getProvided().contains(port)) {
-                        p.send(o);
+        @Override
+        public void run() {
+            ServerSocket welcomeSocket = null;
+            try {
+                welcomeSocket = new ServerSocket(portServer);
+                welcomeSocket.setSoTimeout(500);
+                while (!isStopped()) {
+                    Socket connectionSocket = null;
+                    try {
+                        connectionSocket = welcomeSocket.accept();
+                    } catch (SocketTimeoutException ex) {
+                        continue;
                     }
+                    InputStream inputStream = connectionSocket.getInputStream();
+
+                    ObjectInputStream objectInputStream = new ObjectInputStream(inputStream);
+                    Object o = objectInputStream.readObject();
+                    ContainerRoot model = modelService.getCurrentModel().getModel();
+                    for (Port p : channelContext.getLocalPorts()) {
+                        org.kevoree.Port port = (org.kevoree.Port)model.findByPath(p.getPath()/*, org.kevoree.Port.class*/);
+                        if (port != null && ((ComponentInstance) port.eContainer()).getProvided().contains(port)) {
+                            p.send(o);
+                        }
+                    }
+                    connectionSocket.close();
                 }
-
-//                clientSentence = m.get_content().toString();
-//                logger.info("Received : " + clientSentence);
-//                System.err.printf("Received %s\n", clientSentence);
-//
-//                if (!m.getPassedNodes().contains(myChannel.getNodeName()))
-//                    m.getPassedNodes().add(myChannel.getNodeName());
-
-                // logger.debug("Reiceive msg to  "+msg.getDestNodeName());
-//                myChannel.remoteDispatch(m);
-
-                connectionSocket.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                if (welcomeSocket != null)
+                    try {
+                        welcomeSocket.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
             }
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        } finally {
-            if (welcomeSocket != null)
-                try {
-                    welcomeSocket.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
         }
     }
-}
 
-class TCPClient {
-    static Socket clientSocket;
-
-    public static void send(Object msg, int port) throws Exception {
-//        String sentence;
-//        String modifiedSentence;
-//        BufferedReader inFromServer = new BufferedReader( new InputStreamReader(System.in));
-        clientSocket = new Socket("localhost", port);
-
-        DataOutputStream outToServer = new DataOutputStream(clientSocket.getOutputStream());
-        ObjectOutputStream objectOutputStream = new ObjectOutputStream(outToServer);
-//        BufferedReader inFromServer = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-//        sentence = inFromUser.readLine();
+    public static void sendToOther(Object msg, int port) throws Exception {
+        Socket clientSocket = new Socket("localhost", port);
+        ObjectOutputStream objectOutputStream =
+                new ObjectOutputStream(new DataOutputStream(clientSocket.getOutputStream()));
         objectOutputStream.writeObject(msg);
-//        outToServer.writeBytes(sentence + '\n');
         clientSocket.close();
     }
 }

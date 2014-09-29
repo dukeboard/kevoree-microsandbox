@@ -1,7 +1,8 @@
 CC=g++
 TARGET=InterprocessLock
 TARGET_DIR=../../../../../../../
-PATH_JAVA=/usr/lib/jvm/java-8-oracle
+#PATH_JAVA=/usr/lib/jvm/java-7-oracle
+PATH_JAVA=/usr/lib/jvm/java-7-openjdk-amd64
 
 C_FLAGS=-std=c++11 -lstdc++
 

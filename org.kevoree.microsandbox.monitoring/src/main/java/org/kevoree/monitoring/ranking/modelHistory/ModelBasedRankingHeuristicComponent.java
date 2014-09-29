@@ -9,6 +9,7 @@ import org.kevoree.api.Context;
 import org.kevoree.api.ModelService;
 import org.kevoree.api.handler.ModelListener;
 import org.kevoree.api.handler.ModelListenerAdapter;
+import org.kevoree.api.handler.UpdateContext;
 import org.kevoree.microsandbox.api.contract.ContractedComponentHelper;
 import org.kevoree.microsandbox.api.heuristic.MonitoringEvent;
 import org.kevoree.microsandbox.api.heuristic.RankingHeuristicComponent;
@@ -217,14 +218,6 @@ public class ModelBasedRankingHeuristicComponent implements RankingHeuristicComp
                 modelHistory.remove(0);
             }
             currentModel = modelService.getCurrentModel().getModel();
-        }
-
-        @Override
-        public void preRollback(ContainerRoot containerRoot, ContainerRoot containerRoot2) {
-        }
-
-        @Override
-        public void postRollback(ContainerRoot containerRoot, ContainerRoot containerRoot2) {
         }
     }
 }

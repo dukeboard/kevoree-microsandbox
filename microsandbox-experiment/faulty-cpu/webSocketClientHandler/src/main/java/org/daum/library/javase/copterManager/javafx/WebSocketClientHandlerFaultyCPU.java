@@ -17,7 +17,6 @@ import java.net.URISyntaxException;
  * @author Erwan Daubert
  * @version 1.0
  */
-@Library(name = "javafx", names = {"copterManager"})
 @ComponentType
 public class WebSocketClientHandlerFaultyCPU extends CPUMemoryThroughputContractedImpl {
 

@@ -7,6 +7,7 @@ import org.kevoree.microsandbox.api.contract.impl.MemoryContractedImpl;
 
 import java.util.Random;
 
+
 /**
  * Created with IntelliJ IDEA.
  * User: duke
@@ -34,6 +35,8 @@ public class MemoryConsumerMaxSize extends MemoryContractedImpl {
     public void startComponent() {
         running = true;
         new java.lang.Thread(new java.lang.Runnable() {
+            String s0 = "";
+            String s1 ="lala";
             public void run() {
                 byte[] bytes;
                 Random random = new Random();
@@ -45,14 +48,24 @@ public class MemoryConsumerMaxSize extends MemoryContractedImpl {
                     cache = new byte[cache.length + bytes.length];
                     System.arraycopy(tmp, 0, cache, 0, tmp.length);
                     System.arraycopy(bytes, 0, cache, tmp.length, bytes.length);
-                    Log.warn("Minimum amount of memory used by {}: {}", context.getInstanceName(), cache.length);
+                    Log.warn("Minimum amount of memory used by {}: {} {} {}", context.getInstanceName(), cache.length, s0, s1.toUpperCase());
+                    try {
+                        Thread.sleep(sleepTime);
+                    } catch (InterruptedException ignored) {
+                    }
+                }
+                bytes = null;
+                random = null;
+                while (true) {
                     try {
                         Thread.sleep(sleepTime);
                     } catch (InterruptedException ignored) {
                     }
                 }
             }
-        }).start();
+        }
+        )
+        .start();
     }
 
     @Stop

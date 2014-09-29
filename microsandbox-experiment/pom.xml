@@ -23,15 +23,12 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <!--<kotlin.version>0.6.1673</kotlin.version>
-        <kevoree.version>3.5.4</kevoree.version>
-        <kevoree.library.version>3.5.2</kevoree.library.version>-->
 
-        <kotlin.version>0.7.271</kotlin.version>
-        <kevoree.version>3.5.5-SNAPSHOT</kevoree.version>
-        <kevoree.library.version>3.5.3-SNAPSHOT</kevoree.library.version>
-
+        <kotlin.version>0.8.11</kotlin.version>
+        <kevoree.version>5.0.1</kevoree.version>
+        <kevoree.library.version>5.0.1</kevoree.library.version>
         <kevoree.komponents.version>1.1.0-SNAPSHOT</kevoree.komponents.version>
+
         <kevoree.microsandbox.version>1.1</kevoree.microsandbox.version>
     </properties>
 
@@ -72,6 +69,13 @@
                         </goals>
                     </execution>
                 </executions>
+                <configuration>
+                    <excludes>
+                        <exclude>org.kevoree:org.kevoree.bootstrap</exclude>
+                        <exclude>org.kevoree.microsandbox:org.kevoree.microsandbox.core</exclude>
+                        <exclude>org.kevoree.microsandbox:org.kevoree.microsandbox.sharedResourceAccounting</exclude>
+                    </excludes>
+                </configuration>
             </plugin>
         </plugins>
     </build>

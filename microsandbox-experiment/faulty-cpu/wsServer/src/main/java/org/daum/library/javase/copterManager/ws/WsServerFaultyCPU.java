@@ -19,7 +19,6 @@ import java.util.concurrent.ExecutionException;
  * Date: 22/06/12
  * Time: 13:14
  */
-@Library(name = "JavaSE")
 @ComponentType
 public class WsServerFaultyCPU extends CPUMemoryThroughputContractedImpl implements WsHandler {
 

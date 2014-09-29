@@ -18,7 +18,7 @@ fun main(args: Array<String>) {
     val microsandboxVersion = "1.0-SNAPSHOT"
     val experimentVersion = "1.0.0-SNAPSHOT"
 
-    val folder = File("/home/inti/microsandbox")
+    val folder = File("/home/inti/programs/microsandbox-experiments")
     if (!folder.exists() || (folder.isFile() && folder.delete())) {
         folder.mkdirs()
     }

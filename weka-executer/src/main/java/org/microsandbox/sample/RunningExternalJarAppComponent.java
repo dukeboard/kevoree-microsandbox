@@ -1,6 +1,7 @@
 package org.microsandbox.sample;
 
 import org.kevoree.annotation.*;
+import org.kevoree.log.Log;
 import org.kevoree.microsandbox.api.contract.impl.CPUMemoryContractedImpl;
 
 import java.io.File;
@@ -25,7 +26,7 @@ public class RunningExternalJarAppComponent extends CPUMemoryContractedImpl {
     @Param(optional = false)
     private String jar_main;
     @Param(optional = false)
-    private String argument;
+    private String arguments;
     @Param(optional = false)
     private long delayTime;
 
@@ -40,7 +41,7 @@ public class RunningExternalJarAppComponent extends CPUMemoryContractedImpl {
                 Class<?> cl = loader.loadClass(jar_main);
                 Method method = cl.getMethod("main", new Class[]{String[].class});
 
-                String[] args = argument.split(" ");
+                String[] args = arguments.split(" ");
                 timeBefore = System.nanoTime();
 //                System.setSecurityManager(new NoExitSecurityManager());
                 method.invoke(null, new Object[]{args});
@@ -77,8 +78,9 @@ public class RunningExternalJarAppComponent extends CPUMemoryContractedImpl {
         public void run() {
             int c = 0;
             try {
-            Thread.sleep(delayTime * 1000);
-                loader = new URLClassLoader(new URL[]{new File(jar_path).toURI().toURL()}, this.getClass().getClassLoader());
+                Thread.sleep(delayTime);
+                Log.info("Starting to execute {} {}", jar_main, arguments);
+                loader = new URLClassLoader(new URL[]{new File(jar_path).toURI().toURL()}, Thread.currentThread().getContextClassLoader());
             } catch (MalformedURLException e) {
                 e.printStackTrace();
             }

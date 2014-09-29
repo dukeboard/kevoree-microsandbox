@@ -6,7 +6,6 @@ import org.kevoree.annotation.Param;
 import org.kevoree.annotation.Start;
 import org.kevoree.api.ModelService;
 import org.kevoree.api.handler.ModelListenerAdapter;
-import org.kevoree.komponents.helpers.SynchronizedUpdateCallback;
 
 import java.io.*;
 

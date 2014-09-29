@@ -7,6 +7,7 @@ import org.kevoree.api.handler.UpdateCallback;
 import org.kevoree.core.impl.KevoreeCoreBean;
 import org.kevoree.log.Log;
 import org.kevoree.microsandbox.cgroupNode.helper.SynchronizedUpdateCallback;
+import org.kevoree.microsandbox.cgroupNode.models.ImportingAndExportingModels;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
@@ -50,7 +51,7 @@ public class NodeNameRestarter extends FromFileDeployer {
                 serverSocket.close();
 
 
-                ContainerRoot modelToDeploy = getContainerRoot(lines[1]);
+                ContainerRoot modelToDeploy = ImportingAndExportingModels.fromFile(lines[1], repositories, packages);
                 Log.info("BEFORE UPDATE MODEL NANOTIME {}", System.nanoTime());
                 SynchronizedUpdateCallback callback = new SynchronizedUpdateCallback();
                 callback.initialize();
@@ -67,19 +68,6 @@ public class NodeNameRestarter extends FromFileDeployer {
                 }
             }
         }
-    }
-
-    private void changeNameOfNode(String sentence) {
-        // FIXME, Ugly hack.
-        Log.info("Changing component name from {}/{} to {}", context.getNodeName(),
-                ((KevoreeCoreBean) modelService).getNodeName(),
-                sentence);
-        // doing the job
-        // FIXME is it ok like this ????
-        ((KevoreeCoreBean)modelService).setNodeName(sentence);
-        // done
-        Log.info("Changed component name to: {}/{}", context.getNodeName(),
-                ((KevoreeCoreBean)modelService).getNodeName());
     }
 
     @Start

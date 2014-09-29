@@ -15,4 +15,7 @@ if [ $# -eq 4 ]; then
 	log=$4	
 fi
 
-java -Dnode.bootstrap=$1 -Dproject.version=1.1 -Duse.criu=${criu} -Dexperiment.log=${log} -Dkevoree.corelibrary.version=3.5.3 -Dnode.name=$2 -Dinterproccess.lock.library=/home/inti/programs/kevoree-microsandbox/org.ipc.memory/libInterprocessLock.so -Dthread.control.library=/home/inti/programs/kevoree-microsandbox/org.kevoree.microsandbox.cgroupNode/libCPUThreadControl.so -Xbootclasspath/p:/tmp/ext-rt.jar:/tmp/shared-res-1.1.jar -javaagent:/tmp/ext-agent1.1.jar=scapegoat -jar /tmp/kevoree-runtime-3.5.6.jar
+lock_library=/home/inti/programs/kevoree-microsandbox/org.ipc.memory/libInterprocessLock.so
+thread_library=/home/inti/programs/kevoree-microsandbox/org.kevoree.microsandbox.cgroupNode/libCPUThreadControl.so
+#-ea
+java -ea -Xmx400m -Dnode.bootstrap=$1 -Dproject.version=1.1 -Duse.criu=${criu} -Dexperiment.log=${log} -Dkevoree.corelibrary.version=5.0.1 -Dnode.name=$2 -Dinterproccess.lock.library=${lock_library} -Dthread.control.library=${thread_library} -Xbootclasspath/p:/tmp/ext-rt.jar:/tmp/shared-res-1.1.jar -javaagent:/tmp/ext-agent1.1.jar=scapegoat -jar /tmp/kevoree-runtime-5.0.7.jar

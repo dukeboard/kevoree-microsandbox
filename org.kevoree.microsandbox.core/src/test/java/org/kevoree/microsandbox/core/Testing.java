@@ -7,6 +7,7 @@ package org.kevoree.microsandbox.core; /**
  */
 
 import org.junit.Test;
+import org.kevoree.microsandbox.core.coverage.CoverageRuntime;
 import org.kevoree.microsandbox.core.instrumentation.InstrumenterCommand;
 
 

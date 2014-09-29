@@ -25,7 +25,7 @@ public class RunningExternalJarAppComponent2 extends CPUMemoryContractedImpl {
     @Param(optional = false)
     private String jar_main;
     @Param(optional = false)
-    private String argument;
+    private String arguments;
     @Param(optional = false)
     private long delayTime;
 
@@ -41,7 +41,7 @@ public class RunningExternalJarAppComponent2 extends CPUMemoryContractedImpl {
                 Class<?> cl = loader.loadClass(jar_main);
                 Method method = cl.getMethod("main", new Class[]{String[].class});
 
-                String[] args = argument.split(" ");
+                String[] args = arguments.split(" ");
                 timeBefore = System.nanoTime();
 //                System.setSecurityManager(new NoExitSecurityManager());
                 method.invoke(null, new Object[]{args});

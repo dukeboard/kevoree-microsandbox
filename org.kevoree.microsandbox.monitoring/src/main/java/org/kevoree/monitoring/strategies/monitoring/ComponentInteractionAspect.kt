@@ -40,7 +40,7 @@ public object ComponentInteractionAspect {
 
         val result = PortUsageStatus(false, HashMap<String, HashSet<Port>>())
         val root = modelService.getCurrentModel()!!.getModel() as ContainerRoot
-        val c = root.findByPath(componentPath, javaClass<ComponentInstance>())
+        val c = root.findByPath(componentPath) as ComponentInstance
         val totalExpected = getMaxNumberOfRequest(componentPath, modelService)
         var totalObserved = 0
         var errorOnSinglePortUsage = false;
@@ -98,7 +98,7 @@ public object ComponentInteractionAspect {
     }
 
     private fun getMaxNumberOfRequest(componentPath : String, modelS : ModelService): Int {
-        val c = modelS.getCurrentModel()!!.getModel()?.findByPath(componentPath, javaClass<ComponentInstance>())
+        val c = modelS.getCurrentModel()!!.getModel()?.findByPath(componentPath) as ComponentInstance
         var result = Integer.MAX_VALUE
         for (dv in c?.dictionary?.values!!) {
             if (dv.name.equals("throughput_msg_per_second")) {
@@ -116,7 +116,7 @@ public object ComponentInteractionAspect {
     }
 
     public fun getMaxNumberOfRequest(componentPath : String, port : String, modelS : ModelService): Int {
-        val c = modelS.getCurrentModel()!!.getModel()?.findByPath(componentPath, javaClass<ComponentInstance>())
+        val c = modelS.getCurrentModel()!!.getModel()?.findByPath(componentPath) as ComponentInstance
         var result = Integer.MAX_VALUE
         for (dv in c?.dictionary?.values!!) {
             if (dv.name.equals("throughput_msg_per_second")) {

@@ -1,7 +1,7 @@
 package org.kevoree.microsandbox.cgroupNode;
 
 import org.kevoree.DeployUnit;
-import org.kevoree.bootstrap.kernel.KevoreeCLFactory;
+//import org.kevoree.bootstrap.kernel.KevoreeCLFactory;
 import org.kevoree.kcl.api.FlexyClassLoader;
 import org.kevoree.log.Log;
 
@@ -16,7 +16,8 @@ import java.io.FileNotFoundException;
  * Time: 2:17 PM
  *
  */
-public class SharedKCLFactory implements KevoreeCLFactory {
+public class SharedKCLFactory // implements KevoreeCLFactory
+{
     private final boolean useShared;
     private final String nodeName;
 
@@ -25,7 +26,7 @@ public class SharedKCLFactory implements KevoreeCLFactory {
         useShared = shared;
     }
 
-    @Override
+//    @Override
     public FlexyClassLoader createClassLoader(DeployUnit deployUnit, File file) {
         Log.info("USING OR AT LEAST CALLING THE CLASSLOADER FACTORY");
         System.out.println("USING OR AT LEAST CALLING THE CLASSLOADER FACTORY");

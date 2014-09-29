@@ -1,7 +1,21 @@
 //sample of KevScript configuration
 repo "http://repo1.maven.org/maven2"
-include mvn:org.kevoree.library.java:org.kevoree.library.java.javaNode:release
+include mvn:org.kevoree.library.java:org.kevoree.library.java.NodeToUseWithHeapAnalysis:1.1
 include mvn:org.kevoree.library.java:org.kevoree.library.java.ws:release
-add node0 : JavaNode
+include mvn:org.kevoree.library.java:org.kevoree.library.java.toys:release
+
+
+include mvn:org.kevoree.microsandbox:org.kevoree.microsandbox.samples:1.1
+
+add node0 : NodeToUseWithHeapAnalysis
 add sync : WSGroup
 attach node0 sync
+
+add node0.comp1 : ToyConsole
+add node0.comp2 : MemoryConsumerMaxSize
+
+set node0.comp2.dataSize = "10240"
+set node0.comp2.sleepTime = "1000"
+set node0.comp2.memory_max_size = "224288"
+
+add node0.comp3 : MemoryCheckerWithProfiler

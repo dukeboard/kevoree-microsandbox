@@ -2,6 +2,28 @@
 repo "http://repo1.maven.org/maven2"
 include mvn:org.kevoree.library.java:org.kevoree.library.java.javaNode:release
 include mvn:org.kevoree.library.java:org.kevoree.library.java.ws:release
-add node0 : JavaNode
-add sync : WSGroup
+include mvn:org.kevoree.library.java:org.kevoree.library.java.toys:release
+
+include mvn:org.kevoree.microsandbox:org.kevoree.microsandbox.cgroupNode:1.1
+include mvn:org.kevoree.microsandbox:org.kevoree.microsandbox.javasenode:1.1
+
+add node0 : CGroupsNode/1.1
+set node0.log = "info"
+set node0.started = "true"
+
+add sync : ResourceAwareGroup
+
+add node0.comp0 : ToyConsole
+add node0.comp1 : ToyConsole
+add node0.comp2 : ToyConsole
+//add node0.comp1, node0.comp2 : ToyDisplay
+
+add nodeTMP : CGroupsNode/1.1
+set nodeTMP.log = "info"
+set nodeTMP.started = "true"
+
+add nodeTMP.cgroupDeployer : CGroupDeployer/1.1
+
 attach node0 sync
+set sync.port/nodeTMP='9001'
+attach nodeTMP sync

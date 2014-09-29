@@ -20,5 +20,5 @@ class SimpleModelID(val id : Int) : ModelID {
     }*/
 
 
-    public override fun toString(): String? = id.toString()
+    public override fun toString(): String = id.toString()
 }

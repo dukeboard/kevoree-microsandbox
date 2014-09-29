@@ -21,7 +21,6 @@ import org.kevoree.microsandbox.api.contract.impl.CPUMemoryThroughputContractedI
  * @author Erwan Daubert
  * @version 1.0
  */
-@Library(name = "javafx")
 @ComponentType
 public class JavaFXVideoDisplayFaultyCPU extends CPUMemoryThroughputContractedImpl {
 

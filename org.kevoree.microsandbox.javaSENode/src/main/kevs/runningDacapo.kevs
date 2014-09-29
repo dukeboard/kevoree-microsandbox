@@ -15,6 +15,7 @@ include mvn:org.kevoree.microsandbox:org.kevoree.microsandbox.samples:latest
 include mvn:org.kevoree.komponents:camel-channel-http:latest
 
 add node0:MonitoredNode
+set node0.log = 'debug'
 set node0.availability_memory='950000000'
 set node0.availability_instr='200000000'
 set node0.availability_write_disc='10000000'
@@ -31,29 +32,33 @@ add node0.reasoner0: ResourceAwareReasoner
 
 add node0.rankerBasedHeuristicComponent0: NumberFailureBasedHeuristicComponent
 
-add defMSGT_reasoning : AsyncBroadcast
+add ch_reasoning : AsyncBroadcast
 
-bind node0.reasoner0.eventHandler defMSGT_reasoning
-bind node0.MonitoringComponent0.reasoner defMSGT_reasoning
+bind node0.reasoner0.eventHandler ch_reasoning
+bind node0.MonitoringComponent0.reasoner ch_reasoning
 
-add CamelNett280 : CamelNettyService
-add CamelNett281 : CamelNettyService
+//add CamelNett280 : CamelNettyService
+//add CamelNett281 : CamelNettyService
 
-bind node0.rankerBasedHeuristicComponent0.getRankingOrder CamelNett280
-bind node0.MonitoringComponent0.getRankingOrder CamelNett280
+add ch_rank_of_components : SyncBroadcast
+add ch_trigger_monitoring : SyncBroadcast
 
-bind node0.rankerBasedHeuristicComponent0.triggerMonitoringEvent CamelNett281
-bind node0.MonitoringComponent0.triggerMonitoringEvent CamelNett281
 
-set CamelNett280.port/node0 = '10000'
-set CamelNett281.port/node0 = '10001'
+bind node0.rankerBasedHeuristicComponent0.getRankingOrder ch_rank_of_components
+bind node0.MonitoringComponent0.getRankingOrder ch_rank_of_components
+
+bind node0.rankerBasedHeuristicComponent0.triggerMonitoringEvent ch_trigger_monitoring
+bind node0.MonitoringComponent0.triggerMonitoringEvent ch_trigger_monitoring
+
+//set CamelNett280.port/node0 = '10000'
+//set CamelNett281.port/node0 = '10001'
 
 add node0.dacapoExecuter0: RunningDacapoComponent
-set node0.dacapoExecuter0.dacapo_path = '/home/edaubert/kevoree/inti/dacapo-2006-10-MR2.jar'
-set node0.dacapoExecuter0.dacapo_test = 'xalan'
+set node0.dacapoExecuter0.dacapo_path = '/home/inti/Downloads/dacapo-2006-10-MR2.jar'
+set node0.dacapoExecuter0.dacapo_test = 'fop'
 set node0.dacapoExecuter0.dacapo_n ='4'
-set node0.dacapoExecuter0.cpu_wall_time = '0'
-set node0.dacapoExecuter0.memory_max_size = '1'
+set node0.dacapoExecuter0.cpu_wall_time = '1000'
+set node0.dacapoExecuter0.memory_max_size = '1110'
 
 add sync : WSGroup
 set sync.port/node0 = "9000"

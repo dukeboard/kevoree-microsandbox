@@ -1,7 +1,6 @@
 package org.kevoree.microsandbox.cgroupNode;
 
 import org.kevoree.ComponentInstance;
-import org.kevoree.DictionaryValue;
 import org.kevoree.microsandbox.api.contract.PlatformDescription;
 import org.kevoree.microsandbox.monitoredNode.ControlAdmissionSystem;
 import org.kevoree.microsandbox.monitoredNode.KevoreeComponentResourceContract;

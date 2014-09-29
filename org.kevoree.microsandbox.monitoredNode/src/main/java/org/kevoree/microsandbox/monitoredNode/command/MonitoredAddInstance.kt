@@ -12,6 +12,9 @@ import org.kevoree.library.defaultNodeTypes.wrapper.KInstanceWrapper
 import org.kevoree.ContainerNode
 import org.resourceaccounting.contract.ResourceContract
 import org.resourceaccounting.binder.MonitoringStatusList
+import org.kevoree.kcl.api.FlexyClassLoader
+import org.kevoree.library.defaultNodeTypes.command.ClassLoaderHelper
+import org.kevoree.microsandbox.monitoredNode.command.MicrosandboxClassLoaderHelper
 
 /**
  * Created with IntelliJ IDEA.
@@ -58,22 +61,25 @@ open class MonitoredAddInstance(val wrapperFactory: WrapperFactory, val c: Insta
         MonitoredRemoveInstance(wrapperFactory, c, nodeName, registry, monitoringRegistry, modelService, kscript, bs).execute()
     }
 
+
     public override fun run() {
         try {
-            var newBeanKInstanceWrapper: KInstanceWrapper?
+            var newKCL = ClassLoaderHelper.createInstanceClassLoader(c, nodeName, bs)!! //MicrosandboxClassLoaderHelper.createInstanceClassLoader(c, nodeName, bs)!!
+            Thread.currentThread().setContextClassLoader(newKCL)
+            Thread.currentThread().setName("KevoreeAddInstance" + c.name!!)
+            var newBeanKInstanceWrapper: KInstanceWrapper
             if (c is ContainerNode) {
-                newBeanKInstanceWrapper: KInstanceWrapper? = wrapperFactory.wrap(c, this/* nodeInstance is useless because launched as external process */, tg!!, bs, modelService)
-                registry.register(c, newBeanKInstanceWrapper!!)
+                newBeanKInstanceWrapper = wrapperFactory.wrap(c, this/* nodeInstance is useless because launched as external process */, tg!!, bs, modelService)
+                newBeanKInstanceWrapper.kcl = newKCL
+                registry.register(c, newBeanKInstanceWrapper)
                 monitoringRegistry.register(c.path() + "_platformDescription", ControlAdmissionSystem.getPlatformDescription())
             } else {
-                val newBeanInstance = bs.createInstance(c)
-                newBeanKInstanceWrapper: KInstanceWrapper? = wrapperFactory.wrap(c, newBeanInstance!!, tg!!, bs, modelService)
-                registry.register(c, newBeanKInstanceWrapper!!)
+                val newBeanInstance = bs.createInstance(c, newKCL)
+                newBeanKInstanceWrapper = wrapperFactory.wrap(c, newBeanInstance!!, tg!!, bs, modelService)
+                newBeanKInstanceWrapper.kcl = newKCL
+                registry.register(c, newBeanKInstanceWrapper)
                 bs.injectDictionary(c, newBeanInstance, true)
 
-                resultSub = true
-
-                var contract: ResourceContract? = null
                 val r = ControlAdmissionSystem.registerComponent(c)
                 if (!r.valid) {
                     Log.error("Unable to execute {} because the contract is not valid in instance {}",
@@ -82,35 +88,47 @@ open class MonitoredAddInstance(val wrapperFactory: WrapperFactory, val c: Insta
                 }
 
                 if (r.contract != null) {
-                    contract = r.contract
                     monitoringRegistry.register(c.path() + "_contract", r.contract)
-                }
-                val loader: ClassLoader? = bs.get(c.typeDefinition!!.deployUnit!!)
-//                Log.info("Component: {}, loader: {}", c.name, loader?.hashCode())
-                if (loader != null) {
-                    //                Log.info("------^^^^^^^ {}", c.getName())
 
-                    if (contract != null && (contract?.getMemory() != 0 || contract?.getCPU() != 0)) {
-
-                        //                    Log.info("------^^^^^^^ {} ^^^^^^^-------", c.getName())
-                        //                    println("Classloader for " + c.getName() + " is " + loader.javaClass.getCanonicalName() + " " +
-                        //                    "and has " + (loader as KevoreeJarClassLoaderCoverageInjection).loadedClasses.size +
-                        //                    " loaded classes and hash " + loader.hashCode())
-                        MonitoringStatusList.instance()?.includeApp("kev/" + c.path(), loader.hashCode(),
-                                contract?.getMemory() != 0,
-                                contract?.getCPU() != 0)
-                        //                    MonitoringStatusList.instance()?.setMonitored("kev/"+c.path(), true)
-                    }
+                    registerContract(r.contract, newKCL)
                 }
 
             }
-            if (resultSub) {
-                newBeanKInstanceWrapper?.create()
-                resultSub = true
-            }
-        } catch(e: Throwable){
+            newBeanKInstanceWrapper.create()
+            resultSub = true
+            Thread.currentThread().setContextClassLoader(null)
+            Log.info("Add instance {}", c.path())
+        } catch(e: Throwable) {
             Log.error("Error while adding instance {}", e, c.name)
             resultSub = false
+        }
+    }
+
+    fun registerContract(contract:ResourceContract, classLoader : ClassLoader) {
+//        Log.debug("My loader is {}", this.getClass().getClassLoader())
+//        Log.debug("NUMERO {} {} {} {} {}", classLoader, contract, contract?.getMemory(), contract?.getCPU(), c.path())
+        if (contract != null && (contract?.getMemory() != 0 || contract?.getCPU() != 0)) {
+
+//            Runtime.getRuntime()
+//            Log.debug("Adding to applications's list loader_hash={}, path={}, memory={}, cpu={}",
+//                    classLoader.hashCode(), c.path(), contract?.getMemory(), contract?.getCPU())
+
+//            val clzz = ClassLoader.getSystemClassLoader()?.loadClass("org.resourceaccounting.binder.MonitoringStatusList")
+//            val me_instance = clzz?.getDeclaredMethod("instance")!!
+//            val r = me_instance.invoke(null)
+//            val me_includeApp = clzz?.getDeclaredMethod("includeApp",
+//                    javaClass<String>(),
+//                    javaClass<Int>(),
+//                    javaClass<Boolean>(),
+//                    javaClass<Boolean>())!!
+//            me_includeApp.invoke(r, "kev/" + c.path(), classLoader.hashCode(), contract?.getMemory() != 0,
+//                    contract?.getCPU() != 0)
+
+
+            MonitoringStatusList.instance()?.includeApp("kev/" + c.path(), classLoader.hashCode(),
+                    contract?.getMemory() != 0,
+                    contract?.getCPU() != 0)
+            //MonitoringStatusList.instance()?.setMonitored("kev/"+c.path(), true)
         }
     }
 
@@ -119,120 +137,4 @@ open class MonitoredAddInstance(val wrapperFactory: WrapperFactory, val c: Insta
         return "AddInstance " + c.name
     }
 }
-/*open class MonitoredAddInstance(val c: Instance,
-                                val nodeName: String,
-                                val modelservice: ModelService,
-                                val kscript: KevScriptService,
-                                val registry: ModelRegistry,
-                                val bs: BootstrapService) : PrimitiveCommand, Runnable {
-
-    private val typeDefinitionAspect = TypeDefinitionAspect()
-    var deployUnit: DeployUnit? = null
-    var nodeTypeName: String? = null
-    var tg: ThreadGroup? = null
-
-    override fun execute(): Boolean {
-
-       *//* var contract: ResourceContract? = null
-        if (c is ComponentInstance) {
-            val cc: ComponentInstance = c as ComponentInstance
-            val r = ControlAdmissionSystem.registerComponent(cc)
-            if (!r.valid) {
-                Log.error("Unable to execute {} because the contract is not valid in instance {}",
-                        this.toString(), c.getName())
-                return false
-            }
-
-            if (r.contract != null) {
-                contract = r.contract
-                KevoreeDeployManager.putRef(c.javaClass.getName() + "_contract", c.getName(), r.contract!!)
-            }
-        }*//*
-
-        val model = c.getTypeDefinition()!!.eContainer() as ContainerRoot
-        val node = model.findNodesByID(nodeName)
-        deployUnit = typeDefinitionAspect.foundRelevantDeployUnit(c.getTypeDefinition()!!, node!!)!!
-        if (c is ComponentInstance) {
-            val loader: ClassLoader? = bs.getKevoreeClassLoaderHandler().getKevoreeClassLoader(deployUnit)
-            if (loader != null) {
-                //                Log.info("------^^^^^^^ {}", c.getName())
-
-                if (contract != null && (contract?.getMemory() != 0 || contract?.getCPU() != 0)) {
-
-                    //                    Log.info("------^^^^^^^ {} ^^^^^^^-------", c.getName())
-                    //                    println("Classloader for " + c.getName() + " is " + loader.javaClass.getCanonicalName() + " " +
-                    //                    "and has " + (loader as KevoreeJarClassLoaderCoverageInjection).loadedClasses.size +
-                    //                    " loaded classes and hash " + loader.hashCode())
-                    MonitoringStatusList.instance()?.includeApp("kev/" + c.path(), loader.hashCode(),
-                            contract?.getMemory() != 0,
-                            contract?.getCPU() != 0)
-                    //                    MonitoringStatusList.instance()?.setMonitored("kev/"+c.path(), true)
-                }
-            }
-        }
-
-        val nodeType = node.getTypeDefinition()
-        nodeTypeName = typeDefinitionAspect.foundRelevantHostNodeType(nodeType as NodeType,
-                c.getTypeDefinition()!!)!!.getName()
-        var subThread: Thread? = null
-        try {
-            tg = ThreadGroup("kev/" + c.path()!!)
-            subThread = Thread(tg, this)
-            subThread!!.start()
-            subThread!!.join()
-            KevoreeDeployManager.putRef(c.javaClass.getName() + "_tg", c.getName(), tg!!)
-            KevoreeDeployManager.putRef(c.javaClass.getName() + "_deployTime", c.getName(), System.nanoTime())
-            KevoreeDeployManager.putRef(c.javaClass.getName() + "_platformDescription", c.getName(),
-                    ControlAdmissionSystem.getPlatformDescription() as Any)
-            return true
-        } catch(e: Throwable) {
-            if (subThread != null) {
-                try {
-                    subThread!!.stop() //kill sub thread // TODO : that's wrong
-                } catch(t: Throwable) {
-                    //ignore killing thread
-                }
-            }
-            val message = "Could not start the instance " + c.getName() + ":" + c.getTypeDefinition()!!.getName() + "\n"
-            Log.error(message, e)
-            return false
-        }
-    }
-
-    override fun undo() {
-        MonitoredRemoveInstance(c, nodeName, modelservice, kscript, bs, nt).execute()
-    }
-
-    override public fun run() {
-        val beanClazz = bs.getKevoreeClassLoaderHandler().
-        getKevoreeClassLoader(deployUnit)!!.
-        loadClass(c.getTypeDefinition()!!.getBean())
-
-        val newBeanInstance = beanClazz!!.newInstance()
-        var newBeanKInstanceWrapper: KInstance? = null
-        if (c is ComponentInstance) {
-            newBeanKInstanceWrapper = KevoreeComponent(newBeanInstance as AbstractComponentType,
-                    nodeName, c.getName(), modelservice, bs, kscript, nt.getDataSpaceService())
-            (newBeanKInstanceWrapper as KevoreeComponent).initPorts(nodeTypeName!!, c, tg!!)
-        }
-        if (c is Group) {
-            newBeanKInstanceWrapper = KevoreeGroup(newBeanInstance as AbstractGroupType, nodeName,
-                    c.getName(), modelservice, bs, kscript, nt.getDataSpaceService())
-        }
-        if (c is Channel) {
-            newBeanKInstanceWrapper = ChannelTypeFragmentThread(newBeanInstance as AbstractChannelFragment,
-                    nodeName, c.getName(), modelservice, bs, kscript, nt.getDataSpaceService(), tg!!)
-            (newBeanKInstanceWrapper as ChannelTypeFragmentThread).initChannel()
-        }
-
-        KevoreeDeployManager.putRef(c.javaClass.getName(), c.getName(), newBeanInstance!!)
-        KevoreeDeployManager.putRef(c.javaClass.getName() + "_wrapper", c.getName(), newBeanKInstanceWrapper!!)
-
-    }
-
-
-    public override fun toString(): String? {
-        return "MonitoredAddInstance " + c.getName() + "@" + nodeName + ":" + c.getTypeDefinition()!!.getName()
-    }
-}*/
 

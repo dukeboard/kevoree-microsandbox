@@ -129,8 +129,9 @@ public class KevoreeSharedMemoryChannel implements ChannelDispatch {
     public void dispatch(final Object payload, final Callback callback) {
         if (!channelContext.getRemotePortPaths().isEmpty()) {
             List<String> alreadySentToNodes = new ArrayList<String>();
+            ContainerRoot currentModel = modelService.getCurrentModel().getModel();
             for (String remotePortPath : channelContext.getRemotePortPaths()) {
-                org.kevoree.Port port = modelService.getCurrentModel().getModel().findByPath(remotePortPath, org.kevoree.Port.class);
+                org.kevoree.Port port = (org.kevoree.Port)currentModel.findByPath(remotePortPath);
                 // only send data for provided ports
                 if (port != null && ((ComponentInstance) port.eContainer()).getProvided().contains(port)) {
                     ContainerNode remoteNode = (ContainerNode) port.eContainer().eContainer();
@@ -156,8 +157,9 @@ public class KevoreeSharedMemoryChannel implements ChannelDispatch {
     }
 
     public Object dispatchLocal(Object payload) {
+        ContainerRoot currentModel = modelService.getCurrentModel().getModel();
         for (org.kevoree.api.Port p : channelContext.getLocalPorts()) {
-            org.kevoree.Port port = modelService.getCurrentModel().getModel().findByPath(p.getPath(), org.kevoree.Port.class);
+            org.kevoree.Port port = (org.kevoree.Port)currentModel.findByPath(p.getPath());
             if (port != null && ((ComponentInstance) port.eContainer()).getProvided().contains(port)) {
                 p.send(payload);
             }

@@ -35,7 +35,6 @@ import java.util.List;
  * @author Erwan Daubert
  * @version 1.0
  */
-@Library(name = "javafx")
 @ComponentType
 public class JavaFXWebBrowserFaultyMemory extends CPUMemoryThroughputContractedImpl {
 
@@ -98,14 +97,6 @@ public class JavaFXWebBrowserFaultyMemory extends CPUMemoryThroughputContractedI
                 });
 
                 modelService.unregisterModelListener(this);
-            }
-
-            @Override
-            public void preRollback(ContainerRoot containerRoot, ContainerRoot containerRoot2) {
-            }
-
-            @Override
-            public void postRollback(ContainerRoot containerRoot, ContainerRoot containerRoot2) {
             }
         });
     }

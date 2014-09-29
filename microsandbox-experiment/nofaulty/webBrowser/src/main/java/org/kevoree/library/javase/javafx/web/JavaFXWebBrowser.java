@@ -22,6 +22,7 @@ import org.kevoree.api.Context;
 import org.kevoree.api.ModelService;
 import org.kevoree.api.handler.ModelListenerAdapter;
 import org.kevoree.library.javase.javafx.layout.SingleWindowLayout;
+import org.kevoree.log.Log;
 import org.kevoree.microsandbox.api.contract.impl.CPUMemoryThroughputContractedImpl;
 
 import java.util.ArrayList;
@@ -35,7 +36,6 @@ import java.util.List;
  * @author Erwan Daubert
  * @version 1.0
  */
-@Library(name = "javafx")
 @ComponentType
 public class JavaFXWebBrowser extends CPUMemoryThroughputContractedImpl {
 
@@ -94,19 +94,12 @@ public class JavaFXWebBrowser extends CPUMemoryThroughputContractedImpl {
                 });
                 modelService.unregisterModelListener(this);
             }
-
-            @Override
-            public void preRollback(ContainerRoot containerRoot, ContainerRoot containerRoot2) {
-            }
-
-            @Override
-            public void postRollback(ContainerRoot containerRoot, ContainerRoot containerRoot2) {
-            }
         });
     }
 
     @Stop
     public void stop() throws InterruptedException {
+        Log.debug("Stop in {}", JavaFXWebBrowser.class.getSimpleName());
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
@@ -117,12 +110,14 @@ public class JavaFXWebBrowser extends CPUMemoryThroughputContractedImpl {
                     localWindow.hide();
                 }
                 synchronized (wait) {
+                    Log.debug("Stop 1 in {}", JavaFXWebBrowser.class.getSimpleName());
                     wait.notify();
                 }
             }
         });
         synchronized (wait) {
-            wait.wait();
+            wait.wait(2000);
+            Log.debug("Stop 2 in {}", JavaFXWebBrowser.class.getSimpleName());
         }
     }
 

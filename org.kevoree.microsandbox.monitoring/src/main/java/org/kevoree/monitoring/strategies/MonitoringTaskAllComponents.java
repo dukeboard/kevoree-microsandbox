@@ -12,10 +12,7 @@ import org.kevoree.monitoring.comp.monitor.GCWatcher;
 import org.kevoree.monitoring.comp.monitor.MonitoringComponent;
 import org.kevoree.monitoring.sla.FaultyComponent;
 import org.kevoree.monitoring.sla.MeasurePoint;
-import org.kevoree.monitoring.strategies.monitoring.AllComponentsForEver;
-import org.kevoree.monitoring.strategies.monitoring.FineGrainedMonitoringStrategy;
-import org.kevoree.monitoring.strategies.monitoring.FineGrainedStrategyFactory;
-import org.kevoree.monitoring.strategies.monitoring.RankChecker;
+import org.kevoree.monitoring.strategies.monitoring.*;
 
 import java.util.*;
 
@@ -53,9 +50,9 @@ public class MonitoringTaskAllComponents extends AbstractMonitoringTask implemen
         while (!isStopped()) {
             waitMessage();
             if (isStopped()) continue;
-            if (currentStrategy.isThereContractViolation()) {
-                currentStrategy.pause();
-                FineGrainedMonitoringStrategy s =(FineGrainedMonitoringStrategy)currentStrategy;
+            if (getCurrentStrategy().isThereContractViolation()) {
+                getCurrentStrategy().pause();
+                FineGrainedMonitoringStrategy s =(FineGrainedMonitoringStrategy)getCurrentStrategy();
                 List<FaultyComponent> tmpList = s.getFaultyComponents();
                 for (FaultyComponent c : tmpList) {
                     // FIXME add some information on a specific port (or somthing to notify interesting component)
@@ -85,19 +82,21 @@ public class MonitoringTaskAllComponents extends AbstractMonitoringTask implemen
             }
         }
 
-        currentStrategy.stop();
+        getCurrentStrategy().stop();
         gcWatcher.unregister();
         gcWatcher = null;
     }
 
     private void switchToSimpleLocal(EnumSet<Metric> reason, boolean b) {
-        MonitoringReporterFactory.reporter().trigger(new MonitoringNotification(false, reason))/*.monitoring(false)*/;
-        if (b)
+        if (b) {
+            MonitoringReporterFactory.reporter().trigger(new MonitoringNotification(false, reason))/*.monitoring(false)*/;
             MyLowLevelResourceConsumptionRecorder.getInstance().turnMonitoring(true,
                     !FineGrainedStrategyFactory.instance$.isSingleMonitoring());
+        }
 
-        currentStrategy = new AllComponentsForEver( new ArrayList<ComponentInstance>(), msg, this);
-        currentStrategy.init(0);
+        MonitoringStrategy strategy = new AllComponentsForEver( new ArrayList<ComponentInstance>(), msg, this);
+        setCurrentStrategy(strategy);
+        strategy.init(0);
     }
 
 

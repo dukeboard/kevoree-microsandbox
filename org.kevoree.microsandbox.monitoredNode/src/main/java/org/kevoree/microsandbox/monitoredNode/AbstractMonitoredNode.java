@@ -5,15 +5,12 @@ import org.kevoree.annotation.KevoreeInject;
 import org.kevoree.annotation.NodeType;
 import org.kevoree.annotation.Param;
 import org.kevoree.api.*;
-import org.kevoree.bootstrap.kernel.KevoreeCLFactory;
-import org.kevoree.bootstrap.kernel.KevoreeCLKernel;
+import org.kevoree.api.adaptation.AdaptationPrimitive;
+//import org.kevoree.bootstrap.kernel.KevoreeCLFactory;
 import org.kevoree.library.defaultNodeTypes.JavaNode;
 import org.kevoree.library.defaultNodeTypes.planning.JavaPrimitive;
 import org.kevoree.library.defaultNodeTypes.wrapper.WrapperFactory;
 import org.kevoree.microsandbox.api.contract.PlatformDescription;
-import org.kevoreeadaptation.AdaptationPrimitive;
-
-import java.util.Dictionary;
 
 /**
  * Created with IntelliJ IDEA.
@@ -22,7 +19,7 @@ import java.util.Dictionary;
  * Time: 6:45 PM
  */
 @NodeType
-public abstract class AbstractMonitoredNode<ClassLoaderFactory extends KevoreeCLFactory>
+public abstract class AbstractMonitoredNode //<ClassLoaderFactory extends Object/*KevoreeCLFactory*/>
         extends JavaNode {
     // FIXME How did you choose the default value ?
     @Param(defaultValue = "180000000")
@@ -53,7 +50,7 @@ public abstract class AbstractMonitoredNode<ClassLoaderFactory extends KevoreeCL
     @Override
     public void startNode() {
         monitoringRegistry = MonitoringRegistry.getInstance();
-        setupKCLFactory(getClassLoaderFactory());
+//        setupKCLFactory(getClassLoaderFactory());
         super.startNode();
 
         description = new PlatformDescription(availability_memory, availability_sent,
@@ -65,22 +62,22 @@ public abstract class AbstractMonitoredNode<ClassLoaderFactory extends KevoreeCL
         ControlAdmissionSystem.instance$.init(description);
     }
 
-    protected abstract ClassLoaderFactory getClassLoaderFactory();
-
-    private void setupKCLFactory(KevoreeCLFactory factory) {
-        /*JCLContextHandler jclhandler = null;
-        if (bootstrapService.getKevoreeClassLoaderHandler() instanceof JCLContextHandler) {
-            jclhandler = (JCLContextHandler) bootstrapService.getKevoreeClassLoaderHandler();
-        }
-        else {
-            System.err.println("What a crazy error");
-            System.exit(3);
-            super.startNode();
-            return;
-        }*/
-        // FIXME we need to do something at the Kevoree level
-        ((KevoreeCLKernel) bootstrapService).setKevoreeCLFactory(factory);
-    }
+//    protected abstract ClassLoaderFactory getClassLoaderFactory();
+//
+//    private void setupKCLFactory(Object/*KevoreeCLFactory*/ factory) {
+//        JCLContextHandler jclhandler = null;
+//        if (bootstrapService.getKevoreeClassLoaderHandler() instanceof JCLContextHandler) {
+//            jclhandler = (JCLContextHandler) bootstrapService.getKevoreeClassLoaderHandler();
+//        }
+//        else {
+//            System.err.println("What a crazy error");
+//            System.exit(3);
+//            super.startNode();
+//            return;
+//        }
+//        // FIXME we need to do something at the Kevoree level
+////        ((KevoreeCLKernel) bootstrapService).setKevoreeCLFactory(factory);
+//    }
 
     @Override
     protected WrapperFactory createWrapperFactory(String nodeName) {
@@ -96,7 +93,7 @@ public abstract class AbstractMonitoredNode<ClassLoaderFactory extends KevoreeCL
                     context.getNodeName(), modelRegistry, monitoringRegistry, modelService,
                     kevscriptService, bootstrapService/*, this*/);
         }
-        if (pTypeName.equals(JavaPrimitive.RemoveInstance.name())) {
+        else if (pTypeName.equals(JavaPrimitive.RemoveInstance.name())) {
             return new MonitoredRemoveInstance(createWrapperFactory(context.getNodeName()), (Instance) p.getRef(),
                     context.getNodeName(), modelRegistry, monitoringRegistry, modelService,
                     kevscriptService, bootstrapService/*, this*/);

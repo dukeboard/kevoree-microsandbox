@@ -22,7 +22,6 @@ import org.kevoree.microsandbox.api.contract.impl.CPUMemoryThroughputContractedI
  * @author Erwan Daubert
  * @version 1.0
  */
-@Library(name = "javafx")
 @ComponentType
 public class JavaFXVideoDisplay extends CPUMemoryThroughputContractedImpl {
 
@@ -64,7 +63,7 @@ public class JavaFXVideoDisplay extends CPUMemoryThroughputContractedImpl {
                             if (tab.isSelected()) {
                                 playOrInit();
                             } else {
-                                pause();
+//                                pause();
                             }
                         }
                     });
@@ -73,7 +72,7 @@ public class JavaFXVideoDisplay extends CPUMemoryThroughputContractedImpl {
                         @Override
                         public void changed(ObservableValue<? extends Boolean> observableValue, Boolean aBoolean, Boolean aBoolean2) {
                             if (SingleWindowLayout.getInstance().getStage().isFocused() && tab.isSelected()) {
-                                playOrInit();
+//                                playOrInit();
                             } else if (!SingleWindowLayout.getInstance().getStage().isFocused()) {
                                 //pause();
                             }
@@ -106,9 +105,11 @@ public class JavaFXVideoDisplay extends CPUMemoryThroughputContractedImpl {
                     (mediaPlayer.getStatus().equals(MediaPlayer.Status.PAUSED)
                             || mediaPlayer.getStatus().equals(MediaPlayer.Status.STOPPED)
                             || mediaPlayer.getStatus().equals(MediaPlayer.Status.READY))) {
-                mediaPlayer.play();
+                if (!mediaPlayer.getStatus().equals(MediaPlayer.Status.PLAYING))
+                    mediaPlayer.play();
             } else {
-                defineMedia(mediaUrl);
+                if (!mediaPlayer.getStatus().equals(MediaPlayer.Status.PLAYING))
+                    defineMedia(mediaUrl);
             }
         }
     }
@@ -136,7 +137,7 @@ public class JavaFXVideoDisplay extends CPUMemoryThroughputContractedImpl {
             }
         });
         synchronized (wait) {
-            wait.wait();
+            wait.wait(2000);
         }
     }
 
@@ -147,10 +148,12 @@ public class JavaFXVideoDisplay extends CPUMemoryThroughputContractedImpl {
 
     @Input
     public void media(final Object o) {
-        Log.warn("media url receive: {}", o.toString());
+        Log.info("Media url receive: {}", o.toString());
         if (o instanceof String) {
             mediaUrl = (String) o;
+            Log.info("Media url receive 0 : {}", o.toString());
             if ((tab != null && tab.isSelected()) || localWindow != null) {
+                Log.info("Media url receive 1 : {}", o.toString());
                 Platform.runLater(new Runnable() {
                     @Override
                     public void run() {

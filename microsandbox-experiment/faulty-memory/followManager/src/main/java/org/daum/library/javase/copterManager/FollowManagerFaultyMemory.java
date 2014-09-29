@@ -139,7 +139,7 @@ public class FollowManagerFaultyMemory extends AbstractHTTPHandler implements Ob
         writer.write(new String(MemCache.getRessource("pages/followers.html"), "UTF-8"));
 //                writer.write(new String(MemCache.getRessource("pages/map-test.html"), "UTF-8"));
         writer.flush();
-        resp.addHeader("Content-Type", HTTPHelper.getMimeTypeFromURL("pages/followers.html"));
+        resp.addHeader("Content-Type", "text/html; charset=utf-8"/*HTTPHelper.getMimeTypeFromURL("pages/followers.html")*/);
 
     }
 

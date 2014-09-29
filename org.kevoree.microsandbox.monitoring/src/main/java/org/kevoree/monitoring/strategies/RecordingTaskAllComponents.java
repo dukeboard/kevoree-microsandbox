@@ -53,7 +53,7 @@ public class RecordingTaskAllComponents extends AbstractMonitoringTask implement
             } catch (InterruptedException e) { }
         }
 
-        currentStrategy.stop();
+        getCurrentStrategy().stop();
         gcWatcher.unregister();
         gcWatcher = null;
     }
@@ -61,8 +61,8 @@ public class RecordingTaskAllComponents extends AbstractMonitoringTask implement
     private void switchToSimpleLocal() {
         MyLowLevelResourceConsumptionRecorder.getInstance().turnMonitoring(true,
                 !FineGrainedStrategyFactory.instance$.isSingleMonitoring());
-        currentStrategy = new RecordingAllComponentsForEver(new ArrayList<ComponentInstance>(), msg, this, reporter);
-        currentStrategy.init(0);
+        setCurrentStrategy(new RecordingAllComponentsForEver(new ArrayList<ComponentInstance>(), msg, this, reporter));
+        getCurrentStrategy().init(0);
     }
 
 

@@ -28,8 +28,7 @@ import java.util.Map;
  * Time: 3:57 PM
  */
 @NodeType
-@Library(name = "JavaSE")
-public class CGroupsNode extends AbstractMonitoredNode<SharedKCLFactory>
+public class CGroupsNode extends AbstractMonitoredNode//<SharedKCLFactory>
 {
 
     @Param(defaultValue = "/cgroup")// Fedora style
@@ -54,11 +53,6 @@ public class CGroupsNode extends AbstractMonitoredNode<SharedKCLFactory>
     public void stopNode() {
         super.stopNode();
         gcWatcher.unregister();
-    }
-
-    @Override
-    protected SharedKCLFactory getClassLoaderFactory() {
-        return new SharedKCLFactory(context.getInstanceName(), false);
     }
 
     private class GCWatcher implements NotificationListener {

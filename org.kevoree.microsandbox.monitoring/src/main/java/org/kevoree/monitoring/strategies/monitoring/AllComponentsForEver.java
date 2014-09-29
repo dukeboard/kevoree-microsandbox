@@ -60,6 +60,10 @@ public class AllComponentsForEver extends FineGrainedMonitoringStrategy {
             a.put(Metric.IORead, new MeasurePoint(data.lastRead, contract.getRead()));
         }
 
+//        if (contract.getMemory() < data.lastMem) {
+//            a.put(Metric.Memory, new MeasurePoint(data.lastMem, contract.getMemory()));
+//        }
+
         if (!a.isEmpty())
             faultyComponents.add(new FaultyComponent(currentComponent.path(),a,
                     new HashSet<String>(), new HashSet<String>()));
@@ -68,8 +72,12 @@ public class AllComponentsForEver extends FineGrainedMonitoringStrategy {
 
     @Override
     public void onGCVerifyContract(long used, long max) {
-        Log.debug("Executing memory consumption verification after GC Used:{}, Max:{}", used, max);
+//        checkRanking();
+        Log.debug("EXECUTING MEMORY CONSUMPTION verification after GC Used:{}, Max:{}, ranking.size:{}",
+                used, max, ranking.size());
+        if (ranking.size() == 0) return;
         ArrayList<FaultyComponent> faultyComponents = new ArrayList<FaultyComponent>();
+//        Log.debug("El coco {}", ranking.size());
         for (ComponentInstance component : ranking) {
             EnumMap<Metric, MeasurePoint> b = new EnumMap<Metric, MeasurePoint>(Metric.class);
             ResourcePrincipal principal = getPrincipal(component);
@@ -77,10 +85,11 @@ public class AllComponentsForEver extends FineGrainedMonitoringStrategy {
                 continue;
             DataForCheckingContract data = getInfo(principal);
             ResourceContract contract = principal.getContract();
-            Log.debug("Comparing memory consumption for {}. Contract = {}, Used = {}",
-                    component.getName(), contract.getMemory(), data.lastMem);
+//            Log.debug("Comparing memory consumption for {}. Contract = {}, Used = {}",
+//                    component.getName(), contract.getMemory(), data.lastMem);
 
             if (contract.getMemory() > 0 && contract.getMemory() < data.lastMem) {
+//                Log.debug("\t\t @@@@@@@@@@@@@ Detected 0 {}", component.path());
                 b.put(Metric.Memory, new MeasurePoint(data.lastMem, contract.getMemory()));
                 faultyComponents.add(new FaultyComponent(component.path(),b,
                         new HashSet<String>(), new HashSet<String>()));
@@ -92,7 +101,8 @@ public class AllComponentsForEver extends FineGrainedMonitoringStrategy {
             synchronized (lock) {
                 this.faultyComponents = faultyComponents;
                 for (FaultyComponent c :faultyComponents) {
-                    System.out.println(c.getComponentPath());
+                    Log.debug("\t\t @@@@@@@@@@@@@ Detected 1 {}", c.getComponentPath());
+//                    System.out.println(c.getComponentPath());
                 }
                 actionOnContractViolation(new Metric[0]);
             }
@@ -126,7 +136,7 @@ public class AllComponentsForEver extends FineGrainedMonitoringStrategy {
 
     }
 
-    private void checkRanking() {
+    private synchronized void checkRanking() {
         if (ranking.size() == 0) {
             ranking = rankChecker.getRanking();
         }

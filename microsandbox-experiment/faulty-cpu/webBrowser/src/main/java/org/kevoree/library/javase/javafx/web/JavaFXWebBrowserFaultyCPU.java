@@ -34,7 +34,6 @@ import java.util.List;
  * @author Erwan Daubert
  * @version 1.0
  */
-@Library(name = "javafx")
 @ComponentType
 public class JavaFXWebBrowserFaultyCPU extends CPUMemoryThroughputContractedImpl {
 

@@ -1,7 +1,7 @@
 package org.kevoree.microsandbox.javase;
 
 import org.kevoree.DeployUnit;
-import org.kevoree.bootstrap.kernel.KevoreeCLFactory;
+//import org.kevoree.bootstrap.kernel.KevoreeCLFactory;
 import org.kevoree.kcl.api.FlexyClassLoader;
 import org.kevoree.log.Log;
 
@@ -12,9 +12,9 @@ import java.io.FileNotFoundException;
 /**
  * Created by duke on 24/06/13.
  */
-public class CoverageKCLFactory implements KevoreeCLFactory {
+public class CoverageKCLFactory /*implements KevoreeCLFactory*/ {
 
-    @Override
+//    @Override
     public FlexyClassLoader createClassLoader(DeployUnit deployUnit, File file) {
         FlexyClassLoader classLoader = new KevoreeJarClassLoaderCoverageInjection();
         classLoader.setKey(deployUnit.path());

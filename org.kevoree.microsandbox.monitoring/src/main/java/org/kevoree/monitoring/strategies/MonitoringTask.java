@@ -16,6 +16,7 @@ import org.kevoree.monitoring.sla.MeasurePoint;
 import org.kevoree.monitoring.strategies.monitoring.FineGrainedMonitoringStrategy;
 import org.kevoree.monitoring.strategies.monitoring.FineGrainedStrategyFactory;
 import org.kevoree.monitoring.strategies.monitoring.GlobalMonitoring;
+import org.kevoree.monitoring.strategies.monitoring.MonitoringStrategy;
 
 import java.util.Arrays;
 import java.util.EnumMap;
@@ -105,20 +106,20 @@ public class MonitoringTask extends AbstractMonitoringTask {
             if (isStopped()) continue;
             switch (currentStatus) {
                 case GLOBAL_MONITORING:
-                    if (currentStrategy.isThereContractViolation()) {
+                    if (getCurrentStrategy().isThereContractViolation()) {
 //                        System.out.println("Switching to local monitoring " + currentStrategy.getViolationOn());
-                        currentStrategy.pause();
+                        getCurrentStrategy().pause();
                         timeAtTheBeginning = System.currentTimeMillis();
-                        switchToSimpleLocal(currentStrategy.getViolationOn());
+                        switchToSimpleLocal(getCurrentStrategy().getViolationOn());
                     }
                     break;
                 case LOCAL_MONITORING:
-                    if (currentStrategy.isThereContractViolation()) {
+                    if (getCurrentStrategy().isThereContractViolation()) {
 //                        System.out.println("Triggering adaptation to solve the problem");
 //                        for (Metric m : currentStrategy.getViolationOn())
 //                            System.out.println("\t" + m);
-                        currentStrategy.pause();
-                        FineGrainedMonitoringStrategy s =(FineGrainedMonitoringStrategy)currentStrategy;
+                        getCurrentStrategy().pause();
+                        FineGrainedMonitoringStrategy s =(FineGrainedMonitoringStrategy)getCurrentStrategy();
                         List<FaultyComponent> tmpList = s.getFaultyComponents();
                         for (FaultyComponent c : tmpList) {
                             // FIXME add some information on a specific port (or something to notify interesting component)
@@ -151,7 +152,7 @@ public class MonitoringTask extends AbstractMonitoringTask {
 //                        }
                     }
                     else {
-                        currentStrategy.pause();
+                        getCurrentStrategy().pause();
                         switchToGlobal();
                     }
 
@@ -159,7 +160,7 @@ public class MonitoringTask extends AbstractMonitoringTask {
             }
         }
 
-        currentStrategy.stop();
+        getCurrentStrategy().stop();
         gcWatcher.unregister();
         gcWatcher = null;
     }
@@ -173,9 +174,10 @@ public class MonitoringTask extends AbstractMonitoringTask {
             MyLowLevelResourceConsumptionRecorder.getInstance().turnMonitoring(true,
                     !FineGrainedStrategyFactory.instance$.isSingleMonitoring());
             currentStatus = MonitoringStatus.LOCAL_MONITORING;
-            currentStrategy = FineGrainedStrategyFactory.instance$.newMonitor(reason, Arrays.asList(getRankingOrder(monitoringComponent.getNodeName()))
+            MonitoringStrategy strategy = FineGrainedStrategyFactory.instance$.newMonitor(reason, Arrays.asList(getRankingOrder(monitoringComponent.getNodeName()))
                     /*ComponentsRanker.instance$.rank(nodeName, service, bootstraper,nameOfRankerFunction))*/, msg);
-            currentStrategy.init(0);
+            setCurrentStrategy(strategy);
+            strategy.init(0);
         }
         catch (Exception e) {
             System.err.println("==================\n nooooooooo \n ===================");
@@ -190,8 +192,8 @@ public class MonitoringTask extends AbstractMonitoringTask {
         MyLowLevelResourceConsumptionRecorder.getInstance().turnMonitoring(false,
                 !FineGrainedStrategyFactory.instance$.isSingleMonitoring());
         currentStatus = MonitoringStatus.GLOBAL_MONITORING;
-        currentStrategy = new GlobalMonitoring(msg, globalThreshold);
-        currentStrategy.init(1000);
+        setCurrentStrategy(new GlobalMonitoring(msg, globalThreshold));
+        getCurrentStrategy().init(1000);
     }
 
     private long timeConsumedInLocalMonitoring() {

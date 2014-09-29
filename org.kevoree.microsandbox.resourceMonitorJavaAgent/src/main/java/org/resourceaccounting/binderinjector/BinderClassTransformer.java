@@ -41,6 +41,13 @@ public class BinderClassTransformer implements ClassFileTransformer {
             return cmd.instrumentProxyClass(bytes);
         }
 
+//        if (className.contains("MonitoringStatusList")) {
+//            System.err.printf("1111 - Loading %s %s\n", className, classLoader);
+//            for (StackTraceElement e : Thread.currentThread().getStackTrace()) {
+//                System.err.printf("\t %s \n", e.toString());
+//            }
+//        }
+
 //        if (!isScapegoat) {
 //            System.out.println("Doing the job for class : " + className);
 //            return cmd.instrumentThreadCreationDetection(bytes, className,
@@ -60,6 +67,12 @@ public class BinderClassTransformer implements ClassFileTransformer {
         if (classLoader != null) {
             int hash = classLoader.hashCode();
             String appId = MonitoringStatusList.instance().getAppId(hash);
+//            if (className.startsWith("org/apache/fop/")) {
+//                if (appId.equals(""))
+//                    System.err.println("ERROR " + className + " " + hash + " " + original.hashCode() + " " + original);
+////                else
+////                    System.err.println("LALALLALALA " + appId);
+//            }
             // I should save this class to re-transform it as soon as the system decides
             // In fact, the solution is close to using a Pair<Name, ClassLoader> as key
             // I say "close" because of the hierarchy between classloaders
@@ -67,7 +80,7 @@ public class BinderClassTransformer implements ClassFileTransformer {
             if (isScapegoat && MonitoringStatusList.instance().isMonitored(appId)) {
                 instr_mem = MonitoringStatusList.instance().isMemoryMonitored(appId);
                 instr_instr = MonitoringStatusList.instance().isCPUMonitored(appId);
-                System.out.printf("Classloader %d %s %s %s %s 000\n",hash, appId, className,instr_mem, instr_instr);
+                //System.out.printf("Classloader %d %s %s %s %s 000\n",hash, appId, className,instr_mem, instr_instr);
             }
             else if (!squirrel && MonitoringStatusList.instance().isMemoryMonitored(appId)) {
                 instr_mem = true;
@@ -89,7 +102,8 @@ public class BinderClassTransformer implements ClassFileTransformer {
         while (loader != null &&
                 !loader.getClass().getCanonicalName().endsWith("KevoreeJarClassLoaderCoverageInjection") &&
                 !loader.getClass().getCanonicalName().endsWith("SharedClassLoader") &&
-                !loader.getClass().getCanonicalName().endsWith("FlexyClassLoaderImpl")) {
+                !loader.getClass().getCanonicalName().endsWith("FlexyClassLoaderImpl") &&
+                !loader.getClass().getCanonicalName().endsWith("MicrosandboxLoader")) {
             loader = loader.getParent();
         }
 

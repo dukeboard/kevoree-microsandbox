@@ -9,9 +9,11 @@ import org.kevoree.api.Context;
 import org.kevoree.api.ModelService;
 import org.kevoree.api.handler.UUIDModel;
 import org.kevoree.api.handler.UpdateCallback;
-import org.kevoree.cloner.DefaultModelCloner;
+//import org.kevoree.cloner.DefaultModelCloner;
+import org.kevoree.factory.DefaultKevoreeFactory;
 import org.kevoree.log.Log;
 import org.kevoree.microsandbox.monitoredNode.MonitoringRegistry;
+import org.kevoree.modeling.api.ModelCloner;
 
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadMXBean;
@@ -37,7 +39,7 @@ public class SandboxReasoner implements Runnable {
 
     private ScheduledExecutorService schduler = null;
     private ThreadMXBean tbean = null;
-    private DefaultModelCloner cloner = new DefaultModelCloner();
+    ModelCloner cloner = new ModelCloner(new DefaultKevoreeFactory());
 
     @Start
     public void start() {
@@ -76,7 +78,7 @@ public class SandboxReasoner implements Runnable {
                         //Ok founded, check the contract
                         Instance kevInstance = (Instance) foundedInstance;
                         if (kevInstance.getDictionary() != null) {
-                            DictionaryValue val = kevInstance.getDictionary().findValuesByID("cpu_wall_time");
+                            Value val = kevInstance.getDictionary().findValuesByID("cpu_wall_time");
                             if (val != null) {
                                 try {
                                     long contractWallTime = Long.parseLong(val.getValue());
@@ -87,7 +89,7 @@ public class SandboxReasoner implements Runnable {
                                         UUIDModel uuidModel = modelService.getCurrentModel();
                                         ContainerRoot clonedModel = (ContainerRoot) cloner.clone(uuidModel.getModel());
                                         ContainerNode node = clonedModel.findNodesByID(context.getNodeName());
-                                        node.removeComponents(clonedModel.findByPath(threadGroupKevoreeInstancePath, ComponentInstance.class));
+                                        node.removeComponents((ComponentInstance)clonedModel.findByPath(threadGroupKevoreeInstancePath));
                                         modelService.compareAndSwap(clonedModel, uuidModel.getUUID(), new UpdateCallback() {
                                             @Override
                                             public void run(Boolean aBoolean) {

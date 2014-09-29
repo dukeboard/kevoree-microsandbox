@@ -76,7 +76,7 @@ public class WebbitHTTPServerFaultyCPU extends AbstractHTTPServer implements Mem
 
     // TODO replace Object with a specific type and rename the parameter
     public void request(/*HTTPOperationTuple*/Object param) {
-        if (param != null && param instanceof HTTPOperationTuple && request.getConnectedBindingsSize() > 0) {
+        if (param != null && param instanceof HTTPOperationTuple /*&& request.getConnectedBindingsSize() > 0*/) {
             request.send(param);
         }
     }

@@ -67,12 +67,21 @@
                         </goals>
                     </execution>
                 </executions>
+                <!--<configuration>-->
+                    <!--&lt;!&ndash;<model>${project.basedir}/src/main/kevs/runningDacapo.kevs</model>&ndash;&gt;-->
+                    <!--&lt;!&ndash;<model>/home/edaubert/kevoree/inti/others/new/JavaFXVideoDisplayOurFaultyMemory.kevs</model>&ndash;&gt;-->
+                    <!--<model>/home/edaubert/kevoree/inti/others/new/JavaFXVideoDisplayOurFaultyCPU.kevs</model>-->
+                    <!--<excludes>-->
+                        <!--<exclude>org.kevoree:org.kevoree.bootstrap</exclude>-->
+                        <!--<exclude>org.kevoree.microsandbox:org.kevoree.microsandbox.core</exclude>-->
+                    <!--</excludes>-->
+                <!--</configuration>-->
+
                 <configuration>
-                    <!--<model>${project.basedir}/src/main/kevs/runningDacapo.kevs</model>-->
-                    <!--<model>/home/edaubert/kevoree/inti/others/new/JavaFXVideoDisplayOurFaultyMemory.kevs</model>-->
-                    <model>/home/edaubert/kevoree/inti/others/new/JavaFXVideoDisplayOurFaultyCPU.kevs</model>
                     <excludes>
                         <exclude>org.kevoree:org.kevoree.bootstrap</exclude>
+                        <exclude>org.kevoree.microsandbox:org.kevoree.microsandbox.core</exclude>
+                        <exclude>org.kevoree.microsandbox:org.kevoree.microsandbox.sharedResourceAccounting</exclude>
                     </excludes>
                 </configuration>
             </plugin>

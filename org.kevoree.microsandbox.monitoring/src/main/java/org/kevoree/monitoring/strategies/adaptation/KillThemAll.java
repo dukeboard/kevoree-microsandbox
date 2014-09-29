@@ -3,11 +3,12 @@ package org.kevoree.monitoring.strategies.adaptation;
 import org.kevoree.*;
 import org.kevoree.api.ModelService;
 import org.kevoree.api.handler.UUIDModel;
-import org.kevoree.cloner.DefaultModelCloner;
-import org.kevoree.komponents.helpers.SynchronizedUpdateCallback;
+import org.kevoree.factory.DefaultKevoreeFactory;
 import org.kevoree.microsandbox.api.communication.MonitoringReporterFactory;
 import org.kevoree.microsandbox.api.event.AdaptationEvent;
+import org.kevoree.modeling.api.ModelCloner;
 import org.kevoree.monitoring.sla.FaultyComponent;
+import org.kevoree.monitoring.helper.SynchronizedUpdateCallback;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,14 +29,14 @@ public class KillThemAll extends BasicAdaptation {
     @Override
     public List<FaultyComponent> adapt(String nodeName, List<FaultyComponent> faultyComponents) {
         int index = 0;
-        DefaultModelCloner cloner = new DefaultModelCloner();
+        ModelCloner cloner = new ModelCloner(new DefaultKevoreeFactory());
         UUIDModel uuidModel = modelService.getCurrentModel();
         ContainerRoot clonedModel = (ContainerRoot) cloner.clone(uuidModel.getModel());
         ContainerNode node = clonedModel.findNodesByID(nodeName);
         for (FaultyComponent c : faultyComponents) {
             MonitoringReporterFactory.reporter().trigger(new AdaptationEvent(getActionName(), c.getComponentPath()));/*.adaptation(getActionName(), c.getComponentPath());*/
 
-            ComponentInstance cc = clonedModel.findByPath(c.getComponentPath(), ComponentInstance.class);
+            ComponentInstance cc = (ComponentInstance)clonedModel.findByPath(c.getComponentPath());
             node.removeComponents(cc);
             for (Port p : cc.getProvided()) {
                 for (MBinding b : p.getBindings()) {

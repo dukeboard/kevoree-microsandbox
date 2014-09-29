@@ -3,13 +3,10 @@ package org.kevoree.monitoring.comp.monitor;
 import org.kevoree.ComponentInstance;
 import org.kevoree.ContainerRoot;
 import org.kevoree.annotation.*;
-import org.kevoree.api.BootstrapService;
-import org.kevoree.api.Context;
-import org.kevoree.api.ModelService;
-import org.kevoree.api.Port;
+import org.kevoree.api.*;
 import org.kevoree.api.handler.ModelListener;
 import org.kevoree.api.handler.ModelListenerAdapter;
-import org.kevoree.komponents.helpers.SynchronizedChannelCallback;
+import org.kevoree.api.handler.UpdateContext;
 import org.kevoree.log.Log;
 import org.kevoree.microsandbox.api.communication.ComposeMonitoringReport;
 import org.kevoree.microsandbox.api.communication.MonitoringReporterFactory;
@@ -25,6 +22,7 @@ import org.kevoree.monitoring.strategies.AbstractMonitoringTask;
 import org.kevoree.monitoring.strategies.MonitoringTask;
 import org.kevoree.monitoring.strategies.MonitoringTaskAllComponents;
 import org.kevoree.monitoring.strategies.monitoring.FineGrainedStrategyFactory;
+import org.kevoree.monitoring.helper.SynchronizedChannelCallback;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -39,6 +37,8 @@ import java.util.Map;
  */
 @ComponentType
 public class MonitoringComponent implements MicrosandboxEventListener, RankingHeuristicComponent {
+
+
     AbstractMonitoringTask monitoringTask;
 
     @Output(optional = true)
@@ -146,20 +146,16 @@ public class MonitoringComponent implements MicrosandboxEventListener, RankingHe
     }
 
     public ComponentInstance[] getRankingOrder(String nodeName) {
-        if (getRankingOrder.getConnectedBindingsSize() > 0) {
+        if (getRankingOrder != null && getRankingOrder.getConnectedBindingsSize() > 0) {
             SynchronizedChannelCallback<ComponentInstance[]> callback = new SynchronizedChannelCallback<ComponentInstance[]>();
-            callback.initialize();
             getRankingOrder.call(nodeName, callback);
             try {
                 ComponentInstance[] instances = callback.waitForResult(5000);
 
-                // FIXME remove the loop
                 if (instances != null) {
-                    for (ComponentInstance instance : instances) {
-                        System.out.println(instance.path());
-                    }
+                    return instances;
                 }
-                return instances;
+                return new ComponentInstance[0];
             } catch (Throwable throwable) {
                 throwable.printStackTrace();
                 return new ComponentInstance[0];
@@ -195,8 +191,8 @@ public class MonitoringComponent implements MicrosandboxEventListener, RankingHe
         }
 
         @Override
-        public boolean afterLocalUpdate(ContainerRoot currentModel, ContainerRoot proposedModel) {
-            for (ComponentInstance instance : proposedModel.findNodesByID(getNodeName()).getComponents()) {
+        public boolean afterLocalUpdate(UpdateContext updateContext) {
+            for (ComponentInstance instance : updateContext.getProposedModel().findNodesByID(getNodeName()).getComponents()) {
                 if (!deployTimes.containsKey(instance.path())) {
                     deployTimesToSend.put(instance.path(), (Long) monitoringRegistry.lookup(instance.path() + "_deployTime"));
                 }
@@ -214,7 +210,7 @@ public class MonitoringComponent implements MicrosandboxEventListener, RankingHe
         }
 
         @Override
-        public void preRollback(ContainerRoot containerRoot, ContainerRoot containerRoot2) {
+        public void preRollback(UpdateContext updateContext) {
             deployTimesToSend.clear();
         }
     }

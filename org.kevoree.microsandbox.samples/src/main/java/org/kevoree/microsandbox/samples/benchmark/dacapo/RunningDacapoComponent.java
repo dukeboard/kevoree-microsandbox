@@ -79,11 +79,12 @@ public class RunningDacapoComponent extends CPUMemoryContractedImpl {
     @Start
     public void start() {
         try {
-            FlexyClassLoader ll = (FlexyClassLoader)this.getClass().getClassLoader();
-            ll.load(new FileInputStream(new File(dacapo_path).toURI().toURL().getFile()));
-//            ll.load();
+//            FlexyClassLoader ll = (FlexyClassLoader)Thread.currentThread().getContextClassLoader();
+//            ll.load(new FileInputStream(new File(dacapo_path).toURI().toURL().getFile()));
+//            Log.debug("\n\n\n\t\t\t{}\n\n\n", ll);
 
-            loader = ll;//new MyLoader(new URL[]{new File(path).toURI().toURL()}, this.getClass().getClassLoader());
+            loader = new MyLoader(new URL[]{new File(dacapo_path).toURI().toURL()},
+                    Thread.currentThread().getContextClassLoader());
         } catch (MalformedURLException e) {
             e.printStackTrace();
         } catch (IOException e) {

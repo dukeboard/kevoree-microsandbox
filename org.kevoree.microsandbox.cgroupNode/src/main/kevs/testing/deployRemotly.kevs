@@ -1,7 +1,36 @@
 //sample of KevScript configuration
-repo "http://repo1.maven.org/maven2"
-include mvn:org.kevoree.library.java:org.kevoree.library.java.javaNode:release
-include mvn:org.kevoree.library.java:org.kevoree.library.java.ws:release
-add node0 : JavaNode
-add sync : WSGroup
-attach node0 sync
+repo "http://repo1.maven.org/maven2/"
+include mvn:org.kevoree.library.java:org.kevoree.library.java.ws:3.4.1
+include mvn:org.kevoree.kcl:org.kevoree.kcl:7
+include mvn:org.kevoree:org.kevoree.maven.resolver:16
+include mvn:org.kevoree.log:org.kevoree.log:1
+include mvn:org.java-websocket:Java-WebSocket:1.3.0
+include mvn:org.kevoree.modeling:org.kevoree.modeling.microframework:1.9.11
+include mvn:org.kevoree:org.kevoree.kevscript:3.4.1
+include mvn:org.kevoree:org.kevoree.api:3.4.1
+include mvn:fr.inria.jfilter:jfilter-library:1.3
+include mvn:org.jetbrains.kotlin:kotlin-stdlib:0.6.1673
+include mvn:org.kevoree:org.kevoree.model:3.4.1
+include mvn:org.jetbrains.kotlin:kotlin-runtime:0.6.1673
+include mvn:org.kevoree.library.java:org.kevoree.library.java.javaNode:3.4.1
+include mvn:org.kevoree:org.kevoree.annotation.api:3.4.1
+include mvn:org.kevoree.library.java:org.kevoree.library.java.channels:3.4.1
+
+include mvn:org.kevoree.microsandbox:org.kevoree.microsandbox.cgroupNode:1.1
+include mvn:org.kevoree.microsandbox:org.kevoree.microsandbox.javasenode:1.1
+include mvn:org.kevoree.microsandbox:org.kevoree.microsandbox.samples:1.1
+
+
+add nodeTMP : JavaNode
+set nodeTMP.log = "info"
+set nodeTMP.started = "true"
+
+add nodeTMP.cgroupDeployer : CGroupDeployer/1.1
+set nodeTMP.cgroupDeployer.CRIU_Based_Deployment = 'false'
+set nodeTMP.cgroupDeployer.log_file_for_experiments = 'pepe.log'
+set nodeTMP.cgroupDeployer.distributed_deployment = 'false'
+set nodeTMP.cgroupDeployer.KevScriptToDeploy='/home/inti/programs/kevoree-microsandbox/org.kevoree.microsandbox.cgroupNode/src/main/kevs/testing/testingResourceAwareGroup.kevs'
+
+add sync : ResourceAwareGroup
+set sync.port/nodeTMP='9001'
+attach nodeTMP sync
