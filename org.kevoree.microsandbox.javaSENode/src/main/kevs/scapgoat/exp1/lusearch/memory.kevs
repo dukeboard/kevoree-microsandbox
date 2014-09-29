@@ -1,0 +1,53 @@
+repo "https://repo1.maven.org/maven2"
+repo "https://oss.sonatype.org/content/groups/public/"
+repo "http://maven.kevoree.org/daum/snapshots"
+
+
+include mvn:org.kevoree.microsandbox:org.kevoree.microsandbox.javasenode:latest
+include mvn:org.kevoree.microsandbox:org.kevoree.microsandbox.monitoring:latest
+include mvn:org.kevoree.microsandbox:org.kevoree.microsandbox.samples:latest
+
+include mvn:org.kevoree.library.java:org.kevoree.library.java.toys:release
+include mvn:org.kevoree.library.java:org.kevoree.library.java.ws:release
+include mvn:org.kevoree.library.java:org.kevoree.library.java.channels:release
+
+include mvn:org.kevoree.komponents:camel-channel-http:latest
+
+add node0:MonitoredNode
+set node0.log = 'debug'
+set node0.availability_memory='950000000'
+set node0.availability_instr='200000000'
+set node0.availability_write_disc='10000000'
+set node0.availability_read_disc='10000000'
+
+add node0.MonitoringComponent0: MonitoringComponent
+set node0.MonitoringComponent0.memory_threshold='95'
+set node0.MonitoringComponent0.cpu_threshold='99'
+set node0.MonitoringComponent0.net_in_threshold='90'
+set node0.MonitoringComponent0.net_out_threshold='90'
+set node0.MonitoringComponent0.adaptiveMonitoring='false'
+
+add node0.reasoner0: ResourceAwareReasoner
+add node0.rankerBasedHeuristicComponent0: NumberFailureBasedHeuristicComponent
+add ch_reasoning : AsyncBroadcast
+bind node0.reasoner0.eventHandler ch_reasoning
+bind node0.MonitoringComponent0.reasoner ch_reasoning
+add ch_rank_of_components : SyncBroadcast
+add ch_trigger_monitoring : SyncBroadcast
+bind node0.rankerBasedHeuristicComponent0.getRankingOrder ch_rank_of_components
+bind node0.MonitoringComponent0.getRankingOrder ch_rank_of_components
+bind node0.rankerBasedHeuristicComponent0.triggerMonitoringEvent ch_trigger_monitoring
+bind node0.MonitoringComponent0.triggerMonitoringEvent ch_trigger_monitoring
+
+
+// real work
+add node0.dacapoExecuter0: RunningDacapoComponent
+set node0.dacapoExecuter0.dacapo_path = '/home/inti/Downloads/dacapo-2006-10-MR2.jar'
+set node0.dacapoExecuter0.dacapo_test = 'lusearch'
+set node0.dacapoExecuter0.dacapo_n ='4'
+set node0.dacapoExecuter0.cpu_wall_time = '0'
+set node0.dacapoExecuter0.memory_max_size = '1110'
+
+add sync : WSGroup
+set sync.port/node0 = "9000"
+attach node0 sync

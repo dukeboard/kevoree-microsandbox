@@ -60,10 +60,6 @@ public class AllComponentsForEver extends FineGrainedMonitoringStrategy {
             a.put(Metric.IORead, new MeasurePoint(data.lastRead, contract.getRead()));
         }
 
-//        if (contract.getMemory() < data.lastMem) {
-//            a.put(Metric.Memory, new MeasurePoint(data.lastMem, contract.getMemory()));
-//        }
-
         if (!a.isEmpty())
             faultyComponents.add(new FaultyComponent(currentComponent.path(),a,
                     new HashSet<String>(), new HashSet<String>()));
@@ -75,9 +71,12 @@ public class AllComponentsForEver extends FineGrainedMonitoringStrategy {
 //        checkRanking();
         Log.debug("EXECUTING MEMORY CONSUMPTION verification after GC Used:{}, Max:{}, ranking.size:{}",
                 used, max, ranking.size());
-        if (ranking.size() == 0) return;
+        if (ranking.size() == 0) {
+            checkRanking();
+            Log.debug("EXECUTING MEMORY CONSUMPTION verification after GC Used:{}, Max:{}, ranking.size:{}",
+                    used, max, ranking.size());
+        }
         ArrayList<FaultyComponent> faultyComponents = new ArrayList<FaultyComponent>();
-//        Log.debug("El coco {}", ranking.size());
         for (ComponentInstance component : ranking) {
             EnumMap<Metric, MeasurePoint> b = new EnumMap<Metric, MeasurePoint>(Metric.class);
             ResourcePrincipal principal = getPrincipal(component);
@@ -85,24 +84,19 @@ public class AllComponentsForEver extends FineGrainedMonitoringStrategy {
                 continue;
             DataForCheckingContract data = getInfo(principal);
             ResourceContract contract = principal.getContract();
-//            Log.debug("Comparing memory consumption for {}. Contract = {}, Used = {}",
-//                    component.getName(), contract.getMemory(), data.lastMem);
 
-            if (contract.getMemory() > 0 && contract.getMemory() < data.lastMem) {
-//                Log.debug("\t\t @@@@@@@@@@@@@ Detected 0 {}", component.path());
+            if (contract != null && data != null && contract.getMemory() > 0 && contract.getMemory() < data.lastMem) {
                 b.put(Metric.Memory, new MeasurePoint(data.lastMem, contract.getMemory()));
                 faultyComponents.add(new FaultyComponent(component.path(),b,
                         new HashSet<String>(), new HashSet<String>()));
             }
         }
         if (faultyComponents.size() > 0) {
-//            EnumSet<Metric> tmp = EnumSet.noneOf(Metric.class);
             cancel();
             synchronized (lock) {
                 this.faultyComponents = faultyComponents;
                 for (FaultyComponent c :faultyComponents) {
                     Log.debug("\t\t @@@@@@@@@@@@@ Detected 1 {}", c.getComponentPath());
-//                    System.out.println(c.getComponentPath());
                 }
                 actionOnContractViolation(new Metric[0]);
             }

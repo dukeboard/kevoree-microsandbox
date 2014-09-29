@@ -1,0 +1,26 @@
+repo "https://repo1.maven.org/maven2"
+repo "https://oss.sonatype.org/content/groups/public/"
+repo "http://maven.kevoree.org/daum/snapshots"
+
+
+include mvn:org.kevoree.microsandbox:org.kevoree.microsandbox.javasenode:release
+
+include mvn:org.kevoree.library.java:org.kevoree.library.java.toys:release
+include mvn:org.kevoree.library.java:org.kevoree.library.java.ws:release
+include mvn:org.kevoree.library.java:org.kevoree.library.java.channels:release
+
+include mvn:org.kevoree.microsandbox:org.kevoree.microsandbox.monitoring:latest
+include mvn:org.kevoree.microsandbox:org.kevoree.microsandbox.samples:latest
+
+include mvn:org.kevoree.komponents:camel-channel-http:release
+
+add node0:JavaNode
+
+add node0.dacapoExecuter0: RunningDacapoComponent
+set node0.dacapoExecuter0.dacapo_path = '/home/inti/Downloads/dacapo-2006-10-MR2.jar'
+set node0.dacapoExecuter0.dacapo_test = 'lusearch' // 'hsqldb' 'fop' 'pmd' 'jython' 'chart' 'antlr'
+set node0.dacapoExecuter0.dacapo_n ='4'
+
+add sync : WSGroup
+set sync.port/node0 = "9000"
+attach node0 sync

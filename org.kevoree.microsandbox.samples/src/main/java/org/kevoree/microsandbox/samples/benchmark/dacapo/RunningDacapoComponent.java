@@ -43,7 +43,6 @@ public class RunningDacapoComponent extends CPUMemoryContractedImpl {
         @NotNull
         @Override
         protected Class<?> findClass(String name) throws ClassNotFoundException {
-            Log.debug("Finding class {} {}", name, i++);
             return super.findClass(name);
         }
     }

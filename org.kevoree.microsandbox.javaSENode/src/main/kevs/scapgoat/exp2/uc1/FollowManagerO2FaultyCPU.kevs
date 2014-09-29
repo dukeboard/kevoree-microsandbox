@@ -99,6 +99,7 @@ set node0.FollowMan511.throughput_msg_per_second='all=1;request=1;followmeuser=0
 add node0.javaFXWebBrowser : JavaFXWebBrowser
 set node0.javaFXWebBrowser.cpu_wall_time = '64'
 set node0.javaFXWebBrowser.memory_max_size = '24'
+set node0.javaFXWebBrowser.url = 'http://maps.google.com'
     //,throughput_msg_per_second='all=0;service=0'
 
 add node0.websockletJavaFXHandler : WebSocketClientHandler
@@ -122,8 +123,6 @@ add defMSG472 : AsyncBroadcast
 add defMSG222 : AsyncBroadcast
 add webSocketHandlerMessage : AsyncBroadcast
 
-
-
 bind node0.SprayWebS142.request defMSG472
 bind node0.SprayWebS142.response defMSG222
 
@@ -133,8 +132,8 @@ bind node0.FollowMan511.content defMSG222
 bind node0.Resources407.request defMSG472
 bind node0.Resources407.content defMSG222
 
-bind node0.WsServer650.service defSERVIC618
-bind node0.FollowMan511.ws defSERVIC618
+//bind node0.WsServer650.service defSERVIC618
+//bind node0.FollowMan511.ws defSERVIC618
 
 bind node0.javaFXWebBrowser.handle webSocketHandlerMessage
 bind node0.websockletJavaFXHandler.handle webSocketHandlerMessage

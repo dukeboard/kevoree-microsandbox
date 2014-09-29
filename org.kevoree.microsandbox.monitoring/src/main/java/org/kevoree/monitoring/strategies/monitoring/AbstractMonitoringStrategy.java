@@ -1,6 +1,7 @@
 package org.kevoree.monitoring.strategies.monitoring;
 
 
+import org.kevoree.log.Log;
 import org.kevoree.microsandbox.api.sla.Metric;
 
 import java.util.EnumSet;
@@ -38,7 +39,13 @@ public abstract class AbstractMonitoringStrategy extends TimerTask implements Mo
     public void init(int startTime) {
         // init monitoring of thread execution
         timerForCPU = new Timer();
-        timerForCPU.schedule(this, startTime, ELAPSED_TIME);
+        try {
+            timerForCPU.schedule(this, startTime, ELAPSED_TIME);
+            Log.debug("\t\t\t SCHEDULING {}", this);
+        }
+        catch (java.lang.IllegalStateException ex) {
+            Log.error("I don't know who scheduled the task before {}", this);
+        }
         contractViolation = false;
         violationOn = EnumSet.noneOf(Metric.class);
         // init monitoring of network communication
