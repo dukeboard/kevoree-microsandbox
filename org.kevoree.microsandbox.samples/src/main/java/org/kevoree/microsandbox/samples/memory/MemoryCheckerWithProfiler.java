@@ -30,7 +30,8 @@ public class MemoryCheckerWithProfiler {
         Object[] r = (Object[])obj;
         for (int j = 0 ; j < r.length ; j++) {
 
-            ClassDetailsUsage[] details = (ClassDetailsUsage[])r[j];
+            PrincipalClassDetailsUsage principalClassDetailsUsage = (PrincipalClassDetailsUsage)r[j];
+            ClassDetailsUsage[] details = principalClassDetailsUsage.detailsUsages;
             Arrays.sort(details, new Comparator() {
                 public int compare(Object obj1, Object obj2) {
                     ClassDetailsUsage a = (ClassDetailsUsage) obj1, b = (ClassDetailsUsage) obj2;
@@ -58,8 +59,8 @@ public class MemoryCheckerWithProfiler {
             }
 
 			/* Print out sorted table */
-            System.out.printf("Heap View, Total of %d objects found, with a total size of %d.\n\n",
-                    totalCount, totalSize);
+            System.out.printf("Heap View for %s, Total of %d objects found, with a total size of %d.\n\n",
+                    principalClassDetailsUsage.resourceId, totalCount, totalSize);
 
 //            System.out.printf("Nro.      Space      Count      Class Signature\n");
 //            System.out.printf("--------- ---------- ---------- ----------------------\n");
