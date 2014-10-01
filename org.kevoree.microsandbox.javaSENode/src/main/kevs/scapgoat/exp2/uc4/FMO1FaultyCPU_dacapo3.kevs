@@ -108,7 +108,7 @@ set node0.websockletJavaFXHandler.memory_max_size = '0'
 
 add node0.videoDisplay : JavaFXVideoDisplay
 set node0.videoDisplay.cpu_wall_time = '130'
-set node0.videoDisplay.memory_max_size = '72'
+set node0.videoDisplay.memory_max_size = '0'
     //,throughput_msg_per_second='all=0;service=0'
 
 // sending video signal
