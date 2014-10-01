@@ -1,12 +1,12 @@
 package org.kevoree.watchdog;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
+import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLClassLoader;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
+import java.util.ArrayList;
 import java.util.jar.JarOutputStream;
 import java.util.zip.ZipEntry;
 
@@ -68,48 +68,69 @@ public class RuntimeDowloader {
     }
 
     public File getExtAgent() {
-        String tempPath = getTempPath();
-        File agentFile = new File(tempPath + File.separator + "ext-agent" + Version.VERSION + ".jar");
+        return createFileFromResource(this.getClass().getClassLoader(),
+                "resourceMonitorJavaAgent.jar",
+                "ext-agent" + Version.VERSION + ".jar"
+                );
+    }
+
+    private File getHeapAnalysis() {
+        return createFileFromResource(this.getClass().getClassLoader(),"heapanalysis.jar");
+    }
+
+    public File getHeapExplorerLibrary() {
+        File heapAnalysis_file = getHeapAnalysis();
         try {
-            if (!agentFile.exists() || Version.VERSION.contains("SNAPSHOT")) {
-                FileOutputStream fos = new FileOutputStream(agentFile);
-                InputStream is = this.getClass().getClassLoader().getResourceAsStream("resourceMonitorJavaAgent.jar");
-                byte data[] = new byte[1024];
-                int count;
-                while ((count = is.read(data, 0, 1024)) != -1) {
-                    fos.write(data, 0, count);
-                }
-                is.close();
-                fos.close();
+            URL url = heapAnalysis_file.toURL();
+            URLClassLoader urlClassLoader = URLClassLoader.newInstance(new URL[]{
+                    url
+            });
+            File agentFile = createFileFromResource(urlClassLoader, "libheapViewer.so");
+
+            // extract config.ini and all the plugins
+            File configFile = createFileFromResource(urlClassLoader, "config.ini");
+            File lib_directory = new File(getTempPath() + File.separator + "lib");
+            lib_directory.mkdir();
+
+            BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(configFile)));
+            String line = reader.readLine();
+            ArrayList<String> l = new ArrayList<String>();
+            while (line != null) {
+                l.add(getTempPath() + line);
+                createFileFromResource(urlClassLoader, line);
+                line = reader.readLine();
             }
-        } catch (Exception e) {
+            reader.close(); // this is wrong
+
+            PrintWriter printWriter = new PrintWriter(configFile);
+            for (String s : l)
+                printWriter.println(s);
+            printWriter.close(); // wrong again
+
+            return agentFile;
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
             e.printStackTrace();
         }
-        return agentFile;
+        return null;
+    }
+
+    private File createFileFromResource(ClassLoader classLoader, String resourceName) {
+        return createFileFromResource(classLoader, resourceName, resourceName);
     }
 
     public File getSharedResourceAccounting() {
-        String tempPath = getTempPath();
-        File agentFile = new File(tempPath + File.separator + "shared-res-" + Version.VERSION + ".jar");
-        try {
-            if (!agentFile.exists() || Version.VERSION.contains("SNAPSHOT")) {
-                FileOutputStream fos = new FileOutputStream(agentFile);
-                InputStream is = this.getClass().getClassLoader().getResourceAsStream("sharedResourceAccounting.jar");
-                byte data[] = new byte[1024];
-                int count;
-                while ((count = is.read(data, 0, 1024)) != -1) {
-                    fos.write(data, 0, count);
-                }
-                is.close();
-                fos.close();
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return agentFile;
+        return createFileFromResource(this.getClass().getClassLoader(),
+                "sharedResourceAccounting.jar",
+                "shared-res-" + Version.VERSION + ".jar"
+                );
     }
 
     public File getSharedChildClassJar() {
+
         String tempPath = getTempPath();
         File agentFile = new File(tempPath + File.separator + "shared-childjvm-" + Version.VERSION + ".jar");
         try {
@@ -141,4 +162,24 @@ public class RuntimeDowloader {
     }
 
 
+    private File createFileFromResource(ClassLoader classLoader, String resourceName, String outputName) {
+        String tempPath = getTempPath();
+        File file = new File(tempPath + File.separator + outputName);
+        try {
+            if (!file.exists() || Version.VERSION.contains("SNAPSHOT")) {
+                FileOutputStream fos = new FileOutputStream(file);
+                InputStream is = classLoader.getResourceAsStream(resourceName);
+                byte data[] = new byte[1024];
+                int count;
+                while ((count = is.read(data, 0, 1024)) != -1) {
+                    fos.write(data, 0, count);
+                }
+                is.close();
+                fos.close();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return file;
+    }
 }

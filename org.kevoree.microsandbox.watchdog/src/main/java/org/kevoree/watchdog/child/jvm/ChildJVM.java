@@ -123,6 +123,7 @@ public class ChildJVM {
         }
 
         commandLine.add("-Xbootclasspath/p:" + dwl.getExtRTJar().getAbsolutePath() + File.pathSeparatorChar + dwl.getSharedResourceAccounting());
+        commandLine.add("-agentpath:" + dwl.getHeapExplorerLibrary().getAbsolutePath());
         commandLine.add("-javaagent:" + dwl.getExtAgent().getAbsolutePath());
 
         if (inheritedSystemPropertyNames != null && !inheritedSystemPropertyNames.isEmpty()) {

@@ -16,15 +16,6 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <repositories>
-        <!--other repositories if any-->
-        <repository>
-            <id>project.local</id>
-            <name>project</name>
-            <url>file:///home/inti/programs/jdk1.7.0_65_demos/demo/jvmti/heap analyzer/src/localMavenRepo/repo</url>
-        </repository>
-    </repositories>
-
     <dependencies>
         <dependency>
             <groupId>org.kevoree.microsandbox</groupId>

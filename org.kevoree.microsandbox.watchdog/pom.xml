@@ -91,6 +91,16 @@
                                     <outputDirectory>${basedir}/src/main/resources</outputDirectory>
                                     <destFileName>jarInstrumenter.jar</destFileName>
                                 </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.heapexplorer</groupId>
+                                    <artifactId>org.heapexplorer.heapanalysis</artifactId>
+                                    <version>1.0</version>
+                                    <type>jar</type>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>${basedir}/src/main/resources</outputDirectory>
+                                    <destFileName>heapanalysis.jar</destFileName>
+                                </artifactItem>
+
 
                             </artifactItems>
                             <overWriteReleases>true</overWriteReleases>
