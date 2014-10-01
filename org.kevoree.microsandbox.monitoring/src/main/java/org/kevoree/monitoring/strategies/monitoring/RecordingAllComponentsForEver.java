@@ -20,7 +20,7 @@ import java.util.*;
  * Time: 5:12 PM
  *
  */
-public class RecordingAllComponentsForEver extends FineGrainedMonitoringStrategy {
+public class RecordingAllComponentsForEver<T extends MemorySubstrategy> extends FineGrainedMonitoringStrategy<T> {
     private final NewMetricReporter reporter;
     private int count = 0;
     private Object lock = new Object();

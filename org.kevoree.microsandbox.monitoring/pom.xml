@@ -54,6 +54,11 @@
             <version>4.11</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.heapexplorer</groupId>
+            <artifactId>org.heapexplorer.heapanalysis</artifactId>
+            <version>1.0</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -92,6 +97,7 @@
                         <exclude>org.kevoree:org.kevoree.bootstrap</exclude>
                         <exclude>org.kevoree.microsandbox:org.kevoree.microsandbox.core</exclude>
                         <exclude>org.kevoree.microsandbox:org.kevoree.microsandbox.sharedResourceAccounting</exclude>
+                        <exclude>org.heapexplorer:org.heapexplorer.heapanalysis</exclude>
                     </excludes>
                 </configuration>
             </plugin>

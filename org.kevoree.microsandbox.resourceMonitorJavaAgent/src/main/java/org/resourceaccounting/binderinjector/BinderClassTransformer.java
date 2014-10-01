@@ -3,6 +3,7 @@ package org.resourceaccounting.binderinjector;
 import org.kevoree.microsandbox.core.OnNewThreadNotifier;
 import org.kevoree.microsandbox.core.instrumentation.ExtraInstrumentationRules;
 import org.kevoree.microsandbox.core.instrumentation.InstrumenterCommand;
+import org.resourceaccounting.binder.LowLevelMonitoringModes;
 import org.resourceaccounting.binder.MonitoringStatusList;
 
 import java.lang.instrument.ClassFileTransformer;
@@ -21,13 +22,20 @@ public class BinderClassTransformer implements ClassFileTransformer {
     private InstrumenterCommand cmd = new InstrumenterCommand();
 
     boolean debug = false;
-    private boolean squirrel;
 
-    public void setScapegoat(boolean scapegoat) {
-        isScapegoat = scapegoat;
+    LowLevelMonitoringModes lowLevelMonitoringModes = LowLevelMonitoringModes.SCAPEGOAT;
+
+    public void setScapegoat() {
+        lowLevelMonitoringModes = LowLevelMonitoringModes.SCAPEGOAT;
     }
 
-    boolean isScapegoat = true;
+    public void setSquirrel() {
+        lowLevelMonitoringModes = LowLevelMonitoringModes.SQUIRREL;
+    }
+
+    public void setScapegoat2() {
+        lowLevelMonitoringModes = LowLevelMonitoringModes.SCAPEGOAT2;
+    }
 
     public BinderClassTransformer(Instrumentation inst, boolean debug) {
         this.debug = debug;
@@ -60,31 +68,31 @@ public class BinderClassTransformer implements ClassFileTransformer {
 
         boolean instr_mem = false;
         boolean instr_instr = false;
-        boolean instr_thread_creation = !isScapegoat;
+        boolean instr_thread_creation = lowLevelMonitoringModes.equals(LowLevelMonitoringModes.SQUIRREL);
         ClassLoader original = classLoader;
         classLoader = searchProperLoader(classLoader);
 //        System.out.printf("Discovering if class %s has to be modified %s\n", className, classLoader);
         if (classLoader != null) {
             int hash = classLoader.hashCode();
             String appId = MonitoringStatusList.instance().getAppId(hash);
-//            if (className.startsWith("org/apache/fop/")) {
-//                if (appId.equals(""))
-//                    System.err.println("ERROR " + className + " " + hash + " " + original.hashCode() + " " + original);
-////                else
-////                    System.err.println("LALALLALALA " + appId);
-//            }
             // I should save this class to re-transform it as soon as the system decides
             // In fact, the solution is close to using a Pair<Name, ClassLoader> as key
             // I say "close" because of the hierarchy between classloaders
             MonitoringStatusList.instance().saveClassName(appId, className, original);
-            if (isScapegoat && MonitoringStatusList.instance().isMonitored(appId)) {
+            if (lowLevelMonitoringModes.equals(LowLevelMonitoringModes.SCAPEGOAT)
+                    && MonitoringStatusList.instance().isMonitored(appId)) {
                 instr_mem = MonitoringStatusList.instance().isMemoryMonitored(appId);
                 instr_instr = MonitoringStatusList.instance().isCPUMonitored(appId);
                 //System.out.printf("Classloader %d %s %s %s %s 000\n",hash, appId, className,instr_mem, instr_instr);
             }
-            else if (!squirrel && MonitoringStatusList.instance().isMemoryMonitored(appId)) {
+            else if (lowLevelMonitoringModes.equals(LowLevelMonitoringModes.SCAPEGOAT)
+                    && MonitoringStatusList.instance().isMemoryMonitored(appId)) {
                 instr_mem = true;
 //                System.out.printf("Classloader %d %s %s %s %s 111\n",hash, appId, className,instr_mem, instr_instr);
+            }
+            else if (lowLevelMonitoringModes.equals(LowLevelMonitoringModes.SCAPEGOAT2)
+                    && MonitoringStatusList.instance().isMonitored(appId)) {
+                instr_instr = MonitoringStatusList.instance().isCPUMonitored(appId);
             }
         }
 
@@ -114,9 +122,5 @@ public class BinderClassTransformer implements ClassFileTransformer {
 
     public static synchronized void setHandler(Object h) {
         handler = h;
-    }
-
-    public void setSquirrel(boolean squirrel) {
-        this.squirrel = squirrel;
     }
 }

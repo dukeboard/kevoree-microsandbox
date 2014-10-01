@@ -94,7 +94,8 @@ public class MonitoringTaskAllComponents extends AbstractMonitoringTask implemen
                     !FineGrainedStrategyFactory.instance$.isSingleMonitoring());
         }
 
-        MonitoringStrategy strategy = new AllComponentsForEver( new ArrayList<ComponentInstance>(), msg, this);
+        MonitoringStrategy strategy = new AllComponentsForEver( new ArrayList<ComponentInstance>(),
+                new DefaultMemorySubstrategy(), msg, this);
         setCurrentStrategy(strategy);
         strategy.init(0);
     }

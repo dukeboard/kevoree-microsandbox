@@ -15,6 +15,7 @@ import org.resourceaccounting.binder.MonitoringStatusList
 import org.kevoree.kcl.api.FlexyClassLoader
 import org.kevoree.library.defaultNodeTypes.command.ClassLoaderHelper
 import org.kevoree.microsandbox.monitoredNode.command.MicrosandboxClassLoaderHelper
+import org.kevoree.ComponentInstance
 
 /**
  * Created with IntelliJ IDEA.
@@ -98,6 +99,24 @@ open class MonitoredAddInstance(val wrapperFactory: WrapperFactory, val c: Insta
             resultSub = true
             Thread.currentThread().setContextClassLoader(null)
             Log.info("Add instance {}", c.path())
+
+            // injecting model registry if the component has that field
+            if (c is ComponentInstance) {
+                val wrapper = registry.lookup(c) as KInstanceWrapper
+                val obj = wrapper.targetObj
+                val fields = obj.javaClass.getDeclaredFields()
+                for (f in fields) {
+                    if (f.getType() == javaClass<ModelRegistry>() /*&&
+                                f.isAnnotationPresent(KevoreeInject.class)*/) {
+                        try {
+                            f.set(obj, registry)
+                        } catch (e1: IllegalAccessException) {
+                            e1.printStackTrace()
+                        }
+
+                    }
+                }
+            }
         } catch(e: Throwable) {
             Log.error("Error while adding instance {}", e, c.name)
             resultSub = false

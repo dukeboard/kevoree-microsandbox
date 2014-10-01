@@ -7,6 +7,7 @@ import org.kevoree.api.*;
 import org.kevoree.api.handler.ModelListener;
 import org.kevoree.api.handler.ModelListenerAdapter;
 import org.kevoree.api.handler.UpdateContext;
+import org.kevoree.library.defaultNodeTypes.ModelRegistry;
 import org.kevoree.log.Log;
 import org.kevoree.microsandbox.api.communication.ComposeMonitoringReport;
 import org.kevoree.microsandbox.api.communication.MonitoringReporterFactory;
@@ -74,6 +75,9 @@ public class MonitoringComponent implements MicrosandboxEventListener, RankingHe
     @KevoreeInject
     BootstrapService bootstrapService;
 
+    // used with the native agent
+    public ModelRegistry register;
+
     //    private ModelRankingAlgorithm modelRanker;
     private ModelListener listener;
 
@@ -102,7 +106,7 @@ public class MonitoringComponent implements MicrosandboxEventListener, RankingHe
         }
 
         if (adaptiveMonitoring) {
-            FineGrainedStrategyFactory.instance$.init(fineGrainedStrategy);
+            FineGrainedStrategyFactory.instance$.init(fineGrainedStrategy, modelService, register);
             GlobalThreshold globalThreshold = new GlobalThreshold(cpu_threshold, memory_threshold,
                     net_in_threshold, net_out_threshold,
                     io_in_threshold, io_out_threshold, description);

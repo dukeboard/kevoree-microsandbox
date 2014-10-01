@@ -23,8 +23,7 @@ public class MemoryCheckerWithProfiler {
     @KevoreeInject
     ModelService modelService;
 
-
-    ModelRegistry modelRegister;
+    public ModelRegistry register;
 
     private static void standardPrint(Object obj) {
         Object[] r = (Object[])obj;
@@ -87,7 +86,7 @@ public class MemoryCheckerWithProfiler {
 //                Object[] r = new Object[10000];
                 KMFContainer kmfContainer = modelService.getCurrentModel().getModel().findByPath(ids.replace("kev/",""));
 
-                KInstanceWrapper wrapper = (KInstanceWrapper)modelRegister.lookup(kmfContainer);
+                KInstanceWrapper wrapper = (KInstanceWrapper)register.lookup(kmfContainer);
 //                for (int k = 0; k < r.length ; k++ )
 //                    r[k] = new String(ids);
 

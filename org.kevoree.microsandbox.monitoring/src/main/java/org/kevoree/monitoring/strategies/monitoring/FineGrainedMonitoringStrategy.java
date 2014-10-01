@@ -22,12 +22,14 @@ import java.util.List;
  * Time: 10:00 PM
  *
  */
-public abstract class FineGrainedMonitoringStrategy extends AbstractMonitoringStrategy {
+public abstract class FineGrainedMonitoringStrategy<T extends  MemorySubstrategy> extends AbstractMonitoringStrategy {
     public static final int NUMBER_OF_STEPS = 3;
     public static final int ELAPSED_SECONDS = NUMBER_OF_STEPS - 1;
     protected List<ComponentInstance> ranking;
     protected ComponentInstance currentComponent;
     protected EnumSet<Metric> reason;
+
+    protected T memorySubstrategy;
 
     protected MonitoringRegistry monitoringRegistry;
 

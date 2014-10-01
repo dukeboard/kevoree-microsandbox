@@ -3,9 +3,9 @@ repo "https://oss.sonatype.org/content/groups/public/"
 repo "http://maven.kevoree.org/daum/snapshots"
 
 
-include mvn:org.kevoree.microsandbox:org.kevoree.microsandbox.javasenode:latest
-include mvn:org.kevoree.microsandbox:org.kevoree.microsandbox.monitoring:latest
-include mvn:org.kevoree.microsandbox:org.kevoree.microsandbox.samples:latest
+include mvn:org.kevoree.microsandbox:org.kevoree.microsandbox.javasenode:release
+include mvn:org.kevoree.microsandbox:org.kevoree.microsandbox.monitoring:release
+include mvn:org.kevoree.microsandbox:org.kevoree.microsandbox.samples:release
 
 include mvn:org.kevoree.library.java:org.kevoree.library.java.toys:release
 include mvn:org.kevoree.library.java:org.kevoree.library.java.ws:release

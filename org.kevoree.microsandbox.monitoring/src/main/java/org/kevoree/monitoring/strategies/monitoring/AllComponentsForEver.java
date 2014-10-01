@@ -1,5 +1,6 @@
 package org.kevoree.monitoring.strategies.monitoring;
 
+import kotlin.Pair;
 import org.kevoree.ComponentInstance;
 import org.kevoree.log.Log;
 import org.kevoree.microsandbox.api.sla.Metric;
@@ -17,13 +18,16 @@ import java.util.*;
  * Time: 5:12 PM
  *
  */
-public class AllComponentsForEver extends FineGrainedMonitoringStrategy {
+public class AllComponentsForEver<T extends MemorySubstrategy> extends FineGrainedMonitoringStrategy<T> {
     private int count = 0;
     private Object lock = new Object();
     private RankChecker rankChecker;
 
-    public AllComponentsForEver(List<ComponentInstance> ranking, Object msg, RankChecker rankChecker) {
+    public AllComponentsForEver(List<ComponentInstance> ranking,
+                                T memorySubstrategy,
+                                Object msg, RankChecker rankChecker) {
         super(null, ranking, msg);
+        this.memorySubstrategy = memorySubstrategy;
         this.rankChecker =rankChecker;
     }
 
@@ -85,8 +89,11 @@ public class AllComponentsForEver extends FineGrainedMonitoringStrategy {
             DataForCheckingContract data = getInfo(principal);
             ResourceContract contract = principal.getContract();
 
-            if (contract != null && data != null && contract.getMemory() > 0 && contract.getMemory() < data.lastMem) {
-                b.put(Metric.Memory, new MeasurePoint(data.lastMem, contract.getMemory()));
+            Pair<ResourcePrincipal, DataForCheckingContract> pair = new Pair(principal, data);
+            long tmp = memorySubstrategy.getMemoryConsumption(pair);
+            if (contract != null && data != null && contract.getMemory() > 0
+                    && contract.getMemory() < tmp) {
+                b.put(Metric.Memory, new MeasurePoint(tmp, contract.getMemory()));
                 faultyComponents.add(new FaultyComponent(component.path(),b,
                         new HashSet<String>(), new HashSet<String>()));
             }

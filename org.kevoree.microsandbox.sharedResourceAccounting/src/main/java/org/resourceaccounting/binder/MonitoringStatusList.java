@@ -92,7 +92,7 @@ public class MonitoringStatusList {
 
     public synchronized void includeApp(String appId, int idLoader, boolean mem, boolean instr) {
         assert this.getClass().getClassLoader() == null: String.format("In %s:%d the loader for MonitoringStatusList is %s", appId, idLoader, this.getClass().getClassLoader());
-        System.err.printf("Puta madre in includeApp app=%s, classloader=%d\n\n\n", appId, idLoader);
+//        System.err.printf("Puta madre in includeApp app=%s, classloader=%d\n\n\n", appId, idLoader);
 //        System.err.println("DOING MAGIC WITH " + appId);
         if (!classLoaderIdToPrincipalId.containsKey(idLoader))
             classLoaderIdToPrincipalId.put(idLoader, appId);

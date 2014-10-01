@@ -3,6 +3,7 @@ package org.kevoree.microsandbox.samples.memory;
 import org.kevoree.ComponentInstance;
 import org.kevoree.ContainerNode;
 import org.kevoree.Instance;
+import org.kevoree.annotation.KevoreeInject;
 import org.kevoree.api.BootstrapService;
 import org.kevoree.api.ModelService;
 import org.kevoree.api.PrimitiveCommand;
@@ -91,13 +92,19 @@ public class MemoryAddInstance implements PrimitiveCommand, Runnable {
             if (c instanceof ComponentInstance) {
                 KInstanceWrapper wrapper = (KInstanceWrapper) registry.lookup(c);
                 Object obj = wrapper.getTargetObj();
-                try {
-                    Field field = obj.getClass().getDeclaredField("modelRegister");
-                    if (field != null) {
-                        field.set(obj, registry);
+                    Field []fields = obj.getClass().getDeclaredFields();
+                    for (Field f : fields) {
+                        if (f.getType().equals(ModelRegistry.class) /*&&
+                                f.isAnnotationPresent(KevoreeInject.class)*/
+                                )
+                        {
+                            try {
+                                f.set(obj, registry);
+                            } catch (IllegalAccessException e1) {
+                                e1.printStackTrace();
+                            }
+                        }
                     }
-                }
-                catch (java.lang.NoSuchFieldException ex) {}
             }
             newBeanKInstanceWrapper.create();
             resultSub = true;

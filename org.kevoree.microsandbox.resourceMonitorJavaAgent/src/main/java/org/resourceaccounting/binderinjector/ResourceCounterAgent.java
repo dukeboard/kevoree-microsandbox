@@ -20,6 +20,7 @@ import java.lang.instrument.UnmodifiableClassException;
 
 public class ResourceCounterAgent implements OnNewThreadNotifier.HandlerSet{
     private static final String SCAPEGOAT = "scapegoat";
+    private static final String SCAPEGOAT2 = "scapegoat2";
     private static final String SQUIRREL = "squirrel";
     private static volatile Instrumentation globalInst;
 
@@ -39,6 +40,8 @@ public class ResourceCounterAgent implements OnNewThreadNotifier.HandlerSet{
         final boolean isScapegoat = agentArgs != null && agentArgs.length() > 0 && agentArgs.contains(SCAPEGOAT);
         final boolean isSquirrel =  !isScapegoat &&
                 agentArgs != null && agentArgs.length() > 0 && agentArgs.contains(SQUIRREL);
+        final boolean isScapegoat2 =  !isScapegoat && !isSquirrel &&
+                agentArgs != null && agentArgs.length() > 0 && agentArgs.contains(SCAPEGOAT2);
 
         if (isScapegoat) {
             System.out.println("Agent started and it has been detected Scapegoat mode");
@@ -51,13 +54,28 @@ public class ResourceCounterAgent implements OnNewThreadNotifier.HandlerSet{
             MonitoringStatusList.instance().setGlobalInst(globalInst);
 
             boolean debug = agentArgs != null && agentArgs.length() > 0 &&  agentArgs.equals("debug");
-            inst.addTransformer(new BinderClassTransformer(inst, debug),true);
+            BinderClassTransformer bct = new BinderClassTransformer(inst, debug);
+            inst.addTransformer(bct,true);
+            bct.setScapegoat();
+        }
+        if (isScapegoat2) {
+            System.out.println("Agent started and it has been detected Scapegoat2 mode");
+            ResourceCounter.setResourceContractProvider(new DefaultResourceContractProvider("",""));
+            ResourceCounter.setObjectSizeProvider(new ObjectSizeProvider() {
+                public long sizeOf(Object obj) {
+                    return globalInst.getObjectSize(obj);
+                }
+            });
+            MonitoringStatusList.instance().setGlobalInst(globalInst);
+
+            BinderClassTransformer bct = new BinderClassTransformer(inst, false);
+            inst.addTransformer(bct,true);
+            bct.setScapegoat2();
         }
         else {
             System.out.println("Agent started and it has been detected non-scapegoat mode");
             BinderClassTransformer bct = new BinderClassTransformer(inst, false);
-            bct.setScapegoat(false);
-            bct.setSquirrel(isSquirrel);
+            bct.setSquirrel();
             inst.addTransformer(bct,true);
         }
 
