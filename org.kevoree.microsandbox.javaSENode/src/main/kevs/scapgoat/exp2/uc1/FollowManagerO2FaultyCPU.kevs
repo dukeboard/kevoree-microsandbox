@@ -31,23 +31,14 @@ set node0.MonitoringComponent0.fineGrainedStrategy='all-components'
 //bind node0.rankerBasedHeuristicComponent0.triggerMonitoringEvent ch_trigger_monitoring
 //bind node0.MonitoringComponent0.triggerMonitoringEvent ch_trigger_monitoring
 
-include mvn:org.kevoree.microsandbox.experiment:copter-video:1.0.0-SNAPSHOT
-
-include mvn:org.kevoree.microsandbox.experiment:followManager:1.0.0-SNAPSHOT
-include mvn:org.kevoree.microsandbox.experiment:followResource:1.0.0-SNAPSHOT
-include mvn:org.kevoree.microsandbox.experiment:videoViewer:1.0.0-SNAPSHOT
-include mvn:org.kevoree.microsandbox.experiment:webBrowser:1.0.0-SNAPSHOT
-include mvn:org.kevoree.microsandbox.experiment:wsServer:1.0.0-SNAPSHOT
-include mvn:org.kevoree.microsandbox.experiment:webbitHTTPServer:1.0.0-SNAPSHOT
-include mvn:org.kevoree.microsandbox.experiment:webSocketClientHandler:1.0.0-SNAPSHOT
-
-include mvn:org.kevoree.microsandbox.experiment.fault.cpu:followManager:1.0.0-SNAPSHOT
-include mvn:org.kevoree.microsandbox.experiment.fault.cpu:followResource:1.0.0-SNAPSHOT
-include mvn:org.kevoree.microsandbox.experiment.fault.cpu:videoViewer:1.0.0-SNAPSHOT
-include mvn:org.kevoree.microsandbox.experiment.fault.cpu:ebBrowser:1.0.0-SNAPSHOT
-include mvn:org.kevoree.microsandbox.experiment.fault.cpu:wsServer:1.0.0-SNAPSHOT
-include mvn:org.kevoree.microsandbox.experiment.fault.cpu:webbitHTTPServer:1.0.0-SNAPSHOT
-include mvn:org.kevoree.microsandbox.experiment.fault.cpu:webSocketClientHandler:1.0.0-SNAPSHOT
+include mvn:org.kevoree.microsandbox.experiment:copter-video:1.1
+include mvn:org.kevoree.microsandbox.experiment:followResource:1.1
+include mvn:org.kevoree.microsandbox.experiment:videoViewer:1.1
+include mvn:org.kevoree.microsandbox.experiment:webBrowser:1.1
+include mvn:org.kevoree.microsandbox.experiment:wsServer:1.1
+include mvn:org.kevoree.microsandbox.experiment:webbitHTTPServer:1.1
+include mvn:org.kevoree.microsandbox.experiment:webSocketClientHandler:1.1
+include mvn:org.kevoree.microsandbox.experiment.fault.cpu:followManager:1.1
 
 include mvn:org.kevoree.microsandbox:weka-executer:latest
 

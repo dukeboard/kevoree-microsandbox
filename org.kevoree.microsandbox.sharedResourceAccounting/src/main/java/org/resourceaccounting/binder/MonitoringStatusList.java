@@ -125,12 +125,10 @@ public class MonitoringStatusList {
 
     void setMonitoringAll(boolean on) {
         assert this.getClass().getClassLoader() == null;
-        System.err.printf("PEPEPPEPEPEPEPE : " + on + "\n" );
         for (String appId : map.keySet()) {
             Status s = map.get(appId);
             System.err.printf(" 1 - PEPEPPEPEPEPEPE :%s, %b, %b\n", appId, s.monitored, s.cpuMonitored );
             if (s.monitored != on) {
-                System.err.printf(" 2 - PEPEPPEPEPEPEPE : " + appId + "\n" );
                 s.monitored = on;
                 retransformClasses(appId);
             }
@@ -186,7 +184,7 @@ public class MonitoringStatusList {
 
     private void retransformClasses(String appId) {
         assert this.getClass().getClassLoader() == null;
-        System.err.printf("Puta madre in retransformClasses %s, %d, %s, classloader=%s\n\n\n", appId, this.hashCode(), globalInst, this.getClass().getClassLoader());
+//        System.err.printf("Puta madre in retransformClasses %s, %d, %s, classloader=%s\n\n\n", appId, this.hashCode(), globalInst, this.getClass().getClassLoader());
 //        System.out.println(appId + " " + classes.containsKey(appId) + " ");
         Status status = map.get(appId);
         if (status.memMonitored && !status.cpuMonitored)
