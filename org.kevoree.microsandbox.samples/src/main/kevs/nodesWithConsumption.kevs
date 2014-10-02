@@ -1,14 +1,18 @@
-//sample of KevScript configuration
-repo "http://repo1.maven.org/maven2"
-include mvn:org.kevoree.library.java:org.kevoree.library.java.NodeToUseWithHeapAnalysis:1.1
-include mvn:org.kevoree.library.java:org.kevoree.library.java.ws:release
-include mvn:org.kevoree.library.java:org.kevoree.library.java.toys:release
+repo "https://repo1.maven.org/maven2"
+repo "https://oss.sonatype.org/content/groups/public/"
+repo "http://maven.kevoree.org/daum/snapshots"
 
-include mvn:org.kevoree.microsandbox:org.kevoree.microsandbox.javasenode:1.1
+
+include mvn:org.kevoree.library.java:org.kevoree.library.java.toys:5.0.1
+include mvn:org.kevoree.library.java:org.kevoree.library.java.ws:5.0.1
+include mvn:org.kevoree.library.java:org.kevoree.library.java.channels:5.0.1
+
 include mvn:org.kevoree.microsandbox:org.kevoree.microsandbox.monitoring:1.1
 include mvn:org.kevoree.microsandbox:org.kevoree.microsandbox.samples:1.1
 
-add node0 : NodeToUseWithHeapAnalysis // MonitoredNode
+
+add node0 : NodeToUseWithHeapAnalysis
+set node0.log ='info'
 add sync : WSGroup
 attach node0 sync
 

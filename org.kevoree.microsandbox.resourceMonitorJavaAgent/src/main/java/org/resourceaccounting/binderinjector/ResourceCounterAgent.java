@@ -37,11 +37,11 @@ public class ResourceCounterAgent implements OnNewThreadNotifier.HandlerSet{
 
 
 
-        final boolean isScapegoat = agentArgs != null && agentArgs.length() > 0 && agentArgs.contains(SCAPEGOAT);
+        final boolean isScapegoat = agentArgs != null && agentArgs.length() > 0 && agentArgs.equals(SCAPEGOAT);
         final boolean isSquirrel =  !isScapegoat &&
-                agentArgs != null && agentArgs.length() > 0 && agentArgs.contains(SQUIRREL);
+                agentArgs != null && agentArgs.length() > 0 && agentArgs.equals(SQUIRREL);
         final boolean isScapegoat2 =  !isScapegoat && !isSquirrel &&
-                agentArgs != null && agentArgs.length() > 0 && agentArgs.contains(SCAPEGOAT2);
+                agentArgs != null && agentArgs.length() > 0 && agentArgs.equals(SCAPEGOAT2);
 
         if (isScapegoat) {
             System.out.println("Agent started and it has been detected Scapegoat mode");
@@ -58,7 +58,7 @@ public class ResourceCounterAgent implements OnNewThreadNotifier.HandlerSet{
             inst.addTransformer(bct,true);
             bct.setScapegoat();
         }
-        if (isScapegoat2) {
+        else if (isScapegoat2) {
             System.out.println("Agent started and it has been detected Scapegoat2 mode");
             ResourceCounter.setResourceContractProvider(new DefaultResourceContractProvider("",""));
             ResourceCounter.setObjectSizeProvider(new ObjectSizeProvider() {

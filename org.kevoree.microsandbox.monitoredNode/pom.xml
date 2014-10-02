@@ -32,6 +32,11 @@
             <version>${kevoree.library.version}</version>
         </dependency>
         <dependency>
+            <groupId>org.kevoree</groupId>
+            <artifactId>org.kevoree.bootstrap</artifactId>
+            <version>${kevoree.version}</version>
+        </dependency>
+        <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
             <artifactId>kotlin-stdlib</artifactId>
             <version>${kotlin.version}</version>
@@ -44,11 +49,6 @@
         <dependency>
             <groupId>org.kevoree</groupId>
             <artifactId>org.kevoree.annotation.api</artifactId>
-            <version>${kevoree.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.kevoree</groupId>
-            <artifactId>org.kevoree.bootstrap</artifactId>
             <version>${kevoree.version}</version>
         </dependency>
         <dependency>

@@ -34,10 +34,16 @@
             <!--<artifactId>org.kevoree.core</artifactId>-->
             <!--<version>${kevoree.version}</version>-->
         <!--</dependency>-->
+
         <dependency>
             <groupId>org.kevoree.library.java</groupId>
             <artifactId>org.kevoree.library.java.javaNode</artifactId>
             <version>${kevoree.library.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.kevoree</groupId>
+            <artifactId>org.kevoree.bootstrap</artifactId>
+            <version>${kevoree.version}</version>
         </dependency>
         <dependency>
             <groupId>org.kevoree</groupId>
@@ -67,7 +73,7 @@
                 </executions>
                 <configuration>
                     <excludes>
-                        <exclude>org.kevoree:org.kevoree.bootstrap</exclude>
+                        <!--<exclude>org.kevoree:org.kevoree.bootstrap</exclude>-->
                         <exclude>org.kevoree.microsandbox:org.kevoree.microsandbox.core</exclude>
                         <exclude>org.kevoree.microsandbox:org.kevoree.microsandbox.sharedResourceAccounting</exclude>
                         <exclude>org.heapexplorer:org.heapexplorer.heapanalysis</exclude>

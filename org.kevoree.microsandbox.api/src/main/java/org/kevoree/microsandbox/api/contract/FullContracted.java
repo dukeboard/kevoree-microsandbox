@@ -1,6 +1,12 @@
 package org.kevoree.microsandbox.api.contract;
 
+import jet.runtime.typeinfo.JetValueParameter;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.kevoree.TypeDefinition;
 import org.kevoree.annotation.Param;
+//import org.kevoree.pmodeling.api.KMFContainer;
+//import org.kevoree.pmodeling.api.util.ModelAttributeVisitor;
 
 /**
  * Created with IntelliJ IDEA.

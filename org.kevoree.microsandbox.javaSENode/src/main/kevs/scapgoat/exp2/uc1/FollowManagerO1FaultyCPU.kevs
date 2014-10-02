@@ -1,14 +1,12 @@
-repo "https://repo1.maven.org/maven2"
-repo "https://oss.sonatype.org/content/groups/public/"
-repo "http://maven.kevoree.org/daum/snapshots"
 
-include mvn:org.kevoree.library.java:org.kevoree.library.java.ws:release
-include mvn:org.kevoree.library.java:org.kevoree.library.java.channels:release
-include mvn:org.kevoree.microsandbox:org.kevoree.microsandbox.javasenode:latest
-include mvn:org.kevoree.microsandbox:org.kevoree.microsandbox.monitoring:latest
+include mvn:org.kevoree.library.java:org.kevoree.library.java.ws:5.0.1
+include mvn:org.kevoree.library.java:org.kevoree.library.java.channels:5.0.1
+
+include mvn:org.kevoree.microsandbox:org.kevoree.microsandbox.javasenode:1.1
+include mvn:org.kevoree.microsandbox:org.kevoree.microsandbox.monitoring:1.1
 
 add node0:MonitoredNode
-set node0.log = 'debug'
+set node0.log = 'info'
 set node0.availability_memory='1073741824' //1 GB
 set node0.availability_instr='200000000'
 set node0.availability_write_disc='10000000'
@@ -42,7 +40,7 @@ include mvn:org.kevoree.microsandbox.experiment:webbitHTTPServer:1.1
 include mvn:org.kevoree.microsandbox.experiment:webSocketClientHandler:1.1
 include mvn:org.kevoree.microsandbox.experiment.fault.cpu:followManager:1.1
 
-include mvn:org.kevoree.microsandbox:weka-executer:latest
+include mvn:org.kevoree.microsandbox:weka-executer:1.1
 
 add node0.mediaSender : FakeCopterMediaSender
 set node0.mediaSender.url = 'http://download.oracle.com/otndocs/products/javafx/JavaRap/prog_index.m3u8'
@@ -55,8 +53,8 @@ set node0.wekaExecuter.jar_path = '/home/inti/programs/weka-3-6-8/weka.jar'
 set node0.wekaExecuter.jar_main = 'weka.classifiers.functions.MultilayerPerceptron'
 set node0.wekaExecuter.arguments = '-L 0.3 -M 0.2 -N 500 -V 0 -S 0 -E 20 -H a -o -x 2 -t /home/inti/resources.arff'
 set node0.wekaExecuter.delayTime = '15000'
-set node0.wekaExecuter.memory_max_size = '0'//'30000000'
-set node0.wekaExecuter.cpu_wall_time = '0'//'9000000000'
+set node0.wekaExecuter.memory_max_size = '30000000'
+set node0.wekaExecuter.cpu_wall_time = '9000000000'
 
 add node0.WsServer650 : WsServer
 set node0.WsServer650.port='8092'

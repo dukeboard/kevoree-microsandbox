@@ -5,14 +5,13 @@ repo "http://maven.kevoree.org/daum/snapshots"
 
 include mvn:org.kevoree.microsandbox:org.kevoree.microsandbox.javasenode:release
 
-include mvn:org.kevoree.library.java:org.kevoree.library.java.toys:release
-include mvn:org.kevoree.library.java:org.kevoree.library.java.ws:release
-include mvn:org.kevoree.library.java:org.kevoree.library.java.channels:release
+include mvn:org.kevoree.library.java:org.kevoree.library.java.toys:5.0.1
+include mvn:org.kevoree.library.java:org.kevoree.library.java.ws:5.0.1
+include mvn:org.kevoree.library.java:org.kevoree.library.java.channels:5.0.1
 
 include mvn:org.kevoree.microsandbox:org.kevoree.microsandbox.monitoring:latest
 include mvn:org.kevoree.microsandbox:org.kevoree.microsandbox.samples:latest
 
-include mvn:org.kevoree.komponents:camel-channel-http:release
 
 add node0:JavaNode
 
