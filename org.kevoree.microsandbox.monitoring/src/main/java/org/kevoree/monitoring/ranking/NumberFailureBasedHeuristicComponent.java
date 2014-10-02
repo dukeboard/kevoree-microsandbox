@@ -3,6 +3,7 @@ package org.kevoree.monitoring.ranking;
 import org.kevoree.ComponentInstance;
 import org.kevoree.annotation.ComponentType;
 import org.kevoree.annotation.Start;
+import org.kevoree.log.Log;
 import org.kevoree.microsandbox.api.heuristic.MonitoringEvent;
 import org.resourceaccounting.utils.HashMap;
 import org.resourceaccounting.utils.Map;
@@ -38,12 +39,17 @@ public class NumberFailureBasedHeuristicComponent extends ComparatorBasedHeurist
                 Long nbFailure01 = nbFailures.get(o1.path());
                 Long nbFailure02 = nbFailures.get(o2.path());
 
-                if ((nbFailure01 == null || nbFailure02 == null)) {
-                    // that must not appear
+                if (nbFailure01 == null && nbFailure02 == null) {
                     return 0;
                 }
+                else if (nbFailure01 == null) {
+                    return nbFailure02.intValue();
+                }
+                else if (nbFailure02 == null) {
+                    return (0 - nbFailure01.intValue());
+                }
 
-                return (int) (nbFailure01 - nbFailure02);
+                return (nbFailure02.intValue() - nbFailure01.intValue());
             }
         };
     }
@@ -52,11 +58,18 @@ public class NumberFailureBasedHeuristicComponent extends ComparatorBasedHeurist
     public void triggerMonitoringEvent(MonitoringEvent event) {
         if (event.getName().equalsIgnoreCase("nbFailure")) {
             if (event.getOperation().equalsIgnoreCase("CREATE")) {
-                if (nbFailures.get(event.getInstancePath()) != null) {
+                if (nbFailures.containsKey(event.getInstancePath())) {
                     nbFailures.put(event.getInstancePath(), nbFailures.remove(event.getInstancePath()) + 1);
                 } else {
                     nbFailures.put(event.getInstancePath(), 1l);
                 }
+            } else {
+                nbFailures.remove(event.getInstancePath());
+            }
+        }
+        else if (event.getName().equalsIgnoreCase("deployTime")) {
+            if (event.getOperation().equalsIgnoreCase("CREATE")) {
+                nbFailures.put(event.getInstancePath(), 0l);
             } else {
                 nbFailures.remove(event.getInstancePath());
             }

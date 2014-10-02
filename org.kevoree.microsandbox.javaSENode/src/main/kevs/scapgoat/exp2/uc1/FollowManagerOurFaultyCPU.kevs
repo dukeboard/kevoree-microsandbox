@@ -19,35 +19,26 @@ set node0.MonitoringComponent0.net_out_threshold='80000000'
 set node0.MonitoringComponent0.adaptiveMonitoring='true'
 set node0.MonitoringComponent0.fineGrainedStrategy='single-monitoring'
 
-//add node0.reasoner0: ResourceAwareReasoner
-//add node0.rankerBasedHeuristicComponent0: NumberFailureBasedHeuristicComponent
-//add ch_reasoning : AsyncBroadcast
-//bind node0.reasoner0.eventHandler ch_reasoning
-//bind node0.MonitoringComponent0.reasoner ch_reasoning
-//add ch_rank_of_components : SyncBroadcast
-//add ch_trigger_monitoring : SyncBroadcast
-//bind node0.rankerBasedHeuristicComponent0.getRankingOrder ch_rank_of_components
-//bind node0.MonitoringComponent0.getRankingOrder ch_rank_of_components
-//bind node0.rankerBasedHeuristicComponent0.triggerMonitoringEvent ch_trigger_monitoring
-//bind node0.MonitoringComponent0.triggerMonitoringEvent ch_trigger_monitoring
+add node0.reasoner0: ResourceAwareReasoner
+add node0.rankerBasedHeuristicComponent0: NumberFailureBasedHeuristicComponent
+add ch_reasoning : AsyncBroadcast
+bind node0.reasoner0.eventHandler ch_reasoning
+bind node0.MonitoringComponent0.reasoner ch_reasoning
+add ch_rank_of_components : SyncBroadcast
+add ch_trigger_monitoring : SyncBroadcast
+bind node0.rankerBasedHeuristicComponent0.getRankingOrder ch_rank_of_components
+bind node0.MonitoringComponent0.getRankingOrder ch_rank_of_components
+bind node0.rankerBasedHeuristicComponent0.triggerMonitoringEvent ch_trigger_monitoring
+bind node0.MonitoringComponent0.triggerMonitoringEvent ch_trigger_monitoring
 
-include mvn:org.kevoree.microsandbox.experiment:copter-video:1.0.0-SNAPSHOT
-
-include mvn:org.kevoree.microsandbox.experiment:followManager:1.0.0-SNAPSHOT
-include mvn:org.kevoree.microsandbox.experiment:followResource:1.0.0-SNAPSHOT
-include mvn:org.kevoree.microsandbox.experiment:videoViewer:1.0.0-SNAPSHOT
-include mvn:org.kevoree.microsandbox.experiment:webBrowser:1.0.0-SNAPSHOT
-include mvn:org.kevoree.microsandbox.experiment:wsServer:1.0.0-SNAPSHOT
-include mvn:org.kevoree.microsandbox.experiment:webbitHTTPServer:1.0.0-SNAPSHOT
-include mvn:org.kevoree.microsandbox.experiment:webSocketClientHandler:1.0.0-SNAPSHOT
-
-include mvn:org.kevoree.microsandbox.experiment.fault.cpu:followManager:1.0.0-SNAPSHOT
-include mvn:org.kevoree.microsandbox.experiment.fault.cpu:followResource:1.0.0-SNAPSHOT
-include mvn:org.kevoree.microsandbox.experiment.fault.cpu:videoViewer:1.0.0-SNAPSHOT
-include mvn:org.kevoree.microsandbox.experiment.fault.cpu:ebBrowser:1.0.0-SNAPSHOT
-include mvn:org.kevoree.microsandbox.experiment.fault.cpu:wsServer:1.0.0-SNAPSHOT
-include mvn:org.kevoree.microsandbox.experiment.fault.cpu:webbitHTTPServer:1.0.0-SNAPSHOT
-include mvn:org.kevoree.microsandbox.experiment.fault.cpu:webSocketClientHandler:1.0.0-SNAPSHOT
+include mvn:org.kevoree.microsandbox.experiment:copter-video:1.1
+include mvn:org.kevoree.microsandbox.experiment:followResource:1.1
+include mvn:org.kevoree.microsandbox.experiment:videoViewer:1.1
+include mvn:org.kevoree.microsandbox.experiment:webBrowser:1.1
+include mvn:org.kevoree.microsandbox.experiment:wsServer:1.1
+include mvn:org.kevoree.microsandbox.experiment:webbitHTTPServer:1.1
+include mvn:org.kevoree.microsandbox.experiment:webSocketClientHandler:1.1
+include mvn:org.kevoree.microsandbox.experiment.fault.cpu:followManager:1.1
 
 include mvn:org.kevoree.microsandbox:weka-executer:latest
 

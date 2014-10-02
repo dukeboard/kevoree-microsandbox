@@ -6,6 +6,7 @@ import org.kevoree.annotation.ComponentType;
 import org.kevoree.annotation.Input;
 import org.kevoree.annotation.KevoreeInject;
 import org.kevoree.api.ModelService;
+import org.kevoree.log.Log;
 import org.kevoree.microsandbox.api.contract.ContractedComponentHelper;
 import org.kevoree.microsandbox.api.heuristic.MonitoringEvent;
 import org.kevoree.microsandbox.api.heuristic.RankingHeuristicComponent;
@@ -44,6 +45,8 @@ public abstract class ComparatorBasedHeuristicComponent implements RankingHeuris
             }
             Collections.sort(instances, defineComparator());
             ComponentInstance[] instancesArray = new ComponentInstance[instances.size()];
+//            for (ComponentInstance instance : instances)
+//                Log.info("\t\t\t\t A component {} ", instance.path());
             instances.toArray(instancesArray);
             return instancesArray;
 

@@ -2,6 +2,7 @@ package org.kevoree.monitoring.strategies.monitoring;
 
 import kotlin.Pair;
 import org.kevoree.ComponentInstance;
+import org.kevoree.log.Log;
 import org.kevoree.microsandbox.api.sla.Metric;
 import org.kevoree.monitoring.sla.FaultyComponent;
 import org.kevoree.monitoring.sla.MeasurePoint;
@@ -93,8 +94,8 @@ public class AllComponentsMonitoring<T extends MemorySubstrategy>
     @Override
     public void run() {
         count++;
+//        checkRanking();
         if (count == NUMBER_OF_STEPS) {
-
             Iterator<ComponentInstance> it = ranking.iterator();
             while (it.hasNext()) {
                 currentComponent = it.next();
@@ -118,5 +119,11 @@ public class AllComponentsMonitoring<T extends MemorySubstrategy>
         }
         
     }
+
+//    private synchronized void checkRanking() {
+//        if (ranking.size() == 0) {
+//            ranking = rankChecker.getRanking();
+//        }
+//    }
 
 }

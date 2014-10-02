@@ -75,6 +75,13 @@ public class BinderClassTransformer implements ClassFileTransformer {
         if (classLoader != null) {
             int hash = classLoader.hashCode();
             String appId = MonitoringStatusList.instance().getAppId(hash);
+//            if (appId == null || appId.equals("")) {
+//                // pepe
+//                if (className.contains("org/daum/library/javase")) {
+//                    System.err.printf("EL COCO NO TIENE AGUA classname=%s cl_found=(%s,%d) cl_thread=(%d)\n",
+//                            className, original,original.hashCode(), Thread.currentThread().getContextClassLoader().hashCode());
+//                }
+//            }
             // I should save this class to re-transform it as soon as the system decides
             // In fact, the solution is close to using a Pair<Name, ClassLoader> as key
             // I say "close" because of the hierarchy between classloaders

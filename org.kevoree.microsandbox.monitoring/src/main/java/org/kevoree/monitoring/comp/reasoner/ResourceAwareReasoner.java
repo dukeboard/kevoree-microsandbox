@@ -1,6 +1,7 @@
 package org.kevoree.monitoring.comp.reasoner;
 
 import org.kevoree.annotation.*;
+import org.kevoree.log.Log;
 import org.kevoree.microsandbox.api.event.MicrosandboxEvent;
 
 /**
@@ -32,7 +33,8 @@ public class ResourceAwareReasoner {
     public void eventHandler(Object event) {
         if (event instanceof MicrosandboxEvent) {
             MicrosandboxEvent e = (MicrosandboxEvent)event;
-            System.out.println(e);
+//            Log.info("The reasoner catch an event={}, do something", e);
+//            System.out.println(e);
         }
     }
 }

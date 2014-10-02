@@ -96,7 +96,8 @@ public class MonitoringStatusList {
 //        System.err.println("DOING MAGIC WITH " + appId);
         if (!classLoaderIdToPrincipalId.containsKey(idLoader))
             classLoaderIdToPrincipalId.put(idLoader, appId);
-        map.put(appId, new Status(false,mem,instr));
+        if (!map.containsKey(appId))
+            map.put(appId, new Status(false,mem,instr));
     }
 
     public synchronized String getAppId(int idLoader) {
@@ -127,7 +128,7 @@ public class MonitoringStatusList {
         assert this.getClass().getClassLoader() == null;
         for (String appId : map.keySet()) {
             Status s = map.get(appId);
-            System.err.printf(" 1 - PEPEPPEPEPEPEPE :%s, %b, %b\n", appId, s.monitored, s.cpuMonitored );
+//            System.err.printf(" 1 - PEPEPPEPEPEPEPE : app=%s, app_monitored=%b, cpu_monitored=%b\n", appId, s.monitored, s.cpuMonitored );
             if (s.monitored != on) {
                 s.monitored = on;
                 retransformClasses(appId);
@@ -197,12 +198,13 @@ public class MonitoringStatusList {
             b = true;
             myClasses = classes.get(properId);
         }
-        System.err.printf("3 - PEPEPPEPPEPEPEPEPEPEP : %b, %b, %s, %s\n", b, map.containsKey(appId),myClasses, globalInst);
+//        System.err.printf("3 - PEPEPPEPPEPEPEPEPEPEP : someclassfortheApp=%b, appDeclared=%b, classes_count=%s, %s\n",
+//                b, map.containsKey(appId),myClasses != null? myClasses.size() : -1, globalInst);
         if (b && globalInst != null) {
 //            System.out.println(appId + " " + (status.memMonitored && !status.cpuMonitored) + " ");
             if (status.cpuMonitored || status.memMonitored) {
                 Class<?>[] a = new Class[myClasses.size()];
-                System.out.printf("Classes for %s are %d\n", appId, a.length);
+//                System.out.printf("Classes for %s are %d\n", appId, a.length);
                 int c = 0;
                 for (MyKey key : myClasses) {
                     String name = key.getClassName();

@@ -66,8 +66,31 @@ open class MonitoredAddInstance(val wrapperFactory: WrapperFactory, val c: Insta
     public override fun run() {
         try {
             var newKCL = ClassLoaderHelper.createInstanceClassLoader(c, nodeName, bs)!! //MicrosandboxClassLoaderHelper.createInstanceClassLoader(c, nodeName, bs)!!
+            Log.debug("\t\t\tcl_created =({},{}) cl_caller=({})", newKCL, newKCL.hashCode(), this.javaClass.getClassLoader()?.hashCode())
             Thread.currentThread().setContextClassLoader(newKCL)
             Thread.currentThread().setName("KevoreeAddInstance" + c.name!!)
+
+
+            if (c  is ComponentInstance) {
+                val properLoader = c.typeDefinition?.deployUnits!!.map {
+                    a ->
+                    Pair<String, ClassLoader>(a.name!!, bs.get(a)!!)
+//                    Log.info("Unit {}:{}, Loader {}", a.name, a.path(), )
+                }.first!!.second
+
+                val r = ControlAdmissionSystem.registerComponent(c)
+                if (!r.valid) {
+                    Log.error("Unable to execute {} because the contract is not valid in instance {}",
+                            this.toString(), c.name)
+                    resultSub = false
+                }
+
+                if (r.contract != null) {
+                    monitoringRegistry.register(c.path() + "_contract", r.contract)
+
+                    registerContract(r.contract, array(properLoader, newKCL).toList())
+                }
+            }
             var newBeanKInstanceWrapper: KInstanceWrapper
             if (c is ContainerNode) {
                 newBeanKInstanceWrapper = wrapperFactory.wrap(c, this/* nodeInstance is useless because launched as external process */, tg!!, bs, modelService)
@@ -80,19 +103,6 @@ open class MonitoredAddInstance(val wrapperFactory: WrapperFactory, val c: Insta
                 newBeanKInstanceWrapper.kcl = newKCL
                 registry.register(c, newBeanKInstanceWrapper)
                 bs.injectDictionary(c, newBeanInstance, true)
-
-                val r = ControlAdmissionSystem.registerComponent(c)
-                if (!r.valid) {
-                    Log.error("Unable to execute {} because the contract is not valid in instance {}",
-                            this.toString(), c.name)
-                    resultSub = false
-                }
-
-                if (r.contract != null) {
-                    monitoringRegistry.register(c.path() + "_contract", r.contract)
-
-                    registerContract(r.contract, newKCL)
-                }
 
             }
             newBeanKInstanceWrapper.create()
@@ -123,7 +133,7 @@ open class MonitoredAddInstance(val wrapperFactory: WrapperFactory, val c: Insta
         }
     }
 
-    fun registerContract(contract:ResourceContract, classLoader : ClassLoader) {
+    fun registerContract(contract:ResourceContract, classLoaders : List<ClassLoader?>) {
 //        Log.debug("My loader is {}", this.getClass().getClassLoader())
 //        Log.debug("NUMERO {} {} {} {} {}", classLoader, contract, contract?.getMemory(), contract?.getCPU(), c.path())
         if (contract != null && (contract?.getMemory() != 0 || contract?.getCPU() != 0)) {
@@ -143,10 +153,14 @@ open class MonitoredAddInstance(val wrapperFactory: WrapperFactory, val c: Insta
 //            me_includeApp.invoke(r, "kev/" + c.path(), classLoader.hashCode(), contract?.getMemory() != 0,
 //                    contract?.getCPU() != 0)
 
+            classLoaders.filter { loader -> loader!=null }.forEach {
+                loader ->
+                Log.debug("Registring loader {}", loader!!.hashCode())
+                MonitoringStatusList.instance()?.includeApp("kev/" + c.path(), loader!!.hashCode(),
+                        contract?.getMemory() != 0,
+                        contract?.getCPU() != 0)
+            }
 
-            MonitoringStatusList.instance()?.includeApp("kev/" + c.path(), classLoader.hashCode(),
-                    contract?.getMemory() != 0,
-                    contract?.getCPU() != 0)
             //MonitoringStatusList.instance()?.setMonitored("kev/"+c.path(), true)
         }
     }

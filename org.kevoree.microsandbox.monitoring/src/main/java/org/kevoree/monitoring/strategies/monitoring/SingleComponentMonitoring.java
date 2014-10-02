@@ -124,7 +124,6 @@ public class SingleComponentMonitoring<T extends MemorySubstrategy> extends Fine
                 // cleanup
                 // if someone is violating the contract then trigger adaptation
                 if (faultyComponents.size() > 0) {
-                    System.out.println("Single monitoring detected something");
                     actionOnContractViolation(metrics);
                     counter = 0;
                 }

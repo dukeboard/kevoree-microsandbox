@@ -94,7 +94,7 @@ public class MonitoringComponent implements MicrosandboxEventListener, RankingHe
                 break;
             }
         if (description == null) {
-            System.out.println("panic: Why the platform description isn't here?");
+            Log.error("Why the platform description isn't here?");
             System.exit(0);
         }
 
@@ -172,7 +172,7 @@ public class MonitoringComponent implements MicrosandboxEventListener, RankingHe
     @Override
     public void triggerMonitoringEvent(MonitoringEvent event) {
         if (triggerMonitoringEvent.getConnectedBindingsSize() > 0) {
-            Log.info("TRIGGERING MONITORING EVENT {}", event);
+            Log.debug("TRIGGERING MONITORING EVENT {}", event);
             triggerMonitoringEvent.send(event);
         }
     }
