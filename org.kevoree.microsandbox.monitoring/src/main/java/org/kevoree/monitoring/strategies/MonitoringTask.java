@@ -14,7 +14,6 @@ import org.kevoree.monitoring.sla.FaultyComponent;
 import org.kevoree.monitoring.sla.GlobalThreshold;
 import org.kevoree.monitoring.sla.MeasurePoint;
 import org.kevoree.monitoring.strategies.monitoring.FineGrainedMonitoringStrategy;
-import org.kevoree.monitoring.strategies.monitoring.FineGrainedStrategyFactory;
 import org.kevoree.monitoring.strategies.monitoring.GlobalMonitoring;
 import org.kevoree.monitoring.strategies.monitoring.MonitoringStrategy;
 
@@ -172,10 +171,10 @@ public class MonitoringTask extends AbstractMonitoringTask {
         try {
             MonitoringReporterFactory.reporter().trigger(new MonitoringNotification(false, reason))/*.monitoring(false)*/;
             MyLowLevelResourceConsumptionRecorder.getInstance().turnMonitoring(true,
-                    !FineGrainedStrategyFactory.instance$.isSingleMonitoring());
+                    !monitoringComponent.isSingleMonitoring());
             currentStatus = MonitoringStatus.LOCAL_MONITORING;
-            MonitoringStrategy strategy = FineGrainedStrategyFactory.instance$.newMonitor(reason, Arrays.asList(getRankingOrder(monitoringComponent.getNodeName()))
-                    /*ComponentsRanker.instance$.rank(nodeName, service, bootstraper,nameOfRankerFunction))*/, msg);
+            MonitoringStrategy strategy = monitoringComponent.getLocalMonitoringStrategy(reason, msg);
+
             setCurrentStrategy(strategy);
             strategy.init(0);
         }
@@ -190,7 +189,7 @@ public class MonitoringTask extends AbstractMonitoringTask {
         long time = timeConsumedInLocalMonitoring();
         MonitoringReporterFactory.reporter().trigger(new MonitoringNotification(true, time));
         MyLowLevelResourceConsumptionRecorder.getInstance().turnMonitoring(false,
-                !FineGrainedStrategyFactory.instance$.isSingleMonitoring());
+                !monitoringComponent.isSingleMonitoring());
         currentStatus = MonitoringStatus.GLOBAL_MONITORING;
         setCurrentStrategy(new GlobalMonitoring(msg, globalThreshold));
         getCurrentStrategy().init(1000);

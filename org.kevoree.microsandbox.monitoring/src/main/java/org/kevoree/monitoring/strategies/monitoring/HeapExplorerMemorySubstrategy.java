@@ -9,6 +9,7 @@ import org.kevoree.ComponentInstance;
 import org.kevoree.api.ModelService;
 import org.kevoree.library.defaultNodeTypes.ModelRegistry;
 import org.kevoree.library.defaultNodeTypes.wrapper.KInstanceWrapper;
+import org.kevoree.log.Log;
 import org.kevoree.modeling.api.KMFContainer;
 import org.resourceaccounting.ResourcePrincipal;
 
@@ -22,27 +23,30 @@ public class HeapExplorerMemorySubstrategy implements MemorySubstrategy {
     public static final int ID_KEVOREE_ANALYSIS = 5;
     private final ModelService modelService;
     private final ModelRegistry modelRegistry;
+    private final UpcallGetObjects upcall;
 
-    public HeapExplorerMemorySubstrategy(ModelService modelService, ModelRegistry modelRegistry) {
-        this.modelService = modelService;
-        this.modelRegistry = modelRegistry;
-    }
-
-    @Override
-    public long getMemoryConsumption(Object user_data) {
-        HeapAnalysis.callback = new UpcallGetObjects() {
+    public HeapExplorerMemorySubstrategy(ModelService ms, ModelRegistry mr) {
+        this.modelService = ms;
+        this.modelRegistry = mr;
+        this.upcall = new UpcallGetObjects() {
             @Override
             public Object[] getJavaDefinedObjects(String ids) {
 
                 KMFContainer kmfContainer = modelService.getCurrentModel().getModel().findByPath(ids.replace("kev/",""));
 
-                KInstanceWrapper wrapper = (KInstanceWrapper)modelRegistry.lookup(kmfContainer);
-//                for (int k = 0; k < r.length ; k++ )
-//                    r[k] = new String(ids);
-
-                return new Object[] {wrapper.getTargetObj()};
+                if (kmfContainer != null) {
+                    Log.info("\t\t\t Sexy {}", ids);
+                    KInstanceWrapper wrapper = (KInstanceWrapper) modelRegistry.lookup(kmfContainer);
+                    return new Object[]{wrapper.getTargetObj()};
+                }
+                return new Object[] {};
             }
         };
+        HeapAnalysis.callback = this.upcall;
+    }
+
+    @Override
+    public long getMemoryConsumption(Object user_data) {
         Pair<ResourcePrincipal, DataForCheckingContract> pair = (Pair<ResourcePrincipal, DataForCheckingContract>)user_data;
         Object[] r = (Object[])HeapAnalysis.analysis(ID_KEVOREE_ANALYSIS); // ugly that fixed constant
         for (int j = 0 ; j < r.length ; j++) {

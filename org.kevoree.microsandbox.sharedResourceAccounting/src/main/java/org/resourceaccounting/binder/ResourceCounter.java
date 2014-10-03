@@ -23,9 +23,20 @@ public class ResourceCounter {
 
     private static int monitoringFlags = 0; // TODO : FIX
 
+    private static LowLevelMonitoringModes lowLevelMonitoringMode;
+
 
     private static synchronized boolean isMonitoring() {
         return ( monitoringFlags & MONITORING ) != 0;
+    }
+
+
+    public static synchronized void setLowLevelMonitoringModes(LowLevelMonitoringModes mode) {
+        lowLevelMonitoringMode = mode;
+    }
+
+    public static synchronized boolean isScapegoat2() {
+        return lowLevelMonitoringMode.equals(LowLevelMonitoringModes.SCAPEGOAT2);
     }
 
     public static synchronized void setMonitoring(boolean b, boolean changeInstrumentingStatus) {

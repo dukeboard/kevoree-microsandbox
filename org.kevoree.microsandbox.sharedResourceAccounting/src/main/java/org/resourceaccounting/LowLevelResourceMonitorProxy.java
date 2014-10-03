@@ -35,4 +35,6 @@ public interface LowLevelResourceMonitorProxy {
     int getUsesOfProvidedPort(String component, String port);
 
     int getUsesOfRequiredPort(String component, String port);
+
+    boolean isScapegoat2();
 }

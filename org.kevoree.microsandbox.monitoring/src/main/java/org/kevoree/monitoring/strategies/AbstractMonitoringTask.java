@@ -86,10 +86,8 @@ public abstract class AbstractMonitoringTask implements Runnable, ContractVerifi
         ComponentInstance[] r;
         if (monitoringComponent != null) {
             r = monitoringComponent.getRankingOrder(nodeName);
-//            Log.debug("OOOOOOOOOOOO\n\n\n1111111111111111 {}\n\n\n", r.length);
         } else {
            r = new ComponentInstance[0];
-//           Log.debug("OOOOOOOOOOOO\n\n\nOOOOOOOOOOOOOOOOOO\n\n\n");
         }
         return r;
     }

@@ -20,48 +20,6 @@ public class ComposeMonitoringReport implements MonitoringReporter {
         reporters.add(r);
     }
 
-    /*@Override
-    public void monitoring(boolean global) {
-        for (MonitoringReporter r : reporters) {
-            r.monitoring(global);
-        }
-    }
-
-    @Override
-    public void sla(String componentPath, Metric metric, double observed, double max) {
-        for (MonitoringReporter r : reporters) {
-            r.sla(componentPath, metric, observed, max);
-        }
-    }
-
-    @Override
-    public void adaptation(String action, String args) {
-        for (MonitoringReporter r : reporters) {
-            r.adaptation(action, args);
-        }
-    }
-
-    @Override
-    public void controlAdmission_accepted(String componentPath) {
-        for (MonitoringReporter r : reporters) {
-            r.controlAdmission_accepted(componentPath);
-        }
-    }
-
-    @Override
-    public void controlAdmission_removed(String componentPath) {
-        for (MonitoringReporter r : reporters) {
-            r.controlAdmission_removed(componentPath);
-        }
-    }
-
-    @Override
-    public void controlAdmission_updated(String componentPath) {
-        for (MonitoringReporter r : reporters) {
-            r.controlAdmission_updated(componentPath);
-        }
-    }*/
-
     @Override
     public void trigger(MicrosandboxEvent event) {
         for (MonitoringReporter r : reporters) {

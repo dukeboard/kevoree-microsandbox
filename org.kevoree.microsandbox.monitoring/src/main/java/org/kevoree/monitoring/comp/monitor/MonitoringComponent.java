@@ -15,18 +15,20 @@ import org.kevoree.microsandbox.api.contract.PlatformDescription;
 import org.kevoree.microsandbox.api.event.MicrosandboxEvent;
 import org.kevoree.microsandbox.api.heuristic.MonitoringEvent;
 import org.kevoree.microsandbox.api.heuristic.RankingHeuristicComponent;
+import org.kevoree.microsandbox.api.sla.Metric;
 import org.kevoree.microsandbox.monitoredNode.MonitoringRegistry;
 import org.kevoree.monitoring.communication.MicrosandboxEventListener;
 import org.kevoree.monitoring.communication.MicrosandboxReporter;
+import org.kevoree.monitoring.comp.MyLowLevelResourceConsumptionRecorder;
 import org.kevoree.monitoring.sla.GlobalThreshold;
 import org.kevoree.monitoring.strategies.AbstractMonitoringTask;
 import org.kevoree.monitoring.strategies.MonitoringTask;
 import org.kevoree.monitoring.strategies.MonitoringTaskAllComponents;
-import org.kevoree.monitoring.strategies.monitoring.FineGrainedStrategyFactory;
+import org.kevoree.monitoring.strategies.monitoring.*;
 import org.kevoree.monitoring.helper.SynchronizedChannelCallback;
+import org.resourceaccounting.LowLevelResourceMonitorProxy;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
 
 //import org.kevoree.monitoring.ranking.ModelRankingAlgorithm;
 
@@ -68,6 +70,9 @@ public class MonitoringComponent implements MicrosandboxEventListener, RankingHe
     @Param(optional = true, defaultValue = "all-components")
     String fineGrainedStrategy;
 
+    @Param(optional = true, defaultValue = "false") // or "heap-explorer"
+    boolean use_HeapExplorer;
+
     @KevoreeInject
     Context context;
     @KevoreeInject
@@ -82,6 +87,7 @@ public class MonitoringComponent implements MicrosandboxEventListener, RankingHe
     private ModelListener listener;
 
     private MonitoringRegistry monitoringRegistry;
+    private MemorySubstrategy memorySubstrategy = new DefaultMemorySubstrategy();
 
     @Start
     public void startComponent() {
@@ -105,8 +111,17 @@ public class MonitoringComponent implements MicrosandboxEventListener, RankingHe
                     new MicrosandboxReporter(this));
         }
 
+        if (use_HeapExplorer) {
+            if (MyLowLevelResourceConsumptionRecorder.getInstance().isScapegoat2())
+                memorySubstrategy = new HeapExplorerMemorySubstrategy(modelService, register);
+            else {
+                while (true) {
+                    Log.error("Using heapExplorer without providing the proper strategy to the Java Agent. Should be scapegoat2");
+                }
+            }
+        }
+
         if (adaptiveMonitoring) {
-            FineGrainedStrategyFactory.instance$.init(fineGrainedStrategy, modelService, register);
             GlobalThreshold globalThreshold = new GlobalThreshold(cpu_threshold, memory_threshold,
                     net_in_threshold, net_out_threshold,
                     io_in_threshold, io_out_threshold, description);
@@ -169,6 +184,28 @@ public class MonitoringComponent implements MicrosandboxEventListener, RankingHe
         }
     }
 
+    public MemorySubstrategy getMemorySubstrategy() {
+        return memorySubstrategy;
+    }
+
+    public boolean isSingleMonitoring() {
+        return fineGrainedStrategy.equals("single-monitoring");
+    }
+
+    public MonitoringStrategy getLocalMonitoringStrategy(EnumSet<Metric> reason, Object msg) {
+        ComponentInstance[] ll = getRankingOrder(getNodeName());
+        List<ComponentInstance> l = new ArrayList<ComponentInstance>();
+
+        for (ComponentInstance ci : ll) l.add(ci);
+
+        if (fineGrainedStrategy.equals("single-monitoring"))
+            return new SingleComponentMonitoring(reason, l, getMemorySubstrategy(), msg);
+        if (fineGrainedStrategy.equals("all-components"))
+            return new AllComponentsMonitoring(reason, l, getMemorySubstrategy(), msg);
+        return new AllComponentsMonitoring(reason, l, getMemorySubstrategy(), msg);
+    }
+
+
     @Override
     public void triggerMonitoringEvent(MonitoringEvent event) {
         if (triggerMonitoringEvent.getConnectedBindingsSize() > 0) {
@@ -177,10 +214,11 @@ public class MonitoringComponent implements MicrosandboxEventListener, RankingHe
         }
     }
 
-
     public String getNodeName() {
         return context.getNodeName();
     }
+
+
 
     private class DeployTimeSender extends ModelListenerAdapter {
 
@@ -219,3 +257,4 @@ public class MonitoringComponent implements MicrosandboxEventListener, RankingHe
         }
     }
 }
+

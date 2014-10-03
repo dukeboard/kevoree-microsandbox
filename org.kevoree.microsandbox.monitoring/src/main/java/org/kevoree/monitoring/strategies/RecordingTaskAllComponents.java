@@ -6,7 +6,6 @@ import org.kevoree.api.ModelService;
 import org.kevoree.monitoring.comp.MyLowLevelResourceConsumptionRecorder;
 import org.kevoree.monitoring.comp.monitor.GCWatcher;
 import org.kevoree.monitoring.comp.monitor.NewMetricReporter;
-import org.kevoree.monitoring.strategies.monitoring.FineGrainedStrategyFactory;
 import org.kevoree.monitoring.strategies.monitoring.RankChecker;
 import org.kevoree.monitoring.strategies.monitoring.RecordingAllComponentsForEver;
 
@@ -60,7 +59,7 @@ public class RecordingTaskAllComponents extends AbstractMonitoringTask implement
 
     private void switchToSimpleLocal() {
         MyLowLevelResourceConsumptionRecorder.getInstance().turnMonitoring(true,
-                !FineGrainedStrategyFactory.instance$.isSingleMonitoring());
+                !monitoringComponent.isSingleMonitoring());
         setCurrentStrategy(new RecordingAllComponentsForEver(new ArrayList<ComponentInstance>(), msg, this, reporter));
         getCurrentStrategy().init(0);
     }

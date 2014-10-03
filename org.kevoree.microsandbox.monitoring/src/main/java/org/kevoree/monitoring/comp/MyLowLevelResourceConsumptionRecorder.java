@@ -121,4 +121,10 @@ public class MyLowLevelResourceConsumptionRecorder implements LowLevelResourceMo
         assert ResourceCounter.class.getClassLoader() == null;
         return ResourceCounter.getUsesOfRequiredPort(component, port);
     }
+
+    @Override
+    public boolean isScapegoat2() {
+        assert ResourceCounter.class.getClassLoader() == null;
+        return ResourceCounter.isScapegoat2();
+    }
 }

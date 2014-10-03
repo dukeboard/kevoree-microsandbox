@@ -25,7 +25,7 @@ import java.util.*;
  */
 public class MonitoringTaskAllComponents extends AbstractMonitoringTask implements RankChecker {
 
-    public MonitoringTaskAllComponents(String nodeName,/*String nameOfRankerFunction*/
+    public MonitoringTaskAllComponents(String nodeName,
                                        MonitoringComponent monitoringComponent,
                           ModelService service,
                           BootstrapService bootstraper) {
@@ -91,11 +91,11 @@ public class MonitoringTaskAllComponents extends AbstractMonitoringTask implemen
         if (b) {
             MonitoringReporterFactory.reporter().trigger(new MonitoringNotification(false, reason))/*.monitoring(false)*/;
             MyLowLevelResourceConsumptionRecorder.getInstance().turnMonitoring(true,
-                    !FineGrainedStrategyFactory.instance$.isSingleMonitoring());
+                    !monitoringComponent.isSingleMonitoring());
         }
 
         MonitoringStrategy strategy = new AllComponentsForEver( new ArrayList<ComponentInstance>(),
-                new DefaultMemorySubstrategy(), msg, this);
+                monitoringComponent.getMemorySubstrategy(), msg, this);
         setCurrentStrategy(strategy);
         strategy.init(0);
     }

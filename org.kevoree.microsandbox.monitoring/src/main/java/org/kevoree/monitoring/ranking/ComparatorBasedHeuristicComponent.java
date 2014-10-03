@@ -45,8 +45,6 @@ public abstract class ComparatorBasedHeuristicComponent implements RankingHeuris
             }
             Collections.sort(instances, defineComparator());
             ComponentInstance[] instancesArray = new ComponentInstance[instances.size()];
-//            for (ComponentInstance instance : instances)
-//                Log.info("\t\t\t\t A component {} ", instance.path());
             instances.toArray(instancesArray);
             return instancesArray;
 

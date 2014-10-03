@@ -12,6 +12,7 @@ package org.resourceaccounting.binderinjector;
 import org.kevoree.microsandbox.core.OnNewThreadNotifier;
 import org.kevoree.microsandbox.core.instrumentation.strategies.DefaultResourceContractProvider;
 import org.resourceaccounting.ObjectSizeProvider;
+import org.resourceaccounting.binder.LowLevelMonitoringModes;
 import org.resourceaccounting.binder.MonitoringStatusList;
 import org.resourceaccounting.binder.ResourceCounter;
 
@@ -57,8 +58,10 @@ public class ResourceCounterAgent implements OnNewThreadNotifier.HandlerSet{
             BinderClassTransformer bct = new BinderClassTransformer(inst, debug);
             inst.addTransformer(bct,true);
             bct.setScapegoat();
+            ResourceCounter.setLowLevelMonitoringModes(LowLevelMonitoringModes.SCAPEGOAT);
         }
         else if (isScapegoat2) {
+            ResourceCounter.setLowLevelMonitoringModes(LowLevelMonitoringModes.SCAPEGOAT2);
             System.out.println("Agent started and it has been detected Scapegoat2 mode");
             ResourceCounter.setResourceContractProvider(new DefaultResourceContractProvider("",""));
             ResourceCounter.setObjectSizeProvider(new ObjectSizeProvider() {
@@ -73,6 +76,7 @@ public class ResourceCounterAgent implements OnNewThreadNotifier.HandlerSet{
             bct.setScapegoat2();
         }
         else {
+            ResourceCounter.setLowLevelMonitoringModes(LowLevelMonitoringModes.SQUIRREL);
             System.out.println("Agent started and it has been detected non-scapegoat mode");
             BinderClassTransformer bct = new BinderClassTransformer(inst, false);
             bct.setSquirrel();
