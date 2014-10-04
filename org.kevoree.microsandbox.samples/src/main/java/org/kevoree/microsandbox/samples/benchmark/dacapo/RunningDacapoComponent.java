@@ -56,6 +56,8 @@ public class RunningDacapoComponent extends CPUMemoryContractedImpl {
                 Method method = cl.getMethod("main", new Class[]{String[].class});
 
                 method.invoke(null,new Object[]{new String[]{
+                        "-c",
+                        "IntiCallback",
                         "-noValidation",
                         "-n",
                         dacapo_n.toString(),
