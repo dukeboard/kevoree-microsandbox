@@ -24,6 +24,9 @@ public class HeapExplorerMemorySubstrategy implements MemorySubstrategy {
     private final ModelService modelService;
     private final ModelRegistry modelRegistry;
     private final UpcallGetObjects upcall;
+    private int currentCycle = 0;
+    private int previousCycle;
+    private HashMap<String, Long> results = new HashMap<String, Long>();
 
     public HeapExplorerMemorySubstrategy(ModelService ms, ModelRegistry mr) {
         this.modelService = ms;
@@ -41,28 +44,36 @@ public class HeapExplorerMemorySubstrategy implements MemorySubstrategy {
                 }
                 return new Object[] {};
             }
+
+            @Override
+            public boolean mustAnalyse(String ids) {
+                KMFContainer kmfContainer = modelService.getCurrentModel().getModel().findByPath(ids.replace("kev/",""));
+                return  (kmfContainer != null && kmfContainer instanceof ComponentInstance);
+            }
         };
         HeapAnalysis.callback = this.upcall;
     }
 
     @Override
     public long getMemoryConsumption(Object user_data) {
-        Pair<ResourcePrincipal, DataForCheckingContract> pair = (Pair<ResourcePrincipal, DataForCheckingContract>)user_data;
-        Object[] r = (Object[])HeapAnalysis.analysis(ID_KEVOREE_ANALYSIS); // ugly that fixed constant
-        for (int j = 0 ; j < r.length ; j++) {
-            PrincipalClassDetailsUsage principalClassDetailsUsage = (PrincipalClassDetailsUsage)r[j];
-            if (!principalClassDetailsUsage.resourceId.equals(pair.component1())) continue;
-
-            ClassDetailsUsage[] details = principalClassDetailsUsage.detailsUsages;
-//            int totalCount = 0;
-            int totalSize = 0;
-            for ( int i = 0 ; i < details.length ; i++ ) {
-//                totalCount += details[i].nbObjects;
-                totalSize += details[i].totalSize;
+        if (currentCycle != previousCycle) {
+            Object[] r = (Object[])HeapAnalysis.analysis(ID_KEVOREE_ANALYSIS); // ugly that fixed constant
+            previousCycle = currentCycle;
+            for (int j = 0 ; j < r.length ; j++) {
+                PrincipalClassDetailsUsage principalClassDetailsUsage = (PrincipalClassDetailsUsage)r[j];
+                results.put(principalClassDetailsUsage.resourceId, principalClassDetailsUsage.totalConsumption);
             }
-
-            return totalSize;
         }
+
+        Pair<ResourcePrincipal, DataForCheckingContract> pair = (Pair<ResourcePrincipal, DataForCheckingContract>)user_data;
+        String id = pair.component1().toString();
+        if (results.containsKey(id)) return results.get(id);
+
         return 0;
+    }
+
+    @Override
+    public void newCycle() {
+        currentCycle++;
     }
 }

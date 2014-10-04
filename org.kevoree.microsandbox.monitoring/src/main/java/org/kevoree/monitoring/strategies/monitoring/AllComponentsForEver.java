@@ -81,6 +81,7 @@ public class AllComponentsForEver<T extends MemorySubstrategy> extends FineGrain
                     used, max, ranking.size());
         }
         ArrayList<FaultyComponent> faultyComponents = new ArrayList<FaultyComponent>();
+        memorySubstrategy.newCycle();
         for (ComponentInstance component : ranking) {
             EnumMap<Metric, MeasurePoint> b = new EnumMap<Metric, MeasurePoint>(Metric.class);
             ResourcePrincipal principal = getPrincipal(component);

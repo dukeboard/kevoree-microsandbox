@@ -13,4 +13,9 @@ public class DefaultMemorySubstrategy implements MemorySubstrategy {
         DataForCheckingContract dataForCheckingContract = pair.getSecond();
         return dataForCheckingContract.lastMem;
     }
+
+    @Override
+    public void newCycle() {
+        // nothing
+    }
 }

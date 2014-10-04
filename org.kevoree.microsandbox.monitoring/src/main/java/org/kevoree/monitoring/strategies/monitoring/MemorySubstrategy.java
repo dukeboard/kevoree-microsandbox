@@ -5,4 +5,6 @@ package org.kevoree.monitoring.strategies.monitoring;
  */
 public interface MemorySubstrategy {
     public long getMemoryConsumption(Object user_data);
+
+    void newCycle();
 }
