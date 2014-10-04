@@ -173,6 +173,7 @@ public class JavaFXVideoDisplay extends CPUMemoryThroughputContractedImpl {
         media = new Media(url);
         mediaPlayer = new MediaPlayer(media);
         mediaPlayer.setAutoPlay(true);
+        mediaPlayer.setMute(true);
         mediaControl = new MediaControl(mediaPlayer);
         scene = new Scene(mediaControl);
 
