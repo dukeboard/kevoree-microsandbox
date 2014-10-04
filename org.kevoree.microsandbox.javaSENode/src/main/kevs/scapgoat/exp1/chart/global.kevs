@@ -1,20 +1,15 @@
-repo "https://repo1.maven.org/maven2"
-repo "https://oss.sonatype.org/content/groups/public/"
-repo "http://maven.kevoree.org/daum/snapshots"
+include mvn:org.kevoree.microsandbox:org.kevoree.microsandbox.javasenode:1.1
+include mvn:org.kevoree.microsandbox:org.kevoree.microsandbox.monitoring:1.1
+include mvn:org.kevoree.microsandbox:org.kevoree.microsandbox.samples:1.1
 
+include mvn:org.kevoree.library.java:org.kevoree.library.java.toys:5.0.1
+include mvn:org.kevoree.library.java:org.kevoree.library.java.ws:5.0.1
+include mvn:org.kevoree.library.java:org.kevoree.library.java.channels:5.0.1
 
-include mvn:org.kevoree.microsandbox:org.kevoree.microsandbox.javasenode:latest
-include mvn:org.kevoree.microsandbox:org.kevoree.microsandbox.monitoring:latest
-include mvn:org.kevoree.microsandbox:org.kevoree.microsandbox.samples:latest
-
-include mvn:org.kevoree.library.java:org.kevoree.library.java.toys:release
-include mvn:org.kevoree.library.java:org.kevoree.library.java.ws:release
-include mvn:org.kevoree.library.java:org.kevoree.library.java.channels:release
-
-include mvn:org.kevoree.komponents:camel-channel-http:latest
+//include mvn:org.kevoree.komponents:camel-channel-http:latest
 
 add node0:MonitoredNode
-set node0.log = 'debug'
+set node0.log = 'info'
 set node0.availability_memory='950000000'
 set node0.availability_instr='200000000'
 set node0.availability_write_disc='10000000'
