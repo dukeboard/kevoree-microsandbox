@@ -92,6 +92,11 @@ public class MemoryCheckerWithProfiler {
 
                 return new Object[] {wrapper.getTargetObj()};
             }
+
+            @Override
+            public boolean mustAnalyse(String ids) {
+                return false;
+            }
         };
         new Thread() {
             public void run() {
