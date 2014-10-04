@@ -1,14 +1,10 @@
-repo "https://repo1.maven.org/maven2"
-repo "https://oss.sonatype.org/content/groups/public/"
-repo "http://maven.kevoree.org/daum/snapshots"
-
-include mvn:org.kevoree.library.java:org.kevoree.library.java.ws:release
-include mvn:org.kevoree.library.java:org.kevoree.library.java.channels:release
-include mvn:org.kevoree.microsandbox:org.kevoree.microsandbox.javasenode:latest
-include mvn:org.kevoree.microsandbox:org.kevoree.microsandbox.monitoring:latest
+include mvn:org.kevoree.library.java:org.kevoree.library.java.ws:5.0.1
+include mvn:org.kevoree.library.java:org.kevoree.library.java.channels:5.0.1
+include mvn:org.kevoree.microsandbox:org.kevoree.microsandbox.javasenode:1.1
+include mvn:org.kevoree.microsandbox:org.kevoree.microsandbox.monitoring:1.1
 
 add node0:MonitoredNode
-set node0.log = 'debug'
+set node0.log = 'info'
 set node0.availability_memory='1073741824' //1 GB
 set node0.availability_instr='200000000'
 set node0.availability_write_disc='10000000'
@@ -21,7 +17,6 @@ set node0.MonitoringComponent0.net_in_threshold='80000000'
 set node0.MonitoringComponent0.net_out_threshold='80000000'
 set node0.MonitoringComponent0.adaptiveMonitoring='true'
 set node0.MonitoringComponent0.fineGrainedStrategy='single-monitoring'
-set node0.MonitoringComponent0.componentRankFunction = 'number_of_failures'
 
 
 add node0.reasoner0: ResourceAwareReasoner
@@ -37,24 +32,15 @@ bind node0.rankerBasedHeuristicComponent0.triggerMonitoringEvent ch_trigger_moni
 bind node0.MonitoringComponent0.triggerMonitoringEvent ch_trigger_monitoring
 
 include mvn:org.kevoree.microsandbox.experiment:copter-video:1.1
-
-include mvn:org.kevoree.microsandbox.experiment:followManager:1.1
 include mvn:org.kevoree.microsandbox.experiment:followResource:1.1
 include mvn:org.kevoree.microsandbox.experiment:videoViewer:1.1
 include mvn:org.kevoree.microsandbox.experiment:webBrowser:1.1
 include mvn:org.kevoree.microsandbox.experiment:wsServer:1.1
 include mvn:org.kevoree.microsandbox.experiment:webbitHTTPServer:1.1
 include mvn:org.kevoree.microsandbox.experiment:webSocketClientHandler:1.1
-
 include mvn:org.kevoree.microsandbox.experiment.fault.cpu:followManager:1.1
-include mvn:org.kevoree.microsandbox.experiment.fault.cpu:followResource:1.1
-include mvn:org.kevoree.microsandbox.experiment.fault.cpu:videoViewer:1.1
-include mvn:org.kevoree.microsandbox.experiment.fault.cpu:webBrowser:1.1
-include mvn:org.kevoree.microsandbox.experiment.fault.cpu:wsServer:1.1
-include mvn:org.kevoree.microsandbox.experiment.fault.cpu:webbitHTTPServer:1.1
-include mvn:org.kevoree.microsandbox.experiment.fault.cpu:webSocketClientHandler:1.1
 
-include mvn:org.kevoree.microsandbox:weka-executer:latest
+include mvn:org.kevoree.microsandbox:weka-executer:1.1
 
 add node0.mediaSender : FakeCopterMediaSender
 set node0.mediaSender.url = 'http://download.oracle.com/otndocs/products/javafx/JavaRap/prog_index.m3u8'

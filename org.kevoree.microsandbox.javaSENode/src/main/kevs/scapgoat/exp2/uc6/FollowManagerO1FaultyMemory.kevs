@@ -1,21 +1,17 @@
-repo "https://repo1.maven.org/maven2"
-repo "https://oss.sonatype.org/content/groups/public/"
-repo "http://maven.kevoree.org/daum/snapshots"
-
-include mvn:org.kevoree.library.java:org.kevoree.library.java.ws:release
-include mvn:org.kevoree.library.java:org.kevoree.library.java.channels:release
-include mvn:org.kevoree.microsandbox:org.kevoree.microsandbox.javasenode:latest
-include mvn:org.kevoree.microsandbox:org.kevoree.microsandbox.monitoring:latest
+include mvn:org.kevoree.library.java:org.kevoree.library.java.ws:5.0.1
+include mvn:org.kevoree.library.java:org.kevoree.library.java.channels:5.0.1
+include mvn:org.kevoree.microsandbox:org.kevoree.microsandbox.javasenode:1.1
+include mvn:org.kevoree.microsandbox:org.kevoree.microsandbox.monitoring:1.1
 
 add node0:MonitoredNode
-set node0.log = 'debug'
+set node0.log = 'info'
 set node0.availability_memory='1073741824' //1 GB
 set node0.availability_instr='200000000'
 set node0.availability_write_disc='10000000'
 set node0.availability_read_disc='10000000'
 
 add node0.MonitoringComponent0: MonitoringComponent
-set node0.MonitoringComponent0.memory_threshold='21.499658'
+set node0.MonitoringComponent0.memory_threshold='11.499658'
 set node0.MonitoringComponent0.cpu_threshold='46.025537'
 set node0.MonitoringComponent0.net_in_threshold='80000000'
 set node0.MonitoringComponent0.net_out_threshold='80000000'
@@ -41,7 +37,7 @@ include mvn:org.kevoree.microsandbox.experiment:wsServer:1.1
 include mvn:org.kevoree.microsandbox.experiment:webbitHTTPServer:1.1
 include mvn:org.kevoree.microsandbox.experiment:webSocketClientHandler:1.1
 include mvn:org.kevoree.microsandbox.experiment.fault.memory:followManager:1.1
-include mvn:org.kevoree.microsandbox:weka-executer:latest
+include mvn:org.kevoree.microsandbox:weka-executer:1.1
 
 add node0.mediaSender : FakeCopterMediaSender
 set node0.mediaSender.url = 'http://download.oracle.com/otndocs/products/javafx/JavaRap/prog_index.m3u8'
@@ -59,45 +55,45 @@ set node0.wekaExecuter.cpu_wall_time = '0'
 
 add node0.WsServer650 : WsServer
 set node0.WsServer650.port='8092'
-set node0.WsServer650.cpu_wall_time = '0'
 set node0.WsServer650.memory_max_size = '2048'
+set node0.WsServer650.cpu_wall_time = '0'
     //,throughput_msg_per_second='all=0;service=0'
 
 add node0.SprayWebS142 : WebbitHTTPServer
 set node0.SprayWebS142.port='9500'
-set node0.SprayWebS142.cpu_wall_time = '0'
 set node0.SprayWebS142.memory_max_size = '1112'
+set node0.SprayWebS142.cpu_wall_time = '0'
 set node0.SprayWebS142.throughput_msg_per_second='all=1;response=1'
 
 add node0.Resources407 : ResourcesPage
 set node0.Resources407.urlPattern='/media/'
 set node0.Resources407.patternToRemove = '/media/'
-set node0.Resources407.cpu_wall_time = '0'
 set node0.Resources407.memory_max_size = '12340'
+set node0.Resources407.cpu_wall_time = '0'
 set node0.Resources407.throughput_msg_per_second='all=1;request=1'
 
 add node0.FollowMan511 : FollowManagerFaultyMemory
 set node0.FollowMan511.urlPattern='/'
 set node0.FollowMan511.current='jed'
-set node0.FollowMan511.cpu_wall_time = '0'
 set node0.FollowMan511.memory_max_size = '40000'
+set node0.FollowMan511.cpu_wall_time = '0'
 set node0.FollowMan511.throughput_msg_per_second='all=1;request=1;followmeuser=0'
 
 add node0.javaFXWebBrowser : JavaFXWebBrowser
-set node0.javaFXWebBrowser.cpu_wall_time = '0'
 set node0.javaFXWebBrowser.memory_max_size = '2400'
+set node0.javaFXWebBrowser.cpu_wall_time = '0'
 set node0.javaFXWebBrowser.url = 'http://maps.google.com'
     //,throughput_msg_per_second='all=0;service=0'
 
 add node0.websockletJavaFXHandler : WebSocketClientHandler
-set node0.websockletJavaFXHandler.cpu_wall_time = '0'
 set node0.websockletJavaFXHandler.memory_max_size = '7200'
+set node0.websockletJavaFXHandler.cpu_wall_time = '0'
     //,throughput_msg_per_second='all=0;service=0'
 
 
 add node0.videoDisplay : JavaFXVideoDisplay
-set node0.videoDisplay.cpu_wall_time = '0'
 set node0.videoDisplay.memory_max_size = '7200'
+set node0.videoDisplay.cpu_wall_time = '0'
     //,throughput_msg_per_second='all=0;service=0'
 
 // sending video signal
