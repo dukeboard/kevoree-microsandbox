@@ -41,7 +41,7 @@ set node0.dacapoExecuter0.dacapo_path = '/home/inti/Downloads/dacapo-2006-10-MR2
 set node0.dacapoExecuter0.dacapo_test = 'fop'
 set node0.dacapoExecuter0.dacapo_n ='4'
 set node0.dacapoExecuter0.cpu_wall_time = '1000'
-set node0.dacapoExecuter0.memory_max_size = '1110'
+set node0.dacapoExecuter0.memory_max_size = '0'
 
 add sync : WSGroup
 set sync.port/node0 = "9000"
