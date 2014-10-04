@@ -3,9 +3,7 @@ package org.resourceaccounting.binder;
 import java.lang.instrument.Instrumentation;
 import java.lang.instrument.UnmodifiableClassException;
 import java.lang.ref.WeakReference;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Created with IntelliJ IDEA.
@@ -126,14 +124,19 @@ public class MonitoringStatusList {
 
     void setMonitoringAll(boolean on) {
         assert this.getClass().getClassLoader() == null;
-        for (String appId : map.keySet()) {
-            Status s = map.get(appId);
+        List<String> l = new ArrayList<String>();
+        synchronized (this) {
+            for (String appId : map.keySet()) {
+                Status s = map.get(appId);
 //            System.err.printf(" 1 - PEPEPPEPEPEPEPE : app=%s, app_monitored=%b, cpu_monitored=%b\n", appId, s.monitored, s.cpuMonitored );
-            if (s.monitored != on) {
-                s.monitored = on;
-                retransformClasses(appId);
+                if (s.monitored != on) {
+                    s.monitored = on;
+                    l.add(appId);
+                }
             }
         }
+        for (String id : l)
+            retransformClasses(id);
     }
 
     public synchronized boolean isMonitored(String appId) {
@@ -187,35 +190,42 @@ public class MonitoringStatusList {
         assert this.getClass().getClassLoader() == null;
 //        System.err.printf("Puta madre in retransformClasses %s, %d, %s, classloader=%s\n\n\n", appId, this.hashCode(), globalInst, this.getClass().getClassLoader());
 //        System.out.println(appId + " " + classes.containsKey(appId) + " ");
-        Status status = map.get(appId);
-        if (status.memMonitored && !status.cpuMonitored)
-            return;
-        boolean b = classes.containsKey(appId);
+        boolean b = false;
+        Status status;
         Set<MyKey> myClasses = null;
-        if (b)
-            myClasses = classes.get(appId);
-        else if (appId.contains("ContractedConsole")) {
-            b = true;
-            myClasses = classes.get(properId);
+        synchronized (this) {
+            status = map.get(appId);
+            if (status.memMonitored && !status.cpuMonitored)
+                return;
+            b = classes.containsKey(appId);
+            if (b)
+                myClasses = classes.get(appId);
+            else if (appId.contains("ContractedConsole")) {
+                b = true;
+                myClasses = classes.get(properId);
+            }
         }
 //        System.err.printf("3 - PEPEPPEPPEPEPEPEPEPEP : someclassfortheApp=%b, appDeclared=%b, classes_count=%s, %s\n",
 //                b, map.containsKey(appId),myClasses != null? myClasses.size() : -1, globalInst);
         if (b && globalInst != null) {
 //            System.out.println(appId + " " + (status.memMonitored && !status.cpuMonitored) + " ");
             if (status.cpuMonitored || status.memMonitored) {
-                Class<?>[] a = new Class[myClasses.size()];
+                Class<?>[] a;
+                synchronized (this) {
+                    a = new Class[myClasses.size()];
 //                System.out.printf("Classes for %s are %d\n", appId, a.length);
-                int c = 0;
-                for (MyKey key : myClasses) {
-                    String name = key.getClassName();
-                    ClassLoader loader = key.getLoader();
-                    if (loader != null) {
-                        try {
+                    int c = 0;
+                    for (MyKey key : myClasses) {
+                        String name = key.getClassName();
+                        ClassLoader loader = key.getLoader();
+                        if (loader != null) {
+                            try {
 //                            System.out.println("Getting class "+name+" for retransformation by using loader: " + loader.hashCode());
-                            Class<?> clazz = loader.loadClass(name.replace('/', '.'));
-                            a[c++] = clazz;
-                        } catch (ClassNotFoundException e) {
+                                Class<?> clazz = loader.loadClass(name.replace('/', '.'));
+                                a[c++] = clazz;
+                            } catch (ClassNotFoundException e) {
 
+                            }
                         }
                     }
                 }
