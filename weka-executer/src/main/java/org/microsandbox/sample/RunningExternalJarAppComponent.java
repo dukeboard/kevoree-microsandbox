@@ -5,11 +5,11 @@ import org.kevoree.log.Log;
 import org.kevoree.microsandbox.api.contract.impl.CPUMemoryContractedImpl;
 
 import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLClassLoader;
+import java.net.*;
+import java.nio.channels.SocketChannel;
 
 /**
  * Created with IntelliJ IDEA.
@@ -67,6 +67,11 @@ public class RunningExternalJarAppComponent extends CPUMemoryContractedImpl {
                 System.out.println("============================================");
                 System.out.printf(" Execution Time: %f seconds\n", consumedTime/1000000000.0);
                 System.out.println("============================================");
+                try {
+                    Socket socket = new Socket("localhost",4444);
+                    socket.getOutputStream().write(Double.toString(consumedTime/1000000000.0).getBytes());
+                    socket.close();
+                } catch (IOException e) { }
 //                System.exit(0);
             }
         }
