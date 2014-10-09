@@ -111,15 +111,20 @@ public class MonitoringStatusList {
 //        return "";
     }
 
-    synchronized void setMonitored(String appId, boolean on) {
+    void setMonitored(String appId, boolean on) {
         assert this.getClass().getClassLoader() == null;
-        if (map.containsKey(appId)) {
-            Status s = map.get(appId);
-            if (s.monitored != on) {
-                s.monitored = on;
-                retransformClasses(appId);
+        boolean flag = false;
+        synchronized (this) {
+            if (map.containsKey(appId)) {
+                Status s = map.get(appId);
+                if (s.monitored != on) {
+                    s.monitored = on;
+                    flag = true;
+                }
             }
         }
+        if (flag)
+            retransformClasses(appId);
     }
 
     void setMonitoringAll(boolean on) {
@@ -213,27 +218,44 @@ public class MonitoringStatusList {
                 Class<?>[] a;
                 synchronized (this) {
                     a = new Class[myClasses.size()];
-//                System.out.printf("Classes for %s are %d\n", appId, a.length);
+//                System.out.printf("\nClasses for %s are %d\n", appId, a.length);
                     int c = 0;
                     for (MyKey key : myClasses) {
                         String name = key.getClassName();
                         ClassLoader loader = key.getLoader();
                         if (loader != null) {
                             try {
-//                            System.out.println("Getting class "+name+" for retransformation by using loader: " + loader.hashCode());
+//                                System.out.println("Getting class "+name+" with index " + (c+1) + " for retransformation by using loader: " + loader.hashCode());
                                 Class<?> clazz = loader.loadClass(name.replace('/', '.'));
                                 a[c++] = clazz;
                             } catch (ClassNotFoundException e) {
-
+                                e.printStackTrace();
                             }
                         }
                     }
                 }
                 // now retransform all these classes
                 try {
-                    globalInst.retransformClasses(a);
+                    if (appId.contains("weka45345435")) {
+                        for (Class<?> clazz : a) {
+                            try {
+                                globalInst.retransformClasses(clazz);
+                            } catch (Throwable e) {
+//                                System.err.printf("Doing the trick for %s\n", clazz.getCanonicalName());
+//                                System.err.printf("========================================================\n");
+//                                System.err.printf(" With dacapo:chart, this throws an exception (%s,%s)\n", e, e.getMessage());
+//                                System.err.printf("========================================================\n");
+                            }
+                        }
+                    }
+                    else globalInst.retransformClasses(a);
                 } catch (UnmodifiableClassException e) {
                     e.printStackTrace();
+                }
+                catch (Throwable e) {
+                    System.err.printf("========================================================\n");
+                    System.err.printf(" With %s, this throws an exception (%s,%s)\n", appId, e, e.getMessage());
+                    System.err.printf("========================================================\n");
                 }
             }
         }

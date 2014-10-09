@@ -58,11 +58,11 @@ public class RuntimeDowloader {
     public File getExtRTJar() {
         String tempPath = getTempPath();
         File runtimeFile = new File(tempPath + File.separator + "ext-rt.jar");
-        if (!runtimeFile.exists()) {
+//        if (!runtimeFile.exists()) {
             System.out.print("Extended JDK jar not found ... building it ....");
             CallInstrumenter.createRTIntrumentedJar(runtimeFile);
             System.out.println("Done");
-        }
+//        }
         System.out.println("Extended JAR  : " + runtimeFile.getAbsoluteFile());
         return runtimeFile;
     }
@@ -134,7 +134,7 @@ public class RuntimeDowloader {
         String tempPath = getTempPath();
         File agentFile = new File(tempPath + File.separator + "shared-childjvm-" + Version.VERSION + ".jar");
         try {
-            if (!agentFile.exists() || Version.VERSION.contains("SNAPSHOT")) {
+//            if (!agentFile.exists() || Version.VERSION.contains("SNAPSHOT")) {
                 FileOutputStream fos = new FileOutputStream(agentFile);
                 JarOutputStream jarOut = new JarOutputStream(fos);
 
@@ -154,7 +154,7 @@ public class RuntimeDowloader {
 
                 jarOut.close();
                 fos.close();
-            }
+//            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -166,7 +166,7 @@ public class RuntimeDowloader {
         String tempPath = getTempPath();
         File file = new File(tempPath + File.separator + outputName);
         try {
-            if (!file.exists() || Version.VERSION.contains("SNAPSHOT")) {
+//            if (!file.exists() || Version.VERSION.contains("SNAPSHOT")) {
                 FileOutputStream fos = new FileOutputStream(file);
                 InputStream is = classLoader.getResourceAsStream(resourceName);
                 byte data[] = new byte[1024];
@@ -176,7 +176,7 @@ public class RuntimeDowloader {
                 }
                 is.close();
                 fos.close();
-            }
+//            }
         } catch (Exception e) {
             e.printStackTrace();
         }

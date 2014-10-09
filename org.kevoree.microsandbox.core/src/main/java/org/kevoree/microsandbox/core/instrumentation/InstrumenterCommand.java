@@ -29,8 +29,10 @@ public class InstrumenterCommand {
         ClassWriter writer = new ClassWriter(reader, ClassWriter.COMPUTE_MAXS);
         ClassVisitor tmp = writer;
 
+
+
 //        if (className.startsWith("org/apache/fop/"))
-//            System.out.printf("\t\t -- %s\tcpu=%b, mem=%b\n", className, instr_instr, instr_mem);
+//        System.out.printf("\t\t -- %s\tcpu=%b, mem=%b\n", className, instr_instr, instr_mem);
 
 //        if (className.equals("org/dacapo/harness/TestHarness")) {
 //            tmp = new TraceClassVisitor(tmp, new PrintWriter(System.out));
@@ -48,14 +50,15 @@ public class InstrumenterCommand {
         //tmp = new InstForAccountingPerInvocation(tmp);
 
         try {
-            tmp = new DetectingInvocationRequests(tmp);
-            tmp = new DetectingInvocationReceptions(tmp);
+//            tmp = new DetectingInvocationRequests(tmp);
+//            tmp = new DetectingInvocationReceptions(tmp);
             reader.accept(tmp, ClassReader.EXPAND_FRAMES);
+            return writer.toByteArray();
         }
         catch (Exception e) {
             e.printStackTrace();
+            return code;
         }
-        return writer.toByteArray();
     }
 
     public byte[] instrument(InputStream code, boolean applyMemoryAccounting) throws IOException {
