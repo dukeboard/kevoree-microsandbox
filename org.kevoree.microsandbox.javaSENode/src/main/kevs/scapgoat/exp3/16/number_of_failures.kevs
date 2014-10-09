@@ -1,232 +1,236 @@
-addRepo "http://maven.kevoree.org/release"
-addRepo "http://maven.kevoree.org/snapshots"
-addRepo "http://maven.kevoree.org/daum/release"
-addRepo "http://maven.kevoree.org/daum/snapshots"
-addRepo "http://repo.maven.apache.org/maven2"
+include mvn:org.kevoree.library.java:org.kevoree.library.java.ws:5.0.1
+include mvn:org.kevoree.library.java:org.kevoree.library.java.channels:5.0.1
 
-//merge "mvn:org.kevoree.corelibrary.sky/org.kevoree.library.sky.minicloud/2.0.4"
+include mvn:org.kevoree.microsandbox:org.kevoree.microsandbox.javasenode:1.1
+include mvn:org.kevoree.microsandbox:org.kevoree.microsandbox.monitoring:1.1
 
-merge 'mvn:org.kevoree.microsandbox/org.kevoree.microsandbox.javasenode/1.0-SNAPSHOT'
-merge 'mvn:org.kevoree.microsandbox/org.kevoree.microsandbox.monitoring/1.0-SNAPSHOT'
+add node0:MonitoredNode
+set node0.log = 'info'
+set node0.availability_memory='1073741824' //1 GB
+set node0.availability_instr='200000000'
+set node0.availability_write_disc='10000000'
+set node0.availability_read_disc='10000000'
 
-merge 'mvn:org.kevoree.microsandbox/weka-executer/1.0-SNAPSHOT'
+add node0.MonitoringComponent0: MonitoringComponent
+set node0.MonitoringComponent0.memory_threshold='91.499658'
+set node0.MonitoringComponent0.cpu_threshold='46.025537'
+set node0.MonitoringComponent0.net_in_threshold='80000000'
+set node0.MonitoringComponent0.net_out_threshold='80000000'
+set node0.MonitoringComponent0.adaptiveMonitoring='true'
+set node0.MonitoringComponent0.fineGrainedStrategy='single-monitoring'
 
 
-//addNode node0 : MiniCloudNode { coreLogLevel="WARN",logLevel="WARN"}
+add node0.reasoner0: ResourceAwareReasoner
+add node0.rankerBasedHeuristicComponent0: NumberFailureBasedHeuristicComponent
+add ch_reasoning : AsyncBroadcast
+bind node0.reasoner0.eventHandler ch_reasoning
+bind node0.MonitoringComponent0.reasoner ch_reasoning
+add ch_rank_of_components : SyncBroadcast
+add ch_trigger_monitoring : SyncBroadcast
+bind node0.rankerBasedHeuristicComponent0.getRankingOrder ch_rank_of_components
+bind node0.MonitoringComponent0.getRankingOrder ch_rank_of_components
+bind node0.rankerBasedHeuristicComponent0.triggerMonitoringEvent ch_trigger_monitoring
+bind node0.MonitoringComponent0.triggerMonitoringEvent ch_trigger_monitoring
 
-// TODO specify availability memory/cpu...
-addNode node0:MonitoredNode
-{ logLevel = "INFO",
-    coreLogLevel = "INFO",
-    availability_memory='1073741824', //1 GB
-    availability_instr='200000000'
-}
+include mvn:org.kevoree.microsandbox.experiment:copter-video:1.1
+include mvn:org.kevoree.microsandbox.experiment:followResource:1.1
+include mvn:org.kevoree.microsandbox.experiment:videoViewer:1.1
+include mvn:org.kevoree.microsandbox.experiment:webBrowser:1.1
+include mvn:org.kevoree.microsandbox.experiment:wsServer:1.1
+include mvn:org.kevoree.microsandbox.experiment:webbitHTTPServer:1.1
+include mvn:org.kevoree.microsandbox.experiment:webSocketClientHandler:1.1
+include mvn:org.kevoree.microsandbox.experiment.fault.cpu:followManager:1.1
 
-//addChild monitoredNode@node0
+include mvn:org.kevoree.microsandbox:weka-executer:latest
 
-addComponent monitoringComponent@node0 //monitoredNode
-: MonitoringComponent {
-    memory_threshold='91.499658', // TODO specifiy good value
-    cpu_threshold='46.025537', // TODO specifiy good value
-    net_in_threshold='80000000', // TODO specifiy good value
-    net_out_threshold='80000000', // TODO specifiy good value
-    componentRankFunction = 'number_of_failures',
-    adaptiveMonitoring='true',
-    fineGrainedStrategy='single-monitoring'
-}
+add node0.mediaSender : FakeCopterMediaSender
+set node0.mediaSender.url = 'http://download.oracle.com/otndocs/products/javafx/JavaRap/prog_index.m3u8'
 
-merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.defaultChannels/2.0.4'
-merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.jexxus/2.0.4'
-merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.camel/2.0.4'
+add node0.measurer : MeasuringCPUUsage
+set node0.measurer.accountGlobalConsumption='1200000'
 
-merge "mvn:org.kevoree.microsandbox.experiment/copter-video/1.0.0-SNAPSHOT"
+add node0.wekaExecuter : RunningExternalJarAppComponent
+set node0.wekaExecuter.jar_path = '/home/inti/programs/weka-3-6-8/weka.jar'
+set node0.wekaExecuter.jar_main = 'weka.classifiers.functions.MultilayerPerceptron'
+set node0.wekaExecuter.arguments = '-L 0.3 -M 0.2 -N 500 -V 0 -S 0 -E 20 -H a -o -x 2 -t /home/inti/resources.arff'
+set node0.wekaExecuter.delayTime = '15000'
+set node0.wekaExecuter.memory_max_size = '30000000'
+set node0.wekaExecuter.cpu_wall_time = '9000000000'
 
-merge "mvn:org.kevoree.microsandbox.experiment/followManager/1.0.0-SNAPSHOT"
-merge "mvn:org.kevoree.microsandbox.experiment/followResource/1.0.0-SNAPSHOT"
-merge "mvn:org.kevoree.microsandbox.experiment/videoViewer/1.0.0-SNAPSHOT"
-merge "mvn:org.kevoree.microsandbox.experiment/webBrowser/1.0.0-SNAPSHOT"
-merge "mvn:org.kevoree.microsandbox.experiment/wsServer/1.0.0-SNAPSHOT"
-merge "mvn:org.kevoree.microsandbox.experiment/webbitHTTPServer/1.0.0-SNAPSHOT"
-merge "mvn:org.kevoree.microsandbox.experiment/webSocketClientHandler/1.0.0-SNAPSHOT"
-
-merge "mvn:org.kevoree.microsandbox.experiment.fault.cpu/followManager/1.0.0-SNAPSHOT"
-merge "mvn:org.kevoree.microsandbox.experiment.fault.cpu/followResource/1.0.0-SNAPSHOT"
-merge "mvn:org.kevoree.microsandbox.experiment.fault.cpu/videoViewer/1.0.0-SNAPSHOT"
-merge "mvn:org.kevoree.microsandbox.experiment.fault.cpu/webBrowser/1.0.0-SNAPSHOT"
-merge "mvn:org.kevoree.microsandbox.experiment.fault.cpu/wsServer/1.0.0-SNAPSHOT"
-merge "mvn:org.kevoree.microsandbox.experiment.fault.cpu/webbitHTTPServer/1.0.0-SNAPSHOT"
-merge "mvn:org.kevoree.microsandbox.experiment.fault.cpu/webSocketClientHandler/1.0.0-SNAPSHOT"
-
-merge "mvn:org.kevoree.microsandbox.experiment.fault.memory/followManager/1.0.0-SNAPSHOT"
-merge "mvn:org.kevoree.microsandbox.experiment.fault.memory/followResource/1.0.0-SNAPSHOT"
-merge "mvn:org.kevoree.microsandbox.experiment.fault.memory/videoViewer/1.0.0-SNAPSHOT"
-merge "mvn:org.kevoree.microsandbox.experiment.fault.memory/webBrowser/1.0.0-SNAPSHOT"
-merge "mvn:org.kevoree.microsandbox.experiment.fault.memory/wsServer/1.0.0-SNAPSHOT"
-merge "mvn:org.kevoree.microsandbox.experiment.fault.memory/webbitHTTPServer/1.0.0-SNAPSHOT"
-merge "mvn:org.kevoree.microsandbox.experiment.fault.memory/webSocketClientHandler/1.0.0-SNAPSHOT"
-
-addComponent mediaSender@node0 : FakeCopterMediaSender { url = 'http://download.oracle.com/otndocs/products/javafx/JavaRap/prog_index.m3u8'}
-
-addComponent measurer@node0 : MeasuringCPUUsage {
-	accountGlobalConsumption='1200000'
-}
-
-addComponent wekaExecuter@node0 : RunningExternalJarAppComponent {
-	jar_path = '/home/inti/programs/weka-3-6-8/weka.jar',
-	jar_main = 'weka.classifiers.functions.MultilayerPerceptron',
-	arguments = '-L 0.3 -M 0.2 -N 500 -V 0 -S 0 -E 20 -H a -o -x 2 -t /home/inti/resources.arff',
-	delayTime = '15000',
-	memory_max_size = '30000000',
-	cpu_wall_time = '9000000000'
-}
-
-//addComponent wekaExecuter@node0 : RunningExternalJarAppComponent {
-//	jar_path = '/home/inti/Downloads/dacapo-2006-10-MR2.jar',
-//	jar_main = 'Harness',
-//	arguments = '-noValidation -n 4 chart',
-//	delayTime = '56000',
-//	memory_max_size = '40000000',
-//	cpu_wall_time = '9000000000'
-//}
-
-addComponent WsServer650@node0 : WsServer {
-    port='8092',
-    cpu_wall_time = '2580',
-    memory_max_size = '0'
+add node0.WsServer650 : WsServer
+set node0.WsServer650.port='8092'
+set node0.WsServer650.cpu_wall_time = '2580'
+set node0.WsServer650.memory_max_size = '0'
     //,throughput_msg_per_second='all=0;service=0'
-}
-addComponent SprayWebS142@node0 : WebbitHTTPServer {
-    port='9500',
-    cpu_wall_time = '33160',
-    memory_max_size = '11120'
-    ,throughput_msg_per_second='all=1;response=1'
-}
 
-addComponent Resources407@node0 : ResourcesPage {
-    urlPattern='/media/',
-    patternToRemove = '/media/',
-		cpu_wall_time = '4899398'
-		,memory_max_size = '0'
-    ,throughput_msg_per_second='all=1;request=1'
-}
-addComponent FollowMan511@node0 : FollowManagerFaultyCPU {
-    urlPattern='/',
-    current='jed'
-    ,cpu_wall_time = '56601'
-    ,memory_max_size = '4000'
-    ,throughput_msg_per_second='all=1;request=1;followmeuser=0'
-}
+add node0.SprayWebS142 : WebbitHTTPServer
+set node0.SprayWebS142.port='9500'
+set node0.SprayWebS142.cpu_wall_time = '33160'
+set node0.SprayWebS142.memory_max_size = '11120'
+set node0.SprayWebS142.throughput_msg_per_second='all=1;response=1'
 
-addComponent javaFXWebBrowser@node0 : JavaFXWebBrowser {
-    cpu_wall_time = '6400'
-    ,memory_max_size = '2400'
-    //,throughput_msg_per_second='all=0;service=0'
-}
-addComponent websockletJavaFXHandler@node0 : WebSocketClientHandler {
-    cpu_wall_time = '5000'
-    ,memory_max_size = '7200'
-    //,throughput_msg_per_second='all=0;service=0'
-}
+add node0.Resources407 : ResourcesPage
+set node0.Resources407.urlPattern='/media/'
+set node0.Resources407.patternToRemove = '/media/'
+set node0.Resources407.cpu_wall_time = '4899398'
+set node0.Resources407.memory_max_size = '0'
+set node0.Resources407.throughput_msg_per_second='all=1;request=1'
 
-addComponent  videoDisplay@node0 : JavaFXVideoDisplay {
-    cpu_wall_time = '5000'
-    ,memory_max_size = '720'
-    //,throughput_msg_per_second='all=0;service=0'
-}
+add node0.FollowMan511 : FollowManagerFaultyCPU
+set node0.FollowMan511.urlPattern='/'
+set node0.FollowMan511.current='jed'
+set node0.FollowMan511.cpu_wall_time = '56601'
+set node0.FollowMan511.memory_max_size = '4000'
+set node0.FollowMan511.throughput_msg_per_second='all=1;request=1;followmeuser=0'
 
-addChannel channelMediaSender : defMSG
+add node0.javaFXWebBrowser : JavaFXWebBrowser
+set node0.javaFXWebBrowser.cpu_wall_time = '6400'
+set node0.javaFXWebBrowser.memory_max_size = '2400'
+set node0.javaFXWebBrowser.url = 'http://maps.google.com'
+//,throughput_msg_per_second='all=0;service=0'
 
-addChannel defSERVIC618 : defSERVICE
-addChannel defMSG472 : defMSG
-addChannel defMSG222 : defMSG
-addChannel webSocketHandlerMessage : defMSG
+add node0.websockletJavaFXHandler : WebSocketClientHandler
+set node0.websockletJavaFXHandler.cpu_wall_time = '5000'
+set node0.websockletJavaFXHandler.memory_max_size = '7200'
+//,throughput_msg_per_second='all=0;service=0'
 
-bind mediaSender.media@node0 => channelMediaSender
-bind videoDisplay.media@node0 => channelMediaSender
+add node0.videoDisplay : JavaFXVideoDisplay
+set node0.videoDisplay.cpu_wall_time = '5000'
+set node0.videoDisplay.memory_max_size = '720'
+//,throughput_msg_per_second='all=0;service=0'
 
-bind SprayWebS142.request@node0 => defMSG472
-bind SprayWebS142.response@node0 => defMSG222
+// sending video signal
+add channelMediaSender : AsyncBroadcast
+bind node0.mediaSender.media channelMediaSender
+bind node0.videoDisplay.media channelMediaSender
 
-bind FollowMan511.request@node0 => defMSG472
-bind FollowMan511.content@node0 => defMSG222
+add defSERVIC618 : SyncBroadcast
+add AsyncBroadcast472 : AsyncBroadcast
+add AsyncBroadcast222 : AsyncBroadcast
+add webSocketHandlerMessage : AsyncBroadcast
 
-bind Resources407.request@node0 => defMSG472
-bind Resources407.content@node0 => defMSG222
+bind node0.SprayWebS142.request AsyncBroadcast472
+bind node0.SprayWebS142.response AsyncBroadcast222
 
-bind WsServer650.service@node0 => defSERVIC618
-bind FollowMan511.ws@node0 => defSERVIC618
+bind node0.FollowMan511.request AsyncBroadcast472
+bind node0.FollowMan511.content AsyncBroadcast222
 
-bind javaFXWebBrowser.handle@node0 => webSocketHandlerMessage
-bind websockletJavaFXHandler.handle@node0 => webSocketHandlerMessage
+bind node0.Resources407.request AsyncBroadcast472
+bind node0.Resources407.content AsyncBroadcast222
 
-addGroup group12081044961:BasicGroup
-addToGroup group12081044961 node0
+//bind node0.WsServer650.service defSERVIC618
+//bind node0.FollowMan511.ws defSERVIC618
+
+bind node0.javaFXWebBrowser.handle webSocketHandlerMessage
+bind node0.websockletJavaFXHandler.handle webSocketHandlerMessage
+
+add sync : WSGroup
+set sync.port/node0 = "9000"
+attach node0 sync
 
 
-merge 'mvn:org.kevoree.microsandbox.experiment/contracted-fake-console/1.0.0-SNAPSHOT'
-merge 'mvn:org.kevoree.microsandbox.experiment/number-generator/1.0.0-SNAPSHOT'
-addComponent ContractedConsole1@node0:ContractedFakeConsole { memory_max_size ='4000', cpu_wall_time ='470000' }
-addComponent ContractedConsole2@node0:ContractedFakeConsole { memory_max_size ='4000', cpu_wall_time ='470000' }
-addComponent ContractedConsole3@node0:ContractedFakeConsole { memory_max_size ='4000', cpu_wall_time ='470000' }
-addComponent ContractedConsole4@node0:ContractedFakeConsole { memory_max_size ='4000', cpu_wall_time ='470000' }
-addComponent ContractedConsole5@node0:ContractedFakeConsole { memory_max_size ='4000', cpu_wall_time ='470000' }
-addComponent ContractedConsole6@node0:ContractedFakeConsole { memory_max_size ='4000', cpu_wall_time ='470000' }
-addComponent ContractedConsole7@node0:ContractedFakeConsole { memory_max_size ='4000', cpu_wall_time ='470000' }
-addComponent ContractedConsole8@node0:ContractedFakeConsole { memory_max_size ='4000', cpu_wall_time ='470000' }
-addComponent ContractedConsole9@node0:ContractedFakeConsole { memory_max_size ='4000', cpu_wall_time ='470000' }
-addComponent ContractedConsole10@node0:ContractedFakeConsole { memory_max_size ='4000', cpu_wall_time ='470000' }
-addComponent ContractedConsole11@node0:ContractedFakeConsole { memory_max_size ='4000', cpu_wall_time ='470000' }
-addComponent ContractedConsole12@node0:ContractedFakeConsole { memory_max_size ='4000', cpu_wall_time ='470000' }
-addComponent ContractedConsole13@node0:ContractedFakeConsole { memory_max_size ='4000', cpu_wall_time ='470000' }
-addComponent ContractedConsole14@node0:ContractedFakeConsole { memory_max_size ='4000', cpu_wall_time ='470000' }
-addComponent ContractedConsole15@node0:ContractedFakeConsole { memory_max_size ='4000', cpu_wall_time ='470000' }
-addComponent ContractedConsole16@node0:ContractedFakeConsole { memory_max_size ='4000', cpu_wall_time ='470000' }
-addComponent numberGenerator_fancy@node0 : NumberGenerator {}
-addChannel cInitial : defMSG
-bind numberGenerator_fancy.output@node0 => cInitial
-bind ContractedConsole1.input@node0 => cInitial
-addChannel c1To2 : defMSG
-bind ContractedConsole1.output@node0 => c1To2
-bind ContractedConsole2.input@node0 => c1To2
-addChannel c2To3 : defMSG
-bind ContractedConsole2.output@node0 => c2To3
-bind ContractedConsole3.input@node0 => c2To3
-addChannel c3To4 : defMSG
-bind ContractedConsole3.output@node0 => c3To4
-bind ContractedConsole4.input@node0 => c3To4
-addChannel c4To5 : defMSG
-bind ContractedConsole4.output@node0 => c4To5
-bind ContractedConsole5.input@node0 => c4To5
-addChannel c5To6 : defMSG
-bind ContractedConsole5.output@node0 => c5To6
-bind ContractedConsole6.input@node0 => c5To6
-addChannel c6To7 : defMSG
-bind ContractedConsole6.output@node0 => c6To7
-bind ContractedConsole7.input@node0 => c6To7
-addChannel c7To8 : defMSG
-bind ContractedConsole7.output@node0 => c7To8
-bind ContractedConsole8.input@node0 => c7To8
-addChannel c8To9 : defMSG
-bind ContractedConsole8.output@node0 => c8To9
-bind ContractedConsole9.input@node0 => c8To9
-addChannel c9To10 : defMSG
-bind ContractedConsole9.output@node0 => c9To10
-bind ContractedConsole10.input@node0 => c9To10
-addChannel c10To11 : defMSG
-bind ContractedConsole10.output@node0 => c10To11
-bind ContractedConsole11.input@node0 => c10To11
-addChannel c11To12 : defMSG
-bind ContractedConsole11.output@node0 => c11To12
-bind ContractedConsole12.input@node0 => c11To12
-addChannel c12To13 : defMSG
-bind ContractedConsole12.output@node0 => c12To13
-bind ContractedConsole13.input@node0 => c12To13
-addChannel c13To14 : defMSG
-bind ContractedConsole13.output@node0 => c13To14
-bind ContractedConsole14.input@node0 => c13To14
-addChannel c14To15 : defMSG
-bind ContractedConsole14.output@node0 => c14To15
-bind ContractedConsole15.input@node0 => c14To15
-addChannel c15To16 : defMSG
-bind ContractedConsole15.output@node0 => c15To16
-bind ContractedConsole16.input@node0 => c15To16
+include mvn:org.kevoree.microsandbox.experiment:contracted-fake-console:1.1
+include mvn:org.kevoree.microsandbox.experiment:number-generator:1.1
+add node0.numberGenerator_fancy : NumberGenerator
+
+add node0.ContractedConsole1:ContractedFakeConsole
+set node0.ContractedConsole1.memory_max_size ='4000'
+set node0.ContractedConsole1.cpu_wall_time ='470000'
+
+add node0.ContractedConsole2:ContractedFakeConsole
+add node0.ContractedConsole3:ContractedFakeConsole
+add node0.ContractedConsole4:ContractedFakeConsole
+add node0.ContractedConsole5:ContractedFakeConsole
+add node0.ContractedConsole6:ContractedFakeConsole
+add node0.ContractedConsole7:ContractedFakeConsole
+add node0.ContractedConsole8:ContractedFakeConsole
+add node0.ContractedConsole9:ContractedFakeConsole
+add node0.ContractedConsole10:ContractedFakeConsole
+add node0.ContractedConsole11:ContractedFakeConsole
+add node0.ContractedConsole12:ContractedFakeConsole
+add node0.ContractedConsole13:ContractedFakeConsole
+add node0.ContractedConsole14:ContractedFakeConsole
+add node0.ContractedConsole15:ContractedFakeConsole
+add node0.ContractedConsole16:ContractedFakeConsole
+
+set node0.ContractedConsole1.memory_max_size='4000'
+set node0.ContractedConsole1.cpu_wall_time ='470000'
+set node0.ContractedConsole2.memory_max_size='4000'
+set node0.ContractedConsole2.cpu_wall_time ='470000'
+set node0.ContractedConsole3.memory_max_size='4000'
+set node0.ContractedConsole3.cpu_wall_time ='470000'
+set node0.ContractedConsole4.memory_max_size='4000'
+set node0.ContractedConsole4.cpu_wall_time ='470000'
+set node0.ContractedConsole5.memory_max_size='4000'
+set node0.ContractedConsole5.cpu_wall_time ='470000'
+set node0.ContractedConsole6.memory_max_size='4000'
+set node0.ContractedConsole6.cpu_wall_time ='470000'
+set node0.ContractedConsole7.memory_max_size='4000'
+set node0.ContractedConsole7.cpu_wall_time ='470000'
+set node0.ContractedConsole8.memory_max_size='4000'
+set node0.ContractedConsole8.cpu_wall_time ='470000'
+set node0.ContractedConsole9.memory_max_size='4000'
+set node0.ContractedConsole9.cpu_wall_time ='470000'
+set node0.ContractedConsole10.memory_max_size='4000'
+set node0.ContractedConsole10.cpu_wall_time ='470000'
+set node0.ContractedConsole11.memory_max_size='4000'
+set node0.ContractedConsole11.cpu_wall_time ='470000'
+set node0.ContractedConsole12.memory_max_size='4000'
+set node0.ContractedConsole12.cpu_wall_time ='470000'
+set node0.ContractedConsole13.memory_max_size='4000'
+set node0.ContractedConsole13.cpu_wall_time ='470000'
+set node0.ContractedConsole14.memory_max_size='4000'
+set node0.ContractedConsole14.cpu_wall_time ='470000'
+set node0.ContractedConsole15.memory_max_size='4000'
+set node0.ContractedConsole15.cpu_wall_time ='470000'
+set node0.ContractedConsole16.memory_max_size='4000'
+set node0.ContractedConsole16.cpu_wall_time ='470000'
+
+add cInitial : AsyncBroadcast
+bind node0.numberGenerator_fancy.output cInitial
+bind node0.ContractedConsole1.input cInitial
+add c1To2 : AsyncBroadcast
+bind node0.ContractedConsole1.output c1To2
+bind node0.ContractedConsole2.input c1To2
+add c2To3 : AsyncBroadcast
+bind node0.ContractedConsole2.output c2To3
+bind node0.ContractedConsole3.input c2To3
+add c3To4 : AsyncBroadcast
+bind node0.ContractedConsole3.output c3To4
+bind node0.ContractedConsole4.input c3To4
+add c4To5 : AsyncBroadcast
+bind node0.ContractedConsole4.output c4To5
+bind node0.ContractedConsole5.input c4To5
+add c5To6 : AsyncBroadcast
+bind node0.ContractedConsole5.output c5To6
+bind node0.ContractedConsole6.input c5To6
+add c6To7 : AsyncBroadcast
+bind node0.ContractedConsole6.output c6To7
+bind node0.ContractedConsole7.input c6To7
+add c7To8 : AsyncBroadcast
+bind node0.ContractedConsole7.output c7To8
+bind node0.ContractedConsole8.input c7To8
+add c8To9 : AsyncBroadcast
+bind node0.ContractedConsole8.output c8To9
+bind node0.ContractedConsole9.input c8To9
+add c9To10 : AsyncBroadcast
+bind node0.ContractedConsole9.output c9To10
+bind node0.ContractedConsole10.input c9To10
+add c10To11 : AsyncBroadcast
+bind node0.ContractedConsole10.output c10To11
+bind node0.ContractedConsole11.input c10To11
+add c11To12 : AsyncBroadcast
+bind node0.ContractedConsole11.output c11To12
+bind node0.ContractedConsole12.input c11To12
+add c12To13 : AsyncBroadcast
+bind node0.ContractedConsole12.output c12To13
+bind node0.ContractedConsole13.input c12To13
+add c13To14 : AsyncBroadcast
+bind node0.ContractedConsole13.output c13To14
+bind node0.ContractedConsole14.input c13To14
+add c14To15 : AsyncBroadcast
+bind node0.ContractedConsole14.output c14To15
+bind node0.ContractedConsole15.input c14To15
+add c15To16 : AsyncBroadcast
+bind node0.ContractedConsole15.output c15To16
+bind node0.ContractedConsole16.input c15To16

@@ -1,0 +1,18 @@
+
+include mvn:org.kevoree.library.java:org.kevoree.library.java.javaNode:5.0.1
+include mvn:org.kevoree.library.java:org.kevoree.library.java.ws:5.0.1
+
+include mvn:org.kevoree.microsandbox:weka-executer:1.1
+
+add node0 : JavaNode
+add sync : WSGroup
+attach node0 sync
+
+add node0.rino : RunningExternalJarAppComponent
+set node0.rino.jar_path = '/opt/kevoree/sosies/add_MDMS_JsgiServletInterfacerhino1/run.jar'
+set node0.rino.jar_main = 'org.ringojs.tools.launcher.Main'
+set node0.rino.arguments = '/opt/kevoree/mdms/mdms-ringojs/main.js --port=9999'
+set node0.rino.delayTime = '5000'
+set node0.rino.memory_max_size = '0'
+set node0.rino.cpu_wall_time = '0'
+

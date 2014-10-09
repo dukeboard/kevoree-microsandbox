@@ -1,680 +1,908 @@
-addRepo "http://maven.kevoree.org/release"
-addRepo "http://maven.kevoree.org/snapshots"
-addRepo "http://maven.kevoree.org/daum/release"
-addRepo "http://maven.kevoree.org/daum/snapshots"
-addRepo "http://repo.maven.apache.org/maven2"
+include mvn:org.kevoree.library.java:org.kevoree.library.java.ws:5.0.1
+include mvn:org.kevoree.library.java:org.kevoree.library.java.channels:5.0.1
 
-//merge "mvn:org.kevoree.corelibrary.sky/org.kevoree.library.sky.minicloud/2.0.4"
+include mvn:org.kevoree.microsandbox:org.kevoree.microsandbox.javasenode:1.1
+include mvn:org.kevoree.microsandbox:org.kevoree.microsandbox.monitoring:1.1
 
-merge 'mvn:org.kevoree.microsandbox/org.kevoree.microsandbox.javasenode/1.0-SNAPSHOT'
-merge 'mvn:org.kevoree.microsandbox/org.kevoree.microsandbox.monitoring/1.0-SNAPSHOT'
+add node0:MonitoredNode
+set node0.log = 'info'
+set node0.availability_memory='1073741824' //1 GB
+set node0.availability_instr='200000000'
+set node0.availability_write_disc='10000000'
+set node0.availability_read_disc='10000000'
 
-merge 'mvn:org.kevoree.microsandbox/weka-executer/1.0-SNAPSHOT'
+add node0.MonitoringComponent0: MonitoringComponent
+set node0.MonitoringComponent0.memory_threshold='91.499658'
+set node0.MonitoringComponent0.cpu_threshold='46.025537'
+set node0.MonitoringComponent0.net_in_threshold='80000000'
+set node0.MonitoringComponent0.net_out_threshold='80000000'
+set node0.MonitoringComponent0.adaptiveMonitoring='true'
+set node0.MonitoringComponent0.fineGrainedStrategy='all-components'
 
 
-//addNode node0 : MiniCloudNode { coreLogLevel="WARN",logLevel="WARN"}
+add node0.reasoner0: ResourceAwareReasoner
+add node0.rankerBasedHeuristicComponent0: NumberFailureBasedHeuristicComponent
+add ch_reasoning : AsyncBroadcast
+bind node0.reasoner0.eventHandler ch_reasoning
+bind node0.MonitoringComponent0.reasoner ch_reasoning
+add ch_rank_of_components : SyncBroadcast
+add ch_trigger_monitoring : SyncBroadcast
+bind node0.rankerBasedHeuristicComponent0.getRankingOrder ch_rank_of_components
+bind node0.MonitoringComponent0.getRankingOrder ch_rank_of_components
+bind node0.rankerBasedHeuristicComponent0.triggerMonitoringEvent ch_trigger_monitoring
+bind node0.MonitoringComponent0.triggerMonitoringEvent ch_trigger_monitoring
 
-// TODO specify availability memory/cpu...
-addNode node0:MonitoredNode
-{ logLevel = "INFO",
-    coreLogLevel = "INFO",
-    availability_memory='1073741824', //1 GB
-    availability_instr='200000000'
-}
+include mvn:org.kevoree.microsandbox.experiment:copter-video:1.1
+include mvn:org.kevoree.microsandbox.experiment:followResource:1.1
+include mvn:org.kevoree.microsandbox.experiment:videoViewer:1.1
+include mvn:org.kevoree.microsandbox.experiment:webBrowser:1.1
+include mvn:org.kevoree.microsandbox.experiment:wsServer:1.1
+include mvn:org.kevoree.microsandbox.experiment:webbitHTTPServer:1.1
+include mvn:org.kevoree.microsandbox.experiment:webSocketClientHandler:1.1
+include mvn:org.kevoree.microsandbox.experiment.fault.cpu:followManager:1.1
 
-//addChild monitoredNode@node0
+include mvn:org.kevoree.microsandbox:weka-executer:latest
 
-addComponent monitoringComponent@node0 //monitoredNode
-: MonitoringComponent {
-    memory_threshold='91.499658', // TODO specifiy good value
-    cpu_threshold='46.025537', // TODO specifiy good value
-    net_in_threshold='80000000', // TODO specifiy good value
-    net_out_threshold='80000000', // TODO specifiy good value
-    componentRankFunction = 'number_of_failures',
-    adaptiveMonitoring='true',
-    fineGrainedStrategy='all-components'
-}
+add node0.mediaSender : FakeCopterMediaSender
+set node0.mediaSender.url = 'http://download.oracle.com/otndocs/products/javafx/JavaRap/prog_index.m3u8'
 
-merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.defaultChannels/2.0.4'
-merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.jexxus/2.0.4'
-merge 'mvn:org.kevoree.corelibrary.javase/org.kevoree.library.javase.camel/2.0.4'
+add node0.measurer : MeasuringCPUUsage
+set node0.measurer.accountGlobalConsumption='1200000'
 
-merge "mvn:org.kevoree.microsandbox.experiment/copter-video/1.0.0-SNAPSHOT"
+add node0.wekaExecuter : RunningExternalJarAppComponent
+set node0.wekaExecuter.jar_path = '/home/inti/programs/weka-3-6-8/weka.jar'
+set node0.wekaExecuter.jar_main = 'weka.classifiers.functions.MultilayerPerceptron'
+set node0.wekaExecuter.arguments = '-L 0.3 -M 0.2 -N 500 -V 0 -S 0 -E 20 -H a -o -x 2 -t /home/inti/resources.arff'
+set node0.wekaExecuter.delayTime = '15000'
+set node0.wekaExecuter.memory_max_size = '30000000'
+set node0.wekaExecuter.cpu_wall_time = '9000000000'
 
-merge "mvn:org.kevoree.microsandbox.experiment/followManager/1.0.0-SNAPSHOT"
-merge "mvn:org.kevoree.microsandbox.experiment/followResource/1.0.0-SNAPSHOT"
-merge "mvn:org.kevoree.microsandbox.experiment/videoViewer/1.0.0-SNAPSHOT"
-merge "mvn:org.kevoree.microsandbox.experiment/webBrowser/1.0.0-SNAPSHOT"
-merge "mvn:org.kevoree.microsandbox.experiment/wsServer/1.0.0-SNAPSHOT"
-merge "mvn:org.kevoree.microsandbox.experiment/webbitHTTPServer/1.0.0-SNAPSHOT"
-merge "mvn:org.kevoree.microsandbox.experiment/webSocketClientHandler/1.0.0-SNAPSHOT"
-
-merge "mvn:org.kevoree.microsandbox.experiment.fault.cpu/followManager/1.0.0-SNAPSHOT"
-merge "mvn:org.kevoree.microsandbox.experiment.fault.cpu/followResource/1.0.0-SNAPSHOT"
-merge "mvn:org.kevoree.microsandbox.experiment.fault.cpu/videoViewer/1.0.0-SNAPSHOT"
-merge "mvn:org.kevoree.microsandbox.experiment.fault.cpu/webBrowser/1.0.0-SNAPSHOT"
-merge "mvn:org.kevoree.microsandbox.experiment.fault.cpu/wsServer/1.0.0-SNAPSHOT"
-merge "mvn:org.kevoree.microsandbox.experiment.fault.cpu/webbitHTTPServer/1.0.0-SNAPSHOT"
-merge "mvn:org.kevoree.microsandbox.experiment.fault.cpu/webSocketClientHandler/1.0.0-SNAPSHOT"
-
-merge "mvn:org.kevoree.microsandbox.experiment.fault.memory/followManager/1.0.0-SNAPSHOT"
-merge "mvn:org.kevoree.microsandbox.experiment.fault.memory/followResource/1.0.0-SNAPSHOT"
-merge "mvn:org.kevoree.microsandbox.experiment.fault.memory/videoViewer/1.0.0-SNAPSHOT"
-merge "mvn:org.kevoree.microsandbox.experiment.fault.memory/webBrowser/1.0.0-SNAPSHOT"
-merge "mvn:org.kevoree.microsandbox.experiment.fault.memory/wsServer/1.0.0-SNAPSHOT"
-merge "mvn:org.kevoree.microsandbox.experiment.fault.memory/webbitHTTPServer/1.0.0-SNAPSHOT"
-merge "mvn:org.kevoree.microsandbox.experiment.fault.memory/webSocketClientHandler/1.0.0-SNAPSHOT"
-
-addComponent mediaSender@node0 : FakeCopterMediaSender { url = 'http://download.oracle.com/otndocs/products/javafx/JavaRap/prog_index.m3u8'}
-
-addComponent measurer@node0 : MeasuringCPUUsage {
-	accountGlobalConsumption='1200000'
-}
-
-addComponent wekaExecuter@node0 : RunningExternalJarAppComponent {
-	jar_path = '/home/inti/programs/weka-3-6-8/weka.jar',
-	jar_main = 'weka.classifiers.functions.MultilayerPerceptron',
-	arguments = '-L 0.3 -M 0.2 -N 500 -V 0 -S 0 -E 20 -H a -o -x 2 -t /home/inti/resources.arff',
-	delayTime = '15000',
-	memory_max_size = '30000000',
-	cpu_wall_time = '9000000000'
-}
-
-//addComponent wekaExecuter@node0 : RunningExternalJarAppComponent {
-//	jar_path = '/home/inti/Downloads/dacapo-2006-10-MR2.jar',
-//	jar_main = 'Harness',
-//	arguments = '-noValidation -n 4 chart',
-//	delayTime = '56000',
-//	memory_max_size = '40000000',
-//	cpu_wall_time = '9000000000'
-//}
-
-addComponent WsServer650@node0 : WsServer {
-    port='8092',
-    cpu_wall_time = '2580',
-    memory_max_size = '0'
+add node0.WsServer650 : WsServer
+set node0.WsServer650.port='8092'
+set node0.WsServer650.cpu_wall_time = '2580'
+set node0.WsServer650.memory_max_size = '0'
     //,throughput_msg_per_second='all=0;service=0'
-}
-addComponent SprayWebS142@node0 : WebbitHTTPServer {
-    port='9500',
-    cpu_wall_time = '33160',
-    memory_max_size = '11120'
-    ,throughput_msg_per_second='all=1;response=1'
-}
 
-addComponent Resources407@node0 : ResourcesPage {
-    urlPattern='/media/',
-    patternToRemove = '/media/',
-		cpu_wall_time = '4899398'
-		,memory_max_size = '0'
-    ,throughput_msg_per_second='all=1;request=1'
-}
-addComponent FollowMan511@node0 : FollowManagerFaultyCPU {
-    urlPattern='/',
-    current='jed'
-    ,cpu_wall_time = '56601'
-    ,memory_max_size = '4000'
-    ,throughput_msg_per_second='all=1;request=1;followmeuser=0'
-}
+add node0.SprayWebS142 : WebbitHTTPServer
+set node0.SprayWebS142.port='9500'
+set node0.SprayWebS142.cpu_wall_time = '33160'
+set node0.SprayWebS142.memory_max_size = '11120'
+set node0.SprayWebS142.throughput_msg_per_second='all=1;response=1'
 
-addComponent javaFXWebBrowser@node0 : JavaFXWebBrowser {
-    cpu_wall_time = '6400'
-    ,memory_max_size = '2400'
-    //,throughput_msg_per_second='all=0;service=0'
-}
-addComponent websockletJavaFXHandler@node0 : WebSocketClientHandler {
-    cpu_wall_time = '5000'
-    ,memory_max_size = '7200'
-    //,throughput_msg_per_second='all=0;service=0'
-}
+add node0.Resources407 : ResourcesPage
+set node0.Resources407.urlPattern='/media/'
+set node0.Resources407.patternToRemove = '/media/'
+set node0.Resources407.cpu_wall_time = '4899398'
+set node0.Resources407.memory_max_size = '0'
+set node0.Resources407.throughput_msg_per_second='all=1;request=1'
 
-addComponent  videoDisplay@node0 : JavaFXVideoDisplay {
-    cpu_wall_time = '5000'
-    ,memory_max_size = '720'
-    //,throughput_msg_per_second='all=0;service=0'
-}
+add node0.FollowMan511 : FollowManagerFaultyCPU
+set node0.FollowMan511.urlPattern='/'
+set node0.FollowMan511.current='jed'
+set node0.FollowMan511.cpu_wall_time = '56601'
+set node0.FollowMan511.memory_max_size = '4000'
+set node0.FollowMan511.throughput_msg_per_second='all=1;request=1;followmeuser=0'
 
-addChannel channelMediaSender : defMSG
+add node0.javaFXWebBrowser : JavaFXWebBrowser
+set node0.javaFXWebBrowser.cpu_wall_time = '6400'
+set node0.javaFXWebBrowser.memory_max_size = '2400'
+set node0.javaFXWebBrowser.url = 'http://maps.google.com'
+//,throughput_msg_per_second='all=0;service=0'
 
-addChannel defSERVIC618 : defSERVICE
-addChannel defMSG472 : defMSG
-addChannel defMSG222 : defMSG
-addChannel webSocketHandlerMessage : defMSG
+add node0.websockletJavaFXHandler : WebSocketClientHandler
+set node0.websockletJavaFXHandler.cpu_wall_time = '5000'
+set node0.websockletJavaFXHandler.memory_max_size = '7200'
+//,throughput_msg_per_second='all=0;service=0'
 
-bind mediaSender.media@node0 => channelMediaSender
-bind videoDisplay.media@node0 => channelMediaSender
+add node0.videoDisplay : JavaFXVideoDisplay
+set node0.videoDisplay.cpu_wall_time = '5000'
+set node0.videoDisplay.memory_max_size = '720'
+//,throughput_msg_per_second='all=0;service=0'
 
-bind SprayWebS142.request@node0 => defMSG472
-bind SprayWebS142.response@node0 => defMSG222
+// sending video signal
+add channelMediaSender : AsyncBroadcast
+bind node0.mediaSender.media channelMediaSender
+bind node0.videoDisplay.media channelMediaSender
 
-bind FollowMan511.request@node0 => defMSG472
-bind FollowMan511.content@node0 => defMSG222
+add defSERVIC618 : SyncBroadcast
+add AsyncBroadcast472 : AsyncBroadcast
+add AsyncBroadcast222 : AsyncBroadcast
+add webSocketHandlerMessage : AsyncBroadcast
 
-bind Resources407.request@node0 => defMSG472
-bind Resources407.content@node0 => defMSG222
+bind node0.SprayWebS142.request AsyncBroadcast472
+bind node0.SprayWebS142.response AsyncBroadcast222
 
-bind WsServer650.service@node0 => defSERVIC618
-bind FollowMan511.ws@node0 => defSERVIC618
+bind node0.FollowMan511.request AsyncBroadcast472
+bind node0.FollowMan511.content AsyncBroadcast222
 
-bind javaFXWebBrowser.handle@node0 => webSocketHandlerMessage
-bind websockletJavaFXHandler.handle@node0 => webSocketHandlerMessage
+bind node0.Resources407.request AsyncBroadcast472
+bind node0.Resources407.content AsyncBroadcast222
 
-addGroup group12081044961:BasicGroup
-addToGroup group12081044961 node0
+//bind node0.WsServer650.service defSERVIC618
+//bind node0.FollowMan511.ws defSERVIC618
+
+bind node0.javaFXWebBrowser.handle webSocketHandlerMessage
+bind node0.websockletJavaFXHandler.handle webSocketHandlerMessage
+
+add sync : WSGroup
+set sync.port/node0 = "9000"
+attach node0 sync
 
 
-merge 'mvn:org.kevoree.microsandbox.experiment/contracted-fake-console/1.0.0-SNAPSHOT'
-merge 'mvn:org.kevoree.microsandbox.experiment/number-generator/1.0.0-SNAPSHOT'
-addComponent ContractedConsole1@node0:ContractedFakeConsole { memory_max_size ='4000', cpu_wall_time ='470000' }
-addComponent ContractedConsole2@node0:ContractedFakeConsole { memory_max_size ='4000', cpu_wall_time ='470000' }
-addComponent ContractedConsole3@node0:ContractedFakeConsole { memory_max_size ='4000', cpu_wall_time ='470000' }
-addComponent ContractedConsole4@node0:ContractedFakeConsole { memory_max_size ='4000', cpu_wall_time ='470000' }
-addComponent ContractedConsole5@node0:ContractedFakeConsole { memory_max_size ='4000', cpu_wall_time ='470000' }
-addComponent ContractedConsole6@node0:ContractedFakeConsole { memory_max_size ='4000', cpu_wall_time ='470000' }
-addComponent ContractedConsole7@node0:ContractedFakeConsole { memory_max_size ='4000', cpu_wall_time ='470000' }
-addComponent ContractedConsole8@node0:ContractedFakeConsole { memory_max_size ='4000', cpu_wall_time ='470000' }
-addComponent ContractedConsole9@node0:ContractedFakeConsole { memory_max_size ='4000', cpu_wall_time ='470000' }
-addComponent ContractedConsole10@node0:ContractedFakeConsole { memory_max_size ='4000', cpu_wall_time ='470000' }
-addComponent ContractedConsole11@node0:ContractedFakeConsole { memory_max_size ='4000', cpu_wall_time ='470000' }
-addComponent ContractedConsole12@node0:ContractedFakeConsole { memory_max_size ='4000', cpu_wall_time ='470000' }
-addComponent ContractedConsole13@node0:ContractedFakeConsole { memory_max_size ='4000', cpu_wall_time ='470000' }
-addComponent ContractedConsole14@node0:ContractedFakeConsole { memory_max_size ='4000', cpu_wall_time ='470000' }
-addComponent ContractedConsole15@node0:ContractedFakeConsole { memory_max_size ='4000', cpu_wall_time ='470000' }
-addComponent ContractedConsole16@node0:ContractedFakeConsole { memory_max_size ='4000', cpu_wall_time ='470000' }
-addComponent ContractedConsole17@node0:ContractedFakeConsole { memory_max_size ='4000', cpu_wall_time ='470000' }
-addComponent ContractedConsole18@node0:ContractedFakeConsole { memory_max_size ='4000', cpu_wall_time ='470000' }
-addComponent ContractedConsole19@node0:ContractedFakeConsole { memory_max_size ='4000', cpu_wall_time ='470000' }
-addComponent ContractedConsole20@node0:ContractedFakeConsole { memory_max_size ='4000', cpu_wall_time ='470000' }
-addComponent ContractedConsole21@node0:ContractedFakeConsole { memory_max_size ='4000', cpu_wall_time ='470000' }
-addComponent ContractedConsole22@node0:ContractedFakeConsole { memory_max_size ='4000', cpu_wall_time ='470000' }
-addComponent ContractedConsole23@node0:ContractedFakeConsole { memory_max_size ='4000', cpu_wall_time ='470000' }
-addComponent ContractedConsole24@node0:ContractedFakeConsole { memory_max_size ='4000', cpu_wall_time ='470000' }
-addComponent ContractedConsole25@node0:ContractedFakeConsole { memory_max_size ='4000', cpu_wall_time ='470000' }
-addComponent ContractedConsole26@node0:ContractedFakeConsole { memory_max_size ='4000', cpu_wall_time ='470000' }
-addComponent ContractedConsole27@node0:ContractedFakeConsole { memory_max_size ='4000', cpu_wall_time ='470000' }
-addComponent ContractedConsole28@node0:ContractedFakeConsole { memory_max_size ='4000', cpu_wall_time ='470000' }
-addComponent ContractedConsole29@node0:ContractedFakeConsole { memory_max_size ='4000', cpu_wall_time ='470000' }
-addComponent ContractedConsole30@node0:ContractedFakeConsole { memory_max_size ='4000', cpu_wall_time ='470000' }
-addComponent ContractedConsole31@node0:ContractedFakeConsole { memory_max_size ='4000', cpu_wall_time ='470000' }
-addComponent ContractedConsole32@node0:ContractedFakeConsole { memory_max_size ='4000', cpu_wall_time ='470000' }
-addComponent ContractedConsole33@node0:ContractedFakeConsole { memory_max_size ='4000', cpu_wall_time ='470000' }
-addComponent ContractedConsole34@node0:ContractedFakeConsole { memory_max_size ='4000', cpu_wall_time ='470000' }
-addComponent ContractedConsole35@node0:ContractedFakeConsole { memory_max_size ='4000', cpu_wall_time ='470000' }
-addComponent ContractedConsole36@node0:ContractedFakeConsole { memory_max_size ='4000', cpu_wall_time ='470000' }
-addComponent ContractedConsole37@node0:ContractedFakeConsole { memory_max_size ='4000', cpu_wall_time ='470000' }
-addComponent ContractedConsole38@node0:ContractedFakeConsole { memory_max_size ='4000', cpu_wall_time ='470000' }
-addComponent ContractedConsole39@node0:ContractedFakeConsole { memory_max_size ='4000', cpu_wall_time ='470000' }
-addComponent ContractedConsole40@node0:ContractedFakeConsole { memory_max_size ='4000', cpu_wall_time ='470000' }
-addComponent ContractedConsole41@node0:ContractedFakeConsole { memory_max_size ='4000', cpu_wall_time ='470000' }
-addComponent ContractedConsole42@node0:ContractedFakeConsole { memory_max_size ='4000', cpu_wall_time ='470000' }
-addComponent ContractedConsole43@node0:ContractedFakeConsole { memory_max_size ='4000', cpu_wall_time ='470000' }
-addComponent ContractedConsole44@node0:ContractedFakeConsole { memory_max_size ='4000', cpu_wall_time ='470000' }
-addComponent ContractedConsole45@node0:ContractedFakeConsole { memory_max_size ='4000', cpu_wall_time ='470000' }
-addComponent ContractedConsole46@node0:ContractedFakeConsole { memory_max_size ='4000', cpu_wall_time ='470000' }
-addComponent ContractedConsole47@node0:ContractedFakeConsole { memory_max_size ='4000', cpu_wall_time ='470000' }
-addComponent ContractedConsole48@node0:ContractedFakeConsole { memory_max_size ='4000', cpu_wall_time ='470000' }
-addComponent ContractedConsole49@node0:ContractedFakeConsole { memory_max_size ='4000', cpu_wall_time ='470000' }
-addComponent ContractedConsole50@node0:ContractedFakeConsole { memory_max_size ='4000', cpu_wall_time ='470000' }
-addComponent ContractedConsole51@node0:ContractedFakeConsole { memory_max_size ='4000', cpu_wall_time ='470000' }
-addComponent ContractedConsole52@node0:ContractedFakeConsole { memory_max_size ='4000', cpu_wall_time ='470000' }
-addComponent ContractedConsole53@node0:ContractedFakeConsole { memory_max_size ='4000', cpu_wall_time ='470000' }
-addComponent ContractedConsole54@node0:ContractedFakeConsole { memory_max_size ='4000', cpu_wall_time ='470000' }
-addComponent ContractedConsole55@node0:ContractedFakeConsole { memory_max_size ='4000', cpu_wall_time ='470000' }
-addComponent ContractedConsole56@node0:ContractedFakeConsole { memory_max_size ='4000', cpu_wall_time ='470000' }
-addComponent ContractedConsole57@node0:ContractedFakeConsole { memory_max_size ='4000', cpu_wall_time ='470000' }
-addComponent ContractedConsole58@node0:ContractedFakeConsole { memory_max_size ='4000', cpu_wall_time ='470000' }
-addComponent ContractedConsole59@node0:ContractedFakeConsole { memory_max_size ='4000', cpu_wall_time ='470000' }
-addComponent ContractedConsole60@node0:ContractedFakeConsole { memory_max_size ='4000', cpu_wall_time ='470000' }
-addComponent ContractedConsole61@node0:ContractedFakeConsole { memory_max_size ='4000', cpu_wall_time ='470000' }
-addComponent ContractedConsole62@node0:ContractedFakeConsole { memory_max_size ='4000', cpu_wall_time ='470000' }
-addComponent ContractedConsole63@node0:ContractedFakeConsole { memory_max_size ='4000', cpu_wall_time ='470000' }
-addComponent ContractedConsole64@node0:ContractedFakeConsole { memory_max_size ='4000', cpu_wall_time ='470000' }
-addComponent ContractedConsole65@node0:ContractedFakeConsole { memory_max_size ='4000', cpu_wall_time ='470000' }
-addComponent ContractedConsole66@node0:ContractedFakeConsole { memory_max_size ='4000', cpu_wall_time ='470000' }
-addComponent ContractedConsole67@node0:ContractedFakeConsole { memory_max_size ='4000', cpu_wall_time ='470000' }
-addComponent ContractedConsole68@node0:ContractedFakeConsole { memory_max_size ='4000', cpu_wall_time ='470000' }
-addComponent ContractedConsole69@node0:ContractedFakeConsole { memory_max_size ='4000', cpu_wall_time ='470000' }
-addComponent ContractedConsole70@node0:ContractedFakeConsole { memory_max_size ='4000', cpu_wall_time ='470000' }
-addComponent ContractedConsole71@node0:ContractedFakeConsole { memory_max_size ='4000', cpu_wall_time ='470000' }
-addComponent ContractedConsole72@node0:ContractedFakeConsole { memory_max_size ='4000', cpu_wall_time ='470000' }
-addComponent ContractedConsole73@node0:ContractedFakeConsole { memory_max_size ='4000', cpu_wall_time ='470000' }
-addComponent ContractedConsole74@node0:ContractedFakeConsole { memory_max_size ='4000', cpu_wall_time ='470000' }
-addComponent ContractedConsole75@node0:ContractedFakeConsole { memory_max_size ='4000', cpu_wall_time ='470000' }
-addComponent ContractedConsole76@node0:ContractedFakeConsole { memory_max_size ='4000', cpu_wall_time ='470000' }
-addComponent ContractedConsole77@node0:ContractedFakeConsole { memory_max_size ='4000', cpu_wall_time ='470000' }
-addComponent ContractedConsole78@node0:ContractedFakeConsole { memory_max_size ='4000', cpu_wall_time ='470000' }
-addComponent ContractedConsole79@node0:ContractedFakeConsole { memory_max_size ='4000', cpu_wall_time ='470000' }
-addComponent ContractedConsole80@node0:ContractedFakeConsole { memory_max_size ='4000', cpu_wall_time ='470000' }
-addComponent ContractedConsole81@node0:ContractedFakeConsole { memory_max_size ='4000', cpu_wall_time ='470000' }
-addComponent ContractedConsole82@node0:ContractedFakeConsole { memory_max_size ='4000', cpu_wall_time ='470000' }
-addComponent ContractedConsole83@node0:ContractedFakeConsole { memory_max_size ='4000', cpu_wall_time ='470000' }
-addComponent ContractedConsole84@node0:ContractedFakeConsole { memory_max_size ='4000', cpu_wall_time ='470000' }
-addComponent ContractedConsole85@node0:ContractedFakeConsole { memory_max_size ='4000', cpu_wall_time ='470000' }
-addComponent ContractedConsole86@node0:ContractedFakeConsole { memory_max_size ='4000', cpu_wall_time ='470000' }
-addComponent ContractedConsole87@node0:ContractedFakeConsole { memory_max_size ='4000', cpu_wall_time ='470000' }
-addComponent ContractedConsole88@node0:ContractedFakeConsole { memory_max_size ='4000', cpu_wall_time ='470000' }
-addComponent ContractedConsole89@node0:ContractedFakeConsole { memory_max_size ='4000', cpu_wall_time ='470000' }
-addComponent ContractedConsole90@node0:ContractedFakeConsole { memory_max_size ='4000', cpu_wall_time ='470000' }
-addComponent ContractedConsole91@node0:ContractedFakeConsole { memory_max_size ='4000', cpu_wall_time ='470000' }
-addComponent ContractedConsole92@node0:ContractedFakeConsole { memory_max_size ='4000', cpu_wall_time ='470000' }
-addComponent ContractedConsole93@node0:ContractedFakeConsole { memory_max_size ='4000', cpu_wall_time ='470000' }
-addComponent ContractedConsole94@node0:ContractedFakeConsole { memory_max_size ='4000', cpu_wall_time ='470000' }
-addComponent ContractedConsole95@node0:ContractedFakeConsole { memory_max_size ='4000', cpu_wall_time ='470000' }
-addComponent ContractedConsole96@node0:ContractedFakeConsole { memory_max_size ='4000', cpu_wall_time ='470000' }
-addComponent ContractedConsole97@node0:ContractedFakeConsole { memory_max_size ='4000', cpu_wall_time ='470000' }
-addComponent ContractedConsole98@node0:ContractedFakeConsole { memory_max_size ='4000', cpu_wall_time ='470000' }
-addComponent ContractedConsole99@node0:ContractedFakeConsole { memory_max_size ='4000', cpu_wall_time ='470000' }
-addComponent ContractedConsole100@node0:ContractedFakeConsole { memory_max_size ='4000', cpu_wall_time ='470000' }
-addComponent ContractedConsole101@node0:ContractedFakeConsole { memory_max_size ='4000', cpu_wall_time ='470000' }
-addComponent ContractedConsole102@node0:ContractedFakeConsole { memory_max_size ='4000', cpu_wall_time ='470000' }
-addComponent ContractedConsole103@node0:ContractedFakeConsole { memory_max_size ='4000', cpu_wall_time ='470000' }
-addComponent ContractedConsole104@node0:ContractedFakeConsole { memory_max_size ='4000', cpu_wall_time ='470000' }
-addComponent ContractedConsole105@node0:ContractedFakeConsole { memory_max_size ='4000', cpu_wall_time ='470000' }
-addComponent ContractedConsole106@node0:ContractedFakeConsole { memory_max_size ='4000', cpu_wall_time ='470000' }
-addComponent ContractedConsole107@node0:ContractedFakeConsole { memory_max_size ='4000', cpu_wall_time ='470000' }
-addComponent ContractedConsole108@node0:ContractedFakeConsole { memory_max_size ='4000', cpu_wall_time ='470000' }
-addComponent ContractedConsole109@node0:ContractedFakeConsole { memory_max_size ='4000', cpu_wall_time ='470000' }
-addComponent ContractedConsole110@node0:ContractedFakeConsole { memory_max_size ='4000', cpu_wall_time ='470000' }
-addComponent ContractedConsole111@node0:ContractedFakeConsole { memory_max_size ='4000', cpu_wall_time ='470000' }
-addComponent ContractedConsole112@node0:ContractedFakeConsole { memory_max_size ='4000', cpu_wall_time ='470000' }
-addComponent ContractedConsole113@node0:ContractedFakeConsole { memory_max_size ='4000', cpu_wall_time ='470000' }
-addComponent ContractedConsole114@node0:ContractedFakeConsole { memory_max_size ='4000', cpu_wall_time ='470000' }
-addComponent ContractedConsole115@node0:ContractedFakeConsole { memory_max_size ='4000', cpu_wall_time ='470000' }
-addComponent ContractedConsole116@node0:ContractedFakeConsole { memory_max_size ='4000', cpu_wall_time ='470000' }
-addComponent ContractedConsole117@node0:ContractedFakeConsole { memory_max_size ='4000', cpu_wall_time ='470000' }
-addComponent ContractedConsole118@node0:ContractedFakeConsole { memory_max_size ='4000', cpu_wall_time ='470000' }
-addComponent ContractedConsole119@node0:ContractedFakeConsole { memory_max_size ='4000', cpu_wall_time ='470000' }
-addComponent ContractedConsole120@node0:ContractedFakeConsole { memory_max_size ='4000', cpu_wall_time ='470000' }
-addComponent ContractedConsole121@node0:ContractedFakeConsole { memory_max_size ='4000', cpu_wall_time ='470000' }
-addComponent ContractedConsole122@node0:ContractedFakeConsole { memory_max_size ='4000', cpu_wall_time ='470000' }
-addComponent ContractedConsole123@node0:ContractedFakeConsole { memory_max_size ='4000', cpu_wall_time ='470000' }
-addComponent ContractedConsole124@node0:ContractedFakeConsole { memory_max_size ='4000', cpu_wall_time ='470000' }
-addComponent ContractedConsole125@node0:ContractedFakeConsole { memory_max_size ='4000', cpu_wall_time ='470000' }
-addComponent ContractedConsole126@node0:ContractedFakeConsole { memory_max_size ='4000', cpu_wall_time ='470000' }
-addComponent ContractedConsole127@node0:ContractedFakeConsole { memory_max_size ='4000', cpu_wall_time ='470000' }
-addComponent ContractedConsole128@node0:ContractedFakeConsole { memory_max_size ='4000', cpu_wall_time ='470000' }
-addComponent numberGenerator_fancy@node0 : NumberGenerator {}
-addChannel cInitial : defMSG
-bind numberGenerator_fancy.output@node0 => cInitial
-bind ContractedConsole1.input@node0 => cInitial
-addChannel c1To2 : defMSG
-bind ContractedConsole1.output@node0 => c1To2
-bind ContractedConsole2.input@node0 => c1To2
-addChannel c2To3 : defMSG
-bind ContractedConsole2.output@node0 => c2To3
-bind ContractedConsole3.input@node0 => c2To3
-addChannel c3To4 : defMSG
-bind ContractedConsole3.output@node0 => c3To4
-bind ContractedConsole4.input@node0 => c3To4
-addChannel c4To5 : defMSG
-bind ContractedConsole4.output@node0 => c4To5
-bind ContractedConsole5.input@node0 => c4To5
-addChannel c5To6 : defMSG
-bind ContractedConsole5.output@node0 => c5To6
-bind ContractedConsole6.input@node0 => c5To6
-addChannel c6To7 : defMSG
-bind ContractedConsole6.output@node0 => c6To7
-bind ContractedConsole7.input@node0 => c6To7
-addChannel c7To8 : defMSG
-bind ContractedConsole7.output@node0 => c7To8
-bind ContractedConsole8.input@node0 => c7To8
-addChannel c8To9 : defMSG
-bind ContractedConsole8.output@node0 => c8To9
-bind ContractedConsole9.input@node0 => c8To9
-addChannel c9To10 : defMSG
-bind ContractedConsole9.output@node0 => c9To10
-bind ContractedConsole10.input@node0 => c9To10
-addChannel c10To11 : defMSG
-bind ContractedConsole10.output@node0 => c10To11
-bind ContractedConsole11.input@node0 => c10To11
-addChannel c11To12 : defMSG
-bind ContractedConsole11.output@node0 => c11To12
-bind ContractedConsole12.input@node0 => c11To12
-addChannel c12To13 : defMSG
-bind ContractedConsole12.output@node0 => c12To13
-bind ContractedConsole13.input@node0 => c12To13
-addChannel c13To14 : defMSG
-bind ContractedConsole13.output@node0 => c13To14
-bind ContractedConsole14.input@node0 => c13To14
-addChannel c14To15 : defMSG
-bind ContractedConsole14.output@node0 => c14To15
-bind ContractedConsole15.input@node0 => c14To15
-addChannel c15To16 : defMSG
-bind ContractedConsole15.output@node0 => c15To16
-bind ContractedConsole16.input@node0 => c15To16
-addChannel c16To17 : defMSG
-bind ContractedConsole16.output@node0 => c16To17
-bind ContractedConsole17.input@node0 => c16To17
-addChannel c17To18 : defMSG
-bind ContractedConsole17.output@node0 => c17To18
-bind ContractedConsole18.input@node0 => c17To18
-addChannel c18To19 : defMSG
-bind ContractedConsole18.output@node0 => c18To19
-bind ContractedConsole19.input@node0 => c18To19
-addChannel c19To20 : defMSG
-bind ContractedConsole19.output@node0 => c19To20
-bind ContractedConsole20.input@node0 => c19To20
-addChannel c20To21 : defMSG
-bind ContractedConsole20.output@node0 => c20To21
-bind ContractedConsole21.input@node0 => c20To21
-addChannel c21To22 : defMSG
-bind ContractedConsole21.output@node0 => c21To22
-bind ContractedConsole22.input@node0 => c21To22
-addChannel c22To23 : defMSG
-bind ContractedConsole22.output@node0 => c22To23
-bind ContractedConsole23.input@node0 => c22To23
-addChannel c23To24 : defMSG
-bind ContractedConsole23.output@node0 => c23To24
-bind ContractedConsole24.input@node0 => c23To24
-addChannel c24To25 : defMSG
-bind ContractedConsole24.output@node0 => c24To25
-bind ContractedConsole25.input@node0 => c24To25
-addChannel c25To26 : defMSG
-bind ContractedConsole25.output@node0 => c25To26
-bind ContractedConsole26.input@node0 => c25To26
-addChannel c26To27 : defMSG
-bind ContractedConsole26.output@node0 => c26To27
-bind ContractedConsole27.input@node0 => c26To27
-addChannel c27To28 : defMSG
-bind ContractedConsole27.output@node0 => c27To28
-bind ContractedConsole28.input@node0 => c27To28
-addChannel c28To29 : defMSG
-bind ContractedConsole28.output@node0 => c28To29
-bind ContractedConsole29.input@node0 => c28To29
-addChannel c29To30 : defMSG
-bind ContractedConsole29.output@node0 => c29To30
-bind ContractedConsole30.input@node0 => c29To30
-addChannel c30To31 : defMSG
-bind ContractedConsole30.output@node0 => c30To31
-bind ContractedConsole31.input@node0 => c30To31
-addChannel c31To32 : defMSG
-bind ContractedConsole31.output@node0 => c31To32
-bind ContractedConsole32.input@node0 => c31To32
-addChannel c32To33 : defMSG
-bind ContractedConsole32.output@node0 => c32To33
-bind ContractedConsole33.input@node0 => c32To33
-addChannel c33To34 : defMSG
-bind ContractedConsole33.output@node0 => c33To34
-bind ContractedConsole34.input@node0 => c33To34
-addChannel c34To35 : defMSG
-bind ContractedConsole34.output@node0 => c34To35
-bind ContractedConsole35.input@node0 => c34To35
-addChannel c35To36 : defMSG
-bind ContractedConsole35.output@node0 => c35To36
-bind ContractedConsole36.input@node0 => c35To36
-addChannel c36To37 : defMSG
-bind ContractedConsole36.output@node0 => c36To37
-bind ContractedConsole37.input@node0 => c36To37
-addChannel c37To38 : defMSG
-bind ContractedConsole37.output@node0 => c37To38
-bind ContractedConsole38.input@node0 => c37To38
-addChannel c38To39 : defMSG
-bind ContractedConsole38.output@node0 => c38To39
-bind ContractedConsole39.input@node0 => c38To39
-addChannel c39To40 : defMSG
-bind ContractedConsole39.output@node0 => c39To40
-bind ContractedConsole40.input@node0 => c39To40
-addChannel c40To41 : defMSG
-bind ContractedConsole40.output@node0 => c40To41
-bind ContractedConsole41.input@node0 => c40To41
-addChannel c41To42 : defMSG
-bind ContractedConsole41.output@node0 => c41To42
-bind ContractedConsole42.input@node0 => c41To42
-addChannel c42To43 : defMSG
-bind ContractedConsole42.output@node0 => c42To43
-bind ContractedConsole43.input@node0 => c42To43
-addChannel c43To44 : defMSG
-bind ContractedConsole43.output@node0 => c43To44
-bind ContractedConsole44.input@node0 => c43To44
-addChannel c44To45 : defMSG
-bind ContractedConsole44.output@node0 => c44To45
-bind ContractedConsole45.input@node0 => c44To45
-addChannel c45To46 : defMSG
-bind ContractedConsole45.output@node0 => c45To46
-bind ContractedConsole46.input@node0 => c45To46
-addChannel c46To47 : defMSG
-bind ContractedConsole46.output@node0 => c46To47
-bind ContractedConsole47.input@node0 => c46To47
-addChannel c47To48 : defMSG
-bind ContractedConsole47.output@node0 => c47To48
-bind ContractedConsole48.input@node0 => c47To48
-addChannel c48To49 : defMSG
-bind ContractedConsole48.output@node0 => c48To49
-bind ContractedConsole49.input@node0 => c48To49
-addChannel c49To50 : defMSG
-bind ContractedConsole49.output@node0 => c49To50
-bind ContractedConsole50.input@node0 => c49To50
-addChannel c50To51 : defMSG
-bind ContractedConsole50.output@node0 => c50To51
-bind ContractedConsole51.input@node0 => c50To51
-addChannel c51To52 : defMSG
-bind ContractedConsole51.output@node0 => c51To52
-bind ContractedConsole52.input@node0 => c51To52
-addChannel c52To53 : defMSG
-bind ContractedConsole52.output@node0 => c52To53
-bind ContractedConsole53.input@node0 => c52To53
-addChannel c53To54 : defMSG
-bind ContractedConsole53.output@node0 => c53To54
-bind ContractedConsole54.input@node0 => c53To54
-addChannel c54To55 : defMSG
-bind ContractedConsole54.output@node0 => c54To55
-bind ContractedConsole55.input@node0 => c54To55
-addChannel c55To56 : defMSG
-bind ContractedConsole55.output@node0 => c55To56
-bind ContractedConsole56.input@node0 => c55To56
-addChannel c56To57 : defMSG
-bind ContractedConsole56.output@node0 => c56To57
-bind ContractedConsole57.input@node0 => c56To57
-addChannel c57To58 : defMSG
-bind ContractedConsole57.output@node0 => c57To58
-bind ContractedConsole58.input@node0 => c57To58
-addChannel c58To59 : defMSG
-bind ContractedConsole58.output@node0 => c58To59
-bind ContractedConsole59.input@node0 => c58To59
-addChannel c59To60 : defMSG
-bind ContractedConsole59.output@node0 => c59To60
-bind ContractedConsole60.input@node0 => c59To60
-addChannel c60To61 : defMSG
-bind ContractedConsole60.output@node0 => c60To61
-bind ContractedConsole61.input@node0 => c60To61
-addChannel c61To62 : defMSG
-bind ContractedConsole61.output@node0 => c61To62
-bind ContractedConsole62.input@node0 => c61To62
-addChannel c62To63 : defMSG
-bind ContractedConsole62.output@node0 => c62To63
-bind ContractedConsole63.input@node0 => c62To63
-addChannel c63To64 : defMSG
-bind ContractedConsole63.output@node0 => c63To64
-bind ContractedConsole64.input@node0 => c63To64
-addChannel c64To65 : defMSG
-bind ContractedConsole64.output@node0 => c64To65
-bind ContractedConsole65.input@node0 => c64To65
-addChannel c65To66 : defMSG
-bind ContractedConsole65.output@node0 => c65To66
-bind ContractedConsole66.input@node0 => c65To66
-addChannel c66To67 : defMSG
-bind ContractedConsole66.output@node0 => c66To67
-bind ContractedConsole67.input@node0 => c66To67
-addChannel c67To68 : defMSG
-bind ContractedConsole67.output@node0 => c67To68
-bind ContractedConsole68.input@node0 => c67To68
-addChannel c68To69 : defMSG
-bind ContractedConsole68.output@node0 => c68To69
-bind ContractedConsole69.input@node0 => c68To69
-addChannel c69To70 : defMSG
-bind ContractedConsole69.output@node0 => c69To70
-bind ContractedConsole70.input@node0 => c69To70
-addChannel c70To71 : defMSG
-bind ContractedConsole70.output@node0 => c70To71
-bind ContractedConsole71.input@node0 => c70To71
-addChannel c71To72 : defMSG
-bind ContractedConsole71.output@node0 => c71To72
-bind ContractedConsole72.input@node0 => c71To72
-addChannel c72To73 : defMSG
-bind ContractedConsole72.output@node0 => c72To73
-bind ContractedConsole73.input@node0 => c72To73
-addChannel c73To74 : defMSG
-bind ContractedConsole73.output@node0 => c73To74
-bind ContractedConsole74.input@node0 => c73To74
-addChannel c74To75 : defMSG
-bind ContractedConsole74.output@node0 => c74To75
-bind ContractedConsole75.input@node0 => c74To75
-addChannel c75To76 : defMSG
-bind ContractedConsole75.output@node0 => c75To76
-bind ContractedConsole76.input@node0 => c75To76
-addChannel c76To77 : defMSG
-bind ContractedConsole76.output@node0 => c76To77
-bind ContractedConsole77.input@node0 => c76To77
-addChannel c77To78 : defMSG
-bind ContractedConsole77.output@node0 => c77To78
-bind ContractedConsole78.input@node0 => c77To78
-addChannel c78To79 : defMSG
-bind ContractedConsole78.output@node0 => c78To79
-bind ContractedConsole79.input@node0 => c78To79
-addChannel c79To80 : defMSG
-bind ContractedConsole79.output@node0 => c79To80
-bind ContractedConsole80.input@node0 => c79To80
-addChannel c80To81 : defMSG
-bind ContractedConsole80.output@node0 => c80To81
-bind ContractedConsole81.input@node0 => c80To81
-addChannel c81To82 : defMSG
-bind ContractedConsole81.output@node0 => c81To82
-bind ContractedConsole82.input@node0 => c81To82
-addChannel c82To83 : defMSG
-bind ContractedConsole82.output@node0 => c82To83
-bind ContractedConsole83.input@node0 => c82To83
-addChannel c83To84 : defMSG
-bind ContractedConsole83.output@node0 => c83To84
-bind ContractedConsole84.input@node0 => c83To84
-addChannel c84To85 : defMSG
-bind ContractedConsole84.output@node0 => c84To85
-bind ContractedConsole85.input@node0 => c84To85
-addChannel c85To86 : defMSG
-bind ContractedConsole85.output@node0 => c85To86
-bind ContractedConsole86.input@node0 => c85To86
-addChannel c86To87 : defMSG
-bind ContractedConsole86.output@node0 => c86To87
-bind ContractedConsole87.input@node0 => c86To87
-addChannel c87To88 : defMSG
-bind ContractedConsole87.output@node0 => c87To88
-bind ContractedConsole88.input@node0 => c87To88
-addChannel c88To89 : defMSG
-bind ContractedConsole88.output@node0 => c88To89
-bind ContractedConsole89.input@node0 => c88To89
-addChannel c89To90 : defMSG
-bind ContractedConsole89.output@node0 => c89To90
-bind ContractedConsole90.input@node0 => c89To90
-addChannel c90To91 : defMSG
-bind ContractedConsole90.output@node0 => c90To91
-bind ContractedConsole91.input@node0 => c90To91
-addChannel c91To92 : defMSG
-bind ContractedConsole91.output@node0 => c91To92
-bind ContractedConsole92.input@node0 => c91To92
-addChannel c92To93 : defMSG
-bind ContractedConsole92.output@node0 => c92To93
-bind ContractedConsole93.input@node0 => c92To93
-addChannel c93To94 : defMSG
-bind ContractedConsole93.output@node0 => c93To94
-bind ContractedConsole94.input@node0 => c93To94
-addChannel c94To95 : defMSG
-bind ContractedConsole94.output@node0 => c94To95
-bind ContractedConsole95.input@node0 => c94To95
-addChannel c95To96 : defMSG
-bind ContractedConsole95.output@node0 => c95To96
-bind ContractedConsole96.input@node0 => c95To96
-addChannel c96To97 : defMSG
-bind ContractedConsole96.output@node0 => c96To97
-bind ContractedConsole97.input@node0 => c96To97
-addChannel c97To98 : defMSG
-bind ContractedConsole97.output@node0 => c97To98
-bind ContractedConsole98.input@node0 => c97To98
-addChannel c98To99 : defMSG
-bind ContractedConsole98.output@node0 => c98To99
-bind ContractedConsole99.input@node0 => c98To99
-addChannel c99To100 : defMSG
-bind ContractedConsole99.output@node0 => c99To100
-bind ContractedConsole100.input@node0 => c99To100
-addChannel c100To101 : defMSG
-bind ContractedConsole100.output@node0 => c100To101
-bind ContractedConsole101.input@node0 => c100To101
-addChannel c101To102 : defMSG
-bind ContractedConsole101.output@node0 => c101To102
-bind ContractedConsole102.input@node0 => c101To102
-addChannel c102To103 : defMSG
-bind ContractedConsole102.output@node0 => c102To103
-bind ContractedConsole103.input@node0 => c102To103
-addChannel c103To104 : defMSG
-bind ContractedConsole103.output@node0 => c103To104
-bind ContractedConsole104.input@node0 => c103To104
-addChannel c104To105 : defMSG
-bind ContractedConsole104.output@node0 => c104To105
-bind ContractedConsole105.input@node0 => c104To105
-addChannel c105To106 : defMSG
-bind ContractedConsole105.output@node0 => c105To106
-bind ContractedConsole106.input@node0 => c105To106
-addChannel c106To107 : defMSG
-bind ContractedConsole106.output@node0 => c106To107
-bind ContractedConsole107.input@node0 => c106To107
-addChannel c107To108 : defMSG
-bind ContractedConsole107.output@node0 => c107To108
-bind ContractedConsole108.input@node0 => c107To108
-addChannel c108To109 : defMSG
-bind ContractedConsole108.output@node0 => c108To109
-bind ContractedConsole109.input@node0 => c108To109
-addChannel c109To110 : defMSG
-bind ContractedConsole109.output@node0 => c109To110
-bind ContractedConsole110.input@node0 => c109To110
-addChannel c110To111 : defMSG
-bind ContractedConsole110.output@node0 => c110To111
-bind ContractedConsole111.input@node0 => c110To111
-addChannel c111To112 : defMSG
-bind ContractedConsole111.output@node0 => c111To112
-bind ContractedConsole112.input@node0 => c111To112
-addChannel c112To113 : defMSG
-bind ContractedConsole112.output@node0 => c112To113
-bind ContractedConsole113.input@node0 => c112To113
-addChannel c113To114 : defMSG
-bind ContractedConsole113.output@node0 => c113To114
-bind ContractedConsole114.input@node0 => c113To114
-addChannel c114To115 : defMSG
-bind ContractedConsole114.output@node0 => c114To115
-bind ContractedConsole115.input@node0 => c114To115
-addChannel c115To116 : defMSG
-bind ContractedConsole115.output@node0 => c115To116
-bind ContractedConsole116.input@node0 => c115To116
-addChannel c116To117 : defMSG
-bind ContractedConsole116.output@node0 => c116To117
-bind ContractedConsole117.input@node0 => c116To117
-addChannel c117To118 : defMSG
-bind ContractedConsole117.output@node0 => c117To118
-bind ContractedConsole118.input@node0 => c117To118
-addChannel c118To119 : defMSG
-bind ContractedConsole118.output@node0 => c118To119
-bind ContractedConsole119.input@node0 => c118To119
-addChannel c119To120 : defMSG
-bind ContractedConsole119.output@node0 => c119To120
-bind ContractedConsole120.input@node0 => c119To120
-addChannel c120To121 : defMSG
-bind ContractedConsole120.output@node0 => c120To121
-bind ContractedConsole121.input@node0 => c120To121
-addChannel c121To122 : defMSG
-bind ContractedConsole121.output@node0 => c121To122
-bind ContractedConsole122.input@node0 => c121To122
-addChannel c122To123 : defMSG
-bind ContractedConsole122.output@node0 => c122To123
-bind ContractedConsole123.input@node0 => c122To123
-addChannel c123To124 : defMSG
-bind ContractedConsole123.output@node0 => c123To124
-bind ContractedConsole124.input@node0 => c123To124
-addChannel c124To125 : defMSG
-bind ContractedConsole124.output@node0 => c124To125
-bind ContractedConsole125.input@node0 => c124To125
-addChannel c125To126 : defMSG
-bind ContractedConsole125.output@node0 => c125To126
-bind ContractedConsole126.input@node0 => c125To126
-addChannel c126To127 : defMSG
-bind ContractedConsole126.output@node0 => c126To127
-bind ContractedConsole127.input@node0 => c126To127
-addChannel c127To128 : defMSG
-bind ContractedConsole127.output@node0 => c127To128
-bind ContractedConsole128.input@node0 => c127To128
+include mvn:org.kevoree.microsandbox.experiment:contracted-fake-console:1.1
+include mvn:org.kevoree.microsandbox.experiment:number-generator:1.1
+add node0.numberGenerator_fancy : NumberGenerator
+
+add node0.ContractedConsole1:ContractedFakeConsole
+set node0.ContractedConsole1.memory_max_size ='4000'
+set node0.ContractedConsole1.cpu_wall_time ='470000'
+
+add node0.ContractedConsole2:ContractedFakeConsole
+add node0.ContractedConsole3:ContractedFakeConsole 
+add node0.ContractedConsole4:ContractedFakeConsole 
+add node0.ContractedConsole5:ContractedFakeConsole 
+add node0.ContractedConsole6:ContractedFakeConsole 
+add node0.ContractedConsole7:ContractedFakeConsole 
+add node0.ContractedConsole8:ContractedFakeConsole 
+add node0.ContractedConsole9:ContractedFakeConsole 
+add node0.ContractedConsole10:ContractedFakeConsole 
+add node0.ContractedConsole11:ContractedFakeConsole 
+add node0.ContractedConsole12:ContractedFakeConsole 
+add node0.ContractedConsole13:ContractedFakeConsole 
+add node0.ContractedConsole14:ContractedFakeConsole 
+add node0.ContractedConsole15:ContractedFakeConsole 
+add node0.ContractedConsole16:ContractedFakeConsole 
+add node0.ContractedConsole17:ContractedFakeConsole 
+add node0.ContractedConsole18:ContractedFakeConsole 
+add node0.ContractedConsole19:ContractedFakeConsole 
+add node0.ContractedConsole20:ContractedFakeConsole 
+add node0.ContractedConsole21:ContractedFakeConsole 
+add node0.ContractedConsole22:ContractedFakeConsole 
+add node0.ContractedConsole23:ContractedFakeConsole 
+add node0.ContractedConsole24:ContractedFakeConsole 
+add node0.ContractedConsole25:ContractedFakeConsole 
+add node0.ContractedConsole26:ContractedFakeConsole 
+add node0.ContractedConsole27:ContractedFakeConsole 
+add node0.ContractedConsole28:ContractedFakeConsole 
+add node0.ContractedConsole29:ContractedFakeConsole 
+add node0.ContractedConsole30:ContractedFakeConsole 
+add node0.ContractedConsole31:ContractedFakeConsole 
+add node0.ContractedConsole32:ContractedFakeConsole 
+add node0.ContractedConsole33:ContractedFakeConsole 
+add node0.ContractedConsole34:ContractedFakeConsole 
+add node0.ContractedConsole35:ContractedFakeConsole 
+add node0.ContractedConsole36:ContractedFakeConsole 
+add node0.ContractedConsole37:ContractedFakeConsole 
+add node0.ContractedConsole38:ContractedFakeConsole 
+add node0.ContractedConsole39:ContractedFakeConsole 
+add node0.ContractedConsole40:ContractedFakeConsole 
+add node0.ContractedConsole41:ContractedFakeConsole 
+add node0.ContractedConsole42:ContractedFakeConsole 
+add node0.ContractedConsole43:ContractedFakeConsole 
+add node0.ContractedConsole44:ContractedFakeConsole 
+add node0.ContractedConsole45:ContractedFakeConsole 
+add node0.ContractedConsole46:ContractedFakeConsole 
+add node0.ContractedConsole47:ContractedFakeConsole 
+add node0.ContractedConsole48:ContractedFakeConsole 
+add node0.ContractedConsole49:ContractedFakeConsole 
+add node0.ContractedConsole50:ContractedFakeConsole 
+add node0.ContractedConsole51:ContractedFakeConsole 
+add node0.ContractedConsole52:ContractedFakeConsole 
+add node0.ContractedConsole53:ContractedFakeConsole 
+add node0.ContractedConsole54:ContractedFakeConsole 
+add node0.ContractedConsole55:ContractedFakeConsole 
+add node0.ContractedConsole56:ContractedFakeConsole 
+add node0.ContractedConsole57:ContractedFakeConsole 
+add node0.ContractedConsole58:ContractedFakeConsole 
+add node0.ContractedConsole59:ContractedFakeConsole 
+add node0.ContractedConsole60:ContractedFakeConsole 
+add node0.ContractedConsole61:ContractedFakeConsole 
+add node0.ContractedConsole62:ContractedFakeConsole 
+add node0.ContractedConsole63:ContractedFakeConsole 
+add node0.ContractedConsole64:ContractedFakeConsole 
+add node0.ContractedConsole65:ContractedFakeConsole 
+add node0.ContractedConsole66:ContractedFakeConsole 
+add node0.ContractedConsole67:ContractedFakeConsole 
+add node0.ContractedConsole68:ContractedFakeConsole 
+add node0.ContractedConsole69:ContractedFakeConsole 
+add node0.ContractedConsole70:ContractedFakeConsole 
+add node0.ContractedConsole71:ContractedFakeConsole 
+add node0.ContractedConsole72:ContractedFakeConsole 
+add node0.ContractedConsole73:ContractedFakeConsole 
+add node0.ContractedConsole74:ContractedFakeConsole 
+add node0.ContractedConsole75:ContractedFakeConsole 
+add node0.ContractedConsole76:ContractedFakeConsole 
+add node0.ContractedConsole77:ContractedFakeConsole 
+add node0.ContractedConsole78:ContractedFakeConsole 
+add node0.ContractedConsole79:ContractedFakeConsole 
+add node0.ContractedConsole80:ContractedFakeConsole 
+add node0.ContractedConsole81:ContractedFakeConsole 
+add node0.ContractedConsole82:ContractedFakeConsole 
+add node0.ContractedConsole83:ContractedFakeConsole 
+add node0.ContractedConsole84:ContractedFakeConsole 
+add node0.ContractedConsole85:ContractedFakeConsole 
+add node0.ContractedConsole86:ContractedFakeConsole 
+add node0.ContractedConsole87:ContractedFakeConsole 
+add node0.ContractedConsole88:ContractedFakeConsole 
+add node0.ContractedConsole89:ContractedFakeConsole 
+add node0.ContractedConsole90:ContractedFakeConsole 
+add node0.ContractedConsole91:ContractedFakeConsole 
+add node0.ContractedConsole92:ContractedFakeConsole 
+add node0.ContractedConsole93:ContractedFakeConsole 
+add node0.ContractedConsole94:ContractedFakeConsole 
+add node0.ContractedConsole95:ContractedFakeConsole 
+add node0.ContractedConsole96:ContractedFakeConsole 
+add node0.ContractedConsole97:ContractedFakeConsole 
+add node0.ContractedConsole98:ContractedFakeConsole 
+add node0.ContractedConsole99:ContractedFakeConsole 
+add node0.ContractedConsole100:ContractedFakeConsole 
+add node0.ContractedConsole101:ContractedFakeConsole 
+add node0.ContractedConsole102:ContractedFakeConsole 
+add node0.ContractedConsole103:ContractedFakeConsole 
+add node0.ContractedConsole104:ContractedFakeConsole 
+add node0.ContractedConsole105:ContractedFakeConsole 
+add node0.ContractedConsole106:ContractedFakeConsole 
+add node0.ContractedConsole107:ContractedFakeConsole 
+add node0.ContractedConsole108:ContractedFakeConsole 
+add node0.ContractedConsole109:ContractedFakeConsole 
+add node0.ContractedConsole110:ContractedFakeConsole 
+add node0.ContractedConsole111:ContractedFakeConsole 
+add node0.ContractedConsole112:ContractedFakeConsole 
+add node0.ContractedConsole113:ContractedFakeConsole 
+add node0.ContractedConsole114:ContractedFakeConsole 
+add node0.ContractedConsole115:ContractedFakeConsole 
+add node0.ContractedConsole116:ContractedFakeConsole 
+add node0.ContractedConsole117:ContractedFakeConsole 
+add node0.ContractedConsole118:ContractedFakeConsole 
+add node0.ContractedConsole119:ContractedFakeConsole 
+add node0.ContractedConsole120:ContractedFakeConsole 
+add node0.ContractedConsole121:ContractedFakeConsole 
+add node0.ContractedConsole122:ContractedFakeConsole 
+add node0.ContractedConsole123:ContractedFakeConsole 
+add node0.ContractedConsole124:ContractedFakeConsole 
+add node0.ContractedConsole125:ContractedFakeConsole 
+add node0.ContractedConsole126:ContractedFakeConsole 
+add node0.ContractedConsole127:ContractedFakeConsole 
+add node0.ContractedConsole128:ContractedFakeConsole
+
+set node0.ContractedConsole1.memory_max_size='4000'
+set node0.ContractedConsole1.cpu_wall_time ='470000'
+set node0.ContractedConsole2.memory_max_size='4000'
+set node0.ContractedConsole2.cpu_wall_time ='470000'
+set node0.ContractedConsole3.memory_max_size='4000'
+set node0.ContractedConsole3.cpu_wall_time ='470000'
+set node0.ContractedConsole4.memory_max_size='4000'
+set node0.ContractedConsole4.cpu_wall_time ='470000'
+set node0.ContractedConsole5.memory_max_size='4000'
+set node0.ContractedConsole5.cpu_wall_time ='470000'
+set node0.ContractedConsole6.memory_max_size='4000'
+set node0.ContractedConsole6.cpu_wall_time ='470000'
+set node0.ContractedConsole7.memory_max_size='4000'
+set node0.ContractedConsole7.cpu_wall_time ='470000'
+set node0.ContractedConsole8.memory_max_size='4000'
+set node0.ContractedConsole8.cpu_wall_time ='470000'
+set node0.ContractedConsole9.memory_max_size='4000'
+set node0.ContractedConsole9.cpu_wall_time ='470000'
+set node0.ContractedConsole10.memory_max_size='4000'
+set node0.ContractedConsole10.cpu_wall_time ='470000'
+set node0.ContractedConsole11.memory_max_size='4000'
+set node0.ContractedConsole11.cpu_wall_time ='470000'
+set node0.ContractedConsole12.memory_max_size='4000'
+set node0.ContractedConsole12.cpu_wall_time ='470000'
+set node0.ContractedConsole13.memory_max_size='4000'
+set node0.ContractedConsole13.cpu_wall_time ='470000'
+set node0.ContractedConsole14.memory_max_size='4000'
+set node0.ContractedConsole14.cpu_wall_time ='470000'
+set node0.ContractedConsole15.memory_max_size='4000'
+set node0.ContractedConsole15.cpu_wall_time ='470000'
+set node0.ContractedConsole16.memory_max_size='4000'
+set node0.ContractedConsole16.cpu_wall_time ='470000'
+set node0.ContractedConsole17.memory_max_size='4000'
+set node0.ContractedConsole17.cpu_wall_time ='470000'
+set node0.ContractedConsole18.memory_max_size='4000'
+set node0.ContractedConsole18.cpu_wall_time ='470000'
+set node0.ContractedConsole19.memory_max_size='4000'
+set node0.ContractedConsole19.cpu_wall_time ='470000'
+set node0.ContractedConsole20.memory_max_size='4000'
+set node0.ContractedConsole20.cpu_wall_time ='470000'
+set node0.ContractedConsole21.memory_max_size='4000'
+set node0.ContractedConsole21.cpu_wall_time ='470000'
+set node0.ContractedConsole22.memory_max_size='4000'
+set node0.ContractedConsole22.cpu_wall_time ='470000'
+set node0.ContractedConsole23.memory_max_size='4000'
+set node0.ContractedConsole23.cpu_wall_time ='470000'
+set node0.ContractedConsole24.memory_max_size='4000'
+set node0.ContractedConsole24.cpu_wall_time ='470000'
+set node0.ContractedConsole25.memory_max_size='4000'
+set node0.ContractedConsole25.cpu_wall_time ='470000'
+set node0.ContractedConsole26.memory_max_size='4000'
+set node0.ContractedConsole26.cpu_wall_time ='470000'
+set node0.ContractedConsole27.memory_max_size='4000'
+set node0.ContractedConsole27.cpu_wall_time ='470000'
+set node0.ContractedConsole28.memory_max_size='4000'
+set node0.ContractedConsole28.cpu_wall_time ='470000'
+set node0.ContractedConsole29.memory_max_size='4000'
+set node0.ContractedConsole29.cpu_wall_time ='470000'
+set node0.ContractedConsole30.memory_max_size='4000'
+set node0.ContractedConsole30.cpu_wall_time ='470000'
+set node0.ContractedConsole31.memory_max_size='4000'
+set node0.ContractedConsole31.cpu_wall_time ='470000'
+set node0.ContractedConsole32.memory_max_size='4000'
+set node0.ContractedConsole32.cpu_wall_time ='470000'
+set node0.ContractedConsole33.memory_max_size='4000'
+set node0.ContractedConsole33.cpu_wall_time ='470000'
+set node0.ContractedConsole34.memory_max_size='4000'
+set node0.ContractedConsole34.cpu_wall_time ='470000'
+set node0.ContractedConsole35.memory_max_size='4000'
+set node0.ContractedConsole35.cpu_wall_time ='470000'
+set node0.ContractedConsole36.memory_max_size='4000'
+set node0.ContractedConsole36.cpu_wall_time ='470000'
+set node0.ContractedConsole37.memory_max_size='4000'
+set node0.ContractedConsole37.cpu_wall_time ='470000'
+set node0.ContractedConsole38.memory_max_size='4000'
+set node0.ContractedConsole38.cpu_wall_time ='470000'
+set node0.ContractedConsole39.memory_max_size='4000'
+set node0.ContractedConsole39.cpu_wall_time ='470000'
+set node0.ContractedConsole40.memory_max_size='4000'
+set node0.ContractedConsole40.cpu_wall_time ='470000'
+set node0.ContractedConsole41.memory_max_size='4000'
+set node0.ContractedConsole41.cpu_wall_time ='470000'
+set node0.ContractedConsole42.memory_max_size='4000'
+set node0.ContractedConsole42.cpu_wall_time ='470000'
+set node0.ContractedConsole43.memory_max_size='4000'
+set node0.ContractedConsole43.cpu_wall_time ='470000'
+set node0.ContractedConsole44.memory_max_size='4000'
+set node0.ContractedConsole44.cpu_wall_time ='470000'
+set node0.ContractedConsole45.memory_max_size='4000'
+set node0.ContractedConsole45.cpu_wall_time ='470000'
+set node0.ContractedConsole46.memory_max_size='4000'
+set node0.ContractedConsole46.cpu_wall_time ='470000'
+set node0.ContractedConsole47.memory_max_size='4000'
+set node0.ContractedConsole47.cpu_wall_time ='470000'
+set node0.ContractedConsole48.memory_max_size='4000'
+set node0.ContractedConsole48.cpu_wall_time ='470000'
+set node0.ContractedConsole49.memory_max_size='4000'
+set node0.ContractedConsole49.cpu_wall_time ='470000'
+set node0.ContractedConsole50.memory_max_size='4000'
+set node0.ContractedConsole50.cpu_wall_time ='470000'
+set node0.ContractedConsole51.memory_max_size='4000'
+set node0.ContractedConsole51.cpu_wall_time ='470000'
+set node0.ContractedConsole52.memory_max_size='4000'
+set node0.ContractedConsole52.cpu_wall_time ='470000'
+set node0.ContractedConsole53.memory_max_size='4000'
+set node0.ContractedConsole53.cpu_wall_time ='470000'
+set node0.ContractedConsole54.memory_max_size='4000'
+set node0.ContractedConsole54.cpu_wall_time ='470000'
+set node0.ContractedConsole55.memory_max_size='4000'
+set node0.ContractedConsole55.cpu_wall_time ='470000'
+set node0.ContractedConsole56.memory_max_size='4000'
+set node0.ContractedConsole56.cpu_wall_time ='470000'
+set node0.ContractedConsole57.memory_max_size='4000'
+set node0.ContractedConsole57.cpu_wall_time ='470000'
+set node0.ContractedConsole58.memory_max_size='4000'
+set node0.ContractedConsole58.cpu_wall_time ='470000'
+set node0.ContractedConsole59.memory_max_size='4000'
+set node0.ContractedConsole59.cpu_wall_time ='470000'
+set node0.ContractedConsole60.memory_max_size='4000'
+set node0.ContractedConsole60.cpu_wall_time ='470000'
+set node0.ContractedConsole61.memory_max_size='4000'
+set node0.ContractedConsole61.cpu_wall_time ='470000'
+set node0.ContractedConsole62.memory_max_size='4000'
+set node0.ContractedConsole62.cpu_wall_time ='470000'
+set node0.ContractedConsole63.memory_max_size='4000'
+set node0.ContractedConsole63.cpu_wall_time ='470000'
+set node0.ContractedConsole64.memory_max_size='4000'
+set node0.ContractedConsole64.cpu_wall_time ='470000'
+set node0.ContractedConsole65.memory_max_size='4000'
+set node0.ContractedConsole65.cpu_wall_time ='470000'
+set node0.ContractedConsole66.memory_max_size='4000'
+set node0.ContractedConsole66.cpu_wall_time ='470000'
+set node0.ContractedConsole67.memory_max_size='4000'
+set node0.ContractedConsole67.cpu_wall_time ='470000'
+set node0.ContractedConsole68.memory_max_size='4000'
+set node0.ContractedConsole68.cpu_wall_time ='470000'
+set node0.ContractedConsole69.memory_max_size='4000'
+set node0.ContractedConsole69.cpu_wall_time ='470000'
+set node0.ContractedConsole70.memory_max_size='4000'
+set node0.ContractedConsole70.cpu_wall_time ='470000'
+set node0.ContractedConsole71.memory_max_size='4000'
+set node0.ContractedConsole71.cpu_wall_time ='470000'
+set node0.ContractedConsole72.memory_max_size='4000'
+set node0.ContractedConsole72.cpu_wall_time ='470000'
+set node0.ContractedConsole73.memory_max_size='4000'
+set node0.ContractedConsole73.cpu_wall_time ='470000'
+set node0.ContractedConsole74.memory_max_size='4000'
+set node0.ContractedConsole74.cpu_wall_time ='470000'
+set node0.ContractedConsole75.memory_max_size='4000'
+set node0.ContractedConsole75.cpu_wall_time ='470000'
+set node0.ContractedConsole76.memory_max_size='4000'
+set node0.ContractedConsole76.cpu_wall_time ='470000'
+set node0.ContractedConsole77.memory_max_size='4000'
+set node0.ContractedConsole77.cpu_wall_time ='470000'
+set node0.ContractedConsole78.memory_max_size='4000'
+set node0.ContractedConsole78.cpu_wall_time ='470000'
+set node0.ContractedConsole79.memory_max_size='4000'
+set node0.ContractedConsole79.cpu_wall_time ='470000'
+set node0.ContractedConsole80.memory_max_size='4000'
+set node0.ContractedConsole80.cpu_wall_time ='470000'
+set node0.ContractedConsole81.memory_max_size='4000'
+set node0.ContractedConsole81.cpu_wall_time ='470000'
+set node0.ContractedConsole82.memory_max_size='4000'
+set node0.ContractedConsole82.cpu_wall_time ='470000'
+set node0.ContractedConsole83.memory_max_size='4000'
+set node0.ContractedConsole83.cpu_wall_time ='470000'
+set node0.ContractedConsole84.memory_max_size='4000'
+set node0.ContractedConsole84.cpu_wall_time ='470000'
+set node0.ContractedConsole85.memory_max_size='4000'
+set node0.ContractedConsole85.cpu_wall_time ='470000'
+set node0.ContractedConsole86.memory_max_size='4000'
+set node0.ContractedConsole86.cpu_wall_time ='470000'
+set node0.ContractedConsole87.memory_max_size='4000'
+set node0.ContractedConsole87.cpu_wall_time ='470000'
+set node0.ContractedConsole88.memory_max_size='4000'
+set node0.ContractedConsole88.cpu_wall_time ='470000'
+set node0.ContractedConsole89.memory_max_size='4000'
+set node0.ContractedConsole89.cpu_wall_time ='470000'
+set node0.ContractedConsole90.memory_max_size='4000'
+set node0.ContractedConsole90.cpu_wall_time ='470000'
+set node0.ContractedConsole91.memory_max_size='4000'
+set node0.ContractedConsole91.cpu_wall_time ='470000'
+set node0.ContractedConsole92.memory_max_size='4000'
+set node0.ContractedConsole92.cpu_wall_time ='470000'
+set node0.ContractedConsole93.memory_max_size='4000'
+set node0.ContractedConsole93.cpu_wall_time ='470000'
+set node0.ContractedConsole94.memory_max_size='4000'
+set node0.ContractedConsole94.cpu_wall_time ='470000'
+set node0.ContractedConsole95.memory_max_size='4000'
+set node0.ContractedConsole95.cpu_wall_time ='470000'
+set node0.ContractedConsole96.memory_max_size='4000'
+set node0.ContractedConsole96.cpu_wall_time ='470000'
+set node0.ContractedConsole97.memory_max_size='4000'
+set node0.ContractedConsole97.cpu_wall_time ='470000'
+set node0.ContractedConsole98.memory_max_size='4000'
+set node0.ContractedConsole98.cpu_wall_time ='470000'
+set node0.ContractedConsole99.memory_max_size='4000'
+set node0.ContractedConsole99.cpu_wall_time ='470000'
+set node0.ContractedConsole100.memory_max_size='4000'
+set node0.ContractedConsole100.cpu_wall_time ='470000'
+set node0.ContractedConsole101.memory_max_size='4000'
+set node0.ContractedConsole101.cpu_wall_time ='470000'
+set node0.ContractedConsole102.memory_max_size='4000'
+set node0.ContractedConsole102.cpu_wall_time ='470000'
+set node0.ContractedConsole103.memory_max_size='4000'
+set node0.ContractedConsole103.cpu_wall_time ='470000'
+set node0.ContractedConsole104.memory_max_size='4000'
+set node0.ContractedConsole104.cpu_wall_time ='470000'
+set node0.ContractedConsole105.memory_max_size='4000'
+set node0.ContractedConsole105.cpu_wall_time ='470000'
+set node0.ContractedConsole106.memory_max_size='4000'
+set node0.ContractedConsole106.cpu_wall_time ='470000'
+set node0.ContractedConsole107.memory_max_size='4000'
+set node0.ContractedConsole107.cpu_wall_time ='470000'
+set node0.ContractedConsole108.memory_max_size='4000'
+set node0.ContractedConsole108.cpu_wall_time ='470000'
+set node0.ContractedConsole109.memory_max_size='4000'
+set node0.ContractedConsole109.cpu_wall_time ='470000'
+set node0.ContractedConsole110.memory_max_size='4000'
+set node0.ContractedConsole110.cpu_wall_time ='470000'
+set node0.ContractedConsole111.memory_max_size='4000'
+set node0.ContractedConsole111.cpu_wall_time ='470000'
+set node0.ContractedConsole112.memory_max_size='4000'
+set node0.ContractedConsole112.cpu_wall_time ='470000'
+set node0.ContractedConsole113.memory_max_size='4000'
+set node0.ContractedConsole113.cpu_wall_time ='470000'
+set node0.ContractedConsole114.memory_max_size='4000'
+set node0.ContractedConsole114.cpu_wall_time ='470000'
+set node0.ContractedConsole115.memory_max_size='4000'
+set node0.ContractedConsole115.cpu_wall_time ='470000'
+set node0.ContractedConsole116.memory_max_size='4000'
+set node0.ContractedConsole116.cpu_wall_time ='470000'
+set node0.ContractedConsole117.memory_max_size='4000'
+set node0.ContractedConsole117.cpu_wall_time ='470000'
+set node0.ContractedConsole118.memory_max_size='4000'
+set node0.ContractedConsole118.cpu_wall_time ='470000'
+set node0.ContractedConsole119.memory_max_size='4000'
+set node0.ContractedConsole119.cpu_wall_time ='470000'
+set node0.ContractedConsole120.memory_max_size='4000'
+set node0.ContractedConsole120.cpu_wall_time ='470000'
+set node0.ContractedConsole121.memory_max_size='4000'
+set node0.ContractedConsole121.cpu_wall_time ='470000'
+set node0.ContractedConsole122.memory_max_size='4000'
+set node0.ContractedConsole122.cpu_wall_time ='470000'
+set node0.ContractedConsole123.memory_max_size='4000'
+set node0.ContractedConsole123.cpu_wall_time ='470000'
+set node0.ContractedConsole124.memory_max_size='4000'
+set node0.ContractedConsole124.cpu_wall_time ='470000'
+set node0.ContractedConsole125.memory_max_size='4000'
+set node0.ContractedConsole125.cpu_wall_time ='470000'
+set node0.ContractedConsole126.memory_max_size='4000'
+set node0.ContractedConsole126.cpu_wall_time ='470000'
+set node0.ContractedConsole127.memory_max_size='4000'
+set node0.ContractedConsole127.cpu_wall_time ='470000'
+set node0.ContractedConsole128.memory_max_size='4000'
+set node0.ContractedConsole128.cpu_wall_time ='470000'
+
+add cInitial : AsyncBroadcast
+bind node0.numberGenerator_fancy.output cInitial
+bind node0.ContractedConsole1.input cInitial
+add c1To2 : AsyncBroadcast
+bind node0.ContractedConsole1.output c1To2
+bind node0.ContractedConsole2.input c1To2
+add c2To3 : AsyncBroadcast
+bind node0.ContractedConsole2.output c2To3
+bind node0.ContractedConsole3.input c2To3
+add c3To4 : AsyncBroadcast
+bind node0.ContractedConsole3.output c3To4
+bind node0.ContractedConsole4.input c3To4
+add c4To5 : AsyncBroadcast
+bind node0.ContractedConsole4.output c4To5
+bind node0.ContractedConsole5.input c4To5
+add c5To6 : AsyncBroadcast
+bind node0.ContractedConsole5.output c5To6
+bind node0.ContractedConsole6.input c5To6
+add c6To7 : AsyncBroadcast
+bind node0.ContractedConsole6.output c6To7
+bind node0.ContractedConsole7.input c6To7
+add c7To8 : AsyncBroadcast
+bind node0.ContractedConsole7.output c7To8
+bind node0.ContractedConsole8.input c7To8
+add c8To9 : AsyncBroadcast
+bind node0.ContractedConsole8.output c8To9
+bind node0.ContractedConsole9.input c8To9
+add c9To10 : AsyncBroadcast
+bind node0.ContractedConsole9.output c9To10
+bind node0.ContractedConsole10.input c9To10
+add c10To11 : AsyncBroadcast
+bind node0.ContractedConsole10.output c10To11
+bind node0.ContractedConsole11.input c10To11
+add c11To12 : AsyncBroadcast
+bind node0.ContractedConsole11.output c11To12
+bind node0.ContractedConsole12.input c11To12
+add c12To13 : AsyncBroadcast
+bind node0.ContractedConsole12.output c12To13
+bind node0.ContractedConsole13.input c12To13
+add c13To14 : AsyncBroadcast
+bind node0.ContractedConsole13.output c13To14
+bind node0.ContractedConsole14.input c13To14
+add c14To15 : AsyncBroadcast
+bind node0.ContractedConsole14.output c14To15
+bind node0.ContractedConsole15.input c14To15
+add c15To16 : AsyncBroadcast
+bind node0.ContractedConsole15.output c15To16
+bind node0.ContractedConsole16.input c15To16
+add c16To17 : AsyncBroadcast
+bind node0.ContractedConsole16.output c16To17
+bind node0.ContractedConsole17.input c16To17
+add c17To18 : AsyncBroadcast
+bind node0.ContractedConsole17.output c17To18
+bind node0.ContractedConsole18.input c17To18
+add c18To19 : AsyncBroadcast
+bind node0.ContractedConsole18.output c18To19
+bind node0.ContractedConsole19.input c18To19
+add c19To20 : AsyncBroadcast
+bind node0.ContractedConsole19.output c19To20
+bind node0.ContractedConsole20.input c19To20
+add c20To21 : AsyncBroadcast
+bind node0.ContractedConsole20.output c20To21
+bind node0.ContractedConsole21.input c20To21
+add c21To22 : AsyncBroadcast
+bind node0.ContractedConsole21.output c21To22
+bind node0.ContractedConsole22.input c21To22
+add c22To23 : AsyncBroadcast
+bind node0.ContractedConsole22.output c22To23
+bind node0.ContractedConsole23.input c22To23
+add c23To24 : AsyncBroadcast
+bind node0.ContractedConsole23.output c23To24
+bind node0.ContractedConsole24.input c23To24
+add c24To25 : AsyncBroadcast
+bind node0.ContractedConsole24.output c24To25
+bind node0.ContractedConsole25.input c24To25
+add c25To26 : AsyncBroadcast
+bind node0.ContractedConsole25.output c25To26
+bind node0.ContractedConsole26.input c25To26
+add c26To27 : AsyncBroadcast
+bind node0.ContractedConsole26.output c26To27
+bind node0.ContractedConsole27.input c26To27
+add c27To28 : AsyncBroadcast
+bind node0.ContractedConsole27.output c27To28
+bind node0.ContractedConsole28.input c27To28
+add c28To29 : AsyncBroadcast
+bind node0.ContractedConsole28.output c28To29
+bind node0.ContractedConsole29.input c28To29
+add c29To30 : AsyncBroadcast
+bind node0.ContractedConsole29.output c29To30
+bind node0.ContractedConsole30.input c29To30
+add c30To31 : AsyncBroadcast
+bind node0.ContractedConsole30.output c30To31
+bind node0.ContractedConsole31.input c30To31
+add c31To32 : AsyncBroadcast
+bind node0.ContractedConsole31.output c31To32
+bind node0.ContractedConsole32.input c31To32
+add c32To33 : AsyncBroadcast
+bind node0.ContractedConsole32.output c32To33
+bind node0.ContractedConsole33.input c32To33
+add c33To34 : AsyncBroadcast
+bind node0.ContractedConsole33.output c33To34
+bind node0.ContractedConsole34.input c33To34
+add c34To35 : AsyncBroadcast
+bind node0.ContractedConsole34.output c34To35
+bind node0.ContractedConsole35.input c34To35
+add c35To36 : AsyncBroadcast
+bind node0.ContractedConsole35.output c35To36
+bind node0.ContractedConsole36.input c35To36
+add c36To37 : AsyncBroadcast
+bind node0.ContractedConsole36.output c36To37
+bind node0.ContractedConsole37.input c36To37
+add c37To38 : AsyncBroadcast
+bind node0.ContractedConsole37.output c37To38
+bind node0.ContractedConsole38.input c37To38
+add c38To39 : AsyncBroadcast
+bind node0.ContractedConsole38.output c38To39
+bind node0.ContractedConsole39.input c38To39
+add c39To40 : AsyncBroadcast
+bind node0.ContractedConsole39.output c39To40
+bind node0.ContractedConsole40.input c39To40
+add c40To41 : AsyncBroadcast
+bind node0.ContractedConsole40.output c40To41
+bind node0.ContractedConsole41.input c40To41
+add c41To42 : AsyncBroadcast
+bind node0.ContractedConsole41.output c41To42
+bind node0.ContractedConsole42.input c41To42
+add c42To43 : AsyncBroadcast
+bind node0.ContractedConsole42.output c42To43
+bind node0.ContractedConsole43.input c42To43
+add c43To44 : AsyncBroadcast
+bind node0.ContractedConsole43.output c43To44
+bind node0.ContractedConsole44.input c43To44
+add c44To45 : AsyncBroadcast
+bind node0.ContractedConsole44.output c44To45
+bind node0.ContractedConsole45.input c44To45
+add c45To46 : AsyncBroadcast
+bind node0.ContractedConsole45.output c45To46
+bind node0.ContractedConsole46.input c45To46
+add c46To47 : AsyncBroadcast
+bind node0.ContractedConsole46.output c46To47
+bind node0.ContractedConsole47.input c46To47
+add c47To48 : AsyncBroadcast
+bind node0.ContractedConsole47.output c47To48
+bind node0.ContractedConsole48.input c47To48
+add c48To49 : AsyncBroadcast
+bind node0.ContractedConsole48.output c48To49
+bind node0.ContractedConsole49.input c48To49
+add c49To50 : AsyncBroadcast
+bind node0.ContractedConsole49.output c49To50
+bind node0.ContractedConsole50.input c49To50
+add c50To51 : AsyncBroadcast
+bind node0.ContractedConsole50.output c50To51
+bind node0.ContractedConsole51.input c50To51
+add c51To52 : AsyncBroadcast
+bind node0.ContractedConsole51.output c51To52
+bind node0.ContractedConsole52.input c51To52
+add c52To53 : AsyncBroadcast
+bind node0.ContractedConsole52.output c52To53
+bind node0.ContractedConsole53.input c52To53
+add c53To54 : AsyncBroadcast
+bind node0.ContractedConsole53.output c53To54
+bind node0.ContractedConsole54.input c53To54
+add c54To55 : AsyncBroadcast
+bind node0.ContractedConsole54.output c54To55
+bind node0.ContractedConsole55.input c54To55
+add c55To56 : AsyncBroadcast
+bind node0.ContractedConsole55.output c55To56
+bind node0.ContractedConsole56.input c55To56
+add c56To57 : AsyncBroadcast
+bind node0.ContractedConsole56.output c56To57
+bind node0.ContractedConsole57.input c56To57
+add c57To58 : AsyncBroadcast
+bind node0.ContractedConsole57.output c57To58
+bind node0.ContractedConsole58.input c57To58
+add c58To59 : AsyncBroadcast
+bind node0.ContractedConsole58.output c58To59
+bind node0.ContractedConsole59.input c58To59
+add c59To60 : AsyncBroadcast
+bind node0.ContractedConsole59.output c59To60
+bind node0.ContractedConsole60.input c59To60
+add c60To61 : AsyncBroadcast
+bind node0.ContractedConsole60.output c60To61
+bind node0.ContractedConsole61.input c60To61
+add c61To62 : AsyncBroadcast
+bind node0.ContractedConsole61.output c61To62
+bind node0.ContractedConsole62.input c61To62
+add c62To63 : AsyncBroadcast
+bind node0.ContractedConsole62.output c62To63
+bind node0.ContractedConsole63.input c62To63
+add c63To64 : AsyncBroadcast
+bind node0.ContractedConsole63.output c63To64
+bind node0.ContractedConsole64.input c63To64
+add c64To65 : AsyncBroadcast
+bind node0.ContractedConsole64.output c64To65
+bind node0.ContractedConsole65.input c64To65
+add c65To66 : AsyncBroadcast
+bind node0.ContractedConsole65.output c65To66
+bind node0.ContractedConsole66.input c65To66
+add c66To67 : AsyncBroadcast
+bind node0.ContractedConsole66.output c66To67
+bind node0.ContractedConsole67.input c66To67
+add c67To68 : AsyncBroadcast
+bind node0.ContractedConsole67.output c67To68
+bind node0.ContractedConsole68.input c67To68
+add c68To69 : AsyncBroadcast
+bind node0.ContractedConsole68.output c68To69
+bind node0.ContractedConsole69.input c68To69
+add c69To70 : AsyncBroadcast
+bind node0.ContractedConsole69.output c69To70
+bind node0.ContractedConsole70.input c69To70
+add c70To71 : AsyncBroadcast
+bind node0.ContractedConsole70.output c70To71
+bind node0.ContractedConsole71.input c70To71
+add c71To72 : AsyncBroadcast
+bind node0.ContractedConsole71.output c71To72
+bind node0.ContractedConsole72.input c71To72
+add c72To73 : AsyncBroadcast
+bind node0.ContractedConsole72.output c72To73
+bind node0.ContractedConsole73.input c72To73
+add c73To74 : AsyncBroadcast
+bind node0.ContractedConsole73.output c73To74
+bind node0.ContractedConsole74.input c73To74
+add c74To75 : AsyncBroadcast
+bind node0.ContractedConsole74.output c74To75
+bind node0.ContractedConsole75.input c74To75
+add c75To76 : AsyncBroadcast
+bind node0.ContractedConsole75.output c75To76
+bind node0.ContractedConsole76.input c75To76
+add c76To77 : AsyncBroadcast
+bind node0.ContractedConsole76.output c76To77
+bind node0.ContractedConsole77.input c76To77
+add c77To78 : AsyncBroadcast
+bind node0.ContractedConsole77.output c77To78
+bind node0.ContractedConsole78.input c77To78
+add c78To79 : AsyncBroadcast
+bind node0.ContractedConsole78.output c78To79
+bind node0.ContractedConsole79.input c78To79
+add c79To80 : AsyncBroadcast
+bind node0.ContractedConsole79.output c79To80
+bind node0.ContractedConsole80.input c79To80
+add c80To81 : AsyncBroadcast
+bind node0.ContractedConsole80.output c80To81
+bind node0.ContractedConsole81.input c80To81
+add c81To82 : AsyncBroadcast
+bind node0.ContractedConsole81.output c81To82
+bind node0.ContractedConsole82.input c81To82
+add c82To83 : AsyncBroadcast
+bind node0.ContractedConsole82.output c82To83
+bind node0.ContractedConsole83.input c82To83
+add c83To84 : AsyncBroadcast
+bind node0.ContractedConsole83.output c83To84
+bind node0.ContractedConsole84.input c83To84
+add c84To85 : AsyncBroadcast
+bind node0.ContractedConsole84.output c84To85
+bind node0.ContractedConsole85.input c84To85
+add c85To86 : AsyncBroadcast
+bind node0.ContractedConsole85.output c85To86
+bind node0.ContractedConsole86.input c85To86
+add c86To87 : AsyncBroadcast
+bind node0.ContractedConsole86.output c86To87
+bind node0.ContractedConsole87.input c86To87
+add c87To88 : AsyncBroadcast
+bind node0.ContractedConsole87.output c87To88
+bind node0.ContractedConsole88.input c87To88
+add c88To89 : AsyncBroadcast
+bind node0.ContractedConsole88.output c88To89
+bind node0.ContractedConsole89.input c88To89
+add c89To90 : AsyncBroadcast
+bind node0.ContractedConsole89.output c89To90
+bind node0.ContractedConsole90.input c89To90
+add c90To91 : AsyncBroadcast
+bind node0.ContractedConsole90.output c90To91
+bind node0.ContractedConsole91.input c90To91
+add c91To92 : AsyncBroadcast
+bind node0.ContractedConsole91.output c91To92
+bind node0.ContractedConsole92.input c91To92
+add c92To93 : AsyncBroadcast
+bind node0.ContractedConsole92.output c92To93
+bind node0.ContractedConsole93.input c92To93
+add c93To94 : AsyncBroadcast
+bind node0.ContractedConsole93.output c93To94
+bind node0.ContractedConsole94.input c93To94
+add c94To95 : AsyncBroadcast
+bind node0.ContractedConsole94.output c94To95
+bind node0.ContractedConsole95.input c94To95
+add c95To96 : AsyncBroadcast
+bind node0.ContractedConsole95.output c95To96
+bind node0.ContractedConsole96.input c95To96
+add c96To97 : AsyncBroadcast
+bind node0.ContractedConsole96.output c96To97
+bind node0.ContractedConsole97.input c96To97
+add c97To98 : AsyncBroadcast
+bind node0.ContractedConsole97.output c97To98
+bind node0.ContractedConsole98.input c97To98
+add c98To99 : AsyncBroadcast
+bind node0.ContractedConsole98.output c98To99
+bind node0.ContractedConsole99.input c98To99
+add c99To100 : AsyncBroadcast
+bind node0.ContractedConsole99.output c99To100
+bind node0.ContractedConsole100.input c99To100
+add c100To101 : AsyncBroadcast
+bind node0.ContractedConsole100.output c100To101
+bind node0.ContractedConsole101.input c100To101
+add c101To102 : AsyncBroadcast
+bind node0.ContractedConsole101.output c101To102
+bind node0.ContractedConsole102.input c101To102
+add c102To103 : AsyncBroadcast
+bind node0.ContractedConsole102.output c102To103
+bind node0.ContractedConsole103.input c102To103
+add c103To104 : AsyncBroadcast
+bind node0.ContractedConsole103.output c103To104
+bind node0.ContractedConsole104.input c103To104
+add c104To105 : AsyncBroadcast
+bind node0.ContractedConsole104.output c104To105
+bind node0.ContractedConsole105.input c104To105
+add c105To106 : AsyncBroadcast
+bind node0.ContractedConsole105.output c105To106
+bind node0.ContractedConsole106.input c105To106
+add c106To107 : AsyncBroadcast
+bind node0.ContractedConsole106.output c106To107
+bind node0.ContractedConsole107.input c106To107
+add c107To108 : AsyncBroadcast
+bind node0.ContractedConsole107.output c107To108
+bind node0.ContractedConsole108.input c107To108
+add c108To109 : AsyncBroadcast
+bind node0.ContractedConsole108.output c108To109
+bind node0.ContractedConsole109.input c108To109
+add c109To110 : AsyncBroadcast
+bind node0.ContractedConsole109.output c109To110
+bind node0.ContractedConsole110.input c109To110
+add c110To111 : AsyncBroadcast
+bind node0.ContractedConsole110.output c110To111
+bind node0.ContractedConsole111.input c110To111
+add c111To112 : AsyncBroadcast
+bind node0.ContractedConsole111.output c111To112
+bind node0.ContractedConsole112.input c111To112
+add c112To113 : AsyncBroadcast
+bind node0.ContractedConsole112.output c112To113
+bind node0.ContractedConsole113.input c112To113
+add c113To114 : AsyncBroadcast
+bind node0.ContractedConsole113.output c113To114
+bind node0.ContractedConsole114.input c113To114
+add c114To115 : AsyncBroadcast
+bind node0.ContractedConsole114.output c114To115
+bind node0.ContractedConsole115.input c114To115
+add c115To116 : AsyncBroadcast
+bind node0.ContractedConsole115.output c115To116
+bind node0.ContractedConsole116.input c115To116
+add c116To117 : AsyncBroadcast
+bind node0.ContractedConsole116.output c116To117
+bind node0.ContractedConsole117.input c116To117
+add c117To118 : AsyncBroadcast
+bind node0.ContractedConsole117.output c117To118
+bind node0.ContractedConsole118.input c117To118
+add c118To119 : AsyncBroadcast
+bind node0.ContractedConsole118.output c118To119
+bind node0.ContractedConsole119.input c118To119
+add c119To120 : AsyncBroadcast
+bind node0.ContractedConsole119.output c119To120
+bind node0.ContractedConsole120.input c119To120
+add c120To121 : AsyncBroadcast
+bind node0.ContractedConsole120.output c120To121
+bind node0.ContractedConsole121.input c120To121
+add c121To122 : AsyncBroadcast
+bind node0.ContractedConsole121.output c121To122
+bind node0.ContractedConsole122.input c121To122
+add c122To123 : AsyncBroadcast
+bind node0.ContractedConsole122.output c122To123
+bind node0.ContractedConsole123.input c122To123
+add c123To124 : AsyncBroadcast
+bind node0.ContractedConsole123.output c123To124
+bind node0.ContractedConsole124.input c123To124
+add c124To125 : AsyncBroadcast
+bind node0.ContractedConsole124.output c124To125
+bind node0.ContractedConsole125.input c124To125
+add c125To126 : AsyncBroadcast
+bind node0.ContractedConsole125.output c125To126
+bind node0.ContractedConsole126.input c125To126
+add c126To127 : AsyncBroadcast
+bind node0.ContractedConsole126.output c126To127
+bind node0.ContractedConsole127.input c126To127
+add c127To128 : AsyncBroadcast
+bind node0.ContractedConsole127.output c127To128
+bind node0.ContractedConsole128.input c127To128
