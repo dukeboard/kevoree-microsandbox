@@ -11,5 +11,72 @@
 
     <artifactId>org.kevoree.microsandbox.http_proxy_component</artifactId>
 
+    <dependencies>
 
+        <!--<dependency>-->
+            <!--<groupId>org.kevoree.microsandbox</groupId>-->
+            <!--<artifactId>org.kevoree.microsandbox.api</artifactId>-->
+            <!--<version>${project.version}</version>-->
+        <!--</dependency>-->
+
+        <!--<dependency>-->
+            <!--<groupId>org.kevoree.microsandbox</groupId>-->
+            <!--<artifactId>org.kevoree.microsandbox.monitoredNode</artifactId>-->
+            <!--<version>${project.version}</version>-->
+        <!--</dependency>-->
+
+        <!--<dependency>-->
+        <!--<groupId>org.kevoree</groupId>-->
+        <!--<artifactId>org.kevoree.core</artifactId>-->
+        <!--<version>${kevoree.version}</version>-->
+        <!--</dependency>-->
+
+        <dependency>
+            <groupId>org.kevoree.library.java</groupId>
+            <artifactId>org.kevoree.library.java.javaNode</artifactId>
+            <version>${kevoree.library.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.kevoree</groupId>
+            <artifactId>org.kevoree.bootstrap</artifactId>
+            <version>${kevoree.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.kevoree</groupId>
+            <artifactId>org.kevoree.api</artifactId>
+            <version>${kevoree.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.littleshoot</groupId>
+            <artifactId>littleproxy</artifactId>
+            <version>1.1.0-beta1</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.kevoree.tools</groupId>
+                <artifactId>org.kevoree.tools.mavenplugin</artifactId>
+                <version>${kevoree.version}</version>
+                <extensions>true</extensions>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <excludes>
+                        <!--<exclude>org.kevoree:org.kevoree.bootstrap</exclude>-->
+                        <!--<exclude>org.kevoree.microsandbox:org.kevoree.microsandbox.core</exclude>-->
+                        <!--<exclude>org.kevoree.microsandbox:org.kevoree.microsandbox.sharedResourceAccounting</exclude>-->
+                        <!--<exclude>org.heapexplorer:org.heapexplorer.heapanalysis</exclude>-->
+                    </excludes>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>
