@@ -88,6 +88,10 @@ public abstract class FineGrainedMonitoringStrategy<T extends  MemorySubstrategy
         }
     }
 
+    protected boolean isWorthyContractForMemory(ResourceContract contract) {
+        return contract !=null && contract.getMemory() > 0 && contract.getMemory() < Integer.MAX_VALUE;
+    }
+
     public List<FaultyComponent> getFaultyComponents() {
         return faultyComponents;
     }

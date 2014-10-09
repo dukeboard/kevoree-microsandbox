@@ -17,6 +17,7 @@ import org.kevoree.monitoring.strategies.monitoring.FineGrainedMonitoringStrateg
 import org.kevoree.monitoring.strategies.monitoring.GlobalMonitoring;
 import org.kevoree.monitoring.strategies.monitoring.MonitoringStrategy;
 
+import java.io.*;
 import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.EnumSet;
@@ -203,6 +204,18 @@ public class MonitoringTask extends AbstractMonitoringTask {
         countOfLocalMonitoring++;
         System.out.printf("Total Time in Local Monitoring %d with %d times inside it\n",
                 totalTimeInLocalMonitoring, countOfLocalMonitoring);
+        String s = System.getProperty("experiments.log.timeInLocalMonitoring");
+        if (s != null && !s.isEmpty()) {
+            File file = new File(s);
+            try {
+                PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(file, true)));
+                out.printf("Total Time in Local Monitoring %d with %d times inside it\n",
+                        totalTimeInLocalMonitoring, countOfLocalMonitoring);
+                out.close();
+            } catch (IOException e) {
+                //exception handling left as an exercise for the reader
+            }
+        }
         return time;
     }
 }

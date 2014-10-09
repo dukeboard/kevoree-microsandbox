@@ -10,8 +10,12 @@ import org.kevoree.api.ModelService;
 import org.kevoree.library.defaultNodeTypes.ModelRegistry;
 import org.kevoree.library.defaultNodeTypes.wrapper.KInstanceWrapper;
 import org.kevoree.log.Log;
+import org.kevoree.microsandbox.monitoredNode.MonitoringRegistry;
 import org.kevoree.modeling.api.KMFContainer;
+import org.kevoree.monitoring.comp.MyLowLevelResourceConsumptionRecorder;
+import org.resourceaccounting.LowLevelResourceMonitorProxy;
 import org.resourceaccounting.ResourcePrincipal;
+import org.resourceaccounting.contract.ResourceContract;
 
 import java.util.*;
 
@@ -38,8 +42,8 @@ public class HeapExplorerMemorySubstrategy implements MemorySubstrategy {
                 KMFContainer kmfContainer = modelService.getCurrentModel().getModel().findByPath(ids.replace("kev/",""));
 
                 if (kmfContainer != null) {
-                    Log.info("\t\t\t Sexy {}", ids);
                     KInstanceWrapper wrapper = (KInstanceWrapper) modelRegistry.lookup(kmfContainer);
+                    Log.debug("\t\t\t Requesting extra root for {}. Returning {}", ids, wrapper.getTargetObj());
                     return new Object[]{wrapper.getTargetObj()};
                 }
                 return new Object[] {};
@@ -48,7 +52,21 @@ public class HeapExplorerMemorySubstrategy implements MemorySubstrategy {
             @Override
             public boolean mustAnalyse(String ids) {
                 KMFContainer kmfContainer = modelService.getCurrentModel().getModel().findByPath(ids.replace("kev/",""));
-                return  (kmfContainer != null && kmfContainer instanceof ComponentInstance);
+                if (kmfContainer != null && kmfContainer instanceof  ComponentInstance) {
+                    ComponentInstance instance = (ComponentInstance) kmfContainer;
+                    Object obj = MonitoringRegistry.getInstance().lookup(instance.path() + "_tg");
+                    ThreadGroup tg = (ThreadGroup) obj;
+                    LowLevelResourceMonitorProxy recorder = MyLowLevelResourceConsumptionRecorder.getInstance();
+                    ResourcePrincipal p = recorder.getApplication(tg.getName());
+                    if (p != null) {
+                        return isWorthyContractForMemory(p.getContract());
+                    }
+                }
+                return  false;
+            }
+
+            private boolean isWorthyContractForMemory(ResourceContract contract) {
+                return contract !=null && contract.getMemory() > 0 && contract.getMemory() < Integer.MAX_VALUE;
             }
         };
         HeapAnalysis.callback = this.upcall;
@@ -59,8 +77,10 @@ public class HeapExplorerMemorySubstrategy implements MemorySubstrategy {
         if (currentCycle != previousCycle) {
             Object[] r = (Object[])HeapAnalysis.analysis(ID_KEVOREE_ANALYSIS); // ugly that fixed constant
             previousCycle = currentCycle;
+
             for (int j = 0 ; j < r.length ; j++) {
                 PrincipalClassDetailsUsage principalClassDetailsUsage = (PrincipalClassDetailsUsage)r[j];
+                Log.debug("\t AppId={}, Space={}", principalClassDetailsUsage.resourceId, principalClassDetailsUsage.totalConsumption);
                 results.put(principalClassDetailsUsage.resourceId, principalClassDetailsUsage.totalConsumption);
             }
         }

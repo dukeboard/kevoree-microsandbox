@@ -64,11 +64,12 @@ public class SingleComponentMonitoring<T extends MemorySubstrategy> extends Fine
             }
 
             // TODO : I am wondering if this is OK? Shouldn't I do this inside onGCVerifyContract?
-            long tmp = memorySubstrategy.getMemoryConsumption(pair);
             if (reason.contains(Metric.Memory)
-                    && contract.getMemory() > 0
-                    && contract.getMemory() < tmp) {
-                a.put(Metric.Memory, new MeasurePoint(tmp, contract.getMemory()));
+                    && isWorthyContractForMemory(contract)) {
+                long tmp = memorySubstrategy.getMemoryConsumption(pair);
+                if (contract.getMemory() < tmp) {
+                    a.put(Metric.Memory, new MeasurePoint(tmp, contract.getMemory()));
+                }
             }
 
             if (reason.contains(Metric.IOWrite) && contract.getWrite() < data.lastWrite) {

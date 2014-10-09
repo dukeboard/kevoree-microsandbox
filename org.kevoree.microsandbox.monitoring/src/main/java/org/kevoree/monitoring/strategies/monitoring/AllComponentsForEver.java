@@ -90,13 +90,15 @@ public class AllComponentsForEver<T extends MemorySubstrategy> extends FineGrain
             DataForCheckingContract data = getInfo(principal);
             ResourceContract contract = principal.getContract();
 
-            Pair<ResourcePrincipal, DataForCheckingContract> pair = new Pair(principal, data);
-            long tmp = memorySubstrategy.getMemoryConsumption(pair);
-            if (contract != null && data != null && contract.getMemory() > 0
-                    && contract.getMemory() < tmp) {
-                b.put(Metric.Memory, new MeasurePoint(tmp, contract.getMemory()));
-                faultyComponents.add(new FaultyComponent(component.path(),b,
-                        new HashSet<String>(), new HashSet<String>()));
+            if (contract != null && data != null && isWorthyContractForMemory(contract)) {
+                Pair<ResourcePrincipal, DataForCheckingContract> pair = new Pair(principal, data);
+                long tmp = memorySubstrategy.getMemoryConsumption(pair);
+                Log.debug("Que raROOOOOOOOO esta esto {}", tmp);
+                if (contract.getMemory() < tmp) {
+                    b.put(Metric.Memory, new MeasurePoint(tmp, contract.getMemory()));
+                    faultyComponents.add(new FaultyComponent(component.path(), b,
+                            new HashSet<String>(), new HashSet<String>()));
+                }
             }
         }
         if (faultyComponents.size() > 0) {

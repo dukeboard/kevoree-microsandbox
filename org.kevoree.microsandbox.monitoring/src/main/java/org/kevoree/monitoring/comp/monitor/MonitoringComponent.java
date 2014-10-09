@@ -198,11 +198,14 @@ public class MonitoringComponent implements MicrosandboxEventListener, RankingHe
 
         for (ComponentInstance ci : ll) l.add(ci);
 
+        MemorySubstrategy memSubstrategy = getMemorySubstrategy();
+        memSubstrategy.newCycle();
+
         if (fineGrainedStrategy.equals("single-monitoring"))
-            return new SingleComponentMonitoring(reason, l, getMemorySubstrategy(), msg);
+            return new SingleComponentMonitoring(reason, l, memSubstrategy, msg);
         if (fineGrainedStrategy.equals("all-components"))
-            return new AllComponentsMonitoring(reason, l, getMemorySubstrategy(), msg);
-        return new AllComponentsMonitoring(reason, l, getMemorySubstrategy(), msg);
+            return new AllComponentsMonitoring(reason, l, memSubstrategy, msg);
+        return new AllComponentsMonitoring(reason, l, memSubstrategy, msg);
     }
 
 

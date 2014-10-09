@@ -1,6 +1,7 @@
 package org.kevoree.monitoring.ranking;
 
 import org.kevoree.ComponentInstance;
+import org.kevoree.annotation.ComponentType;
 
 import java.util.Comparator;
 
@@ -12,6 +13,7 @@ import java.util.Comparator;
  * @author Erwan Daubert
  * @version 1.0
  */
+@ComponentType
 public class InvNumberFailureBasedHeuristicComponent extends NumberFailureBasedHeuristicComponent {
 
     @Override
@@ -19,15 +21,20 @@ public class InvNumberFailureBasedHeuristicComponent extends NumberFailureBasedH
         return new Comparator<ComponentInstance>() {
             @Override
             public int compare(ComponentInstance o1, ComponentInstance o2) {
-                long nbFailure01 = nbFailures.get(o1.path());
-                long nbFailure02 = nbFailures.get(o2.path());
+                Long nbFailure01 = nbFailures.get(o1.path());
+                Long nbFailure02 = nbFailures.get(o2.path());
 
-                if (nbFailure01 == 0 || nbFailure02 == 0) {
-                    // that must not appear
-                    return 1;
+                if (nbFailure01 == null && nbFailure02 == null) {
+                    return 0;
+                }
+                else if (nbFailure01 == null) {
+                    return -nbFailure02.intValue();
+                }
+                else if (nbFailure02 == null) {
+                    return (nbFailure01.intValue());
                 }
 
-                return (int) (nbFailure02 - nbFailure01);
+                return (-nbFailure02.intValue() + nbFailure01.intValue());
             }
         };
     }
