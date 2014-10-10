@@ -12,29 +12,10 @@
     <artifactId>org.kevoree.microsandbox.http_proxy_component</artifactId>
 
     <dependencies>
-
-        <!--<dependency>-->
-            <!--<groupId>org.kevoree.microsandbox</groupId>-->
-            <!--<artifactId>org.kevoree.microsandbox.api</artifactId>-->
-            <!--<version>${project.version}</version>-->
-        <!--</dependency>-->
-
-        <!--<dependency>-->
-            <!--<groupId>org.kevoree.microsandbox</groupId>-->
-            <!--<artifactId>org.kevoree.microsandbox.monitoredNode</artifactId>-->
-            <!--<version>${project.version}</version>-->
-        <!--</dependency>-->
-
-        <!--<dependency>-->
-        <!--<groupId>org.kevoree</groupId>-->
-        <!--<artifactId>org.kevoree.core</artifactId>-->
-        <!--<version>${kevoree.version}</version>-->
-        <!--</dependency>-->
-
         <dependency>
-            <groupId>org.kevoree.library.java</groupId>
-            <artifactId>org.kevoree.library.java.javaNode</artifactId>
-            <version>${kevoree.library.version}</version>
+            <groupId>org.kevoree.microsandbox</groupId>
+            <artifactId>org.kevoree.microsandbox.api</artifactId>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.kevoree</groupId>
@@ -71,7 +52,7 @@
                 <configuration>
                     <excludes>
                         <!--<exclude>org.kevoree:org.kevoree.bootstrap</exclude>-->
-                        <!--<exclude>org.kevoree.microsandbox:org.kevoree.microsandbox.core</exclude>-->
+                        <exclude>org.kevoree.microsandbox:org.kevoree.microsandbox.core</exclude>
                         <!--<exclude>org.kevoree.microsandbox:org.kevoree.microsandbox.sharedResourceAccounting</exclude>-->
                         <!--<exclude>org.heapexplorer:org.heapexplorer.heapanalysis</exclude>-->
                     </excludes>

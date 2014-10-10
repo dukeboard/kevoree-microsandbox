@@ -2,6 +2,8 @@ package org.kevoree.microsandbox.http_proxy_component;
 
 import org.kevoree.annotation.*;
 import org.kevoree.log.Log;
+import org.kevoree.microsandbox.api.contract.FullContracted;
+import org.kevoree.microsandbox.api.contract.impl.CPUMemoryContractedImpl;
 
 import java.io.File;
 import java.io.IOException;
@@ -13,7 +15,7 @@ import java.net.URL;
 import java.net.URLClassLoader;
 
 @ComponentType
-public class WebServerExecuter {
+public class WebServerExecuter extends CPUMemoryContractedImpl {
 
     @Param(optional = false)
     String path_to_sosie;
@@ -40,7 +42,6 @@ public class WebServerExecuter {
 
         @Override
         public void run() {
-            long timeBefore = 0;
             try {
                 Class<?> cl = loader.loadClass("org.ringojs.tools.launcher.Main");
                 Method method = cl.getMethod("main", new Class[]{String[].class});
@@ -49,7 +50,6 @@ public class WebServerExecuter {
                         path_to_mdms,
                         String.format("--port=%d",port)
                 };
-                timeBefore = System.nanoTime();
                 method.invoke(null, new Object[]{args});
             }catch (ClassNotFoundException e) {
                 e.printStackTrace();
@@ -66,17 +66,6 @@ public class WebServerExecuter {
 
             }
             finally {
-//                System.setSecurityManager(null);
-//                long consumedTime = System.nanoTime() - timeBefore;
-//                System.out.println("============================================");
-//                System.out.printf(" Execution Time: %f seconds\n", consumedTime/1000000000.0);
-//                System.out.println("============================================");
-//                try {
-//                    Socket socket = new Socket("localhost",4444);
-//                    socket.getOutputStream().write(Double.toString(consumedTime/1000000000.0).getBytes());
-//                    socket.close();
-//                } catch (IOException e) { }
-//                System.exit(0);
             }
         }
     }
@@ -85,15 +74,17 @@ public class WebServerExecuter {
 
         @Override
         public void run() {
-            int c = 0;
             try {
-//                Thread.sleep(200);
+                Thread.sleep(2000);
+//                Log.info("\t\t I AM HERE< TRYING TO CREATE COMPONENT {}", context.getInstanceName());
                 String jar_path = path_to_sosie + "/run.jar";
                 ClassLoader loader = new URLClassLoader(new URL[]{new File(jar_path).toURI().toURL()}, Thread.currentThread().getContextClassLoader());
                 Thread th = new Thread(new ServerExecuter(loader));
                 th.setContextClassLoader(loader);
                 th.start();
             } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (InterruptedException e) {
                 e.printStackTrace();
             }
 
@@ -109,12 +100,16 @@ public class WebServerExecuter {
             @Override
             public void run() {
                 try {
+//                    Log.info("\t\t sending 000 {}", context.getInstanceName());
                     Thread.sleep(3000);
+//                    Log.info("\t\t sending 111 {}", context.getInstanceName());
+
                     while (registerBackend.getConnectedBindingsSize() == 0) {
                         Thread.sleep(100);
                     }
+//                    Log.info("\t\t sending 222 {} {}", context.getInstanceName(), registerBackend.getConnectedBindingsSize());
                     if (registerBackend.getConnectedBindingsSize() > 0) {
-                        registerBackend.send(port);
+                        registerBackend.send(String.format("%s,%d", context.getPath(), port));
                     }
                 } catch (InterruptedException e) {
                     e.printStackTrace();
@@ -127,7 +122,9 @@ public class WebServerExecuter {
     public void stop() {}
 
     @Update
-    public void update() {System.out.println("Param updated!");}
+    public void update() {
+        System.out.println("Param updated!");
+    }
 
 }
 
